@@ -190,3 +190,117 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const HomeScreen = () => {
+  const navigation = useNavigation();
+
+  const handleLogin = () => {
+    // Navegar a la pantalla de inicio de sesión
+    navigation.navigate('Iniciar Sesión');
+  };
+
+  const handleRegistration = () => {
+    // Navegar a la pantalla de registro
+    navigation.navigate('Registro');
+  };
+
+  return (
+    <View style={styles.container}>
+      <Image source={require('../assets/logo2.png')} style={styles.logo} />
+      <Text style={styles.title}>Inicia sesión o regístrate para continuar.</Text>
+      <View style={styles.buttonContainer}>
+        <View style={styles.buttonBox}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+          >
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonBox}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleRegistration}
+          >
+            <Text style={styles.buttonText}>Registrarse</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E0E8FA', // Color de fondo
+  },
+  logo: {
+    width: 300,
+    height: 200,
+    marginBottom: 80,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 60,
+  },
+  buttonContainer: {
+    flexDirection: 'row', // Para alinear los botones en una fila
+  },
+  buttonBox: {
+    backgroundColor: '#0b34b0',
+    borderRadius: 10,
+    marginHorizontal: 10, // Espacio horizontal entre los botones
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});
+
+export default HomeScreen;
+*/

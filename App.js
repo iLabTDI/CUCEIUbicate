@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/login';
 import RegistrationScreen from './screens/register';
-//import CompleteProfileScreen from './complete_profile';
+import CompleteProfileScreen from './screens/complete_profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,25 +27,30 @@ function App() {
           name="Inicio"
           component={HomeScreen}
           options={{
-          title: 'Inicio', // Cambiar el titulo de la barra
+            title: 'Inicio', // Cambia el titulo
           }}
         />
         <Stack.Screen
           name="Iniciar Sesión"
           component={LoginScreen}
           options={{
-          title: 'Iniciar Sesión',
+            title: 'Iniciar Sesión',
           }}
         />
         <Stack.Screen
           name="Registro"
           component={RegistrationScreen}
           options={{
-          title: 'Registro',
-         }}
-      />
-
-      {/*Aqui van las diferentes pantallas restantes*/}
+            title: 'Registro',
+          }}
+        />
+        <Stack.Screen
+          name="Completar Perfil"
+          component={CompleteProfileScreen}
+          options={{
+            title: 'Completar Perfil',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -53,13 +58,19 @@ function App() {
 
 export default App;
 
+/*import React from 'react';
+import AppNavigation from './navigation/appNavigation'; // Ajusta la ruta según sea necesario
+import LoginScreen from './login';
+//import InteractiveImage from './screens/InteractiveImage';
 
-/*
-    <Stack.Screen
-   name="Completar Perfil"
-   component={CompleteProfileScreen}
-   options={{
-   title: 'Completar Perfil',
-  }}
-/>
-  */
+function App() {
+  return (
+  
+      //<AppNavigation />
+      <LoginScreen/>
+
+  );
+}
+
+export default App;
+*/

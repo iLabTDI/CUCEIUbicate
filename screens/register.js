@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Asegúrate de reemplazar 'FontAwesome' por el nombre de la fuente de iconos que estás utilizando
 import { useNavigation } from '@react-navigation/native';
+//import LoginScreen from './login';
+
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
@@ -28,6 +30,13 @@ const RegisterScreen = () => {
     navigation.navigate('Completar Perfil');
   };
 
+  const handleLoginWithAvatar = () => {
+    // Realiza tus acciones de inicio de sesión con avatar aquí
+    
+    // Después de iniciar sesión, navega a la pantalla deseada
+    navigation.navigate('Iniciar Sesión'); // Reemplaza 'OtraPantalla' con el nombre de tu pantalla de destino
+  };
+
   return (
     <View style={styles.container}>
       {isRegistered ? (
@@ -35,6 +44,10 @@ const RegisterScreen = () => {
           <Text style={styles.registerCompleteText}>Registro exitoso. ¡Bienvenido, {email}! :D</Text>
           <TouchableOpacity style={styles.completeProfileButton} onPress={handleCompleteProfile}>
             <Text style={styles.buttonText}>Completar Perfil</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.completeProfileButton} onPress={handleLoginWithAvatar}>
+            <Text style={styles.buttonText}>Login con avatar</Text>
           </TouchableOpacity>
         </View>
       ) : (

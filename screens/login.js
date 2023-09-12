@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity, Image } from 'react-native';
 import { Alert } from 'react-native';
 
 const LoginScreen = () => {
@@ -40,7 +39,16 @@ const LoginScreen = () => {
     { source: require('../assets/Iconos_animales/perro.png') }
   ];
 
-  const colorOptions = ['#FF0000', '#3498db', '#2ecc71', '#FFA500', '#FFD700', '#8B4513', '#808080'];
+  const colorOptions = [
+    // Amarillos     Azules    Morados    Verdes     Rosas     Negros
+    '#FFFF00',  '#3498db', '#8A2BE2', '#2ecc71','#FF69B4', '#000000', 
+    
+    '#FFD700',  '#0074e4', '#9400D3', '#008000','#FF1493', '#111111',
+  
+    '#FFA500',  '#0056b3', '#6A5ACD', '#00FF00','#FFC0CB', '#333333',
+  
+    '#FFC300',  '#1e90ff', '#8B008B', '#32CD32','#FF91A4', '#555555',
+  ];
 
   const handleLogin = () => {
     // Obtener el valor ingresado por el usuario en el campo de usuario y contraseña
@@ -61,7 +69,6 @@ const LoginScreen = () => {
           text: 'Aceptar',
         },
       );
-
     }
   };
 
@@ -101,15 +108,11 @@ const LoginScreen = () => {
             <Text style={styles.welcomeText}>¡Bienvenido, {username}!</Text>
             {selectedAvatar ? (
               <View style={styles.avatarContainer}>
-                <Image source={selectedAvatar} style={[styles.avatar, { backgroundColor: selectedColor }]} />
+                <View style={[styles.avatarCircle, { backgroundColor: selectedColor }]}>
+                  <Image source={selectedAvatar} style={styles.avatar} />
+                </View>
               </View>
             ) : null}
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "green" }]}
-              onPress={handleAcceptAvatar}
-            >
-              <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#0b34b0" }]}
               onPress={handleLogout}
@@ -122,7 +125,9 @@ const LoginScreen = () => {
             <TouchableOpacity onPress={() => setAvatarModalVisible(true)}>
               <View style={styles.avatarContainer}>
                 {selectedAvatar ? (
-                  <Image source={selectedAvatar} style={[styles.avatar, { backgroundColor: selectedColor }]} />
+                  <View style={[styles.avatarCircle, { backgroundColor: selectedColor }]}>
+                    <Image source={selectedAvatar} style={styles.avatar} />
+                  </View>
                 ) : (
                   <View style={styles.avatarPlaceholder} />
                 )}
@@ -148,16 +153,18 @@ const LoginScreen = () => {
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#0b34b0" }]}
               onPress={handleLogin}
-
             >
               <Text style={styles.buttonText}>Iniciar Sesión</Text>
-
             </TouchableOpacity>
           </View>
         )}
-
       </View>
-      <Modal visible={avatarModalVisible} animationType="slide" transparent={true}>
+      <Modal
+        visible={avatarModalVisible}
+        animationType="slide"
+        transparent={true}
+        presentationStyle="overFullScreen"
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccionar Tu Avatar</Text>
@@ -166,11 +173,15 @@ const LoginScreen = () => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => selectAvatar(index)}
+                  style={styles.avatarOptionContainer}
                 >
-                  <Image source={avatar.source} style={[
-                    styles.avatarOption,
+                  <View style={[
+                    styles.avatarCircle,
                     selectedAvatarIndex === index ? { opacity: 0.5 } : null,
-                  ]} />
+                    { backgroundColor: selectedColor }
+                  ]}>
+                    <Image source={avatar.source} style={styles.avatarOption} />
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
@@ -180,6 +191,7 @@ const LoginScreen = () => {
                 <TouchableOpacity
                   key={index}
                   onPress={() => selectColor(index)}
+                  style={styles.colorOptionContainer}
                 >
                   <View style={[
                     styles.colorOption,
@@ -189,8 +201,11 @@ const LoginScreen = () => {
                 </TouchableOpacity>
               ))}
             </View>
-            <TouchableOpacity style={styles.closeButton}>
-              <Text style={styles.buttonText} onPress={handleAcceptAvatar}>Aceptar</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleAcceptAvatar}
+            >
+              <Text style={styles.buttonText}>Aceptar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -198,7 +213,6 @@ const LoginScreen = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -228,7 +242,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
-
   input: {
     borderWidth: 1,
     borderColor: 'black', // Color del borde de los campos de texto
@@ -241,40 +254,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Centrar verticalmente
   },
-
   avatar: {
-    width: 100,
-    height: 100,
+    width: 60,
+    height: 60,
     borderRadius: 50,
-    borderWidth: 2,
-    borderColor: 'black', // Color del borde del avatar
   },
-
+  avatarCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatarPlaceholder: {
     width: 100,
     height: 100,
     backgroundColor: 'lightgray',
     borderRadius: 50,
   },
-
   modalContainer: {
     flex: 1,
     justifyContent: 'center', // Centrar verticalmente en la mitad de la pantalla
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    // paddingTop: 100 // Establecer una altura máxima del 80% de la pantalla
+    paddingTop: 50, // Establecer una altura máxima del 50% de la pantalla
   },
-
   avatarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    borderRadius: 5
+  },
+
+  avatarOptionContainer: {
+    width: '26%',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  avatarOption: {
+    width: 60,
+    height: 65,
+    borderRadius: 60,
   },
   colorGrid: {
-    flexDirection: 'row',
+    flexDirection:'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  colorOptionContainer: {
+    width: '16.666%', // 6 colores por fila
+    alignItems: 'center',
+    marginBottom: 12},
+    
+    colorOption: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   closeButton: {
     backgroundColor: "#0b34b0",
@@ -282,35 +316,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginTop: 10,
   },
-
   modalContent: {
     backgroundColor: 'gray',
-    width: '80%',
+    width: '99%', // Ancho del modal aumentado
     borderRadius: 15,
-    padding: 15
+    padding: 30,
   },
-
   modalTitle: {
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center'
-  },
-
-  avatarOption: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginHorizontal: 4,
-    marginVertical: 10,
-  },
-  colorOption: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 5,
-    marginVertical: 10,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: "#0b34b0",

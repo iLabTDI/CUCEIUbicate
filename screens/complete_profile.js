@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import LottieView from 'lottie-react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { useNavigation } from '@react-navigation/native';
+//import HomeScreen from './screens/HomeScreen';
 
 const CompleteProfileScreen = () => {
   const [name, setName] = useState('');
@@ -34,6 +36,8 @@ const CompleteProfileScreen = () => {
     "Ingeniería Robótica INRO"
   ];
 
+  const navigation = useNavigation();
+
   const handleCompleteProfile = () => {
     // Por ahora, solo marcamos el perfil como completo una vez que se complete su registro
     setIsProfileComplete(true);
@@ -45,32 +49,43 @@ const CompleteProfileScreen = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+// Animación Json de confeti
+const ConfettiAnimation_Json = () => (
+  <LottieView
+   // source={require('./dark_mode.json')}
+    autoPlay
+    loop={true}
+    style={styles.animation}
+  />
+);
 
-  //animacion Json de confeti
-  const Animacion = () => (
-    <LottieView
-       // source={require('./confetti.json')}
-        autoPlay
-        loop={false}
-        style={{ width: 500, height: 500 }}
-    />
+const ConfettiAnimation = () =>(
+   
+  <ConfettiCannon
+  count={75} // Reduzca la cantidad de confeti a la mitad
+  origin={{ x: -10, y: 100 }}
+  autoStart={true}
+  fadeOut={true}
+  fadeOutDuration={10} // Aumenta la duración de desvanecimiento
+/>
+    
   );
-  
 
   return (
  
     <View style={styles.container}>
       {isProfileComplete ? (
         <>
-          {isConfettiVisible && (
-            <ConfettiCannon // Muestra la animación de confeti si isConfettiVisible es true
-              count={200} // Cantidad de confeti a mostrar
-              origin={{ x: -10, y: 0 }} // Origen de la explosión de confeti
-              autoStart={true} // Iniciar la animación automáticamente
-              fadeOut={true} // Desvanecer el confeti después de un tiempo
-            />
-          )}
-          <Text style={styles.profileCompleteText}>Perfil completado. ¡Bienvenido, {username}! :D</Text>
+          {isConfettiVisible && <ConfettiAnimation />}
+        <Text style={styles.profileCompleteText}>¡Bienvenido {username}! Tu perfil ha sido creado</Text>
+        
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Inicio')}
+        style={styles.button}
+        >
+          <Text style={styles.buttonText}>Continuar</Text>
+        </TouchableOpacity>
+        
         </>
       ) : (
         <View>
@@ -179,6 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginTop: 20,
   },
   button: {
     backgroundColor: "#0b34b0",
@@ -231,8 +247,15 @@ export default CompleteProfileScreen;
 
 
 
-
-
+//animacion de confeti 2.0
+/*{isConfettiVisible && (
+  <ConfettiCannon // Muestra la animación de confeti si isConfettiVisible es true
+    count={200} // Cantidad de confeti a mostrar
+    origin={{ x: -10, y: 0 }} // Origen de la explosión de confeti
+    autoStart={true} // Iniciar la animación automáticamente
+    fadeOut={true} // Desvanecer el confeti después de un tiempo
+  />
+)}*/
 
 
 /*import React, { useState } from 'react';
