@@ -60,15 +60,15 @@ const LoginScreen = () => {
     if (isAdmin) {
       // Inicio de sesión como administrador
       setLoggedIn(true);
-    } else {
-      // Credenciales incorrectas o no es un administrador
-      Alert.alert(
-        'Error de Inicio de Sesión',
-        'Usuario o Contraseña incorrectos.\nPor favor, intenta nuevamente.',
-        {
-          text: 'Aceptar',
-        },
-      );
+    // } else {
+      // // Credenciales incorrectas o no es un administrador
+      // Alert.alert(
+        // 'Error de Inicio de Sesión',
+        // 'Usuario o Contraseña incorrectos.\nPor favor, intenta nuevamente.',
+        // {
+          // text: 'Aceptar',
+        // },
+      // );
     }
   };
 
@@ -80,6 +80,11 @@ const LoginScreen = () => {
     setSelectedAvatar(null);
     setSelectedColor('#FFFFFF');
   };
+
+  const handleMain = () => {
+    
+  };
+
 
   const selectAvatar = (avatarIndex) => {
     setSelectedAvatarIndex(avatarIndex);

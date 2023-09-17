@@ -1,104 +1,118 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, SafeAreaView } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { CommonActions } from '@react-navigation/native'; // Importa CommonActions
+
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [showIncorrectMessage, setShowIncorrectMessage] = useState(false);
 
   const users = [
     { username: 'yair', password: 'admin' },
     { username: 'admin', password: 'admin' },
     { username: 'Admin', password: 'Admin' },
     { username: 'ADMIN', password: 'ADMIN' },
-    // más usuarios
   ];
 
   const handleLogin = () => {
-    // Obtener el valor ingresado por el usuario en el campo de usuario y contraseña
+    setShowError(false);
+    setShowIncorrectMessage(false);
+
     const adminUsername = username;
     const adminPassword = password;
 
-    // Comprobar si el usuario y la contraseña coinciden con las credenciales de administrador
+    if (!adminUsername || !adminPassword) {
+      setShowError(true);
+      setShowIncorrectMessage(false);
+      return;
+    }
+
     const isAdmin = users.some(user => user.username === adminUsername && user.password === adminPassword);
     if (isAdmin) {
-      // Inicio de sesión como administrador
       setLoggedIn(true);
-      navigation.navigate('Inicio'); // Cambia 'Inicio' al nombre de tu pantalla de inicio
-    } else {
-      // Credenciales incorrectas o no es un administrador
-      Alert.alert(
-        'Error de Inicio de Sesión',
-        'Usuario o Contraseña incorrectos.\nPor favor, intenta nuevamente.',
-        {
-          text: 'Aceptar',
-        },
+      setShowError(false);
+      setShowIncorrectMessage(false);
+
+      // Restablecer la pila de navegación y evitar la posibilidad de retroceder
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Principal Home' }],
+        })
       );
+    } else {
+      setShowError(false);
+      setShowIncorrectMessage(true);
     }
   };
 
   const handleLogout = () => {
-    // Cerrar sesión al cambiar el estado a "deslogueado"
     setLoggedIn(false);
     setUsername('');
     setPassword('');
-    // Puedes agregar aquí la lógica para restablecer las selecciones de avatar y color si es necesario
   };
 
   const handleRegister = () => {
-    // Navegar a la pantalla de registro
-    navigation.navigate('Registro'); // Cambia 'Registro' al nombre de tu pantalla de registro
+    navigation.navigate('Registro');
   };
 
   return (
     
     <View style={styles.container}>
-    <Image source={require('../assets/logo2.png')} style={styles.logo} />
+      <Image source={require('../assets/logo2.png')} style={styles.logo} />
       <View style={styles.iconCircle}>
-        <Icon name="user" size={50} color="#0b34b0" style={styles.icon} />
+        <Icon name="user-circle-o" size={85} color="#0b34b0" style={styles.icon} />
       </View>
-      
       <View style={styles.loginBox}>
-        {loggedIn ? (
+        
           <View>
-            {/* Contenido para usuario logueado */}
-            <Text style={styles.welcomeText}>¡Bienvenido, {username}!</Text>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "green" }]}
-              onPress={handleLogout}
-            >
-              <Text style={styles.buttonText}>Cerrar sesión</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            {/* Contenido para usuario no logueado */}
-            <Text style={styles.label}>Correo Electrónico:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="alumno@Cucei.com"
-              onChangeText={text => setUsername(text)}
-            />
+            <Text>Correo electrónico:</Text>
+            <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
+              <FontAwesomeIcon icon={faEnvelope} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
+              <TextInput
+                style={styles.input}
+                placeholder="alumno@Cucei.com"
+                onChangeText={text => setUsername(text)}
+              />
+            </View>
             <Text style={styles.label}>Contraseña:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Contraseña"
-              secureTextEntry
-              onChangeText={text => setPassword(text)}
-            />
+            <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
+              <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
+              <TextInput
+                style={styles.input}
+                placeholder="**************"
+                secureTextEntry
+                onChangeText={text => setPassword(text)}
+              />
+            </View>
             <TouchableOpacity onPress={handleLogin}>
               <View style={styles.loginButton}>
                 <Text style={styles.buttonText}>Iniciar Sesión</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleRegister}>
-              <Text style={styles.registerText}>¿No tienes cuenta? Regístrate</Text>
+              <Text style={styles.registerText}>¿No tienes cuenta? ¡Regístrate!</Text>
             </TouchableOpacity>
+            {showError && (
+              <Text style={styles.errorText}>
+                Por favor, completa ambos campos.
+              </Text>
+            )}
+            {showIncorrectMessage && (
+              <Text style={styles.errorText}>
+                Correo o Contraseña incorrectos.
+              </Text>
+            )}
           </View>
-        )}
+        
       </View>
     </View>
   );
@@ -109,15 +123,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E4EDF9', // Color de fondo
+    backgroundColor: '#E4EDF9',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: 'Poppins',
     marginBottom: 20,
   },
   loginBox: {
-    width: '80%',
+    width: '85%',
     height: 'auto',
     backgroundColor: 'white',
     padding: 35,
@@ -132,13 +146,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'black', // Color del borde de los campos de texto
     borderRadius: 5,
-    padding: 10,
-    marginTop: 5,
+    padding: 8,
+    marginTop: 10,
     marginBottom: 15,
+  },
+  iconStyle: {
+    marginRight: 8,
+  },
+  input: {
+    fontSize: 15,
+    flex: 1,
+    padding: 7,
+    borderColor: 'black', // Asegúrate de que el borde esté inicialmente en el color deseado
+    borderWidth: 0, // Asegúrate de que el borde esté inicialmente visible
   },
   loginButton: {
     backgroundColor: '#0b34b0',
@@ -155,8 +180,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#0b34b0',
-    textDecorationLine: 'underline', // Establece el texto como un hipervínculo
-    textAlign: 'center', // Centra el texto horizontalmente
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    paddingTop: 15,
   },
   welcomeText: {
     fontSize: 20,
@@ -171,136 +201,19 @@ const styles = StyleSheet.create({
     height: 85,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: -25, // Ajusta la posición vertical del círculo
+    marginBottom: -25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    zIndex: 1, // Coloca el circulo por encima de otros elementos
+    zIndex: 1,
   },
-
-  logo: { 
+  logo: {
     marginTop: -150,
     marginBottom: 50,
     width: 400,
     height: 200,
-  }
-  
-  
-});
-
-export default HomeScreen;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
-const HomeScreen = () => {
-  const navigation = useNavigation();
-
-  const handleLogin = () => {
-    // Navegar a la pantalla de inicio de sesión
-    navigation.navigate('Iniciar Sesión');
-  };
-
-  const handleRegistration = () => {
-    // Navegar a la pantalla de registro
-    navigation.navigate('Registro');
-  };
-
-  return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logo2.png')} style={styles.logo} />
-      <Text style={styles.title}>Inicia sesión o regístrate para continuar.</Text>
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonBox}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleLogin}
-          >
-            <Text style={styles.buttonText}>Iniciar Sesión</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonBox}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleRegistration}
-          >
-            <Text style={styles.buttonText}>Registrarse</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#E0E8FA', // Color de fondo
-  },
-  logo: {
-    width: 300,
-    height: 200,
-    marginBottom: 80,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 60,
-  },
-  buttonContainer: {
-    flexDirection: 'row', // Para alinear los botones en una fila
-  },
-  buttonBox: {
-    backgroundColor: '#0b34b0',
-    borderRadius: 10,
-    marginHorizontal: 10, // Espacio horizontal entre los botones
-  },
-  button: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
 export default HomeScreen;
-*/

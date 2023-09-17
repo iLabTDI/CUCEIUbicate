@@ -1,76 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
-import LoginScreen from './screens/login';
-import RegistrationScreen from './screens/register';
-import CompleteProfileScreen from './screens/complete_profile';
+import LoginScreen from './screens/LoginScreen'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
+import RegistrationScreen from './screens/registerScreen'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
+import CompleteProfileScreen from './screens/complete_profile'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
+import PrincipalHomeScreen from './screens/PrincipalHome'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
+import RegisterScreen from './screens/registerScreen';
+import { View } from 'react-native-animatable';
 
 const Stack = createNativeStackNavigator();
 
-const globalScreenOptions = {
-  headerStyle: {
-    backgroundColor: '#F5FCFF', // Color de fondo de la barra de navegación
-  },
-  headerTintColor: '#000', // Color del texto de la barra de navegación
-  headerBackTitleVisible: true, // Muestra el boton de regreso con el titulo "SOLO PARA IOS"
-};
-
 function App() {
   return (
+
+  //   //para editar cada pantalla
+
+  //   <NavigationContainer>
+  //   <CompleteProfileScreen/>
+
+  //   <Stack.Navigator initialRouteName="Inicio">
+  //     <Stack.Screen
+  //      name="Inicio"
+  //      component={HomeScreen}
+  //       options={{ title: 'Inicio', headerShown: false }}
+  //    />
+  // </Stack.Navigator>
+  // </NavigationContainer>
+
+
+
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Inicio"
-        screenOptions={globalScreenOptions} // Aplica el estilo global a todas las pantallas
-      >
+      <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen
           name="Inicio"
           component={HomeScreen}
-          options={{
-            title: 'Inicio', // Cambia el titulo
-          }}
+          options={{ title: 'Inicio', headerShown: false }} // Oculta la barra de navegación
         />
         <Stack.Screen
-          name="Iniciar Sesión"
+          name="Login"
           component={LoginScreen}
-          options={{
-            title: 'Iniciar Sesión',
-          }}
+          options={{ title: 'Iniciar Sesión' }}
         />
         <Stack.Screen
           name="Registro"
           component={RegistrationScreen}
-          options={{
-            title: 'Registro',
-          }}
+          options={{ title: 'Registro' }}
         />
         <Stack.Screen
           name="Completar Perfil"
           component={CompleteProfileScreen}
+          options={{ title: 'Completar Perfil' }}
+        />
+        <Stack.Screen
+          name="Principal Home"
+          component={PrincipalHomeScreen}
           options={{
-            title: 'Completar Perfil',
-          }}
+            headerShown: false 
+            }
+          }
         />
       </Stack.Navigator>
     </NavigationContainer>
-  );
-}
+   );
+ }
 
 export default App;
-
-/*import React from 'react';
-import AppNavigation from './navigation/appNavigation'; // Ajusta la ruta según sea necesario
-import LoginScreen from './login';
-//import InteractiveImage from './screens/InteractiveImage';
-
-function App() {
-  return (
-  
-      //<AppNavigation />
-      <LoginScreen/>
-
-  );
-}
-
-export default App;
-*/

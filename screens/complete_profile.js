@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
-import LottieView from 'lottie-react-native';
-import ConfettiCannon from 'react-native-confetti-cannon';
+import React, { useState, useEffect  } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Modal, ScrollView, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//import HomeScreen from './screens/HomeScreen';
+import LottieView from 'lottie-react-native'; // Importa LottieView
+
 
 const CompleteProfileScreen = () => {
   const [name, setName] = useState('');
@@ -12,151 +11,130 @@ const CompleteProfileScreen = () => {
   const [selectedCareer, setSelectedCareer] = useState('');
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isConfettiVisible, setIsConfettiVisible] = useState(false);
-
-  const careerOptions = [
-    "Seleccione una carrera",
-    "Licenciatura en Matemáticas LIMA",
-    "Licenciatura en Física LIFI",
-    "Licenciatura en Química LQUI",
-    "Licenciatura en Químico Farmacéutico Biólogo LQFB",
-    "Licenciatura en Ciencia de Materiales LCMA",
-    "Ingeniería Química INQU",
-    "Ingeniería Civil ICIV",
-    "Ingeniería en Topografía Geomática ITOG",
-    "Ingeniería en Alimentos y Biotecnología LIAB/LINA",
-    "Ingeniería Industrial INDU",
-    "Ingeniería Mecánica Eléctrica INME",
-    "Ingeniería en Logística y Transporte LOGT",
-    "Ingeniería en Informática INFO",
-    "Ingeniería Biomédica INBI",
-    "Ingeniería en Computación INCO",
-    "Ingeniería en Comunicaciones y Electrónica INCE",
-    "Ingeniería Fotónica IGFO",
-    "Ingeniería Robótica INRO"
-  ];
 
   const navigation = useNavigation();
 
+  const careerOptions = [
+
+    "Ingeniería Biomédica INBI",
+    "Ingeniería Civil ICIV",
+    "Ingeniería en Alimentos y Biotecnología LIAB/LINA",
+    "Ingeniería en Comunicaciones y Electrónica INCE",
+    "Ingeniería en Computación INCO",
+    "Ingeniería en Informática INFO",
+    "Ingeniería Fotónica IGFO",
+    "Ingeniería Industrial INDU",
+    "Ingeniería Mecánica Eléctrica INME",
+    "Ingeniería Química INQU",
+    "Ingeniería en Logística y Transporte LOGT",
+    "Ingeniería en Topografía Geomática ITOG",
+    "Licenciatura en Ciencia de Materiales LCMA",
+    "Licenciatura en Física LIFI",
+    "Licenciatura en Matemáticas LIMA",
+    "Licenciatura en Química LQUI",
+    "Licenciatura en Químico Farmacéutico Biólogo LQFB",
+  ];
+
   const handleCompleteProfile = () => {
-    // Por ahora, solo marcamos el perfil como completo una vez que se complete su registro
     setIsProfileComplete(true);
-      // Activa la animación de confeti
-    setIsConfettiVisible(true);
   };
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-// Animación Json de confeti
-const ConfettiAnimation_Json = () => (
-  <LottieView
-   // source={require('./dark_mode.json')}
-    autoPlay
-    loop={true}
-    style={styles.animation}
-  />
-);
+   // Efecto secundario para navegar a la pantalla principal después de 5 segundos
+   useEffect(() => {
+    if (isProfileComplete) {
+      const timer = setTimeout(() => {
+        navigation.navigate('Inicio'); // navega hacia la pantalla inicio
+      }, 5000); // 5000 milisegundos = 5 segundos
 
-const ConfettiAnimation = () =>(
-   
-  <ConfettiCannon
-  count={75} // Reduzca la cantidad de confeti a la mitad
-  origin={{ x: -10, y: 100 }}
-  autoStart={true}
-  fadeOut={true}
-  fadeOutDuration={10} // Aumenta la duración de desvanecimiento
-/>
-    
-  );
+      // Limpia el temporizador cuando el componente se desmonta
+      return () => clearTimeout(timer);
+    }
+  }, [isProfileComplete, navigation]);
+
 
   return (
- 
     <View style={styles.container}>
-      {isProfileComplete ? (
-        <>
-          {isConfettiVisible && <ConfettiAnimation />}
-        <Text style={styles.profileCompleteText}>¡Bienvenido {username}! Tu perfil ha sido creado</Text>
-        
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('Inicio')}
-        style={styles.button}
-        >
-          <Text style={styles.buttonText}>Continuar</Text>
-        </TouchableOpacity>
-        
-        </>
-      ) : (
-        <View>
-          <Text style={styles.label}>Nombre:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tu nombre"
-            value={name}
-            onChangeText={(text) => setName(text)}
-          />
-
-          <Text style={styles.label}>Apellidos:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tus apellidos"
-            value={lastName}
-            onChangeText={(text) => setLastName(text)}
-          />
-
-          <Text style={styles.label}>Nombre de Usuario:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tu nombre de usuario"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-          />
-
-          <Text style={styles.label}>Carrera:</Text>
-          <TouchableOpacity
-            style={styles.picker}
-            onPress={toggleModal}
-          >
-            <Text>{selectedCareer || 'Seleccione una carrera'}</Text>
-          </TouchableOpacity>
-          
-          <Modal
-            visible={isModalVisible}
-            animationType="slide"
-            transparent={true}
-          >
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Seleccione una carrera</Text>
-              {careerOptions.map((option, index) => (
-                <Pressable
-                  key={index}
-                  style={styles.careerOption}
-                  onPress={() => {
-                    setSelectedCareer(option);
-                    toggleModal();
-                  }}
-                >
-                  <Text>{option}</Text>
-                </Pressable>
-              ))}
-              <Pressable
-                style={styles.closeButton}
-                onPress={toggleModal}
-              >
-                <Text style= {styles.buttonText}>Cerrar</Text>
-              </Pressable>
-            </View>
-          </Modal>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleCompleteProfile}
-          >
-            <Text style={styles.buttonText}>Aceptar</Text>
-          </TouchableOpacity>
-        </View>
+      {!isProfileComplete && ( // Mostrar el titulo solo si el perfil no está completo
+      <Text style={styles.title}>Completa tu Perfil</Text>
       )}
+      
+      {isProfileComplete ? (
+        <View>
+          <Text style={styles.profileCompleteText}>Perfil completado.</Text> 
+          <Text style={styles.profileCompleteText} >¡Bienvenido, @{username}!</Text>
+          <Image source={require('../assets/Cucei-1.png')} style={styles.logo} />
+          <LottieView
+            source={require('../assets//animations/Confetti-2.json')}
+            autoPlay
+            loop={true}
+            style={{ position: 'absolute', top: -50, left: -30, width: '110%', height: '150%', zIndex: 1 }}
+          />
+        </View>
+      ) : (
+        
+          <View style={styles.profileBox}>
+            <Text style={styles.label}>Nombre:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ingresa tu nombre"
+              value={name}
+              onChangeText={(text) => setName(text)}
+            />
+
+            <Text style={styles.label}>Apellidos:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ingresa tus apellidos"
+              value={lastName}
+              onChangeText={(text) => setLastName(text)}
+            />
+
+            <Text style={styles.label}>Nombre de Usuario:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="@CUCEI_777"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+            />
+
+            <Text style={styles.label}>Carrera:</Text>
+            <TouchableOpacity style={styles.picker} onPress={toggleModal}>
+              <Text>{selectedCareer || 'Seleccione una carrera'}</Text>
+            </TouchableOpacity>
+            
+            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Seleccione una carrera</Text>
+                <ScrollView style={styles.careerOptionsContainer}>
+                  {careerOptions.map((option, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.careerOption}
+                      onPress={() => {
+                        setSelectedCareer(option);
+                        toggleModal();
+                      }}
+                    >
+                      <Text>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                  <Text style={styles.buttonText}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+
+            <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
+              <Text style={styles.buttonText}>Terminar</Text>
+            </TouchableOpacity>
+          </View>
+      )}
+  
     </View>
   );
 };
@@ -168,33 +146,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#E4EDF9', // Color de fondo
   },
+  title: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color:'#000',//Color del titulo
+    paddingTop: 20,
+    padding: 50
+
+  },
+  profileBox: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   label: {
     fontSize: 16,
     marginTop: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'purple',
+    borderColor: 'black',
     borderRadius: 5,
     padding: 10,
     marginTop: 5,
     marginBottom: 15,
-    width: '80%',
   },
   picker: {
     borderWidth: 1,
-    borderColor: 'purple',
+    borderColor: 'black',
+    backgroundColor: 'white',
     borderRadius: 5,
     marginTop: 5,
     marginBottom: 10,
-    padding: 10,
-    width: '80%',
+    padding: 12,
   },
   profileCompleteText: {
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 20,
+    paddingBottom: 50,
   },
   button: {
     backgroundColor: "#0b34b0",
@@ -213,21 +210,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: 'white',
+  },
+  careerOptionsContainer: {
+    maxHeight: '60%', // Ajusta el valor según sea necesario
+    padding: 20,
+    backgroundColor: '#E4EDF9',
+    borderRadius: 10,
   },
   careerOption: {
     borderWidth: 1,
-    borderColor: '0b34b0',
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
-    width: '50%',
-    textAlign: 'center'
+    borderColor: 'black',
+    borderRadius: 4,
+    padding: 15,
+    marginVertical: 8, // Ajusta el margen vertical para separar las opciones
+    backgroundColor: 'white'
   },
   closeButton: {
     backgroundColor: '#0b34b0',
@@ -235,163 +238,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
   },
-  closeButtonText: {
-    textAlign: "center",
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  logo: {
+    width: 300,
+    height: 300,
   },
 });
 
 export default CompleteProfileScreen;
-
-
-
-//animacion de confeti 2.0
-/*{isConfettiVisible && (
-  <ConfettiCannon // Muestra la animación de confeti si isConfettiVisible es true
-    count={200} // Cantidad de confeti a mostrar
-    origin={{ x: -10, y: 0 }} // Origen de la explosión de confeti
-    autoStart={true} // Iniciar la animación automáticamente
-    fadeOut={true} // Desvanecer el confeti después de un tiempo
-  />
-)}*/
-
-
-/*import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-
-const CompleteProfileScreen = () => {
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
-  const [selectedCareer, setSelectedCareer] = useState('');
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
-
-  const handleCompleteProfile = () => {
-    // Aquí puedes agregar la lógica para completar el perfil del usuario
-    // Por ahora, solo marcamos el perfil como completo
-    setIsProfileComplete(true);
-  };
-
-  return (
-    <View style={styles.container}>
-      {isProfileComplete ? (
-        <Text style={styles.profileCompleteText}>Perfil completado. ¡Bienvenido, {username}! :D</Text>
-      ) : (
-        <View>
-          <Text style={styles.label}>Nombre:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tu nombre"
-            value={name}
-            onChangeText={(text) => setName(text)}
-          />
-
-          <Text style={styles.label}>Apellidos:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tus apellidos"
-            value={lastName}
-            onChangeText={(text) => setLastName(text)}
-          />
-
-          <Text style={styles.label}>Nombre de Usuario:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ingresa tu nombre de usuario"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-          />
-
-          <Text style={styles.label}>Carrera:</Text>
-          <Picker
-            selectedValue={selectedCareer}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSelectedCareer(itemValue)}
-          >
-            <Picker.Item label="Seleccione una carrera" value="" />
-            <Picker.Item label="Licenciatura en Matemáticas LIMA" value="LIMA" />
-            <Picker.Item label="Licenciatura en Física LIFI" value="LIFI" />
-            <Picker.Item label="Licenciatura en Química LQUI" value="LQUI" />
-            <Picker.Item label="Licenciatura en Químico Farmacéutico Biólogo LQFB" value="LQFB" />
-            <Picker.Item label="Licenciatura en Ciencia de Materiales LCMA" value="LCMA" />
-            <Picker.Item label="Ingeniería Química INQU" value="INQU" />
-            <Picker.Item label="Ingeniería Civil ICIV" value="ICIV" />
-            <Picker.Item label="Ingeniería en Topografía Geomática" value="ITOG" />
-            <Picker.Item label="Ingeniería en Alimentos y Biotecnología" value="LIAB/LINA" />
-            <Picker.Item label="Ingeniería Industrial INDU" value="INDU" />
-            <Picker.Item label="Ingeniería Industrial INDU" value="INME" />
-            <Picker.Item label="Ingeniería en Logística y Transporte LOGT" value="LOGT" />
-            <Picker.Item label="Ingeniería en Informática INNI" value="INNI" />
-            <Picker.Item label="Ingeniería Biomédica INBI" value="INBI" />
-            <Picker.Item label="Ingeniería en Computación INCO" value="INCO" />
-            <Picker.Item label="Ingeniería en Comunicaciones y Electrónica INCE" value="INCE" />
-            <Picker.Item label="Ingeniería Fotónica IGFO" value="IGFO" />
-            <Picker.Item label="Ingeniería Robótica INRO" value="INRO " />
-           
-          </Picker>
-          <TouchableOpacity
-            style={[styles.button]}
-              onPress={handleCompleteProfile}
-          >
-            <Text style={styles.buttonText}>Aceptar</Text>
-          </TouchableOpacity>
-          
-          
-        </View>
-      )}
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#E4EDF9', // Color de fondo
-  },
-  label: {
-    fontSize: 16,
-    marginTop: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: 'purple',
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 15,
-    width: '80%',
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: 'purple',
-    borderRadius: 5,
-    marginTop: 5,
-    marginBottom: 10,
-    width: '30%',
-  },
-  profileCompleteText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-  },
-  buttonText: {
-    textAlign: "center",
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
-
-export default CompleteProfileScreen;
-*/ 
