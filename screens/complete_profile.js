@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Modal, ScrollView, Image} from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ScrollView, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native'; // Importa LottieView
 
@@ -11,6 +11,11 @@ const CompleteProfileScreen = () => {
   const [selectedCareer, setSelectedCareer] = useState('');
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+  const [nameError, setNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
 
   const navigation = useNavigation();
 
@@ -35,7 +40,16 @@ const CompleteProfileScreen = () => {
     "Licenciatura en Químico Farmacéutico Biólogo LQFB",
   ];
 
-  const handleCompleteProfile = () => {
+ const handleCompleteProfile = () => {
+    // Realiza la validación aquí antes de marcar el perfil como completo
+    if (!name || !lastName || !username) {
+      setNameError(!name);
+      setLastNameError(!lastName);
+      setUsernameError(!username);
+      return;
+    }
+
+    // Si pasa la validación, marca el perfil como completo
     setIsProfileComplete(true);
   };
 
@@ -43,98 +57,105 @@ const CompleteProfileScreen = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-   // Efecto secundario para navegar a la pantalla principal después de 5 segundos
-   useEffect(() => {
+  useEffect(() => {
     if (isProfileComplete) {
       const timer = setTimeout(() => {
-        navigation.navigate('Inicio'); // navega hacia la pantalla inicio
-      }, 5000); // 5000 milisegundos = 5 segundos
+        navigation.navigate('Inicio');
+      }, 3000);
 
-      // Limpia el temporizador cuando el componente se desmonta
       return () => clearTimeout(timer);
     }
   }, [isProfileComplete, navigation]);
 
-
   return (
     <View style={styles.container}>
-      {!isProfileComplete && ( // Mostrar el titulo solo si el perfil no está completo
-      <Text style={styles.title}>Completa tu Perfil</Text>
+      {!isProfileComplete && (
+        <Text style={styles.title}>Completa tu Perfil</Text>
       )}
-      
+
       {isProfileComplete ? (
         <View>
-          <Text style={styles.profileCompleteText}>Perfil completado.</Text> 
-          <Text style={styles.profileCompleteText} >¡Bienvenido, @{username}!</Text>
+          <Text style={styles.profileCompleteText}>Perfil completado.</Text>
+          <Text style={styles.profileCompleteText}>¡Bienvenido, @{username}!</Text>
           <Image source={require('../assets/Cucei-1.png')} style={styles.logo} />
           <LottieView
-            source={require('../assets//animations/Confetti-2.json')}
+            source={require('../assets/animations/Confetti-2.json')}
             autoPlay
             loop={true}
             style={{ position: 'absolute', top: -50, left: -30, width: '110%', height: '150%', zIndex: 1 }}
           />
         </View>
       ) : (
-        
-          <View style={styles.profileBox}>
-            <Text style={styles.label}>Nombre:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ingresa tu nombre"
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
+        <View style={styles.profileBox}>
+          <Text style={styles.label}>Nombre:</Text>
+          <TextInput
+            style={[styles.input, nameError && styles.errorInput]}
+            placeholder="Ingresa tu nombre"
+            value={name}
+            onChangeText={(text) => {
+              setName(text);
+              setNameError(false);
+            }}
+          />
+          {nameError && <Text style={styles.errorText}>Campo requerido</Text>}
 
-            <Text style={styles.label}>Apellidos:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ingresa tus apellidos"
-              value={lastName}
-              onChangeText={(text) => setLastName(text)}
-            />
+          <Text style={styles.label}>Apellidos:</Text>
+          <TextInput
+            style={[styles.input, lastNameError && styles.errorInput]}
+            placeholder="Ingresa tus apellidos"
+            value={lastName}
+            onChangeText={(text) => {
+              setLastName(text);
+              setLastNameError(false);
+            }}
+          />
+          {lastNameError && <Text style={styles.errorText}>Campo requerido</Text>}
 
-            <Text style={styles.label}>Nombre de Usuario:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="@CUCEI_777"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-            />
+          <Text style={styles.label}>Nombre de Usuario:</Text>
+          <TextInput
+            style={[styles.input, usernameError && styles.errorInput]}
+            placeholder="@CUCEI_777"
+            value={username}
+            onChangeText={(text) => {
+              setUsername(text);
+              setUsernameError(false);
+            }}
+          />
+          {usernameError && <Text style={styles.errorText}>Campo requerido</Text>}
 
-            <Text style={styles.label}>Carrera:</Text>
-            <TouchableOpacity style={styles.picker} onPress={toggleModal}>
-              <Text>{selectedCareer || 'Seleccione una carrera'}</Text>
-            </TouchableOpacity>
-            
-            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-              <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>Seleccione una carrera</Text>
-                <ScrollView style={styles.careerOptionsContainer}>
-                  {careerOptions.map((option, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.careerOption}
-                      onPress={() => {
-                        setSelectedCareer(option);
-                        toggleModal();
-                      }}
-                    >
-                      <Text>{option}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-                <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
-                  <Text style={styles.buttonText}>Cerrar</Text>
-                </TouchableOpacity>
-              </View>
-            </Modal>
+          <Text style={styles.label}>Carrera:</Text>
+          <TouchableOpacity style={styles.picker} onPress={toggleModal}>
+            <Text>{selectedCareer || 'Seleccione una carrera'}</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
-              <Text style={styles.buttonText}>Terminar</Text>
-            </TouchableOpacity>
-          </View>
+          <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Seleccione una carrera</Text>
+              <ScrollView style={styles.careerOptionsContainer}>
+                {careerOptions.map((option, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.careerOption}
+                    onPress={() => {
+                      setSelectedCareer(option);
+                      toggleModal();
+                    }}
+                  >
+                    <Text>{option}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                <Text style={styles.buttonText}>Cerrar</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
+            <Text style={styles.buttonText}>Terminar</Text>
+          </TouchableOpacity>
+        </View>
       )}
-  
     </View>
   );
 };
@@ -144,16 +165,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E4EDF9', // Color de fondo
+    backgroundColor: '#E4EDF9',
   },
   title: {
     fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 20,
-    color:'#000',//Color del titulo
+    color: '#000',
     paddingTop: 20,
-    padding: 50
-
+    padding: 50,
   },
   profileBox: {
     width: '80%',
@@ -176,7 +196,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginTop: 5,
-    marginBottom: 15,
+    marginBottom: 10,
+  },
+  errorInput: {
+    borderColor: 'red',
   },
   picker: {
     borderWidth: 1,
@@ -194,14 +217,14 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   button: {
-    backgroundColor: "#0b34b0",
+    backgroundColor: '#0b34b0',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginTop: 10,
   },
   buttonText: {
-    textAlign: "center",
+    textAlign: 'center',
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
@@ -219,7 +242,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   careerOptionsContainer: {
-    maxHeight: '60%', // Ajusta el valor según sea necesario
+    maxHeight: '60%',
     padding: 20,
     backgroundColor: '#E4EDF9',
     borderRadius: 10,
@@ -229,8 +252,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 4,
     padding: 15,
-    marginVertical: 8, // Ajusta el margen vertical para separar las opciones
-    backgroundColor: 'white'
+    marginVertical: 8,
+    backgroundColor: 'white',
   },
   closeButton: {
     backgroundColor: '#0b34b0',
@@ -241,6 +264,10 @@ const styles = StyleSheet.create({
   logo: {
     width: 300,
     height: 300,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 1,
   },
 });
 
