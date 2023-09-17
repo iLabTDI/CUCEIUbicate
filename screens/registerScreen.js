@@ -42,12 +42,12 @@ import LottieView from 'lottie-react-native'; // Importa LottieView
       return;
     }
 
-  //  if (!passwordRegex.test(password)) {
-    //  setPasswordError(true);
+    if (!passwordRegex.test(password)) {
+      setPasswordError(true);
   
-    //  setErrorMsg('La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 número y 1 letra mayúscula.');
-    //  return;
-  //  }
+     setErrorMsg('La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 número y 1 letra mayúscula.');
+    return;
+    }
 
     if (password !== confirmPassword) {
       setPasswordError(true);

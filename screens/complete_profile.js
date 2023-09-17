@@ -86,6 +86,7 @@ const CompleteProfileScreen = () => {
           />
         </View>
       ) : (
+        
         <View style={styles.profileBox}>
           <Text style={styles.label}>Nombre:</Text>
           <TextInput

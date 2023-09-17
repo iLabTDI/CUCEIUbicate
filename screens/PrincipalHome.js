@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
   menu: {
     position: 'absolute',
     top: 100,

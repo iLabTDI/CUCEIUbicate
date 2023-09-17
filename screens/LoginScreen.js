@@ -82,9 +82,7 @@ const LoginScreen = () => {
   };
 
   const handleMain = () => {
-    
   };
-
 
   const selectAvatar = (avatarIndex) => {
     setSelectedAvatarIndex(avatarIndex);
