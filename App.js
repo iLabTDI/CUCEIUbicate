@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
-import LoginScreen from './screens/LoginScreen'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
-import RegistrationScreen from './screens/registerScreen'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
-import CompleteProfileScreen from './screens/complete_profile'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
-import PrincipalHomeScreen from './screens/PrincipalHome'; // Asegúrate de que los nombres de archivo coincidan con tus archivos reales
+import LoginScreen from './screens/LoginScreen'; 
+import RegistrationScreen from './screens/registerScreen'; 
+import CompleteProfileScreen from './screens/complete_profile'; 
+import PrincipalHomeScreen from './screens/PrincipalHome'; 
 import RegisterScreen from './screens/registerScreen';
 import { View } from 'react-native-animatable';
 

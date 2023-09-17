@@ -1,7 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ScrollView, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LottieView from 'lottie-react-native'; // Importa LottieView
+import LottieView from 'lottie-react-native';
 
 
 const CompleteProfileScreen = () => {
@@ -41,7 +41,7 @@ const CompleteProfileScreen = () => {
   ];
 
  const handleCompleteProfile = () => {
-    // Realiza la validación aquí antes de marcar el perfil como completo
+    // Realiza la validacion aqui antes de marcar el perfil como completo
     if (!name || !lastName || !username) {
       setNameError(!name);
       setLastNameError(!lastName);
@@ -49,7 +49,7 @@ const CompleteProfileScreen = () => {
       return;
     }
 
-    // Si pasa la validación, marca el perfil como completo
+    // Si pasa la validacion, marca el perfil como completo
     setIsProfileComplete(true);
   };
 
@@ -86,7 +86,7 @@ const CompleteProfileScreen = () => {
           />
         </View>
       ) : (
-        
+
         <View style={styles.profileBox}>
           <Text style={styles.label}>Nombre:</Text>
           <TextInput
@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
   },
+  
   errorText: {
     color: 'red',
     marginTop: 1,

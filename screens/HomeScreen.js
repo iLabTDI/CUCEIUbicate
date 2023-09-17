@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { CommonActions } from '@react-navigation/native'; // Importa CommonActions
+import { CommonActions } from '@react-navigation/native'; 
 
 
 const HomeScreen = () => {

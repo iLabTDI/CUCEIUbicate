@@ -1,4 +1,4 @@
-import { useRoute } from '@react-navigation/native'; // Importa el hook de ruta
+import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   menu: {
     position: 'absolute',
     top: 100,
