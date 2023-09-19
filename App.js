@@ -28,8 +28,6 @@ function App() {
   // </Stack.Navigator>
   // </NavigationContainer>
 
-
-
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen
