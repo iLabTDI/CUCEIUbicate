@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 //import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
-import LottieView from 'lottie-react-native'; // Importa LottieView
+import LottieView from 'lottie-react-native'; 
 
   const RegisterScreen = () => {
   const [email, setEmail] = useState('');
