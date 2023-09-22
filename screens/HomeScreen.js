@@ -41,7 +41,7 @@ const HomeScreen = () => {
       setShowError(false);
       setShowIncorrectMessage(false);
 
-      // Restablecer la pila de navegación y evitar la posibilidad de retroceder
+      // Restablecer la pila de navegacion y evitar la posibilidad de retroceder
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -162,8 +162,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     flex: 1,
     padding: 7,
-    borderColor: 'black', // Asegúrate de que el borde esté inicialmente en el color deseado
-    borderWidth: 0, // Asegúrate de que el borde esté inicialmente visible
+    borderColor: 'black', 
+    borderWidth: 0, 
   },
   loginButton: {
     backgroundColor: '#0b34b0',
