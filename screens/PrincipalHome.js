@@ -1,64 +1,91 @@
-import { useRoute } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { GestureHandlerRootView, State } from 'react-native-gesture-handler';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBars, faUser, faSearch, faRoute } from '@fortawesome/free-solid-svg-icons'; // Importa los íconos que necesites
 
-const PrincipalHomeScreen = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+const PrincipalHome = () => {
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const renderTopLeftMenu = () => {
+    return (
+      <View style={styles.topLeftContainer}>
+        <TouchableOpacity style={styles.topLeftIcon}>
+          <FontAwesomeIcon icon={faBars} size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topLeftIcon}>
+          <FontAwesomeIcon icon={faUser} size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    );
   };
-  const route = useRoute(); // Obtén la instancia de ruta
+
+  const renderTopRightIcons = () => {
+    return (
+      <View style={styles.topRightIcons}>
+        <TouchableOpacity style={styles.topRightIcon}>
+          <FontAwesomeIcon icon={faSearch} size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topRightIcon}>
+          <FontAwesomeIcon icon={faRoute} size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.menuButton} onPress={toggleMenu}>
-          <Icon name={menuOpen ? 'close' : 'menu'} size={30} color="white" />
-        </TouchableOpacity>
-
-        {menuOpen && (
-          <View style={styles.menu}>
-            {/* Aquí puedes colocar los elementos de tu menú */}
-            <Text>Opción 1</Text>
-            <Text>Opción 2</Text>
-            <Text>Opción 3</Text>
-          </View>
-        )}
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image style={{ width: 500, height: 950 
+              //transform: [{ scale: baseScale * pinchScale }],
+            }}
+            source={require('../assets/Mapa1.png')}
+          />
+          {renderTopLeftMenu()}
+          {renderTopRightIcons()}
+        </ScrollView>
+      </GestureHandlerRootView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-   // marginTop: '10%', // Mueve el componente un 20% desde la parte superior
   },
-  menuButton: {
+  topLeftContainer: {
     position: 'absolute',
-    top: 20,
-    left: 20,
+    top: 60,
+    left: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  topLeftIcon: {
     backgroundColor: 'blue',
-    borderRadius: 50,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 60,
+    marginLeft: 10,
   },
-
-  menu: {
+  topRightIcons: {
     position: 'absolute',
-    top: 100,
-    left: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    width: 150,
-    padding: 10,
+    top: 60,
+    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  topRightIcon: {
+    backgroundColor: 'blue',
+    padding: 12,
+    borderRadius: 60,
+    marginLeft: 10,
   },
 });
 
-export default PrincipalHomeScreen;
+export default PrincipalHome;

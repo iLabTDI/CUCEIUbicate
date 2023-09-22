@@ -16,17 +16,9 @@ function App() {
 
   //   //para editar cada pantalla
 
-  //   <NavigationContainer>
-  //   <CompleteProfileScreen/>
-
-  //   <Stack.Navigator initialRouteName="Inicio">
-  //     <Stack.Screen
-  //      name="Inicio"
-  //      component={HomeScreen}
-  //       options={{ title: 'Inicio', headerShown: false }}
-  //    />
-  // </Stack.Navigator>
-  // </NavigationContainer>
+    // <NavigationContainer>
+     /* <PrincipalHomeScreen/> */
+   /* </NavigationContainer> */
 
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Inicio">
