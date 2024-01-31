@@ -1,9 +1,16 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBars, faUser, faSearch, faRoute } from '@fortawesome/free-solid-svg-icons';
-import Svg, { Image as SvgImage } from 'react-native-svg';
+import React from "react";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { PinchGestureHandler } from "react-native-gesture-handler";
+import ImageZoom from "react-native-image-pan-zoom";
+import { Dimensions } from 'react-native';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faBars,
+  faUser,
+  faSearch,
+  faRoute,
+} from "@fortawesome/free-solid-svg-icons";
 
 export const HomePage = () => {
   const renderTopLeftMenu = () => {
@@ -32,29 +39,41 @@ export const HomePage = () => {
     );
   };
 
+  const handleZoomEvent = React.useRef((event) => {
+    console.log("Zoom Scale:", event.nativeEvent.scale);
+  });
+
   return (
     <View style={styles.container}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-        >
-          <Svg
-            width={500}
-            height={950}
-            viewBox="0 0 500 950"
-          >
-            <SvgImage
-              href={require('../assets/images/rayo.svg')}
-              width={500}
-              height={950}
+        <PinchGestureHandler
+          onGestureEvent={handleZoomEvent.current}
+          onHandlerStateChange={handleZoomEvent.current}>
+          <ImageZoom
+            cropWidth={Dimensions.get('window').width}
+            cropHeight={Dimensions.get('window').height}
+            imageWidth={700}
+            imageHeight={950}
+            onZoom={() => console.log('onZoom')}
+            enableSwipeDown={false}
+            panToMove={true}
+            pinchToZoomInSensitivity={1}
+            pinchToZoomOutSensitivity={1}
+            doubleClickToZoomOut={false}
+            minScale={1.2}
+            maxScale={3}  // Puedes ajustar esto según tus necesidades
+            centerOn={{ x: 10, y: 0, scale: 1.2 }}
+            >
+            <Image
+              source={require("../assets/images/Mapa.png")}
+              style={{ flex: 1, width: undefined, height: undefined, alignSelf: 'stretch' }}
+              resizeMode="contain"
             />
-          </Svg>
-          {renderTopLeftMenu()}
-          {renderTopRightIcons()}
-        </ScrollView>
+          </ImageZoom>
+        </PinchGestureHandler>
       </GestureHandlerRootView>
+      {renderTopLeftMenu()}
+      {renderTopRightIcons()}
     </View>
   );
 };
@@ -64,30 +83,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topLeftContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
     left: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     zIndex: 2,
   },
   topLeftIcon: {
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     padding: 12,
     borderRadius: 60,
     marginLeft: 10,
   },
   topRightIcons: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
     right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     zIndex: 2,
   },
   topRightIcon: {
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     padding: 12,
     borderRadius: 60,
     marginLeft: 10,
