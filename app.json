@@ -7,9 +7,9 @@
     "icon": "./assets/images/cucei.png",
     "userInterfaceStyle": "black",
     "splash": {
-      "image": "./assets/images/cucei.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1E20E2"
+      "backgroundColor": "#0000"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/cucei.png",
-        "backgroundColor": "#1E20E2"
+        "backgroundColor": "#0000"
       }
     },
     

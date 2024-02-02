@@ -2,7 +2,8 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { PinchGestureHandler } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -41,6 +42,7 @@ export const HomePage = () => {
 
   const handleZoomEvent = React.useRef((event) => {
     console.log("Zoom Scale:", event.nativeEvent.scale);
+    console.log('hola');
   });
 
   return (
@@ -50,25 +52,40 @@ export const HomePage = () => {
           onGestureEvent={handleZoomEvent.current}
           onHandlerStateChange={handleZoomEvent.current}>
           <ImageZoom
-            cropWidth={Dimensions.get('window').width}
-            cropHeight={Dimensions.get('window').height}
+            cropWidth={Dimensions.get("window").width}
+            cropHeight={Dimensions.get("window").height}
             imageWidth={700}
             imageHeight={950}
-            onZoom={() => console.log('onZoom')}
+            onZoom={() => console.log("onZoom")}
             enableSwipeDown={false}
             panToMove={true}
             pinchToZoomInSensitivity={1}
             pinchToZoomOutSensitivity={1}
             doubleClickToZoomOut={false}
             minScale={1.2}
-            maxScale={3}  // Puedes ajustar esto según tus necesidades
+            maxScale={3} // Puedes ajustar esto según tus necesidades
             centerOn={{ x: 10, y: 0, scale: 1.2 }}
-            >
+            maxOverflow={0} // Limita el desbordamiento de la imagen
+          >
             <Image
               source={require("../assets/images/Mapa.png")}
-              style={{ flex: 1, width: undefined, height: undefined, alignSelf: 'stretch' }}
+              style={{
+                flex: 1,
+                width: undefined,
+                height: undefined,
+                alignSelf: "stretch",
+              }}
               resizeMode="contain"
             />
+            <Svg style={styles.svg}>
+              <Path
+                d="M50 100 L70 40 L2 40" // Actualiza esto con la ruta que quieras dibujar
+                fill="none"
+                stroke="red"
+                strokeWidth="3"
+              />
+            </Svg>
+              
           </ImageZoom>
         </PinchGestureHandler>
       </GestureHandlerRootView>
@@ -110,5 +127,8 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 60,
     marginLeft: 10,
+  },
+  svg: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
