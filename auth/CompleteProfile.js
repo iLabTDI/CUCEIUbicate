@@ -1,8 +1,17 @@
-import React, { useState, useEffect  } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ScrollView, Image} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+  Image,
+  Dimensions,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-
 
 export const CompleteProfile = () => {
   const [name, setName] = useState('');
@@ -12,7 +21,6 @@ export const CompleteProfile = () => {
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
@@ -20,7 +28,6 @@ export const CompleteProfile = () => {
   const navigation = useNavigation();
 
   const careerOptions = [
-
     "Ingeniería Biomédica INBI",
     "Ingeniería Civil ICIV",
     "Ingeniería en Alimentos y Biotecnología LIAB/LINA",
@@ -40,7 +47,7 @@ export const CompleteProfile = () => {
     "Licenciatura en Químico Farmacéutico Biólogo LQFB",
   ];
 
- const handleCompleteProfile = () => {
+  const handleCompleteProfile = () => {
     // Realiza la validacion aqui antes de marcar el perfil como completo
     if (!name || !lastName || !username) {
       setNameError(!name);
@@ -61,7 +68,7 @@ export const CompleteProfile = () => {
     if (isProfileComplete) {
       const timer = setTimeout(() => {
         navigation.navigate('Inicio');
-      }, 3000);
+      }, 4000);
 
       return () => clearTimeout(timer);
     }
@@ -70,28 +77,37 @@ export const CompleteProfile = () => {
   return (
     <View style={styles.container}>
       {!isProfileComplete && (
-        <Text style={styles.title}>Completa tu Perfil</Text>
+        <>
+          <Text style={styles.title}>Completa tu Perfil</Text>
+          <LottieView
+            source={require('../assets/animations/completeProfile.json')}
+            autoPlay
+            loop={true}
+            style={styles.animation}
+          />
+        </>
       )}
+
 
       {isProfileComplete ? (
         <View>
           <Text style={styles.profileCompleteText}>Perfil completado.</Text>
           <Text style={styles.profileCompleteText}>¡Bienvenido, @{username}!</Text>
-          <Image source={require('../../assets/images/Cucei-1.png')} style={styles.logo} />
+          <Image source={require('../assets/images/cucei.png')} style={styles.logo} />
           <LottieView
             source={require('../assets/animations/Confetti-2.json')}
             autoPlay
             loop={true}
             style={{ position: 'absolute', top: -50, left: -30, width: '110%', height: '150%', zIndex: 1 }}
-          />
+          /> 
         </View>
       ) : (
-
         <View style={styles.profileBox}>
           <Text style={styles.label}>Nombre:</Text>
           <TextInput
             style={[styles.input, nameError && styles.errorInput]}
             placeholder="Ingresa tu nombre"
+            placeholderTextColor="black"
             value={name}
             onChangeText={(text) => {
               setName(text);
@@ -104,6 +120,7 @@ export const CompleteProfile = () => {
           <TextInput
             style={[styles.input, lastNameError && styles.errorInput]}
             placeholder="Ingresa tus apellidos"
+            placeholderTextColor="black"
             value={lastName}
             onChangeText={(text) => {
               setLastName(text);
@@ -116,6 +133,7 @@ export const CompleteProfile = () => {
           <TextInput
             style={[styles.input, usernameError && styles.errorInput]}
             placeholder="@CUCEI_777"
+            placeholderTextColor="black"
             value={username}
             onChangeText={(text) => {
               setUsername(text);
@@ -173,8 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#000',
-    paddingTop: 20,
-    padding: 50,
+    paddingTop: 10,
   },
   profileBox: {
     width: '80%',
@@ -243,7 +260,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   careerOptionsContainer: {
-    maxHeight: '60%',
+    maxHeight: Dimensions.get('window').height * 0.6,
     padding: 20,
     backgroundColor: '#E4EDF9',
     borderRadius: 10,
@@ -266,10 +283,12 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
   },
-  
   errorText: {
     color: 'red',
     marginTop: 1,
   },
+  animation:{
+    width: 300,
+    height: 200,
+  }
 });
-

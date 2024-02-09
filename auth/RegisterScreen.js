@@ -85,6 +85,7 @@ export const RegisterScreen = () => {
           <TextInput
             style={[styles.input, emailError && { borderColor: 'red' }]}
             placeholder="alumno@cucei.com"
+            placeholderTextColor="black"
             value={email}
             onChangeText={(text) => setEmail(text)}
             autoCapitalize="none"
@@ -97,6 +98,7 @@ export const RegisterScreen = () => {
             <TextInput
               style={styles.passwordInput}
               placeholder="Ingresa tu contraseña"
+              placeholderTextColor="black"
               value={password}
               secureTextEntry={!showPassword}
               onChangeText={(text) => setPassword(text)}
@@ -114,6 +116,7 @@ export const RegisterScreen = () => {
           <TextInput
             style={[styles.input, passwordError && { borderColor: 'red' }]}
             placeholder="Confirma tu contraseña"
+            placeholderTextColor="black"
             value={confirmPassword}
             secureTextEntry={!showPassword}
             onChangeText={(text) => setConfirmPassword(text)}
