@@ -79,7 +79,7 @@ export const HomePage = () => {
             />
             <Svg style={styles.svg}>
               <Path
-                d="M50 100 L70 40 L2 40" // Actualiza esto con la ruta que quieras dibujar
+                d="M50 100 L70 40 L2 40" 
                 fill="none"
                 stroke="red"
                 strokeWidth="3"
@@ -132,3 +132,4 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 });
+// 
