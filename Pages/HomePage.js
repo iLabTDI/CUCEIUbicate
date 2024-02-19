@@ -21,8 +21,8 @@ export const HomePage = () => {
           <ImageZoom
             cropWidth={Dimensions.get("window").width}
             cropHeight={Dimensions.get("window").height}
-            imageWidth={700}
-            imageHeight={950}
+            imageWidth={1200}
+            imageHeight={1250}
             onZoom={() => console.log("onZoom")}
             enableSwipeDown={false}
             panToMove={true}
@@ -30,12 +30,12 @@ export const HomePage = () => {
             pinchToZoomOutSensitivity={3}
             doubleClickToZoomOut={false}
             minScale={1.2}
-            maxScale={3} // Puedes ajustar esto según tus necesidades
+            maxScale={5} // Puedes ajustar esto según tus necesidades
             centerOn={{ x: 10, y: 0, scale: 1.2 }}
             maxOverflow={0} // Limita el desbordamiento de la imagen
           >
             <Image
-              source={require("../assets/images/Mapa.png")}
+              source={require("../assets/images/mapa_png.png")}
               style={{
                 flex: 1,
                 width: undefined,

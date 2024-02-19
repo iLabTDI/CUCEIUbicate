@@ -99,7 +99,7 @@ export const LoginScreen = () => {
           <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
           <TextInput
             style={styles.input}
-            placeholder="**************"
+            placeholder="Password"
             secureTextEntry
             placeholderTextColor="black"
             onChangeText={(text) => setPassword(text)}
