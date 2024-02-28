@@ -23,7 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
-  const navigation = useNavigation(); // Obtener la navegación
+  const navigation = useNavigation(); // Obtener la navegacion
 
   const handleLogout = () => {
     // Aquí debes agregar la lógica para cerrar sesión

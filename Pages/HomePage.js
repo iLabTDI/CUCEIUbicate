@@ -29,29 +29,20 @@ export const HomePage = () => {
             pinchToZoomInSensitivity={1}
             pinchToZoomOutSensitivity={3}
             doubleClickToZoomOut={false}
-            minScale={1.2}
+            minScale={1.6}
             maxScale={5} // Puedes ajustar esto según tus necesidades
-            centerOn={{ x: 10, y: 0, scale: 1.2 }}
+            centerOn={{ x: 180, y: -90, scale: 1.7 }}
             maxOverflow={0} // Limita el desbordamiento de la imagen
           >
             <Image
-              source={require("../assets/images/mapa_png.png")}
+              source={require("../assets/images/mapita.png")}
               style={{
                 flex: 1,
                 width: undefined,
                 height: undefined,
                 alignSelf: "stretch",
-              }}
-              resizeMode="contain"
+              }}              
             />
-            <Svg style={styles.svg}>
-              <Path
-                d="M50 100 L70 40 L2 40"
-                fill="none"
-                stroke="red"
-                strokeWidth="3"
-              />
-            </Svg>
           </ImageZoom>
         </PinchGestureHandler>
       </GestureHandlerRootView>
