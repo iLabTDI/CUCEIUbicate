@@ -30,7 +30,7 @@ export const HomePage = () => {
             pinchToZoomOutSensitivity={3}
             doubleClickToZoomOut={false}
             minScale={1.6}
-            maxScale={5} // Puedes ajustar esto según tus necesidades
+            maxScale={5} 
             centerOn={{ x: 180, y: -90, scale: 1.7 }}
             maxOverflow={0} // Limita el desbordamiento de la imagen
           >
