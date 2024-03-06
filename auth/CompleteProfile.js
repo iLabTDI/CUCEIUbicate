@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -10,22 +10,32 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute} from '@react-navigation/native';
+import { alta_usuario } from "../backend/altaUsuario";
 import LottieView from 'lottie-react-native';
 
 export const CompleteProfile = () => {
   const [name, setName] = useState('');
+  const [Codigo, setCodigo] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [selectedCareer, setSelectedCareer] = useState('');
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const [CodigoError, setCodigoError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
 
   const navigation = useNavigation();
+
+  const route = useRoute();
+
+  const { mail, pass } = route.params;
+
+  const correo = mail;
+  const contraseña = pass;
 
   const careerOptions = [
     "Ingeniería Biomédica INBI",
@@ -55,6 +65,8 @@ export const CompleteProfile = () => {
       setUsernameError(!username);
       return;
     }
+
+      alta_usuario(Codigo, correo, contraseña, selectedCareer, name, lastName, username);
 
     // Si pasa la validacion, marca el perfil como completo
     setIsProfileComplete(true);
@@ -138,6 +150,18 @@ export const CompleteProfile = () => {
             onChangeText={(text) => {
               setUsername(text);
               setUsernameError(false);
+            }}
+          />
+
+          <Text style={styles.label}>Codigo de estudiante:</Text>
+          <TextInput
+            style={[styles.input, CodigoError && styles.errorInput]}
+            placeholder="222333444"
+            placeholderTextColor="black"
+            value={Codigo}
+            onChangeText={(text) => {
+              setCodigo(text);
+              setCodigoError(false);
             }}
           />
           {usernameError && <Text style={styles.errorText}>Campo requerido</Text>}

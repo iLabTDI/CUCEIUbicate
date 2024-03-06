@@ -57,7 +57,7 @@ export const RegisterScreen = () => {
     }
     
     // Redirigir a la pantalla de completar perfil si todas las validaciones son exitosas
-    navigation.navigate('Completar Perfil');
+    navigation.navigate('Completar Perfil', {mail: email, pass: password});
   };
 
   return (
