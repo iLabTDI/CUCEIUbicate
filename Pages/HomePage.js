@@ -5,6 +5,7 @@ import ImageZoom from "react-native-image-pan-zoom";
 import { Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+// import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet"; 
 
 export const HomePage = () => {
   const handleZoomEvent = React.useRef((event) => {
@@ -21,27 +22,21 @@ export const HomePage = () => {
           <ImageZoom
             cropWidth={Dimensions.get("window").width}
             cropHeight={Dimensions.get("window").height}
-            imageWidth={1200}
-            imageHeight={1250}
-            onZoom={() => console.log("onZoom")}
+            imageWidth={1600}
+            imageHeight={1400}
             enableSwipeDown={false}
             panToMove={true}
             pinchToZoomInSensitivity={1}
-            pinchToZoomOutSensitivity={3}
+            // pinchToZoomOutSensitivity={6}
             doubleClickToZoomOut={false}
-            minScale={1.6}
-            maxScale={5} // Puedes ajustar esto según tus necesidades
-            centerOn={{ x: 180, y: -90, scale: 1.7 }}
-            maxOverflow={0} // Limita el desbordamiento de la imagen
+            minScale={1.1}
+            maxScale={3}
+            centerOn={{ x: 250, y: -90, scale: 1.1 }}
+            maxOverflow={0} 
           >
             <Image
-              source={require("../assets/images/mapita.png")}
-              style={{
-                flex: 1,
-                width: undefined,
-                height: undefined,
-                alignSelf: "stretch",
-              }}              
+              source={require("../assets/images/mapa.webp")}
+              style={styles.image}
             />
           </ImageZoom>
         </PinchGestureHandler>
@@ -54,9 +49,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  svg: {
-    ...StyleSheet.absoluteFillObject,
+  image: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    alignSelf: "stretch",
   },
-
 });
-

@@ -19,6 +19,9 @@ import { HomePage } from "../Pages/HomePage";
 import { Profile } from "./Profile";
 import { Notifications } from "./Notification";
 import { useNavigation } from "@react-navigation/native";
+//importar los nuevos componentes (CREARLOS CEN MODO EXPORTACION)
+
+
 
 const Drawer = createDrawerNavigator();
 
@@ -26,14 +29,13 @@ const CustomDrawerContent = (props) => {
   const navigation = useNavigation(); // Obtener la navegacion
 
   const handleLogout = () => {
-    // Aquí debes agregar la lógica para cerrar sesión
-    // Por ejemplo, navegar a la pantalla de inicio de sesión
-
+    // Logica para cerrar sesion y redirigir a la pantalla de inicio
     navigation.navigate("Inicio");
     console.log("Cerrando sesión...");
   };
 
   return (
+    //Estos son los estilos del drawer que se abre
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
         <Text style={styles.drawerHeaderText}>CUCEI UBICATE</Text>
@@ -99,6 +101,9 @@ export const MyDrawer = () => {
           ),
         }}
       />
+      {/* Duplicar lo de arriba para crear una nueva Screen 
+          con el nombre y la importacion del componente corrspondiente*/}
+      
     </Drawer.Navigator>
   );
 };
