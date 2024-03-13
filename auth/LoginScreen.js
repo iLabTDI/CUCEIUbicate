@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E4EDF9',
+    width: '100%'
   },
   loginBox: {
     width: windowWidth * 0.83,
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.6,
   },
   eyeIcon: {
-    fontSize: 24, // Ajusta el tamaño del ícono de ojo
+    fontSize: 24, 
     color: '#000',
   },
 });
