@@ -5,6 +5,7 @@ import ImageZoom from "react-native-image-pan-zoom";
 import { Dimensions } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+// import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet"; 
 
 export const HomePage = () => {
   const handleZoomEvent = React.useRef((event) => {
