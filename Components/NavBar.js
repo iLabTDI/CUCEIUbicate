@@ -16,8 +16,8 @@ import {
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { HomePage } from "../Pages/HomePage";
-import { Profile } from "./Profile";
-import { Notifications } from "./Notification";
+import { Profile } from "../Pages/Profile";
+import { Notifications } from "../Pages/Notification";
 import { useNavigation } from "@react-navigation/native";
 //importar los nuevos componentes (CREARLOS CEN MODO EXPORTACION)
 

@@ -95,7 +95,7 @@ export const RegisterScreen = () => {
             source={require("../assets/animations/register.json")}
             autoPlay
             loop={true}
-            style={{ width: 200, height: 250, zIndex: 1 }}
+            style={{ width: 200, height: 200, zIndex: 1 }}
           />
 
           {/*ICONO DE REGISTRO*/}
@@ -190,14 +190,16 @@ const styles = StyleSheet.create({
   },
 
   loginBox: {
-    width: "85%",
+    width: "80%",
     backgroundColor: "white",
-    padding: 35,
-    borderRadius: 15,
+    padding: 20,
+    borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 60,
   },
 
   iconCircle: {
@@ -265,7 +267,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   successText: {
-    marginTop: -60,
+    marginTop: -80,
     fontSize: 35,
     fontWeight: "bold",
     padding: 5,
