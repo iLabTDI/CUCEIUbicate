@@ -7,6 +7,7 @@ import { CompleteProfile } from "./auth/CompleteProfile";
 import { RegisterScreen } from "./auth/RegisterScreen";
 import { View } from "react-native-animatable";
 import { MyDrawer } from "./Components/NavBar";
+import { BottomSheetComponent } from "./Components/BottonSheet";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,9 +15,9 @@ function App() {
   return (
     //para editar cada pantalla
 
-    //   <NavigationContainer>
-    //    <MyDrawer />
-    //  </NavigationContainer>
+    // <NavigationContainer>
+    //   <MyDrawer />
+    // </NavigationContainer>
 
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Inicio">
