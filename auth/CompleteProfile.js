@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,10 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { useNavigation, useRoute} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { validar_codigo } from "../backend/validaciones";
+import { validar_usuario } from "../backend/validaciones";
+import { get_degrees } from "../backend/consultas";
 import { alta_usuario } from "../backend/altaUsuario";
 import LottieView from 'lottie-react-native';
 
@@ -22,53 +25,48 @@ export const CompleteProfile = () => {
   const [selectedCareer, setSelectedCareer] = useState('');
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState('');
   const [CodigoError, setCodigoError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
-  const [usernameError, setUsernameError] = useState(false);
-
+  const [careerOptions, setCareerOptions] = useState([]);
   const navigation = useNavigation();
-
   const route = useRoute();
-
   const { mail, pass } = route.params;
-
   const correo = mail;
   const contraseña = pass;
 
-  const careerOptions = [
-    "Ingeniería Biomédica INBI",
-    "Ingeniería Civil ICIV",
-    "Ingeniería en Alimentos y Biotecnología LIAB/LINA",
-    "Ingeniería en Comunicaciones y Electrónica INCE",
-    "Ingeniería en Computación INCO",
-    "Ingeniería en Informática INFO",
-    "Ingeniería Fotónica IGFO",
-    "Ingeniería Industrial INDU",
-    "Ingeniería Mecánica Eléctrica INME",
-    "Ingeniería Química INQU",
-    "Ingeniería en Logística y Transporte LOGT",
-    "Ingeniería en Topografía Geomática ITOG",
-    "Licenciatura en Ciencia de Materiales LCMA",
-    "Licenciatura en Física LIFI",
-    "Licenciatura en Matemáticas LIMA",
-    "Licenciatura en Química LQUI",
-    "Licenciatura en Químico Farmacéutico Biólogo LQFB",
-  ];
+  useEffect(() => {
+    const fetchDegrees = async () => {
+      const degrees = await get_degrees();
+      setCareerOptions(degrees);
+    };
 
-  const handleCompleteProfile = () => {
-    // Realiza la validacion aqui antes de marcar el perfil como completo
-    if (!name || !lastName || !username) {
+    fetchDegrees();
+  }, []);
+
+  const handleCompleteProfile = async () => {
+    if (!name || !lastName || !username || !selectedCareer) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       return;
     }
 
-      alta_usuario(Codigo, correo, contraseña, selectedCareer, name, lastName, username);
+    const usuarioValido = await validar_usuario(username);
+    if (!usuarioValido) {
+      setUsernameError(true);
+      return;
+    }
 
-    // Si pasa la validacion, marca el perfil como completo
+    const codigoValido = await validar_codigo(Codigo);
+    if (!codigoValido) {
+      setCodigoError(true);
+      return;
+    }
+
+    alta_usuario(Codigo, correo, contraseña, selectedCareer, name, lastName, username);
     setIsProfileComplete(true);
   };
 
@@ -100,7 +98,6 @@ export const CompleteProfile = () => {
         </>
       )}
 
-
       {isProfileComplete ? (
         <View>
           <Text style={styles.profileCompleteText}>Perfil completado.</Text>
@@ -111,7 +108,7 @@ export const CompleteProfile = () => {
             autoPlay
             loop={true}
             style={{ position: 'absolute', top: -50, left: -30, width: '110%', height: '150%', zIndex: 1 }}
-          /> 
+          />
         </View>
       ) : (
         <View style={styles.profileBox}>
@@ -152,6 +149,7 @@ export const CompleteProfile = () => {
               setUsernameError(false);
             }}
           />
+          {usernameError && <Text style={styles.errorText}>Este usuario ya ha sido registrado</Text>}
 
           <Text style={styles.label}>Codigo de estudiante:</Text>
           <TextInput
@@ -164,7 +162,7 @@ export const CompleteProfile = () => {
               setCodigoError(false);
             }}
           />
-          {usernameError && <Text style={styles.errorText}>Campo requerido</Text>}
+          {CodigoError && <Text style={styles.errorText}>Este codigo ya ha sido registrado</Text>}
 
           <Text style={styles.label}>Carrera:</Text>
           <TouchableOpacity style={styles.picker} onPress={toggleModal}>
@@ -180,7 +178,7 @@ export const CompleteProfile = () => {
                     key={index}
                     style={styles.careerOption}
                     onPress={() => {
-                      setSelectedCareer(option);
+                      setSelectedCareer(option.slice(-4));
                       toggleModal();
                     }}
                   >
@@ -197,6 +195,9 @@ export const CompleteProfile = () => {
           <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
             <Text style={styles.buttonText}>Terminar</Text>
           </TouchableOpacity>
+
+          {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+
         </View>
       )}
     </View>
@@ -239,9 +240,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 5,
     marginBottom: 10,
-  },
-  errorInput: {
-    borderColor: 'red',
   },
   picker: {
     borderWidth: 1,
@@ -311,7 +309,7 @@ const styles = StyleSheet.create({
     color: 'red',
     marginTop: 1,
   },
-  animation:{
+  animation: {
     width: 300,
     height: 200,
   }
