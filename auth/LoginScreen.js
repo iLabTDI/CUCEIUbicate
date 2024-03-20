@@ -16,12 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import successAnimation from "../assets/animations/complete.json";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-
-import { login } from "../backend/login";
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
-
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
@@ -73,35 +68,6 @@ export const LoginScreen = () => {
     }, 3000);
   };
 
-  const handleLoginTest = async () => {
-    setShowError(false);
-    setShowIncorrectMessage(false);
-
-    const adminUsername = username;
-    const adminPassword = password;
-
-    if (!adminUsername || !adminPassword) {
-      setShowError(true);
-      setShowIncorrectMessage(false);
-      return;
-    }
-
-    const isAdmin = await login(adminUsername, adminPassword);
-
-    if (isAdmin) {
-      setShowSuccessAnimation(true);
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        setShowSuccessAnimation(false);
-        navigation.navigate("Principal Home");
-      }, 2000);
-    } else {
-      setShowError(true);
-      setShowIncorrectMessage(true);
-    }
-  };
-
   const handleRegister = () => {
     navigation.navigate("Registro");
   };
@@ -127,36 +93,6 @@ export const LoginScreen = () => {
             color="#0b34b0"
           />
         </View>
-
-        <Text style={styles.label}>Contraseña:</Text>
-        <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
-          <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            placeholderTextColor="black"
-            onChangeText={(text) => setPassword(text)}
-          />
-        </View>
-        <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={styles.registerText}>¿No tienes cuenta? ¡Regístrate!</Text>
-        </TouchableOpacity>
-        {showError && (
-          <Text style={styles.errorText}>
-            Por favor, completa ambos campos.
-          </Text>
-        )}
-        {showIncorrectMessage && (
-          <Text style={styles.errorText}>
-            Correo o Contraseña incorrectos.
-          </Text>
-        )}
-      </View>
-
 
         <View style={styles.loginBox}>
           <Text>Correo electrónico:</Text>
