@@ -7,17 +7,9 @@ import { CompleteProfile } from "./auth/CompleteProfile";
 import { RegisterScreen } from "./auth/RegisterScreen";
 import { View } from "react-native-animatable";
 import { MyDrawer } from "./Components/NavBar";
-
-import { setRandomFallback } from 'bcryptjs';
-import { getRandomBase64 } from 'react-native-get-random-values';
-
-
 import { BottomSheetComponent } from "./Components/BottonSheet";
 
-
 const Stack = createNativeStackNavigator();
-
-setRandomFallback(getRandomBase64);
 
 function App() {
   return (
