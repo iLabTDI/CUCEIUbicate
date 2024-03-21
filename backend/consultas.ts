@@ -2,16 +2,16 @@ import { supabase } from "../lib/supabase";
 
 export const get_degrees = async () => {
   try {
-    const { data: namesData, namesError } = await supabase
+    const { data: namesData, error } = await supabase
       .from('degrees')
       .select('name');
 
-    const { data: codesData, codesError } = await supabase
+    const { data: codesData, error: codesError } = await supabase
       .from('degrees')
       .select('code');
 
-    if (namesError || codesError) {
-      console.error('Error al consultar los datos:', namesError || codesError);
+     if (error || codesError) {
+       console.error('Error al consultar los datos:', error || codesError);
       return [];
     }
 

@@ -12,12 +12,10 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 //import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
-
 import LottieView from 'lottie-react-native'; 
 import { alta_usuario } from "../backend/altaUsuario";
 import { validar_correo } from "../backend/validaciones";
 
-import LottieView from "lottie-react-native";
 
 
 export const RegisterScreen = () => {
@@ -81,7 +79,6 @@ export const RegisterScreen = () => {
     }
 
 
-
     const correoValido = await validar_correo(email);
     if (!correoValido) {
       setEmailError(true);
@@ -91,9 +88,6 @@ export const RegisterScreen = () => {
     
     // Redirigir a la pantalla de completar perfil si todas las validaciones son exitosas
     navigation.navigate('Completar Perfil', {mail: email, pass: password});
-
-    // Redirigir a la pantalla de completar perfil si todas las validaciones son exitosas
-    navigation.navigate("Completar Perfil");
 
   };
 

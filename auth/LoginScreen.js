@@ -18,8 +18,6 @@ import successAnimation from "../assets/animations/complete.json";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 import { login } from "../backend/login";
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
-
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 
@@ -128,34 +126,34 @@ export const LoginScreen = () => {
           />
         </View>
 
-        <Text style={styles.label}>Contraseña:</Text>
-        <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
-          <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            placeholderTextColor="black"
-            onChangeText={(text) => setPassword(text)}
-          />
-        </View>
-        <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={styles.registerText}>¿No tienes cuenta? ¡Regístrate!</Text>
-        </TouchableOpacity>
-        {showError && (
-          <Text style={styles.errorText}>
-            Por favor, completa ambos campos.
-          </Text>
-        )}
-        {showIncorrectMessage && (
-          <Text style={styles.errorText}>
-            Correo o Contraseña incorrectos.
-          </Text>
-        )}
-      </View>
+          {/* <Text style={styles.label}>Contraseña:</Text>
+          <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
+            <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              placeholderTextColor="black"
+              onChangeText={(text) => setPassword(text)}
+            />
+          </View>
+          <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegister}>
+            <Text style={styles.registerText}>¿No tienes cuenta? ¡Regístrate!</Text>
+          </TouchableOpacity>
+          {showError && (
+            <Text style={styles.errorText}>
+              Por favor, completa ambos campos.
+            </Text>
+          )}
+          {showIncorrectMessage && (
+            <Text style={styles.errorText}>
+              Correo o Contraseña incorrectos.
+            </Text>
+          )}
+        </View> */}
 
 
         <View style={styles.loginBox}>
