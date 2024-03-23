@@ -17,6 +17,7 @@ import LottieView from "lottie-react-native";
 import successAnimation from "../assets/animations/complete.json";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { login } from "../backend/login";
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
@@ -66,6 +67,35 @@ export const LoginScreen = () => {
         setShowIncorrectMessage(true);
       }
     }, 3000);
+  };
+
+  const handleLoginTest = async () => {
+    setShowError(false);
+    setShowIncorrectMessage(false);
+
+    const adminUsername = username;
+    const adminPassword = password;
+
+    if (!adminUsername || !adminPassword) {
+      setShowError(true);
+      setShowIncorrectMessage(false);
+      return;
+    }
+
+    const isAdmin = await login(adminUsername, adminPassword);
+
+    if (isAdmin) {
+      setShowSuccessAnimation(true);
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        setShowSuccessAnimation(false);
+        navigation.navigate("Principal Home");
+      }, 2000);
+    } else {
+      setShowError(true);
+      setShowIncorrectMessage(true);
+    }
   };
 
   const handleRegister = () => {
@@ -122,7 +152,7 @@ export const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
             <Text style={styles.buttonText}>Iniciar Sesión</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRegister}>
