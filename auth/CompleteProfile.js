@@ -12,13 +12,18 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { validar_codigo } from "../backend/validaciones";
+import { validar_usuario } from "../backend/validaciones";
+import { get_degrees } from "../backend/consultas";
+import { alta_usuario } from "../backend/altaUsuario";
 import LottieView from "lottie-react-native";
 
 export const CompleteProfile = () => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+  const [Codigo, setCodigo] = useState('');
   const [selectedCareer, setSelectedCareer] = useState("");
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -26,38 +31,50 @@ export const CompleteProfile = () => {
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
+  const [CodigoError, setCodigoError] = useState(false);
 
   const navigation = useNavigation();
 
-  const careerOptions = [
-    "Ingeniería Biomédica INBI",
-    "Ingeniería Civil ICIV",
-    "Ingeniería en Alimentos y Biotecnología LIAB/LINA",
-    "Ingeniería en Comunicaciones y Electrónica INCE",
-    "Ingeniería en Computación INCO",
-    "Ingeniería en Informática INFO",
-    "Ingeniería Fotónica IGFO",
-    "Ingeniería Industrial INDU",
-    "Ingeniería Mecánica Eléctrica INME",
-    "Ingeniería Química INQU",
-    "Ingeniería en Logística y Transporte LOGT",
-    "Ingeniería en Topografía Geomática ITOG",
-    "Licenciatura en Ciencia de Materiales LCMA",
-    "Licenciatura en Física LIFI",
-    "Licenciatura en Matemáticas LIMA",
-    "Licenciatura en Química LQUI",
-    "Licenciatura en Químico Farmacéutico Biólogo LQFB",
-  ];
+  const route = useRoute();
+  const { mail, pass } = route.params;
+  const correo = mail;
+  const contraseña = pass;
 
-  const handleCompleteProfile = () => {
+  const [careerOptions, setCareerOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchDegrees = async () => {
+      const degrees = await get_degrees();
+      setCareerOptions(degrees);
+    };
+
+    fetchDegrees();
+  }, []);
+
+  const handleCompleteProfile = async () => {
     // Realiza la validacion aqui antes de marcar el perfil como completo
     if (!name || !lastName || !username) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       return;
+
+
     }
 
+    const usuarioValido = await validar_usuario(username);
+    if (!usuarioValido) {
+      setUsernameError(true);
+      return;
+    }
+
+    const codigoValido = await validar_codigo(Codigo);
+    if (!codigoValido) {
+      setCodigoError(true);
+      return;
+    }
+
+    alta_usuario(Codigo, correo, contraseña, selectedCareer, name, lastName, username);
     // Si pasa la validacion, marca el perfil como completo
     setIsProfileComplete(true);
   };
@@ -162,7 +179,22 @@ export const CompleteProfile = () => {
                 }}
               />
               {usernameError && (
-                <Text style={styles.errorText}>Campo requerido</Text>
+                <Text style={styles.errorText}>Este usuario ya ha sido registrado</Text>
+              )}
+
+              <Text style={styles.label}>Codigo de estudiante:</Text>
+              <TextInput
+                style={[styles.input, CodigoError && styles.errorInput]}
+                placeholder="222333444"
+                placeholderTextColor="black"
+                value={Codigo}
+                onChangeText={(text) => {
+                  setCodigo(text);
+                  setCodigoError(false);
+                }}
+              />
+              {CodigoError && (
+                <Text style={styles.errorText}>Este codigo ya ha sido registrado</Text>
               )}
 
               <Text style={styles.label}>Carrera:</Text>
@@ -182,7 +214,7 @@ export const CompleteProfile = () => {
                         key={index}
                         style={styles.careerOption}
                         onPress={() => {
-                          setSelectedCareer(option);
+                          setSelectedCareer(option.slice(-4));
                           toggleModal();
                         }}>
                         <Text>{option}</Text>
