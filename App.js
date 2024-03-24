@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// import { HomePage } from "./Pages/HomePage";
 import { LoginScreen } from "./auth/LoginScreen";
 import { CompleteProfile } from "./auth/CompleteProfile";
 import { RegisterScreen } from "./auth/RegisterScreen";
-import { View } from "react-native-animatable";
 import { MyDrawer } from "./Components/NavBar";
-import { BottomSheetComponent } from "./Components/BottonSheet";
+import { setRandomFallback } from 'bcryptjs';
+import { getRandomBase64 } from 'react-native-get-random-values';
 
 const Stack = createNativeStackNavigator();
+
+setRandomFallback(getRandomBase64);
 
 function App() {
   return (
