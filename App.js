@@ -16,41 +16,41 @@ function App() {
   return (
     //para editar cada pantalla
 
-    // <NavigationContainer>
-    //   <MyDrawer />
-    // </NavigationContainer>
-
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Inicio">
-        <Stack.Screen
-          name="Inicio"
-          component={LoginScreen}
-          options={{ title: "Inicio", headerShown: false }} // Oculta la barra de navegación
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: "Iniciar Sesión" }}
-        />
-        <Stack.Screen
-          name="Registro"
-          component={RegisterScreen}
-          options={{ title: "Registro" }}
-        />
-        <Stack.Screen
-          name="Completar Perfil"
-          component={CompleteProfile}
-          options={{ title: "Completar Perfil" }}
-        />
-        <Stack.Screen
-          name="Principal Home"
-          component={MyDrawer}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
+      <MyDrawer />
     </NavigationContainer>
+
+    // <NavigationContainer>
+    //   <Stack.Navigator initialRouteName="Inicio">
+    //     <Stack.Screen
+    //       name="Inicio"
+    //       component={LoginScreen}
+    //       options={{ title: "Inicio", headerShown: false }} // Oculta la barra de navegación
+    //     />
+    //     <Stack.Screen
+    //       name="Login"
+    //       component={LoginScreen}
+    //       options={{ title: "Iniciar Sesión" }}
+    //     />
+    //     <Stack.Screen
+    //       name="Registro"
+    //       component={RegisterScreen}
+    //       options={{ title: "Registro" }}
+    //     />
+    //     <Stack.Screen
+    //       name="Completar Perfil"
+    //       component={CompleteProfile}
+    //       options={{ title: "Completar Perfil" }}
+    //     />
+    //     <Stack.Screen
+    //       name="Principal Home"
+    //       component={MyDrawer}
+    //       options={{
+    //         headerShown: false,
+    //       }}
+    //     />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 }
 export default App;
