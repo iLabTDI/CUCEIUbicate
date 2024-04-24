@@ -14,10 +14,32 @@ import {
   faBell,
   faSignOutAlt,
   faBars,
+  faDirections,
+  faBook,
+  faRadio,
+  faFaceSmile,
+  faUserFriends,
+  faSoccerBall,
+  faMedkit,
+  faCircle,
+  faFlagCheckered,
+  faLegal,
+  faHandHoldingHand,
+  faPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { HomePage } from "../Pages/HomePage";
 import { Profile } from "../Pages/Profile";
 import { Notifications } from "../Pages/Notification";
+import { Directory } from "../Pages/Directory";
+import { Articles } from "../Pages/Articles";
+import { Clubs } from "../Pages/Clubs";
+import { CTA } from "../Pages/CTA";
+import { CUCEI_radio } from "../Pages/CUCEI_radio";
+import { Facial_recognition } from "../Pages/Facial_recognition";
+import { Medical_services } from "../Pages/Medical_services";
+import { Scholarships } from "../Pages/Scholarships";
+import { School_services } from "../Pages/School_services";
+import { Social_service } from "../Pages/Social_service";
 import { useNavigation } from "@react-navigation/native";
 //importar los nuevos componentes (CREARLOS CEN MODO EXPORTACION)
 
@@ -61,7 +83,7 @@ export const MyDrawer = () => {
         name="Mapa"
         component={HomePage}
         options={({ navigation }) => ({
-          drawerLabel: "Home",
+          drawerLabel: "Inicio",
           drawerIcon: ({ focused, color, size }) => (
             <FontAwesomeIcon icon={faMap} size={size} color={color} />
           ),
@@ -82,22 +104,132 @@ export const MyDrawer = () => {
         })}
       />
       <Drawer.Screen
-        name="Notifications"
+        name="Notificaciones"
         component={Notifications}
         options={{
-          drawerLabel: "Updates",
+          drawerLabel: "Notificaciones",
           drawerIcon: ({ focused, color, size }) => (
             <FontAwesomeIcon icon={faBell} size={size} color={color} />
           ),
         }}
       />
       <Drawer.Screen
-        name="Profile"
+        name="Perfil"
         component={Profile}
         options={{
-          drawerLabel: "Profile",
+          drawerLabel: "Perfil",
           drawerIcon: ({ focused, color, size }) => (
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Directorio"
+        component={Directory}
+        options={{
+          drawerLabel: "Directorio",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faDirections} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Articulos"
+        component={Articles}
+        options={{
+          drawerLabel: "Artículos",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faBook} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Servicio social"
+        component={Social_service}
+        options={{
+          drawerLabel: "Servicio social",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faHandHoldingHand} size={size} color={color} />
+          ),
+        }}
+      />
+        
+      <Drawer.Screen
+        name="Becas"
+        component={Scholarships}
+        options={{
+          drawerLabel: "Becas",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faPlane} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Radio CUCEI"
+        component={CUCEI_radio}
+        options={{
+          drawerLabel: "Radio CUCEI",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faRadio} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Reconocimiento facial"
+        component={Facial_recognition}
+        options={{
+          drawerLabel: "Reconocimiento facial",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faFaceSmile} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Servicios escolares"
+        component={School_services}
+        options={{
+          drawerLabel: "Servicios escolares",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faUserFriends} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Clubes"
+        component={Clubs}
+        options={{
+          drawerLabel: "Clubes",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faSoccerBall} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Servicios médicos"
+        component={Medical_services}
+        options={{
+          drawerLabel: "Servicios médicos",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faMedkit} size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="CTA"
+        component={CTA}
+        options={{
+          drawerLabel: "CTA",
+          drawerIcon: ({ focused, color, size }) => (
+            <FontAwesomeIcon icon={faCircle} size={size} color={color} />
           ),
         }}
       />
