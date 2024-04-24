@@ -41,6 +41,7 @@ import { Scholarships } from "../Pages/Scholarships";
 import { School_services } from "../Pages/School_services";
 import { Social_service } from "../Pages/Social_service";
 import { useNavigation } from "@react-navigation/native";
+import { Header } from "react-native/Libraries/NewAppScreen";
 //importar los nuevos componentes (CREARLOS CEN MODO EXPORTACION)
 
 
@@ -78,6 +79,7 @@ export const MyDrawer = () => {
   return (
     <Drawer.Navigator
       initialRouteName="Mapa"
+      screenOptions={{ headerShown: false }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
         name="Mapa"
