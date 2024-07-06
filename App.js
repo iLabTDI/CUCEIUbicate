@@ -5,8 +5,9 @@ import { LoginScreen } from "./auth/LoginScreen";
 import { CompleteProfile } from "./auth/CompleteProfile";
 import { RegisterScreen } from "./auth/RegisterScreen";
 import { MyDrawer } from "./Components/NavBar";
-import { setRandomFallback } from 'bcryptjs';
-import { getRandomBase64 } from 'react-native-get-random-values';
+import { setRandomFallback } from "bcryptjs";
+import { getRandomBase64 } from "react-native-get-random-values";
+import { StatusBar, Platform } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,10 +18,20 @@ function App() {
     //para editar cada pantalla
 
     <NavigationContainer>
+      <StatusBar //Barra de estaco dolor negra
+        backgroundColor="#333"
+        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+      />
       <MyDrawer />
     </NavigationContainer>
 
     // <NavigationContainer>
+
+    //   <StatusBar //Barra de estaco dolor negra
+    //     backgroundColor="#333"
+    //     barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+    //   />
+
     //   <Stack.Navigator initialRouteName="Inicio">
     //     <Stack.Screen
     //       name="Inicio"
