@@ -15,9 +15,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import successAnimation from "../assets/animations/complete.json";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { FontAwesomeIcon as BaseFontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { login } from "../backend/login";
+
+const FontAwesomeIcon = ({ icon = faEnvelope, style = {} }) => {
+  return <BaseFontAwesomeIcon icon={icon} style={style} />;
+};
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
