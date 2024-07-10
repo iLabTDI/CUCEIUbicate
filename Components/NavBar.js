@@ -39,6 +39,7 @@ import { Medical_services } from "../Pages/Medical_services";
 import { Scholarships } from "../Pages/Scholarships";
 import { School_services } from "../Pages/School_services";
 import { Social_service } from "../Pages/Social_service";
+import { ProfileScreen } from "../Pages/ProfileScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -72,7 +73,9 @@ const DrawerHeaderButton = () => {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menu_icon}>
+    <TouchableOpacity
+      onPress={() => navigation.openDrawer()}
+      style={styles.menu_icon}>
       <FontAwesomeIcon icon={faBars} size={23} color="white" />
     </TouchableOpacity>
   );
@@ -91,8 +94,7 @@ export const MyDrawer = () => {
           fontWeight: "bold",
         },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
+      drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
@@ -117,13 +119,13 @@ export const MyDrawer = () => {
       />
       <Drawer.Screen
         name="Perfil"
-        component={Profile}
+        component={ProfileScreen}
         options={{
           drawerLabel: "Perfil",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerShown: true,
         }}
       />
       <Drawer.Screen
@@ -229,6 +231,7 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
         }}
       />
+
       <Drawer.Screen
         name="CTA"
         component={CTA}
