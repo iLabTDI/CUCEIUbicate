@@ -11,17 +11,17 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import successAnimation from "../assets/animations/complete.json";
-import { FontAwesomeIcon as BaseFontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faEnvelope,
+  faLock,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 import { login } from "../Api/login";
-
-const FontAwesomeIcon = ({ icon = faEnvelope, style = {} }) => {
-  return <BaseFontAwesomeIcon icon={icon} style={style} />;
-};
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
@@ -40,45 +40,12 @@ export const LoginScreen = () => {
     { username: "ADMIN", password: "ADMIN" },
   ];
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setShowError(false);
     setShowIncorrectMessage(false);
 
-    setTimeout(() => {
-      const adminUsername = username;
-      const adminPassword = password;
-
-      if (!adminUsername || !adminPassword) {
-        setShowError(true);
-        setShowIncorrectMessage(false);
-        return;
-      }
-
-      const isAdmin = users.some(
-        (user) =>
-          user.username === adminUsername && user.password === adminPassword
-      );
-      if (isAdmin) {
-        setShowSuccessAnimation(true);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-          setShowSuccessAnimation(false);
-          navigation.navigate("Principal Home");
-        }, 2000);
-      } else {
-        setShowError(true);
-        setShowIncorrectMessage(true);
-      }
-    }, 3000);
-  };
-
-  const handleLoginTest = async () => {
-    setShowError(false);
-    setShowIncorrectMessage(false);
-
-    const adminUsername = username;
-    const adminPassword = password;
+    const adminUsername = username.trim();
+    const adminPassword = password.trim();
 
     if (!adminUsername || !adminPassword) {
       setShowError(true);
@@ -113,54 +80,77 @@ export const LoginScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
+      style={styles.container}>
       <View style={styles.container}>
         <Image
-          source={require("../assets/images/Logo_Cucei.png")}
+          source={require("../../assets/images/Logo_Cucei.png")}
           style={styles.logo}
         />
         <View style={styles.iconCircle}>
-          <Icon
-            name="user-circle-o"
-            size={windowWidth * 0.2} // Ajusta el tamaño del icono
-            color="#0b34b0"
+          <Image
+            source={require("../assets/images/usuario.png")}
+            style={styles.userImage}
           />
         </View>
 
         <View style={styles.loginBox}>
           <Text>Correo electrónico:</Text>
-          <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
-            <FontAwesomeIcon icon={faEnvelope} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
+          <View
+            style={[
+              styles.inputContainer,
+              (showError || showIncorrectMessage) && { borderColor: "red" },
+            ]}>
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              style={[
+                styles.iconStyle,
+                (showError || showIncorrectMessage) && { color: "red" },
+              ]}
+            />
             <TextInput
               style={styles.input}
               placeholder="alumno@Cucei.com"
-              placeholderTextColor="black"
+              placeholderTextColor="gray"
               onChangeText={(text) => setUsername(text)}
+              value={username}
             />
           </View>
           <Text style={styles.label}>Contraseña:</Text>
-          <View style={[styles.inputContainer, (showError || showIncorrectMessage) && { borderColor: 'red' }]}>
-            <FontAwesomeIcon icon={faLock} style={[styles.iconStyle, (showError || showIncorrectMessage) && { color: 'red' }]} />
+          <View
+            style={[
+              styles.inputContainer,
+              (showError || showIncorrectMessage) && { borderColor: "red" },
+            ]}>
+            <FontAwesomeIcon
+              icon={faLock}
+              style={[
+                styles.iconStyle,
+                (showError || showIncorrectMessage) && { color: "red" },
+              ]}
+            />
             <TextInput
               style={styles.input}
               placeholder="Password"
               secureTextEntry={!showPassword}
-              placeholderTextColor="black"
+              placeholderTextColor="gray"
               onChangeText={(text) => setPassword(text)}
+              value={password}
             />
             <TouchableOpacity onPress={togglePasswordVisibility}>
               <FontAwesomeIcon
                 icon={showPassword ? faEyeSlash : faEye}
                 style={styles.eyeIcon}
+                size={20}
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.buttonText}>Iniciar Sesión</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRegister}>
-            <Text style={styles.registerText}>¿No tienes cuenta? ¡Regístrate!</Text>
+            <Text style={styles.registerText}>
+              ¿No tienes cuenta? ¡Regístrate!
+            </Text>
           </TouchableOpacity>
           {showError && (
             <Text style={styles.errorText}>
@@ -180,8 +170,7 @@ export const LoginScreen = () => {
           visible={modalVisible}
           onRequestClose={() => {
             setModalVisible(false);
-          }}
-        >
+          }}>
           <View style={styles.modalContainer}>
             {showSuccessAnimation && (
               <LottieView
@@ -198,35 +187,35 @@ export const LoginScreen = () => {
   );
 };
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#E4EDF9',
-    width: '100%'
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#E4EDF9",
+    width: "100%",
   },
   loginBox: {
     width: windowWidth * 0.83,
     padding: windowWidth * 0.08,
     borderRadius: windowWidth * 0.04,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   label: {
     fontSize: windowWidth * 0.04,
     marginTop: windowWidth * 0.02,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: windowWidth * 0.003,
     borderRadius: windowWidth * 0.02,
     padding: windowWidth * 0.015,
@@ -243,38 +232,42 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   loginButton: {
-    backgroundColor: '#0b34b0',
+    backgroundColor: "#0b34b0",
     borderRadius: windowWidth * 0.03,
     paddingVertical: windowWidth * 0.03,
     marginTop: windowWidth * 0.03,
   },
   buttonText: {
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
     fontSize: windowWidth * 0.04,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   registerText: {
     marginTop: windowWidth * 0.03,
     fontSize: windowWidth * 0.04,
-    color: '#0b34b0',
-    textDecorationLine: 'underline',
-    textAlign: 'center',
+    color: "#0b34b0",
+    textDecorationLine: "underline",
+    textAlign: "center",
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     paddingTop: windowWidth * 0.045,
   },
+  userImage: {
+    width: 55,
+    height: 55,
+  },
   iconCircle: {
-    backgroundColor: 'white',
-    borderRadius: windowWidth * 0.2, 
-    width: windowWidth * 0.2, 
-    height: windowWidth * 0.2, 
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "white",
+    borderRadius: windowWidth * 0.2,
+    width: windowWidth * 0.2,
+    height: windowWidth * 0.2,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: -windowWidth * 0.05,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: windowWidth * 0.02 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -288,16 +281,15 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   animation: {
     width: windowWidth * 0.6,
     height: windowWidth * 0.6,
   },
-  eyeIcon: {
-    fontSize: 24, 
-    color: '#000',
-  },
+
 });
+
+export default LoginScreen;

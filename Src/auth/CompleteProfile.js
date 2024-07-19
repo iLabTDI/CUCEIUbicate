@@ -23,7 +23,7 @@ export const CompleteProfile = () => {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [Codigo, setCodigo] = useState('');
+  const [Codigo, setCodigo] = useState("");
   const [selectedCareer, setSelectedCareer] = useState("");
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -52,14 +52,11 @@ export const CompleteProfile = () => {
   }, []);
 
   const handleCompleteProfile = async () => {
-    // Realiza la validacion aqui antes de marcar el perfil como completo
     if (!name || !lastName || !username) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       return;
-
-
     }
 
     const usuarioValido = await validar_usuario(username);
@@ -74,8 +71,15 @@ export const CompleteProfile = () => {
       return;
     }
 
-    alta_usuario(Codigo, correo, contraseña, selectedCareer, name, lastName, username);
-    // Si pasa la validacion, marca el perfil como completo
+    alta_usuario(
+      Codigo,
+      correo,
+      contraseña,
+      selectedCareer,
+      name,
+      lastName,
+      username
+    );
     setIsProfileComplete(true);
   };
 
@@ -141,7 +145,7 @@ export const CompleteProfile = () => {
               <TextInput
                 style={[styles.input, nameError && styles.errorInput]}
                 placeholder="Ingresa tu nombre"
-                placeholderTextColor="black"
+                placeholderTextColor="gray"
                 value={name}
                 onChangeText={(text) => {
                   setName(text);
@@ -156,7 +160,7 @@ export const CompleteProfile = () => {
               <TextInput
                 style={[styles.input, lastNameError && styles.errorInput]}
                 placeholder="Ingresa tus apellidos"
-                placeholderTextColor="black"
+                placeholderTextColor="gray"
                 value={lastName}
                 onChangeText={(text) => {
                   setLastName(text);
@@ -171,7 +175,7 @@ export const CompleteProfile = () => {
               <TextInput
                 style={[styles.input, usernameError && styles.errorInput]}
                 placeholder="@CUCEI_777"
-                placeholderTextColor="black"
+                placeholderTextColor="gray"
                 value={username}
                 onChangeText={(text) => {
                   setUsername(text);
@@ -179,14 +183,16 @@ export const CompleteProfile = () => {
                 }}
               />
               {usernameError && (
-                <Text style={styles.errorText}>Este usuario ya ha sido registrado</Text>
+                <Text style={styles.errorText}>
+                  Este usuario ya ha sido registrado
+                </Text>
               )}
 
               <Text style={styles.label}>Codigo de estudiante:</Text>
               <TextInput
                 style={[styles.input, CodigoError && styles.errorInput]}
                 placeholder="222333444"
-                placeholderTextColor="black"
+                placeholderTextColor="gray"
                 value={Codigo}
                 onChangeText={(text) => {
                   setCodigo(text);
@@ -194,7 +200,9 @@ export const CompleteProfile = () => {
                 }}
               />
               {CodigoError && (
-                <Text style={styles.errorText}>Este codigo ya ha sido registrado</Text>
+                <Text style={styles.errorText}>
+                  Este codigo ya ha sido registrado
+                </Text>
               )}
 
               <Text style={styles.label}>Carrera:</Text>
