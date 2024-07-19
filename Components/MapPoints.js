@@ -1,27 +1,7 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-export const MapPoints = ({ onPointPress }) => {
-  const points = [
-    { id: "point1", left: 200, top: 300, width: 90, height: 20 },
-    {
-      id: "Modulo X",
-      left: 265,
-      top: 488,
-      width: 90,
-      height: 20,
-    },
-    {
-      id: "Modulo Z",
-      left: 187,
-      top: 649,
-      height: 45,
-      width: 18,
-      transform: [{ rotate: "5deg" }],
-    },
-    // Agrega más puntos aquí
-  ];
-
+export const MapPoints = ({ onPointPress, selectedRoute, selectedPoint, points }) => {
   return (
     <View style={styles.container}>
       {points.map((point) => (
@@ -35,11 +15,26 @@ export const MapPoints = ({ onPointPress }) => {
               height: point.height,
               width: point.width,
               transform: point.transform,
+              backgroundColor: selectedRoute && (selectedRoute.origin === point.id || selectedRoute.destination === point.id)
+                ? "rgba(255, 255, 0, 0.5)"
+                : "rgba(255, 0, 0, 0.5)",
             },
           ]}
           onPress={() => onPointPress(point.id)}
         />
       ))}
+      {selectedPoint && (
+        <Image
+          source={require('../assets/images/pin.png')} // Asegúrate de tener esta imagen en tu proyecto
+          style={[
+            styles.pin,
+            {
+              left: points.find(point => point.id === selectedPoint)?.left || 0,
+              top: points.find(point => point.id === selectedPoint)?.top || 0,
+            }
+          ]}
+        />
+      )}
     </View>
   );
 };
@@ -52,8 +47,15 @@ const styles = StyleSheet.create({
   },
   point: {
     position: "absolute",
-    backgroundColor: "rgba(255, 0, 0, 0.5)",
-    borderRadius: 10,
+    borderRadius: 20,
     zIndex: 10,
   },
+  pin: {
+    position: "absolute",
+    width: 30,
+    height: 30,
+    zIndex: 20,
+  },
 });
+
+export default MapPoints;
