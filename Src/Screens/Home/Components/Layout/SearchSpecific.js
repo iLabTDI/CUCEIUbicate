@@ -1,0 +1,256 @@
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Animated,
+  Easing,
+  Keyboard,
+  FlatList,
+  Text,
+} from "react-native";
+import { faSearch, faTimes, faHistory } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
+  const [showSpecificSearch, setShowSpecificSearchState] = useState(false);
+  const [specificSearchText, setSpecificSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const animatedWidth = useRef(new Animated.Value(0)).current;
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    loadSearchHistory();
+    if (showSpecificSearch) {
+      inputRef.current?.focus();
+    }
+    setShowSpecificSearch(showSpecificSearch); // Actualizar el estado en HomePage
+  }, [showSpecificSearch]);
+
+  const loadSearchHistory = async () => {
+    try {
+      const savedHistory = await AsyncStorage.getItem("specificSearchHistory");
+      if (savedHistory) {
+        setSearchHistory(JSON.parse(savedHistory));
+      }
+    } catch (error) {
+      console.error("Error loading search history:", error);
+    }
+  };
+
+  const toggleSpecificSearch = () => {
+    if (showSpecificSearch) {
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  };
+
+  const openSearch = () => {
+    setShowSpecificSearchState(true);
+    Animated.timing(animatedWidth, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const closeSearch = () => {
+    Keyboard.dismiss();
+    Animated.timing(animatedWidth, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start(() => {
+      setShowSpecificSearchState(false);
+      setSpecificSearchText("");
+      setSearchResults([]);
+      setShowHistory(false);
+      setShowSpecificSearch(false); // Actualizar el estado en HomePage
+    });
+  };
+
+  const handleSpecificSearch = (text) => {
+    setSpecificSearchText(text);
+    if (text.length > 0) {
+      const filteredResults = points.filter((point) =>
+        point.name.toLowerCase().includes(text.toLowerCase()) || point.id.toLowerCase().includes(text.toLowerCase())
+      );
+      setSearchResults(filteredResults);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleSelectResult = async (item) => {
+    onSearch(item.id);
+    await updateSearchHistory(item.name);
+    closeSearch();
+  };
+
+  const updateSearchHistory = async (searchTerm) => {
+    const newHistory = [searchTerm, ...searchHistory.filter(term => term !== searchTerm)].slice(0, 5);
+    setSearchHistory(newHistory);
+    await AsyncStorage.setItem("specificSearchHistory", JSON.stringify(newHistory));
+  };
+
+  const renderSearchResult = ({ item }) => (
+    <TouchableOpacity
+      style={styles.resultItem}
+      onPress={() => handleSelectResult(item)}
+    >
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderHistoryItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.resultItem}
+      onPress={() => {
+        setSpecificSearchText(item);
+        handleSpecificSearch(item);
+      }}
+    >
+      <Text>{item}</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.searchIcon}
+        onPress={toggleSpecificSearch}
+      >
+        <FontAwesomeIcon icon={faSearch} size={20} color="white" />
+      </TouchableOpacity>
+
+      {showSpecificSearch && (
+        <Animated.View
+          style={[
+            styles.searchBarContainer,
+            {
+              transform: [{
+                translateX: animatedWidth.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [150, 10], // Desliza la barra de búsqueda hacia la izquierda
+                }),
+              }],
+              width: animatedWidth.interpolate({
+                inputRange: [0, 1],
+                outputRange: ["0%", "83%"],
+              }),
+            },
+          ]}
+        >
+          <TextInput
+            ref={inputRef}
+            style={styles.searchInput}
+            placeholder="Buscar lugares..."
+            placeholderTextColor="gray"
+            value={specificSearchText}
+            onChangeText={handleSpecificSearch}
+          />
+          <TouchableOpacity style={styles.historyIcon} onPress={() => setShowHistory(!showHistory)}>
+            <FontAwesomeIcon icon={faHistory} size={20} color="gray" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
+            <FontAwesomeIcon icon={faTimes} size={20} color="gray" />
+          </TouchableOpacity>
+        </Animated.View>
+      )}
+
+      {searchResults.length > 0 && !showHistory && (
+        <View style={styles.resultsContainer}>
+          <FlatList
+            data={searchResults}
+            renderItem={renderSearchResult}
+            keyExtractor={(item) => item.id}
+            keyboardShouldPersistTaps="always"
+          />
+        </View>
+      )}
+
+      {showHistory && (
+        <View style={styles.resultsContainer}>
+          <FlatList
+            data={searchHistory}
+            renderItem={renderHistoryItem}
+            keyExtractor={(item, index) => index.toString()}
+            keyboardShouldPersistTaps="always"
+          />
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    top: 45,
+    right: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  searchIcon: {
+    backgroundColor: "blue",
+    borderRadius: 25,
+    padding: 17,
+    zIndex: 10,
+  },
+  searchBarContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    height: 44,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    zIndex: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "black",
+  },
+  historyIcon: {
+    padding: 5,
+    marginRight: 5,
+  },
+  closeIcon: {
+    padding: 5,
+  },
+  resultsContainer: {
+    position: "absolute",
+    top: 55,
+    right: 10,
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 5,
+    maxHeight: 200,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    zIndex: 10,
+  },
+  resultItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+});
+
+export default SpecificSearch;

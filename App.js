@@ -22,7 +22,7 @@ function App() {
         backgroundColor="#333"
         barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
       />
-      <LoginScreen />
+      <MyDrawer />
     </NavigationContainer>
 
     // <NavigationContainer>
