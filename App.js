@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LoginScreen } from "./auth/LoginScreen";
-import { CompleteProfile } from "./auth/CompleteProfile";
-import { RegisterScreen } from "./auth/RegisterScreen";
-import { MyDrawer } from "./Components/NavBar";
+import { LoginScreen } from "./Src/auth/LoginScreen";
+import { CompleteProfile } from "./Src/auth/CompleteProfile";
+import { RegisterScreen } from "./Src/auth/RegisterScreen";
+import { MyDrawer } from "./Src/Screens/Home/Components/Layout/MyDrawer";
 import { setRandomFallback } from "bcryptjs";
 import { getRandomBase64 } from "react-native-get-random-values";
 import { StatusBar, Platform } from "react-native";
