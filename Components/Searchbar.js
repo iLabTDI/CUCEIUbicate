@@ -141,7 +141,7 @@ export const SearchBar = ({ onClose, onSearch }) => {
           </View>
 
           <View style={styles.searchHistoryContainer}>
-            <Text style={styles.searchHistoryTitle}>Historial de Búsqueda</Text>
+            <Text style={styles.searchHistoryTitle}>Historial de Busqueda</Text>
             <ScrollView contentContainerStyle={styles.searchHistoryList}>
               {searchHistory.map((item, index) => (
                 <View key={index} style={styles.searchHistoryItem}>
@@ -166,6 +166,7 @@ export const SearchBar = ({ onClose, onSearch }) => {
     </Modal>
   );
 };
+
 
 const styles = StyleSheet.create({
   modalBackground: {
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 10, // Inputs más redondeados
+    borderRadius: 10, 
     marginVertical: 5,
     padding: 10,
     width: "100%",
@@ -220,21 +221,21 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 2,
     fontSize: 16,
-    borderRadius: 10, // Inputs más redondeados
+    borderRadius: 10, 
     color: "#000",
-    height: 40, // Reduce la altura del input
+    height: 30, 
   },
   buttonsContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     width: "100%",
   },
   iconButton: {
     backgroundColor: "#FFD700",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     marginHorizontal: 5,
     position: "absolute",
     left: "50%",
@@ -243,8 +244,9 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: "#1E90FF",
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderRadius: 5,
+    alignSelf: 'flex-end',
   },
   searchButtonText: {
     color: "#fff",
@@ -287,6 +289,23 @@ const styles = StyleSheet.create({
   },
   clearHistoryButtonText: {
     color: "red",
+    fontWeight: "bold",
+  },
+   suggestionsContainer: {
+    maxHeight: 100,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 });
