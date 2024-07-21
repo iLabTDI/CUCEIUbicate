@@ -122,7 +122,7 @@ export const CompleteProfile = () => {
                 ¡Bienvenido, @{username}!
               </Text>
               <Image
-                source={require("../assets/images/cucei.png")}
+                source={require("../../assets/images/cucei.png")}
                 style={styles.logo}
               />
               <LottieView

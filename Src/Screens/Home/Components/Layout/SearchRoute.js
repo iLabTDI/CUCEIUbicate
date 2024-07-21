@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     width: "90%",
     alignItems: "center",
-    marginTop: 40, // Mueve el contenedor hacia arriba
+    marginTop: 5, 
   },
   searchBar: {
     backgroundColor: "#0033A0",
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10, 
     marginVertical: 5,
-    padding: 10,
+    padding: 8,
     width: "100%",
   },
   iconWrapper: {
@@ -223,7 +223,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 10, 
     color: "#000",
-    height: 30, 
+    height: 30,
+     
   },
   buttonsContainer: {
     flexDirection: "row",
