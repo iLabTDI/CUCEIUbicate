@@ -19,6 +19,7 @@ import { SpecificSearch } from "./Components/Layout/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
 import { MapPoints } from "./Components/MapComponent/MapPoints";
 import RouteDrawer from "./Components/MapComponent/RouteDrawer";
+import { points } from "./Components/MapComponent/data";
 
 export const HomePage = () => {
   const navigation = useNavigation();
@@ -28,34 +29,34 @@ export const HomePage = () => {
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
 
-  const points = [
-    {
-      id: "point1",
-      name: "Punto 1",
-      left: 200,
-      top: 300,
-      width: 90,
-      height: 20,
-    },
-    {
-      id: "Modulo X",
-      name: "Módulo X",
-      left: 265,
-      top: 488,
-      width: 90,
-      height: 20,
-    },
-    {
-      id: "Modulo Z",
-      name: "Módulo Z",
-      left: 187,
-      top: 649,
-      height: 45,
-      width: 18,
-      transform: [{ rotate: "5deg" }],
-    },
-    // Agrega más puntos aquí
-  ];
+  // const points = [
+  //   {
+  //     id: "point1",
+  //     name: "Punto 1",
+  //     left: 200,
+  //     top: 300,
+  //     width: 90,
+  //     height: 20,
+  //   },
+  //   {
+  //     id: "Modulo X",
+  //     name: "Módulo X",
+  //     left: 265,
+  //     top: 488,
+  //     width: 90,
+  //     height: 20,
+  //   },
+  //   {
+  //     id: "Modulo Z",
+  //     name: "Módulo Z",
+  //     left: 187,
+  //     top: 649,
+  //     height: 45,
+  //     width: 18,
+  //     transform: [{ rotate: "5deg" }],
+  //   },
+  //   // Agrega más puntos aquí
+  // ];
 
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
@@ -140,7 +141,7 @@ export const HomePage = () => {
             centerOn={{ x: 250, y: -90, scale: 1.1 }}
             maxOverflow={0}>
             <Image
-              source={require("./assets/images/mapa-min.webp")}
+              source={require("./assets/images/mapa2.webp")}
               style={styles.image}
             />
             <MapPoints
