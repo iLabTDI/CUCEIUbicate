@@ -8,7 +8,7 @@ import ImageZoom from 'react-native-image-pan-zoom';
 import { SearchRoute } from './Components/Layout/SearchRoute';
 import { SpecificSearch } from './Components/Layout/SearchSpecific';
 import { BottomSheetComponent } from './Components/BottonSheetComponent/BottonSheet';
-import { MapWithPointsAndRoutes } from './Components/MapComponent/MapPoints'; // Asegúrate de que la ruta sea correcta
+import { MapWithPointsAndRoutes } from './Components/MapComponent/MapPoints'; 
 import { points } from './Components/MapComponent/data';
 
 export const HomePage = () => {
