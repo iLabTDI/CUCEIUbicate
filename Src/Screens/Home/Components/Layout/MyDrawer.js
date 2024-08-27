@@ -25,7 +25,7 @@ import {
   faHandHoldingHand,
   faPlane,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute} from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
 // import { Profile } from "../Src/Screens/Profile/Profile";
 import { Directory } from "../../../community/Directory";
@@ -80,6 +80,8 @@ const DrawerHeaderButton = () => {
 };
 
 export const MyDrawer = () => {
+  const route = useRoute();
+  const { user } = route.params;
   return (
     <Drawer.Navigator
       initialRouteName="Mapa"
@@ -96,6 +98,7 @@ export const MyDrawer = () => {
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
+        initialParams={{ user }}
         options={{
           drawerLabel: "Inicio",
           drawerIcon: ({ focused, color, size }) => (
@@ -107,6 +110,7 @@ export const MyDrawer = () => {
       <Drawer.Screen
         name="Perfil"
         component={ProfileScreen}
+        initialParams={{ user }}
         options={{
           drawerLabel: "Perfil",
           drawerIcon: ({ color, size }) => (

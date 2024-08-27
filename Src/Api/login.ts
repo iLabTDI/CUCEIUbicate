@@ -17,7 +17,7 @@ export const login = async (user, contraseña) => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('password') // Seleccionar solamente la contraseña encriptada
+      .select('*') // Seleccionar solamente la contraseña encriptada
       .or(`username.eq.${user}, email.eq.${user}`);
 
     if (error || data.length === 0) {
@@ -25,7 +25,12 @@ export const login = async (user, contraseña) => {
     } else {
       const hashedPassword = data[0].password;
       const isMatch = await comparePassword(contraseña, hashedPassword); 
-      return isMatch;
+
+      console.log("log del back",data);
+      return {
+        isMatch,
+        userData: data,
+      };
     }
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
