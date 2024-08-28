@@ -9,10 +9,13 @@ import {
   Keyboard,
   FlatList,
   Text,
+  Dimensions,
 } from "react-native";
 import { faSearch, faTimes, faHistory } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const { width, height } = Dimensions.get('window');
 
 export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   const [showSpecificSearch, setShowSpecificSearchState] = useState(false);
@@ -26,15 +29,15 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   useEffect(() => {
     loadSearchHistory();
     if (showSpecificSearch) {
-      inputRef.current?.focus();
+      setTimeout(() => inputRef.current?.focus(), 300); // Asegurar que el input reciba el foco (bug de android)
     }
-    setShowSpecificSearch(showSpecificSearch); // Actualizar el estado en HomePage
+    setShowSpecificSearch(showSpecificSearch); // Actualizar el estado en HomePage que recibe el objeto
   }, [showSpecificSearch]);
 
   const loadSearchHistory = async () => {
     try {
-      const savedHistory = await AsyncStorage.getItem("specificSearchHistory");
-      if (savedHistory) {
+      const savedHistory = await AsyncStorage.getItem("specificSearchHistory"); 
+      if (savedHistory) { 
         setSearchHistory(JSON.parse(savedHistory));
       }
     } catch (error) {
@@ -60,12 +63,12 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     }).start();
   };
 
-  const closeSearch = () => {
+  const closeSearch = () => {  //Animacion al cerrar la barra buscadora
     Keyboard.dismiss();
-    Animated.timing(animatedWidth, {
+    Animated.timing(animatedWidth, { 
       toValue: 0,
       duration: 300,
-      easing: Easing.out(Easing.cubic),
+      easing: Easing.out(Easing.cubic), 
       useNativeDriver: false,
     }).start(() => {
       setShowSpecificSearchState(false);
@@ -89,13 +92,13 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   };
 
   const handleSelectResult = async (item) => {
-    onSearch(item.id);
+    onSearch(item.id); // Esta función se encarga del zoom en el HomePage
     await updateSearchHistory(item.name);
     closeSearch();
   };
 
   const updateSearchHistory = async (searchTerm) => {
-    const newHistory = [searchTerm, ...searchHistory.filter(term => term !== searchTerm)].slice(0, 5);
+    const newHistory = [searchTerm, ...searchHistory.filter(term => term !== searchTerm)].slice(0, 5); 
     setSearchHistory(newHistory);
     await AsyncStorage.setItem("specificSearchHistory", JSON.stringify(newHistory));
   };
@@ -103,13 +106,13 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   const renderSearchResult = ({ item }) => (
     <TouchableOpacity
       style={styles.resultItem}
-      onPress={() => handleSelectResult(item)}
+      onPress={() => handleSelectResult(item)}  // Seleccion del resultado de busqueda
     >
       <Text>{item.name}</Text>
     </TouchableOpacity>
   );
 
-  const renderHistoryItem = ({ item }) => (
+  const renderHistoryItem = ({ item }) => ( // Renderiza los items de la busqueda
     <TouchableOpacity
       style={styles.resultItem}
       onPress={() => {
@@ -125,20 +128,20 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.searchIcon}
-        onPress={toggleSpecificSearch}
+        onPress={toggleSpecificSearch} // Muestra la barra de busqueda
       >
-        <FontAwesomeIcon icon={faSearch} size={20} color="white" />
+        <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="white" />
       </TouchableOpacity>
 
-      {showSpecificSearch && (
+      {showSpecificSearch && ( 
         <Animated.View
           style={[
             styles.searchBarContainer,
             {
               transform: [{
-                translateX: animatedWidth.interpolate({
+                translateX: animatedWidth.interpolate({ 
                   inputRange: [0, 1],
-                  outputRange: [150, 10], // Desliza la barra de búsqueda hacia la izquierda
+                  outputRange: [150, 10],
                 }),
               }],
               width: animatedWidth.interpolate({
@@ -200,10 +203,12 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   searchIcon: {
+    top: height * 0.005,
+    left: width * 0.005,
     backgroundColor: "blue",
-    borderRadius: 25,
-    padding: 17,
-    zIndex: 10,
+    borderRadius: width * 0.1,
+    padding: width * 0.04,
+    zIndex: 2,
   },
   searchBarContainer: {
     flexDirection: "row",
