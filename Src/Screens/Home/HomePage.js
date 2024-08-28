@@ -167,6 +167,7 @@ export const HomePage = () => {
             clearRoute={clearRoute}
           />
         </ImageZoom>
+        
       </GestureHandlerRootView>
 
       {/* Componente de Botón Finalizar Ruta */}
