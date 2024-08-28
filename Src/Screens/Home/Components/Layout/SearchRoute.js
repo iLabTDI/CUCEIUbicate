@@ -19,7 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const SearchRoute = ({ onClose, onSearch }) => {
+export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originText, setOriginText] = useState("");
   const [destinationText, setDestinationText] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
@@ -45,6 +45,15 @@ export const SearchRoute = ({ onClose, onSearch }) => {
       return;
     }
 
+    // Verificar si el origen y destino existen en los puntos del mapa
+    const originExists = points.some(point => new RegExp(`^${originText.trim()}$`, 'i').test(point.name)); //  
+    const destinationExists = points.some(point => new RegExp(`^${destinationText.trim()}$`, 'i').test(point.name));
+
+    if (!originExists || !destinationExists) {
+      Alert.alert("Error", "El origen o destino no existen en el mapa. Por favor, verifique los nombres.");
+      return;
+    }
+    
     const search = { origin: originText.trim(), destination: destinationText.trim() };
     try {
       setSearchHistory((prevHistory) => {
@@ -167,7 +176,6 @@ export const SearchRoute = ({ onClose, onSearch }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
@@ -224,7 +232,6 @@ const styles = StyleSheet.create({
     borderRadius: 10, 
     color: "#000",
     height: 30,
-     
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -276,7 +283,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     paddingVertical: 5,
-    marginBottom: 5,
   },
   searchHistoryText: {
     flex: 1,
@@ -285,29 +291,16 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   clearHistoryButton: {
-    alignSelf: "flex-end",
     marginTop: 10,
+    paddingVertical: 10,
+    backgroundColor: "#ff6347",
+    borderRadius: 5,
+    alignItems: "center",
   },
   clearHistoryButtonText: {
-    color: "red",
-    fontWeight: "bold",
-  },
-   suggestionsContainer: {
-    maxHeight: 100,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    marginTop: 5,
-    marginBottom: 10,
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  headerTitle: {
     color: "#fff",
-    fontSize: 18,
     fontWeight: "bold",
   },
 });
 
+export default SearchRoute;
