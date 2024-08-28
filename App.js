@@ -17,51 +17,41 @@ function App() {
   return (
     //para editar cada pantalla
 
-    <NavigationContainer>
-      <StatusBar //Barra de estaco dolor negra
-        backgroundColor="#333"
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-      />
-      <MyDrawer />
-    </NavigationContainer>
-
     // <NavigationContainer>
-
-    //   <StatusBar //Barra de estaco dolor negra
-    //     backgroundColor="#333"
-    //     barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-    //   />
-
-    //   <Stack.Navigator initialRouteName="Inicio">
-    //     <Stack.Screen
-    //       name="Inicio"
-    //       component={LoginScreen}
-    //       options={{ title: "Inicio", headerShown: false }} // Oculta la barra de navegación
-    //     />
-    //     <Stack.Screen
-    //       name="Login"
-    //       component={LoginScreen}
-    //       options={{ title: "Iniciar Sesión" }}
-    //     />
-    //     <Stack.Screen
-    //       name="Registro"
-    //       component={RegisterScreen}
-    //       options={{ title: "Registro" }}
-    //     />
-    //     <Stack.Screen
-    //       name="Completar Perfil"
-    //       component={CompleteProfile}
-    //       options={{ title: "Completar Perfil" }}
-    //     />
-    //     <Stack.Screen
-    //       name="Principal Home"
-    //       component={MyDrawer}
-    //       options={{
-    //         headerShown: false,
-    //       }}
-    //     />
-    //   </Stack.Navigator>
+    //   <MyDrawer />
     // </NavigationContainer>
+
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Inicio">
+        <Stack.Screen
+          name="Inicio"
+          component={LoginScreen}
+          options={{ title: "Inicio", headerShown: false }} // Oculta la barra de navegación
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ title: "Iniciar Sesión" }}
+        />
+        <Stack.Screen
+          name="Registro"
+          component={RegisterScreen}
+          options={{ title: "Registro" }}
+        />
+        <Stack.Screen
+          name="Completar Perfil"
+          component={CompleteProfile}
+          options={{ title: "Completar Perfil" }}
+        />
+        <Stack.Screen
+          name="Principal Home"
+          component={MyDrawer}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 export default App;

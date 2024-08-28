@@ -53,15 +53,44 @@ export const LoginScreen = () => {
       return;
     }
 
-    const isAdmin = await login(adminUsername, adminPassword);
+    const { isMatch, userData } = await login(adminUsername, adminPassword);
 
-    if (isAdmin) {
+    if (isMatch) {
       setShowSuccessAnimation(true);
       setModalVisible(true);
       setTimeout(() => {
         setModalVisible(false);
         setShowSuccessAnimation(false);
-        navigation.navigate("Principal Home");
+        navigation.navigate("Principal Home", {user: userData});
+      }, 2000);
+    } else {
+      setShowError(true);
+      setShowIncorrectMessage(true);
+    }
+  };
+
+  const handleLoginTest = async () => {
+    setShowError(false);
+    setShowIncorrectMessage(false);
+
+    const adminUsername = username;
+    const adminPassword = password;
+
+    if (!adminUsername || !adminPassword) {
+      setShowError(true);
+      setShowIncorrectMessage(false);
+      return;
+    }
+
+    const { isMatch, userData } = await login(adminUsername, adminPassword);
+
+    if (isMatch) {
+      setShowSuccessAnimation(true);
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        setShowSuccessAnimation(false);
+        navigation.navigate("Principal Home", { user: userData }); // Pasar el objeto userData aquí
       }, 2000);
     } else {
       setShowError(true);
@@ -144,7 +173,7 @@ export const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
             <Text style={styles.buttonText}>Iniciar Sesión</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRegister}>
