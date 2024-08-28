@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
-import { routes } from './data'; // Asegúrate de que la ruta al archivo de datos sea correcta
+import { routes } from './data'; // Importa las rutas de los puntos
 
 export const MapWithPointsAndRoutes = ({
   onPointPress,
@@ -30,27 +30,28 @@ export const MapWithPointsAndRoutes = ({
     ));
   };
 
-  // Renderiza la ruta seleccionada en el mapa
+  // Renderizacion la rutaa seleccionadas en el mapa
   const renderRoute = () => {
-    if (!selectedRoute || !selectedRoute.origin || !selectedRoute.destination) return null;
+    if (!selectedRoute || !selectedRoute.origin || !selectedRoute.destination) return null; // Si no hay ruta seleccionada, no renderiza nada
 
     const originBuilding = points.find(point => point.name === selectedRoute.origin);
-    const destinationBuilding = points.find(point => point.name === selectedRoute.destination);
+    const destinationBuilding = points.find(point => point.name === selectedRoute.destination); // Busca los puntos de origen y destino
 
-    if (!originBuilding || !destinationBuilding) return null;
-
-    const routeCoordinates = routes[selectedRoute.origin]?.[selectedRoute.destination];
+    if (!originBuilding || !destinationBuilding) return null; 
     
-    if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null;
 
-    const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
+    const routeCoordinates = routes[selectedRoute.origin]?.[selectedRoute.destination]; // Obtiene las coordenadas de la ruta 
+    
+    if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null; 
+ 
+    const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '); // Convierte las coordenadas en un string para renderizar la ruta
 
     return (
-      <Svg style={styles.svgContainer}>
+      <Svg style={styles.svgContainer}> 
         <Polyline
           points={pointsStr}
           stroke="blue"
-          strokeWidth="3"
+          strokeWidth="4"
           fill="none"
         />
       </Svg>
@@ -61,11 +62,11 @@ export const MapWithPointsAndRoutes = ({
     <View style={styles.container}>
       {renderPoints()}
       {renderRoute()}
-      {clearRoute && (
+      {/* {clearRoute && (
         <TouchableOpacity style={styles.clearButton} onPress={clearRoute}>
           <Text style={styles.clearButtonText}>Limpiar Ruta</Text>
         </TouchableOpacity>
-      )}
+      )} */}
     </View>
   );
 };
