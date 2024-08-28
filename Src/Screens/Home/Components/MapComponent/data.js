@@ -1,47 +1,52 @@
-export const points = [
-  {
-    id: "point1",
-    name: "Punto 1",
-    left: 200,
-    top: 300,
-    width: 90,
-    height: 20,
-  },
-  {
-    id: "Modulo X",
-    name: "Modulo X",
-    left: 265,
-    top: 488,
-    width: 90,
-    height: 20,
-  },
-  {
-    id: "Modulo Z",
-    name: "Modulo Z",
-    left: 187,
-    top: 649,
-    height: 45,
-    width: 18,
-    transform: [{ rotate: "5deg" }],
-  },
-  {
-    id: "Modulo W",
-    name: "Modulo W",
-    left: 267,
-    top: 520,
-    height: 16,
-    width: 90,
-    transform: [{ rotate: "10deg" }],
-  },
-  {
-    id: "Modulo V2",
-    name: "Modulo V2",
-    left: 320,  // Ajuste en el left
-    top: 510,
-    height: 20,
-    width: 90,
-  },
-];
+export const points = [  //Los points son los puntos o id de cada edificio, representados por un touchopacity
+    {
+      id: "point1",
+      name: "Punto 1",
+      aliases: ["Punto Uno", "P1"],
+      left: 200,
+      top: 300,
+      width: 90,
+      height: 20,
+    },
+    {
+      id: "Modulo X",
+      name: "Modulo X",
+      aliases: ["modulo x", "Edificio X", "edificio x"],
+      left: 265,
+      top: 488,
+      width: 90,
+      height: 20,
+    },
+    {
+      id: "Modulo Z",
+      name: "Modulo Z",
+      aliases: ["modulo z", "Edificio Z", "edificio z"],
+      left: 187,
+      top: 649,
+      height: 45,
+      width: 18,
+      transform: [{ rotate: "5deg" }],
+    },
+    {
+      id: "Modulo W",
+      name: "Modulo W",
+      aliases: ["Módulo Doble V", "MW"],
+      left: 267,
+      top: 520,
+      height: 16,
+      width: 90,
+      transform: [{ rotate: "10deg" }],
+    },
+    {
+      id: "Modulo V2",
+      name: "Modulo V2",
+      aliases: ["Módulo 5", "MV2", "Modulo Cinco"],
+      left: 320,
+      top: 510,
+      height: 20,
+      width: 90,
+    },
+  ];
 
 export const routes = {
   'Modulo X': {
