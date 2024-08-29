@@ -5,26 +5,26 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cucei.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "black",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain"
+      "resizeMode": "contain",
+      "backgroundColor": "#0000"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "userInterfaceStyle": "dark" 
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/cucei.png",
-        "backgroundColor": "#000000" 
+        "backgroundColor": "#0000"
       }
     },
     "web": {
-      "favicon": "./images/splash.pn"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store"
