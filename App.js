@@ -22,6 +22,10 @@ function App() {
     // </NavigationContainer>
 
     <NavigationContainer>
+      <StatusBar //Barra de estaco dolor negra
+        backgroundColor="#333"
+        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+      />
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen
           name="Inicio"
