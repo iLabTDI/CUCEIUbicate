@@ -90,7 +90,7 @@ export const LoginScreen = () => {
       setTimeout(() => {
         setModalVisible(false);
         setShowSuccessAnimation(false);
-        navigation.navigate("Principal Home", { user: userData }); // Pasar el objeto userData aquí
+        navigation.navigate("Principal Home", { user: userData[0] }); // Pasar el objeto userData aquí
       }, 2000);
     } else {
       setShowError(true);

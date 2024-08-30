@@ -18,10 +18,18 @@ function App() {
     //para editar cada pantalla
 
     // <NavigationContainer>
+    // <StatusBar //Barra de estaco dolor negra
+    //     backgroundColor="#333"
+    //     barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+    //   />
     //   <MyDrawer />
     // </NavigationContainer>
 
     <NavigationContainer>
+      <StatusBar //Barra de estaco dolor negra
+        backgroundColor="#333"
+        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+      />
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen
           name="Inicio"
