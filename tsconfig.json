@@ -1,5 +1,4 @@
 {
   "compilerOptions": {},
-  "extends": "expo/tsconfig.base",
-  "types": ["hammerjs"]
+  "extends": "expo/tsconfig.base"
 }
