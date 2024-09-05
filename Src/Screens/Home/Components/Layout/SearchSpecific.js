@@ -10,6 +10,7 @@ import {
   FlatList,
   Text,
   Dimensions,
+  Platform,
 } from "react-native";
 import { faSearch, faTimes, faHistory } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -127,7 +128,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.searchIcon}
+        style={styles.search_icon}
         onPress={toggleSpecificSearch} // Muestra la barra de busqueda
       >
         <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="white" />
@@ -196,15 +197,15 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 45,
-    right: 10,
+    top: height * 0.05,
+    right: width * 0.03,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 10,
   },
-  searchIcon: {
-    top: height * 0.005,
-    left: width * 0.005,
+  search_icon: {
+    top: Platform.OS === 'ios' ? height * 0.005 : -height * 0.002,
+    right: 0, // Alineado consistentemente a la derecha
     backgroundColor: "blue",
     borderRadius: width * 0.1,
     padding: width * 0.04,
@@ -215,35 +216,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 25,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     height: 44,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
     zIndex: 10,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: "black",
   },
   historyIcon: {
-    padding: 5,
-    marginRight: 5,
+    padding: width * 0.015,
+    marginRight: width * 0.015,
   },
   closeIcon: {
-    padding: 5,
+    padding: width * 0.015,
   },
   resultsContainer: {
     position: "absolute",
-    top: 55,
-    right: 10,
-    width: "80%",
+    top: height * 0.07,
+    right: width * 0.03,
+    width: width * 0.8,
     backgroundColor: "white",
     borderRadius: 5,
-    maxHeight: 200,
+    maxHeight: height * 0.3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   resultItem: {
-    padding: 10,
+    padding: height * 0.015,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },

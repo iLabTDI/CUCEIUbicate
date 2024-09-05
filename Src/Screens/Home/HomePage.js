@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   search_icon: {
     position: "absolute",
     top: height * 0.05,
-    right: 70,
+    right: 75,
     backgroundColor: "blue",
     borderRadius: width * 0.1,
     padding: width * 0.04,
