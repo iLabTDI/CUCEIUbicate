@@ -1,13 +1,16 @@
 import React, { useState, useRef } from "react";
 import {
-  View, StyleSheet, TouchableOpacity, Image, Dimensions, Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  Text,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBars, faRoute, faUser } from "@fortawesome/free-solid-svg-icons";
-import {
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
 import { SearchRoute } from "./Components/Layout/SearchRoute";
 import { SpecificSearch } from "./Components/Layout/SearchSpecific";
@@ -43,18 +46,22 @@ export const HomePage = () => {
     bottomSheetRef.current?.close();
   };
 
-  // Ajuste para centrar y hacer zoom en un punto específico
   const zoomToPoint = (pointId) => {
     const point = points.find((p) => p.id === pointId);
     if (point && imageZoomRef.current) {
-      // Centra las coordenadas en el punto exacto del mapa
-      const centerX = point.left + (point.width / 2);
-      const centerY = point.top + (point.height / 2);
+      // Asumiendo que 1600 es el ancho real de tu imagen
+      const scaleFactorX = 1600 / width;
+      const scaleFactorY = 1400 / height;
+
+      const x = point.left * scaleFactorX;
+      const y = point.top * scaleFactorY;
+
+      console.log(`Zoom hacia: x=${x}, Y=${y}`); // Verifica las coordenadas
 
       imageZoomRef.current.centerOn({
-        x: centerX,
-        y: centerY,
-        scale: 2, // Cambia el nivel de zoom según tus necesidades
+        x,
+        y,
+        scale: 2, // Ajusta la escala para el zoom
         duration: 300,
       });
     }
@@ -62,6 +69,7 @@ export const HomePage = () => {
 
   // Función para manejar la búsqueda específica y hacer zoom en el punto
   const handleSpecificSearch = (pointId) => {
+    // console.log("Punto seleccionado:", pointId);
     setSelectedPoint(pointId);
     bottomSheetRef.current?.expand();
     setShowSpecificSearch(false);
@@ -81,23 +89,23 @@ export const HomePage = () => {
     const destination = points.find((p) => p.name === destinationName);
 
     if (origin && destination && imageZoomRef.current) {
-      const route = routes[originName]?.[destinationName];
-      if (route && route.length > 0) {
-        // Calcula el punto medio entre origen y destino
-        const midX = (origin.left + destination.left) -5;
-        const midY = (origin.top + destination.top) ;
+      const scaleFactorX = 1600 / width;
+      const scaleFactorY = 1400 / height;
 
-        imageZoomRef.current.centerOn({
-          x: midX,
-          y: midY,
-          scale: 1.5, // Nivel de zoom adecuado para ver la ruta completa
-          duration: 300,
-        });
-      }
+      const midX = (origin.left + destination.left) / 2 / scaleFactorX;
+      const midY = (origin.top + destination.top) / 2 / scaleFactorY;
+
+      imageZoomRef.current.centerOn({
+        x: midX,
+        y: midY,
+        scale: 1.5, // Ajusta el zoom para visualizar toda la ruta
+        duration: 300,
+      });
     }
   };
 
-  const clearRoute = () => { //limpia la ruta mostrada 
+  const clearRoute = () => {
+    //limpia la ruta mostrada
     setSelectedRoute(null);
   };
 
@@ -114,7 +122,7 @@ export const HomePage = () => {
 
       <TouchableOpacity
         style={styles.profile_icon}
-        onPress={() => navigation.navigate("Perfil")}> 
+        onPress={() => navigation.navigate("Perfil")}>
         <FontAwesomeIcon icon={faUser} size={width * 0.06} color="white" />
       </TouchableOpacity>
 
@@ -153,7 +161,8 @@ export const HomePage = () => {
           maxScale={2}
           enableCenterFocus={false}
           useNativeDriver={true}
-          centerOn={{ x: 250, y: -20, scale: 0.9 }}>
+          centerOn={{ x: 250, y: -20, scale: 0.9 }}
+          >
           <Image
             source={require("./assets/images/mapa2.webp")}
             style={styles.image}
@@ -167,7 +176,6 @@ export const HomePage = () => {
             clearRoute={clearRoute}
           />
         </ImageZoom>
-        
       </GestureHandlerRootView>
 
       {/* Componente de Botón Finalizar Ruta */}
@@ -212,7 +220,7 @@ const styles = StyleSheet.create({
   search_icon: {
     position: "absolute",
     top: height * 0.05,
-    right: 70,
+    right: 75,
     backgroundColor: "blue",
     borderRadius: width * 0.1,
     padding: width * 0.04,

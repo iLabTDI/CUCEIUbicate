@@ -17,6 +17,20 @@ function App() {
   return (
     //para editar cada pantalla
 
+  //   <NavigationContainer>
+  //        <StatusBar //Barra de estaco dolor negra
+  //         backgroundColor="#333"
+  //         barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+  //       />
+  //   <Stack.Navigator>
+      
+  //     <Stack.Screen
+  //       name="Drawer"
+  //       component={MyDrawer}
+  //       options={{ headerShown: false }} // Oculta el header del stack si no lo necesitas
+  //     />
+  //   </Stack.Navigator>
+  // </NavigationContainer>
     // <NavigationContainer>
     // <StatusBar //Barra de estaco dolor negra
     //     backgroundColor="#333"
@@ -26,10 +40,10 @@ function App() {
     // </NavigationContainer>
 
     <NavigationContainer>
-      <StatusBar //Barra de estaco dolor negra
-        backgroundColor="#333"
-        barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
-      />
+        <StatusBar //Barra de estaco dolor negra
+          backgroundColor="#333"
+          barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
+        />
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen
           name="Inicio"

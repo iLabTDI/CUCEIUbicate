@@ -10,6 +10,9 @@ export const MapWithPointsAndRoutes = ({
   points,
   clearRoute
 }) => {
+
+
+  
   // Renderiza los puntos en el mapa
   const renderPoints = () => {
     return points.map((point) => (
@@ -23,9 +26,17 @@ export const MapWithPointsAndRoutes = ({
             height: point.height,
             width: point.width,
             backgroundColor: selectedPoint === point.id ? 'yellow' : 'red',
+            transform: [{ rotate: `${point.rotate}deg` }], //pasar como prop el rotate para los obstaculos
           },
         ]}
-        onPress={() => onPointPress(point.id)}
+        onPress={() => {
+          onPointPress(point.id)
+          console.log(point.id)
+          console.log(`Coordenadas: x=${point.left}, Y=${point.top}`) // para sacra las coordenadas de los obstaculos
+        }}
+
+
+        // onPress={() => Alert.alert(coordenadas)}
       />
     ));
   };
@@ -45,7 +56,8 @@ export const MapWithPointsAndRoutes = ({
     if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null; 
  
     const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '); // Convierte las coordenadas en un string para renderizar la ruta
-
+    console.log(pointsStr);
+    
     return (
       <Svg style={styles.svgContainer}> 
         <Polyline
@@ -79,8 +91,7 @@ const styles = StyleSheet.create({
   },
   point: {
     position: 'absolute',
-    borderRadius: 20,
-    opacity: 0
+    opacity: 0.5
   },
   svgContainer: {
     position: 'absolute',
