@@ -84,13 +84,16 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     setSpecificSearchText(text);
     if (text.length > 0) {
       const filteredResults = points.filter((point) =>
-        point.name.toLowerCase().includes(text.toLowerCase()) || point.id.toLowerCase().includes(text.toLowerCase())
+        point.name.toLowerCase().includes(text.toLowerCase()) ||
+        point.id.toLowerCase().includes(text.toLowerCase()) ||
+        (point.aliases && point.aliases.some(alias => alias.toLowerCase().includes(text.toLowerCase())))
       );
       setSearchResults(filteredResults);
     } else {
       setSearchResults([]);
     }
   };
+  
 
   const handleSelectResult = async (item) => {
     onSearch(item.id); // Esta función se encarga del zoom en el HomePage
@@ -204,8 +207,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   search_icon: {
-    top: Platform.OS === 'ios' ? height * 0.005 : -height * 0.002,
-    right: 0, // Alineado consistentemente a la derecha
+    top: Platform.OS === 'ios' ? height * 0.001 : -height * 0.002,
+    right: Platform.OS === 'ios' ? -5 : 0, 
     backgroundColor: "blue",
     borderRadius: width * 0.1,
     padding: width * 0.04,
