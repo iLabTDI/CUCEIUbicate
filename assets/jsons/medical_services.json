@@ -1,0 +1,23 @@
+{
+    "section_description": {
+        "name": "Servicios médicos",
+        "description": "CUCEI ofrece distintos servicios médicos a niños que tienes derecho de acceder por ser estudiante.",
+        "sub_sections":{
+            "1":{
+                "title": "Unidad de servicios médicos",
+                "listed-elements":{
+                    "1": "En el módulo L, al lado de la división de ciencias básicas, podrás encontrar la unidad de servicios médicos, donde cuentan con servicios de medicina general, psicología y nutrición con un horario de atención de 8:00 a 20:00 horas.",
+                    "2": "Si tú o algún compañero presenta una situación médica de riesgo en las instalaciones, marca de manera inmediata al número 33 32 34 84 11, donde se les dará atención."
+                }
+            },
+            "2": {
+                "title": "Laboratorio de análisis clínicos",
+                "listed-elements": {
+                    "1": "Se encuentra en el módulo H, es un espacio multidisciplinario por profesionistas y estudiantes.Se encuentra abierto de 8:15 a.m a 3:00 p.m.",
+                    "2": "Aunque cuentan con distintos tipos de análisis, estos varían de acuerdo a su disponibilidad, puedes contactarte para preguntar a su número de whatsapp oficial 33 3351 4696"
+                }
+            }
+            
+        }
+    }
+}
