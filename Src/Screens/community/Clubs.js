@@ -1,9 +1,21 @@
 import * as React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-
+import { getJsons } from "../../Api/fetchJsons";
 
 
 export const Clubs = () =>{
+
+    /*
+    const url = 'url-a-la-api-correspondiente';
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        getJsons().then(result => {
+          setData(result);
+        });
+      }, []);
+      */
+     
     return(
         <View style={styles.container}>
             <Text>Clubs</Text>
