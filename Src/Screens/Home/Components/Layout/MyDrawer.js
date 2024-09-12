@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -19,18 +19,18 @@ import {
   faRadio,
   faFaceSmile,
   faUserFriends,
-  faSoccerBall,
   faMedkit,
   faCircle,
   faHandHoldingHand,
-  faPlane,
+  faSchool,
+  faBookBookmark,
+  faNewspaper,
+  faHandsAmericanSignLanguageInterpreting,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigation, useRoute} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
-// import { Profile } from "../Src/Screens/Profile/Profile";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
-import { Clubs } from "../../../community/Clubs";
 import { CUCEI_radio } from "../../../Education/CUCEI_radio";
 import { Facial_recognition } from "../../../misc/Facial_recognition";
 import { Medical_services } from "../../../Services/Medical_services";
@@ -38,6 +38,7 @@ import { Scholarships } from "../../../Education/Scholarships";
 import { School_services } from "../../../Services/School_services";
 import { Social_service } from "../../../Services/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Drawer = createDrawerNavigator();
 
@@ -45,24 +46,33 @@ const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    // Logica para cerrar sesión y redirigir a la pantalla de inicio
     navigation.navigate("Inicio");
     console.log("Cerrando sesión...");
   };
 
   return (
-    <DrawerContentScrollView {...props}>
-      <View style={styles.drawerHeader}>
+    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
+      <LinearGradient
+        colors={['#4c669f', '#3b5998', '#192f6a']}
+        style={styles.drawerHeader}
+      >
+        <Image
+          source={require('../../../../../assets/images/Logo_Cucei.png')}
+          style={styles.logo}
+        />
         <Text style={styles.drawerHeaderText}>CUCEI UBICATE</Text>
+      </LinearGradient>
+      <View style={styles.drawerItemsContainer}>
+        <DrawerItemList {...props} />
+        <DrawerItem
+          label="Cerrar Sesión"
+          onPress={handleLogout}
+          icon={({ color, size }) => (
+            <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
+          )}
+          labelStyle={styles.drawerItemLabel}
+        />
       </View>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        label="Cerrar Sesión"
-        onPress={handleLogout}
-        icon={({ focused, color, size }) => (
-          <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
-        )}
-      />
     </DrawerContentScrollView>
   );
 };
@@ -73,7 +83,7 @@ const DrawerHeaderButton = () => {
   return (
     <TouchableOpacity
       onPress={() => navigation.openDrawer()}
-      style={styles.menu_icon}>
+      style={styles.menuIcon}>
       <FontAwesomeIcon icon={faBars} size={23} color="white" />
     </TouchableOpacity>
   );
@@ -82,17 +92,25 @@ const DrawerHeaderButton = () => {
 export const MyDrawer = () => {
   const route = useRoute();
   const { user } = route.params;
+
   return (
     <Drawer.Navigator
       initialRouteName="Mapa"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#512DA8",
+          backgroundColor: "#4c669f",
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        drawerStyle: {
+          backgroundColor: '#f5f5f5',
+          width: 280,
+        },
+        drawerActiveBackgroundColor: '#e0e0e0',
+        drawerActiveTintColor: '#4c669f',
+        drawerInactiveTintColor: '#333',
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
@@ -101,10 +119,10 @@ export const MyDrawer = () => {
         initialParams={{ user }}
         options={{
           drawerLabel: "Inicio",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faMap} size={size} color={color} />
           ),
-          headerShown: false, // Deshabilitar el header para la pantalla del mapa
+          headerShown: false,
         }}
       />
       <Drawer.Screen
@@ -117,6 +135,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
           headerShown: true,
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -124,10 +143,10 @@ export const MyDrawer = () => {
         component={Directory}
         options={{
           drawerLabel: "Directorio",
-          drawerIcon: ({ focused, color, size }) => (
-            <FontAwesomeIcon icon={faDirections} size={size} color={color} />
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faBookBookmark} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -135,10 +154,10 @@ export const MyDrawer = () => {
         component={Articles}
         options={{
           drawerLabel: "Artículos",
-          drawerIcon: ({ focused, color, size }) => (
-            <FontAwesomeIcon icon={faBook} size={size} color={color} />
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faNewspaper} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -146,14 +165,14 @@ export const MyDrawer = () => {
         component={Social_service}
         options={{
           drawerLabel: "Servicio social",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon
-              icon={faHandHoldingHand}
+              icon={faHandsAmericanSignLanguageInterpreting}
               size={size}
               color={color}
             />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -161,10 +180,10 @@ export const MyDrawer = () => {
         component={Scholarships}
         options={{
           drawerLabel: "Becas",
-          drawerIcon: ({ focused, color, size }) => (
-            <FontAwesomeIcon icon={faPlane} size={size} color={color} />
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faSchool} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -172,10 +191,10 @@ export const MyDrawer = () => {
         component={CUCEI_radio}
         options={{
           drawerLabel: "Radio CUCEI",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faRadio} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -183,10 +202,10 @@ export const MyDrawer = () => {
         component={Facial_recognition}
         options={{
           drawerLabel: "Reconocimiento facial",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faFaceSmile} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -194,21 +213,10 @@ export const MyDrawer = () => {
         component={School_services}
         options={{
           drawerLabel: "Servicios escolares",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faUserFriends} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
-        }}
-      />
-      <Drawer.Screen
-        name="Clubes"
-        component={Clubs}
-        options={{
-          drawerLabel: "Clubes",
-          drawerIcon: ({ focused, color, size }) => (
-            <FontAwesomeIcon icon={faSoccerBall} size={size} color={color} />
-          ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
       <Drawer.Screen
@@ -216,10 +224,10 @@ export const MyDrawer = () => {
         component={Medical_services}
         options={{
           drawerLabel: "Servicios médicos",
-          drawerIcon: ({ focused, color, size }) => (
+          drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faMedkit} size={size} color={color} />
           ),
-          headerLeft: () => <DrawerHeaderButton />, // Agregar botón de menú en el header
+          headerLeft: () => <DrawerHeaderButton />,
         }}
       />
     </Drawer.Navigator>
@@ -227,18 +235,37 @@ export const MyDrawer = () => {
 };
 
 const styles = StyleSheet.create({
+  drawerContent: {
+    flex: 1,
+  },
   drawerHeader: {
-    backgroundColor: "#512DA8",
-    height: 140,
+    height: 180,
     alignItems: "center",
     justifyContent: "center",
+    padding: 16,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+    borderRadius: 40,
   },
   drawerHeaderText: {
     color: "white",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
+    textAlign: "center",
   },
-  menu_icon: {
-    paddingLeft: 10,
+  drawerItemsContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    paddingTop: 10,
+  },
+  drawerItemLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  menuIcon: {
+    paddingLeft: 16,
   },
 });
