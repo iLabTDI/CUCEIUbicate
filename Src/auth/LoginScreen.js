@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
@@ -32,42 +33,8 @@ export const LoginScreen = () => {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const users = [
-    { username: "yair", password: "admin" },
-    { username: "admin", password: "admin" },
-    { username: "Admin", password: "Admin" },
-    { username: "ADMIN", password: "ADMIN" },
-  ];
-
-  const handleLogin = async () => {
-    setShowError(false);
-    setShowIncorrectMessage(false);
-
-    const adminUsername = username.trim();
-    const adminPassword = password.trim();
-
-    if (!adminUsername || !adminPassword) {
-      setShowError(true);
-      setShowIncorrectMessage(false);
-      return;
-    }
-
-    const { isMatch, userData } = await login(adminUsername, adminPassword);
-
-    if (isMatch) {
-      setShowSuccessAnimation(true);
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        setShowSuccessAnimation(false);
-        navigation.navigate("Principal Home", {user: userData});
-      }, 2000);
-    } else {
-      setShowError(true);
-      setShowIncorrectMessage(true);
-    }
-  };
 
   const handleLoginTest = async () => {
     setShowError(false);
@@ -82,7 +49,11 @@ export const LoginScreen = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const { isMatch, userData } = await login(adminUsername, adminPassword);
+
+    setIsLoading(false);
 
     if (isMatch) {
       setShowSuccessAnimation(true);
@@ -173,8 +144,15 @@ export const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleLoginTest} style={styles.loginButton}>
-            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          <TouchableOpacity
+            onPress={handleLoginTest}
+            style={styles.loginButton}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" zIndex={10}/>
+            ) : (
+              <Text style={styles.buttonText}>Iniciar Sesión</Text> // Texto del botón cuando no hay carga
+            )}
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRegister}>
             <Text style={styles.registerText}>
@@ -318,7 +296,6 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.6,
     height: windowWidth * 0.6,
   },
-
 });
 
 export default LoginScreen;
