@@ -11,6 +11,8 @@ import {
   Platform,
   Dimensions,
   ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
@@ -23,6 +25,10 @@ import {
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { login } from "../Api/login";
+import { LinearGradient } from "expo-linear-gradient";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export const LoginScreen = () => {
   const navigation = useNavigation();
@@ -35,23 +41,18 @@ export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const handleLoginTest = async () => {
     setShowError(false);
     setShowIncorrectMessage(false);
 
-    const adminUsername = username;
-    const adminPassword = password;
-
-    if (!adminUsername || !adminPassword) {
+    if (!username || !password) {
       setShowError(true);
-      setShowIncorrectMessage(false);
       return;
     }
 
     setIsLoading(true);
 
-    const { isMatch, userData } = await login(adminUsername, adminPassword);
+    const { isMatch, userData } = await login(username, password);
 
     setIsLoading(false);
 
@@ -61,10 +62,9 @@ export const LoginScreen = () => {
       setTimeout(() => {
         setModalVisible(false);
         setShowSuccessAnimation(false);
-        navigation.navigate("Principal Home", { user: userData[0] }); // Pasar el objeto userData aquí
+        navigation.navigate("Principal Home", { user: userData[0] });
       }, 2000);
     } else {
-      setShowError(true);
       setShowIncorrectMessage(true);
     }
   };
@@ -78,213 +78,210 @@ export const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}>
-      <View style={styles.container}>
-        <Image
-          source={require("../../assets/images/Logo_Cucei.png")}
-          style={styles.logo}
-        />
-        <View style={styles.iconCircle}>
-          <Image
-            source={require("../assets/images/usuario.png")}
-            style={styles.userImage}
-          />
-        </View>
-
-        <View style={styles.loginBox}>
-          <Text>Correo electrónico:</Text>
-          <View
-            style={[
-              styles.inputContainer,
-              (showError || showIncorrectMessage) && { borderColor: "red" },
-            ]}>
-            <FontAwesomeIcon
-              icon={faEnvelope}
-              style={[
-                styles.iconStyle,
-                (showError || showIncorrectMessage) && { color: "red" },
-              ]}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="alumno@Cucei.com"
-              placeholderTextColor="gray"
-              onChangeText={(text) => setUsername(text)}
-              value={username}
-            />
-          </View>
-          <Text style={styles.label}>Contraseña:</Text>
-          <View
-            style={[
-              styles.inputContainer,
-              (showError || showIncorrectMessage) && { borderColor: "red" },
-            ]}>
-            <FontAwesomeIcon
-              icon={faLock}
-              style={[
-                styles.iconStyle,
-                (showError || showIncorrectMessage) && { color: "red" },
-              ]}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              placeholderTextColor="gray"
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-            />
-            <TouchableOpacity onPress={togglePasswordVisibility}>
-              <FontAwesomeIcon
-                icon={showPassword ? faEyeSlash : faEye}
-                style={styles.eyeIcon}
-                size={20}
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient colors={["#DBE2EF", "#F5F7F8"]} style={styles.container}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 10} // Ajuste para iOS
+        >
+          <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+              <Image
+                source={require("../../assets/images/Logo_Cucei.png")}
+                style={styles.logo}
+                resizeMode="contain"
               />
-            </TouchableOpacity>
+              <View style={styles.loginBox}>
+                <View style={styles.iconCircle}>
+                  <Image
+                    source={require("../assets/images/usuario.png")}
+                    style={styles.userImage}
+                  />
+                </View>
+                <Text style={styles.title}>Iniciar Sesión</Text>
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faEnvelope} style={styles.iconStyle} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Correo electrónico"
+                    placeholderTextColor="#999"
+                    onChangeText={setUsername}
+                    value={username}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faLock} style={styles.iconStyle} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Contraseña"
+                    secureTextEntry={!showPassword}
+                    placeholderTextColor="#999"
+                    onChangeText={setPassword}
+                    value={password}
+                  />
+                  <TouchableOpacity onPress={togglePasswordVisibility}>
+                    <FontAwesomeIcon
+                      icon={showPassword ? faEyeSlash : faEye}
+                      style={styles.eyeIcon}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {showError && (
+                  <Text style={styles.errorText}>
+                    Por favor, completa ambos campos.
+                  </Text>
+                )}
+                {showIncorrectMessage && (
+                  <Text style={styles.errorText}>
+                    Correo o Contraseña incorrectos.
+                  </Text>
+                )}
+                <TouchableOpacity
+                  onPress={handleLoginTest}
+                  style={styles.loginButton}
+                  disabled={isLoading}>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Iniciar Sesión</Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleRegister}>
+                  <Text style={styles.registerText}>
+                    ¿No tienes cuenta? ¡Regístrate!
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
-          <TouchableOpacity
-            onPress={handleLoginTest}
-            style={styles.loginButton}
-            disabled={isLoading}>
-            {isLoading ? (
-              <ActivityIndicator size="small" color="#fff" zIndex={10}/>
-            ) : (
-              <Text style={styles.buttonText}>Iniciar Sesión</Text> // Texto del botón cuando no hay carga
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleRegister}>
-            <Text style={styles.registerText}>
-              ¿No tienes cuenta? ¡Regístrate!
-            </Text>
-          </TouchableOpacity>
-          {showError && (
-            <Text style={styles.errorText}>
-              Por favor, completa ambos campos.
-            </Text>
-          )}
-          {showIncorrectMessage && (
-            <Text style={styles.errorText}>
-              Correo o Contraseña incorrectos.
-            </Text>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          {showSuccessAnimation && (
+            <LottieView
+              source={successAnimation}
+              autoPlay
+              loop={false}
+              style={styles.animation}
+            />
           )}
         </View>
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}>
-          <View style={styles.modalContainer}>
-            {showSuccessAnimation && (
-              <LottieView
-                source={successAnimation}
-                autoPlay
-                loop={false}
-                style={styles.animation}
-              />
-            )}
-          </View>
-        </Modal>
-      </View>
-    </KeyboardAvoidingView>
+      </Modal>
+    </SafeAreaView>
   );
 };
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
-
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  scrollViewContent: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#E4EDF9",
-    width: "100%",
+    paddingVertical: 20,
+  },
+  logo: {
+    width: 400,
+    height: 200,
+    marginBottom: 20,
   },
   loginBox: {
-    width: windowWidth * 0.83,
-    padding: windowWidth * 0.08,
-    borderRadius: windowWidth * 0.04,
+    width: windowWidth * 0.85,
+    padding: windowWidth * 0.06,
+    borderRadius: windowWidth * 0.05,
+    backgroundColor: "white",
+    alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 10,
-    backgroundColor: "white",
+    elevation: 5,
   },
-  label: {
-    fontSize: windowWidth * 0.04,
-    marginTop: windowWidth * 0.02,
+  iconCircle: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: windowWidth * 0.1,
+    width: windowWidth * 0.2,
+    height: windowWidth * 0.2,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -windowWidth * 0.1,
+    marginBottom: windowWidth * 0.03,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  userImage: {
+    width: windowWidth * 0.12,
+    height: windowWidth * 0.12,
+  },
+  title: {
+    fontSize: windowWidth * 0.055,
+    fontWeight: "bold",
+    color: "#0b34b0",
+    marginBottom: windowWidth * 0.04,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: windowWidth * 0.003,
+    borderWidth: 1,
+    borderColor: "#ddd",
     borderRadius: windowWidth * 0.02,
-    padding: windowWidth * 0.015,
-    marginTop: windowWidth * 0.02,
+    paddingHorizontal: windowWidth * 0.03,
     marginBottom: windowWidth * 0.03,
+    width: "100%",
   },
   iconStyle: {
+    color: "#999",
     marginRight: windowWidth * 0.02,
   },
   input: {
-    fontSize: windowWidth * 0.035,
     flex: 1,
-    padding: windowWidth * 0.015,
-    borderWidth: 0,
+    fontSize: windowWidth * 0.04,
+    paddingVertical: windowWidth * 0.025,
+  },
+  eyeIcon: {
+    color: "#999",
   },
   loginButton: {
     backgroundColor: "#0b34b0",
-    borderRadius: windowWidth * 0.03,
-    paddingVertical: windowWidth * 0.03,
-    marginTop: windowWidth * 0.03,
+    borderRadius: windowWidth * 0.02,
+    paddingVertical: windowWidth * 0.035,
+    width: "100%",
+    alignItems: "center",
+    marginTop: windowWidth * 0.02,
   },
   buttonText: {
-    textAlign: "center",
     color: "white",
     fontSize: windowWidth * 0.04,
     fontWeight: "bold",
   },
   registerText: {
-    marginTop: windowWidth * 0.03,
-    fontSize: windowWidth * 0.04,
+    marginTop: windowWidth * 0.04,
+    fontSize: windowWidth * 0.035,
     color: "#0b34b0",
-    textDecorationLine: "underline",
-    textAlign: "center",
   },
   errorText: {
     color: "red",
+    fontSize: windowWidth * 0.035,
+    marginBottom: windowWidth * 0.02,
     textAlign: "center",
-    paddingTop: windowWidth * 0.045,
-  },
-  userImage: {
-    width: 55,
-    height: 55,
-  },
-  iconCircle: {
-    backgroundColor: "white",
-    borderRadius: windowWidth * 0.2,
-    width: windowWidth * 0.2,
-    height: windowWidth * 0.2,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: -windowWidth * 0.05,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: windowWidth * 0.02 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    zIndex: 1,
-  },
-  logo: {
-    marginTop: -windowHeight * 0.1,
-    marginBottom: windowHeight * 0.05,
-    width: windowWidth * 0.8,
-    height: windowHeight * 0.2,
   },
   modalContainer: {
     flex: 1,
