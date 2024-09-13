@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   iconStyle: {
-    color: '#999',
+    color: '#0b34b0',
     marginRight: width * 0.02,
   },
   input: {
