@@ -11,13 +11,17 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { validar_codigo } from "../Api/validaciones";
-import { validar_usuario } from "../Api/validaciones";
+import { validar_codigo, validar_usuario } from "../Api/validaciones";
 import { get_degrees } from "../Api/consultas";
 import { alta_usuario } from "../Api/altaUsuario";
 import LottieView from "lottie-react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faUser, faEnvelope, faIdCard, faGraduationCap, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+
+const { width, height } = Dimensions.get("window");
 
 export const CompleteProfile = () => {
   const [name, setName] = useState("");
@@ -27,27 +31,23 @@ export const CompleteProfile = () => {
   const [selectedCareer, setSelectedCareer] = useState("");
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [nameError, setNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [CodigoError, setCodigoError] = useState(false);
+  const [careerOptions, setCareerOptions] = useState([]);
 
   const navigation = useNavigation();
-
   const route = useRoute();
   const { mail, pass } = route.params;
   const correo = mail;
   const contraseña = pass;
-
-  const [careerOptions, setCareerOptions] = useState([]);
 
   useEffect(() => {
     const fetchDegrees = async () => {
       const degrees = await get_degrees();
       setCareerOptions(degrees);
     };
-
     fetchDegrees();
   }, []);
 
@@ -92,283 +92,317 @@ export const CompleteProfile = () => {
       const timer = setTimeout(() => {
         navigation.navigate("Inicio");
       }, 4000);
-
       return () => clearTimeout(timer);
     }
   }, [isProfileComplete, navigation]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.KeyboardAvoidingView}>
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={styles.container}>
-          {!isProfileComplete && (
-            <>
-              <Text style={styles.title}>Completa tu Perfil</Text>
-              <LottieView
-                source={require("../assets/animations/completeProfile.json")}
-                autoPlay
-                loop={true}
-                style={styles.animation}
-              />
-            </>
-          )}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingView}>
+        <ScrollView 
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollViewContent}
+        >
+          <View style={styles.container}>
+            {!isProfileComplete ? (
+              <>
+                <Text style={styles.title}>Completa tu Perfil</Text>
+                <LottieView
+                  source={require("../assets/animations/completeProfile.json")}
+                  autoPlay
+                  loop={true}
+                  style={styles.animation}
+                />
+                <View style={styles.formContainer}>
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                    <TextInput
+                      style={[styles.input, nameError && styles.errorInput]}
+                      placeholder="Nombre"
+                      placeholderTextColor="#999"
+                      value={name}
+                      onChangeText={(text) => {
+                        setName(text);
+                        setNameError(false);
+                      }}
+                    />
+                  </View>
+                  {nameError && <Text style={styles.errorText}>Campo requerido</Text>}
 
-          {isProfileComplete ? (
-            <View style={{ marginTop: 130 }}>
-              <Text style={styles.profileCompleteText}>PERFIL COMPLETADO.</Text>
-              <Text style={styles.profileCompleteText}>
-                ¡Bienvenido, @{username}!
-              </Text>
-              <Image
-                source={require("../../assets/images/cucei.png")}
-                style={styles.logo}
-              />
-              <LottieView
-                source={require("../assets/animations/Confetti-2.json")}
-                autoPlay
-                loop={true}
-                style={{
-                  position: "absolute",
-                  top: -50,
-                  left: -30,
-                  width: "110%",
-                  height: "150%",
-                  zIndex: 1,
-                }}
-              />
-            </View>
-          ) : (
-            <View style={styles.profileBox}>
-              <Text style={styles.label}>Nombre:</Text>
-              <TextInput
-                style={[styles.input, nameError && styles.errorInput]}
-                placeholder="Ingresa tu nombre"
-                placeholderTextColor="gray"
-                value={name}
-                onChangeText={(text) => {
-                  setName(text);
-                  setNameError(false);
-                }}
-              />
-              {nameError && (
-                <Text style={styles.errorText}>Campo requerido</Text>
-              )}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                    <TextInput
+                      style={[styles.input, lastNameError && styles.errorInput]}
+                      placeholder="Apellidos"
+                      placeholderTextColor="#999"
+                      value={lastName}
+                      onChangeText={(text) => {
+                        setLastName(text);
+                        setLastNameError(false);
+                      }}
+                    />
+                  </View>
+                  {lastNameError && <Text style={styles.errorText}>Campo requerido</Text>}
 
-              <Text style={styles.label}>Apellidos:</Text>
-              <TextInput
-                style={[styles.input, lastNameError && styles.errorInput]}
-                placeholder="Ingresa tus apellidos"
-                placeholderTextColor="gray"
-                value={lastName}
-                onChangeText={(text) => {
-                  setLastName(text);
-                  setLastNameError(false);
-                }}
-              />
-              {lastNameError && (
-                <Text style={styles.errorText}>Campo requerido</Text>
-              )}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} />
+                    <TextInput
+                      style={[styles.input, usernameError && styles.errorInput]}
+                      placeholder="Nombre de Usuario"
+                      placeholderTextColor="#999"
+                      value={username}
+                      onChangeText={(text) => {
+                        setUsername(text);
+                        setUsernameError(false);
+                      }}
+                    />
+                  </View>
+                  {usernameError && <Text style={styles.errorText}>Este usuario ya ha sido registrado</Text>}
 
-              <Text style={styles.label}>Nombre de Usuario:</Text>
-              <TextInput
-                style={[styles.input, usernameError && styles.errorInput]}
-                placeholder="@CUCEI_777"
-                placeholderTextColor="gray"
-                value={username}
-                onChangeText={(text) => {
-                  setUsername(text);
-                  setUsernameError(false);
-                }}
-              />
-              {usernameError && (
-                <Text style={styles.errorText}>
-                  Este usuario ya ha sido registrado
-                </Text>
-              )}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} />
+                    <TextInput
+                      style={[styles.input, CodigoError && styles.errorInput]}
+                      placeholder="Código de estudiante"
+                      placeholderTextColor="#999"
+                      value={Codigo}
+                      onChangeText={(text) => {
+                        setCodigo(text);
+                        setCodigoError(false);
+                      }}
+                    />
+                  </View>
+                  {CodigoError && <Text style={styles.errorText}>Este código ya ha sido registrado</Text>}
 
-              <Text style={styles.label}>Codigo de estudiante:</Text>
-              <TextInput
-                style={[styles.input, CodigoError && styles.errorInput]}
-                placeholder="222333444"
-                placeholderTextColor="gray"
-                value={Codigo}
-                onChangeText={(text) => {
-                  setCodigo(text);
-                  setCodigoError(false);
-                }}
-              />
-              {CodigoError && (
-                <Text style={styles.errorText}>
-                  Este codigo ya ha sido registrado
-                </Text>
-              )}
+                  <TouchableOpacity style={styles.pickerContainer} onPress={toggleModal}>
+                    <FontAwesomeIcon icon={faGraduationCap} style={styles.inputIcon} />
+                    <Text style={styles.pickerText}>{selectedCareer || "Seleccione una carrera"}</Text>
+                    <FontAwesomeIcon icon={faChevronDown} style={styles.pickerIcon} />
+                  </TouchableOpacity>
 
-              <Text style={styles.label}>Carrera:</Text>
-              <TouchableOpacity style={styles.picker} onPress={toggleModal}>
-                <Text>{selectedCareer || "Seleccione una carrera"}</Text>
-              </TouchableOpacity>
-
-              <Modal
-                visible={isModalVisible}
-                animationType="slide"
-                transparent={true}>
-                <View style={styles.modalContainer}>
-                  <Text style={styles.modalTitle}>Seleccione una carrera</Text>
-                  <ScrollView style={styles.careerOptionsContainer}>
-                    {careerOptions.map((option, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={styles.careerOption}
-                        onPress={() => {
-                          setSelectedCareer(option.slice(-4));
-                          toggleModal();
-                        }}>
-                        <Text>{option}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={toggleModal}>
-                    <Text style={styles.buttonText}>Cerrar</Text>
+                  <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
+                    <Text style={styles.buttonText}>Terminar</Text>
                   </TouchableOpacity>
                 </View>
-              </Modal>
+              </>
+            ) : (
+              <View style={styles.completedContainer}>
+                <Text style={styles.profileCompleteText}>PERFIL COMPLETADO</Text>
+                <Text style={styles.welcomeText}>¡Bienvenido, @{username}!</Text>
+                <Image
+                  source={require("../../assets/images/cucei.png")}
+                  style={styles.logo}
+                />
+                <LottieView
+                  source={require("../assets/animations/Confetti-2.json")}
+                  autoPlay
+                  loop={true}
+                  style={styles.confetti}
+                />
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleCompleteProfile}>
-                <Text style={styles.buttonText}>Terminar</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccione una carrera</Text>
+            <ScrollView style={styles.careerOptionsContainer}>
+              {careerOptions.map((option, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.careerOption}
+                  onPress={() => {
+                    setSelectedCareer(option.slice(-4));
+                    toggleModal();
+                  }}>
+                  <Text style={styles.careerOptionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+              <Text style={styles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </Modal>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: "#f0f0f0",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
     justifyContent: "center",
+    padding: width * 0.05,
+  },
+  container: {
     alignItems: "center",
-    backgroundColor: "#E4EDF9",
-    width: "100%",
   },
-
-  KeyboardAvoidingView: {
-    flex: 1,
-    backgroundColor: "#E4EDF9",
-    width: "100%",
-  },
-
   title: {
-    fontSize: 35,
+    fontSize: width * 0.08,
     fontWeight: "bold",
-    marginBottom: 20,
-    color: "#000",
-    paddingTop: 10,
+    marginBottom: height * 0.02,
+    color: "#0b34b0",
   },
-  profileBox: {
-    width: "80%",
+  animation: {
+    width: width * 0.6,
+    height: width * 0.4,
+    marginBottom: height * 0.02,
+  },
+  formContainer: {
+    width: "100%",
     backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
+    padding: width * 0.05,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
     elevation: 5,
-    marginBottom: 60,
   },
-  label: {
-    fontSize: 16,
-    marginTop: 10,
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: height * 0.015,
+    paddingHorizontal: width * 0.03,
+  },
+  inputIcon: {
+    marginRight: width * 0.02,
+    color: "#0b34b0",
   },
   input: {
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 10,
+    flex: 1,
+    paddingVertical: height * 0.015,
+    fontSize: width * 0.04,
   },
   errorInput: {
     borderColor: "red",
   },
-  picker: {
-    borderWidth: 1,
-    borderColor: "black",
-    backgroundColor: "white",
-    borderRadius: 5,
-    marginTop: 5,
-    marginBottom: 10,
-    padding: 12,
+  errorText: {
+    color: "red",
+    fontSize: width * 0.035,
+    marginBottom: height * 0.01,
   },
-  profileCompleteText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: 50,
+  pickerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: height * 0.015,
+    paddingHorizontal: width * 0.03,
+    paddingVertical: height * 0.015,
+  },
+  pickerText: {
+    flex: 1,
+    fontSize: width * 0.04,
+    color: "#333",
+  },
+  pickerIcon: {
+    color: "#0b34b0",
   },
   button: {
     backgroundColor: "#0b34b0",
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginTop: 10,
+    paddingVertical: height * 0.02,
+    alignItems: "center",
+    marginTop: height * 0.02,
   },
   buttonText: {
-    textAlign: "center",
     color: "white",
-    fontSize: 16,
+    fontSize: width * 0.04,
     fontWeight: "bold",
+  },
+  completedContainer: {
+    alignItems: "center",
+  },
+  profileCompleteText: {
+    fontSize: width * 0.08,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#0b34b0",
+    marginBottom: height * 0.02,
+  },
+  welcomeText: {
+    fontSize: width * 0.06,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: height * 0.04,
+  },
+  logo: {
+    width: width * 0.6,
+    height: width * 0.6,
+    resizeMode: "contain",
+  },
+  confetti: {
+    position: "absolute",
+    width: width,
+    height: height,
+    zIndex: 1,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: width * 0.05,
+    width: width * 0.9,
+    maxHeight: height * 0.8,
   },
   modalTitle: {
-    fontSize: 30,
+    fontSize: width * 0.06,
     fontWeight: "bold",
-    marginBottom: 20,
-    color: "white",
+    marginBottom: height * 0.02,
+    textAlign: "center",
+    color: "#0b34b0",
   },
   careerOptionsContainer: {
-    maxHeight: Dimensions.get("window").height * 0.7,
-    padding: 20,
-    backgroundColor: "#E4EDF9",
-    borderRadius: 10,
+    maxHeight: height * 0.5,
   },
   careerOption: {
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 4,
-    padding: 15,
-    marginVertical: 5,
-    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingVertical: height * 0.02,
+  },
+  careerOptionText: {
+    fontSize: width * 0.04,
   },
   closeButton: {
     backgroundColor: "#0b34b0",
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 10,
+    borderRadius: 10,
+    paddingVertical: height * 0.015,
+    alignItems: "center",
+    marginTop: height * 0.02,
   },
-  logo: {
-    width: 300,
-    height: 300,
-  },
-  errorText: {
-    color: "red",
-    marginTop: 1,
-  },
-  animation: {
-    width: 300,
-    height: 200,
+  closeButtonText: {
+    color: "white",
+    fontSize: width * 0.04,
+    fontWeight: "bold",
   },
 });
+
+export default CompleteProfile;
