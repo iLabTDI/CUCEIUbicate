@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "./Src/auth/LoginScreen";
 import { CompleteProfile } from "./Src/auth/CompleteProfile";
 import { RegisterScreen } from "./Src/auth/RegisterScreen";
-import { MyDrawer } from "./Src/Screens/Home/Components/Layout/MyDrawer";
+import { MyDrawer } from "./Src/Screens/Home/Components/SearchBarsComponent/MyDrawer";
 import { setRandomFallback } from "bcryptjs";
 import { getRandomBase64 } from "react-native-get-random-values";
 import { StatusBar, Platform } from "react-native";
