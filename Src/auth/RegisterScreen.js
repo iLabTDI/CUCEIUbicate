@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: width * 0.02,
-    color: "#999",
+    color: "#0b34b0",
   },
   input: {
     flex: 1,
