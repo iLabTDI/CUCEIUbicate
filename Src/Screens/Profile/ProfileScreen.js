@@ -1,10 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, Image, TouchableOpacity, Modal, FlatList, StyleSheet,
   Animated, PanResponder, Dimensions, ScrollView
 } from 'react-native';
-import { GestureHandlerRootView, RectButton } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, RectButton, PinchGestureHandler, State, TapGestureHandler } from 'react-native-gesture-handler';
 import { useRoute } from "@react-navigation/native";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const animalIcons = [
   { id: '1', uri: require('./Iconos_animales/abeja.png') },
@@ -31,28 +37,68 @@ export const ProfileScreen = () => {
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [scale, setScale] = useState(1);
-  const [translateX, setTranslateX] = useState(0);
-  const [translateY, setTranslateY] = useState(0);
+
+  const scale = useRef(new Animated.Value(1)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: (_, gestureState) => {
-        setTranslateX(prev => prev + gestureState.dx / scale);
-        setTranslateY(prev => prev + gestureState.dy / scale);
-      },
-      onPanResponderGrant: () => {
-        // Inicio del gesto
-      },
+      onPanResponderMove: Animated.event(
+        [null, { dx: translateX, dy: translateY }],
+        { useNativeDriver: false }
+      ),
       onPanResponderRelease: () => {
-        // Fin del gesto
+        // No resetting the position to allow persistent panning
       },
     })
   ).current;
 
-  const handleZoomIn = () => setScale(prev => Math.min(prev + 0.1, 3));
-  const handleZoomOut = () => setScale(prev => Math.max(prev - 0.1, 0.5));
+  const pinchRef = useRef();
+  const doubleTapRef = useRef();
+
+  const handlePinch = Animated.event(
+    [{ nativeEvent: { scale: scale } }],
+    { useNativeDriver: false }
+  );
+
+  const handlePinchStateChange = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      // No resetting the scale to allow persistent zoom
+    }
+  };
+
+  const handleDoubleTap = () => {
+    Animated.parallel([
+      Animated.spring(scale, { toValue: 1, useNativeDriver: false }),
+      Animated.spring(translateX, { toValue: 0, useNativeDriver: false }),
+      Animated.spring(translateY, { toValue: 0, useNativeDriver: false })
+    ]).start();
+  };
+
+  useEffect(() => {
+    loadSelectedIcon();
+  }, []);
+
+  const loadSelectedIcon = async () => {
+    try {
+      const savedIcon = await AsyncStorage.getItem('selectedIcon');
+      if (savedIcon) {
+        setSelectedIcon(JSON.parse(savedIcon));
+      }
+    } catch (error) {
+      console.error('Error loading selected icon:', error);
+    }
+  };
+
+  const saveSelectedIcon = async (icon) => {
+    try {
+      await AsyncStorage.setItem('selectedIcon', JSON.stringify(icon));
+    } catch (error) {
+      console.error('Error saving selected icon:', error);
+    }
+  };
 
   const toggleExpand = () => setIsExpanded(!isExpanded);
 
@@ -62,6 +108,7 @@ export const ProfileScreen = () => {
 
   const handleAvatarChange = (newAvatar) => {
     setSelectedIcon(newAvatar);
+    saveSelectedIcon(newAvatar);
     setModalVisible(false);
   };
 
@@ -99,29 +146,12 @@ export const ProfileScreen = () => {
 
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <View style={styles.zoomControls}>
-              <TouchableOpacity onPress={handleZoomIn} style={styles.zoomButton}>
-                <Text style={styles.zoomButtonText}>+</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleZoomOut} style={styles.zoomButton}>
-                <Text style={styles.zoomButtonText}>-</Text>
-              </TouchableOpacity>
-            </View>
-            <View {...panResponder.panHandlers}>
+            <TouchableOpacity onPress={toggleCurriculumModal}>
               <Image
                 source={careerImages[userData.degree_code]}
-                style={[
-                  styles.curriculumImage,
-                  {
-                    transform: [
-                      { scale: scale },
-                      { translateX: translateX },
-                      { translateY: translateY }
-                    ]
-                  }
-                ]}
+                style={styles.curriculumImage}
               />
-            </View>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -153,6 +183,50 @@ export const ProfileScreen = () => {
             </View>
           </View>
         </Modal>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isCurriculumModalVisible}
+          onRequestClose={toggleCurriculumModal}
+        >
+          <View style={styles.curriculumModalOverlay}>
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={toggleCurriculumModal}
+            >
+              <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+            </TouchableOpacity>
+            <TapGestureHandler
+              ref={doubleTapRef}
+              numberOfTaps={2}
+              onActivated={handleDoubleTap}
+            >
+              <PinchGestureHandler
+                ref={pinchRef}
+                onGestureEvent={handlePinch}
+                onHandlerStateChange={handlePinchStateChange}
+              >
+                <Animated.View {...panResponder.panHandlers}>
+                  <Animated.Image
+                    source={careerImages[userData.degree_code]}
+                    style={[
+                      styles.expandedCurriculumImage,
+                      {
+                        transform: [
+                          { scale },
+                          { translateX },
+                          { translateY }
+                        ]
+                      }
+                    ]}
+                    resizeMode="contain"
+                  />
+                </Animated.View>
+              </PinchGestureHandler>
+            </TapGestureHandler>
+          </View>
+        </Modal>
       </GestureHandlerRootView>
     </ScrollView>
   );
@@ -175,7 +249,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   header: {
-    backgroundColor: '#4a0e4e',
+    backgroundColor: '#0b34b0',
     padding: 15,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
@@ -199,16 +273,16 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 3,
-    borderColor: '#4a0e4e',
+    borderColor: '#0b34b0',
   },
   editIcon: {
     position: 'absolute',
-    right: -10,
-    bottom: -10,
-    backgroundColor: '#4a0e4e',
+    right: -5,
+    bottom: -8,
+    backgroundColor: '#0b34b0',
     borderRadius: 15,
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -219,7 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#4a0e4e',
+    color: '#0b34b0',
   },
   infoContainer: {
     width: '100%',
@@ -231,10 +305,10 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
-    color: '#4a0e4e',
+    color: '#0b34b0',
   },
   expandButton: {
-    backgroundColor: '#4a0e4e',
+    backgroundColor: '#0b34b0',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -251,27 +325,8 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
   },
-  zoomControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  zoomButton: {
-    backgroundColor: '#4a0e4e',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 10,
-  },
-  zoomButtonText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   curriculumImage: {
-    width: 300,
+    width: 350,
     height: 300,
     resizeMode: 'contain',
   },
@@ -292,7 +347,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#4a0e4e',
+    color: '#0b34b0',
   },
   iconButton: {
     margin: 8,
@@ -304,7 +359,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: '#4a0e4e',
+    backgroundColor: '#0b34b0',
     borderRadius: 10,
     padding: 10,
   },
@@ -313,4 +368,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  curriculumModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  expandedCurriculumImage: {
+    width: windowWidth,
+    height: windowHeight,
+  },
+  closeModalButton: {
+    position: 'absolute',
+    width: 35,
+    height: 35,
+    top: 70,
+    right: 20,
+    zIndex: 1,
+  },
 });
+
+export default ProfileScreen;
