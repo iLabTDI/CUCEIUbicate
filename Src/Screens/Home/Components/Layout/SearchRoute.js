@@ -9,6 +9,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Alert,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -16,8 +18,12 @@ import {
   faMapMarkerAlt,
   faArrowUp,
   faExchangeAlt,
+  faSearch,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const { width, height } = Dimensions.get('window');
 
 export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originText, setOriginText] = useState("");
@@ -45,8 +51,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       return;
     }
 
-    // Verificar si el origen y destino existen en los puntos del mapa
-    const originExists = points.some(point => new RegExp(`^${originText.trim()}$`, 'i').test(point.name)); //  
+    const originExists = points.some(point => new RegExp(`^${originText.trim()}$`, 'i').test(point.name));
     const destinationExists = points.some(point => new RegExp(`^${destinationText.trim()}$`, 'i').test(point.name));
 
     if (!originExists || !destinationExists) {
@@ -105,70 +110,71 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
 
   return (
     <Modal animationType="slide" transparent={true} visible={true}>
-      <KeyboardAvoidingView style={styles.modalBackground} behavior="padding">
+      <KeyboardAvoidingView 
+        style={styles.modalBackground} 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
             <View style={styles.header}>
-              <Text style={styles.inputLabel}>Origen:</Text>
+              <Text style={styles.headerTitle}>Buscar Ruta</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                <FontAwesomeIcon icon={faTimes} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
               </TouchableOpacity>
             </View>
             <View style={styles.inputContainer}>
-              <View style={styles.iconWrapper}>
-                <FontAwesomeIcon icon={faArrowUp} size={20} color="#FFD700" />
-              </View>
+              <FontAwesomeIcon icon={faArrowUp} size={20} color="#0033A0" />
               <TextInput
                 style={styles.input}
                 placeholder="Origen"
-                placeholderTextColor={"gray"}
+                placeholderTextColor={"#888"}
                 value={originText}
                 onChangeText={setOriginText}
               />
             </View>
-            <Text style={styles.inputLabel}>Destino:</Text>
             <View style={styles.inputContainer}>
-              <View style={styles.iconWrapper}>
-                <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#FFD700" />
-              </View>
+              <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#0033A0" />
               <TextInput
                 style={styles.input}
                 placeholder="Destino"
-                placeholderTextColor={"gray"}
+                placeholderTextColor={"#888"}
                 value={destinationText}
                 onChangeText={setDestinationText}
               />
             </View>
             <View style={styles.buttonsContainer}>
               <TouchableOpacity style={styles.iconButton} onPress={swapLocations}>
-                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#0033A0" />
+                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#fff" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-                <Text style={styles.searchButtonText}>Iniciar</Text>
+                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+                <Text style={styles.searchButtonText}>Buscar</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.searchHistoryContainer}>
-            <Text style={styles.searchHistoryTitle}>Historial de Busqueda</Text>
-            <ScrollView contentContainerStyle={styles.searchHistoryList}>
+            <Text style={styles.searchHistoryTitle}>Historial de Búsqueda</Text>
+            <ScrollView style={styles.searchHistoryList}>
               {searchHistory.map((item, index) => (
-                <View key={index} style={styles.searchHistoryItem}>
-                  <TouchableOpacity
-                    onPress={() => selectSearchFromHistory(item)}
-                    style={styles.searchHistoryText}
-                  >
-                    <Text>{item.origin} - {item.destination}</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.searchHistoryItem}
+                  onPress={() => selectSearchFromHistory(item)}
+                >
+                  <Text style={styles.searchHistoryText}>{item.origin} - {item.destination}</Text>
                   <TouchableOpacity onPress={() => removeSearchItem(item)}>
-                    <FontAwesomeIcon icon={faTimes} size={15} color="red" style={styles.removeIcon} />
+                    <FontAwesomeIcon icon={faTimes} size={18} color="#ff6347" />
                   </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
-            <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-              <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
-            </TouchableOpacity>
+            {searchHistory.length > 0 && (
+              <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
+                <FontAwesomeIcon icon={faTrash} size={18} color="#fff" />
+                <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -180,126 +186,135 @@ const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
+    paddingTop: height * 0.05,
   },
   searchBarContainer: {
     width: "90%",
+    maxWidth: 400,
+    marginTop: 20,
     alignItems: "center",
-    marginTop: 5, 
   },
   searchBar: {
-    backgroundColor: "#0033A0",
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    marginBottom: 10,
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#0033A0",
   },
   closeButton: {
-    backgroundColor: "transparent",
-  },
-  inputLabel: {
-    color: "#fff",
-    fontSize: 16,
-    alignSelf: "flex-start",
+    backgroundColor: "#0033A0",
+    borderRadius: 20,
+    padding: 5,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10, 
-    marginVertical: 5,
-    padding: 8,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10,
+    marginVertical: 10,
+    padding: 10,
     width: "100%",
-  },
-  iconWrapper: {
-    borderRadius: 5,
-    padding: 5,
-    marginRight: 5,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 2,
+    marginLeft: 10,
     fontSize: 16,
-    borderRadius: 10, 
     color: "#000",
-    height: 30,
   },
   buttonsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+    marginTop: 20,
     width: "100%",
   },
   iconButton: {
-    backgroundColor: "#FFD700",
-    padding: 10,
+    backgroundColor: "#0033A0",
+    padding: 12,
     borderRadius: 10,
-    marginHorizontal: 5,
-    position: "absolute",
-    left: "50%",
-    transform: [{ translateX: -25 }],
   },
   searchButton: {
-    backgroundColor: "#1E90FF",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    alignSelf: 'flex-end',
+    backgroundColor: "#0033A0",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
   },
   searchButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    marginLeft: 10,
+    fontSize: 16,
   },
   searchHistoryContainer: {
     backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 15,
+    padding: 20,
     width: "100%",
-    maxHeight: 300,
+    maxHeight: height * 0.4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   searchHistoryTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+    marginBottom: 15,
+    color: "#0033A0",
   },
   searchHistoryList: {
-    flexGrow: 1,
+    flexGrow: 0,
   },
   searchHistoryItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 5,
+    borderBottomColor: "#e0e0e0",
+    paddingVertical: 12,
   },
   searchHistoryText: {
     flex: 1,
-  },
-  removeIcon: {
-    marginLeft: 10,
+    fontSize: 16,
+    color: "#333",
   },
   clearHistoryButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    backgroundColor: "#ff6347",
-    borderRadius: 5,
+    marginTop: 15,
+    paddingVertical: 12,
+    backgroundColor: "#0033A0",
+    borderRadius: 10,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   clearHistoryButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    marginLeft: 10,
+    fontSize: 16,
   },
 });
 
