@@ -46,62 +46,18 @@ export const HomePage = () => {
     bottomSheetRef.current?.close();
   };
 
-  const zoomToPoint = (pointId) => {
-    const point = points.find((p) => p.id === pointId);
-    if (point && imageZoomRef.current) {
-      // Asumiendo que 1600 es el ancho real de tu imagen
-      const scaleFactorX = 1600 / width;
-      const scaleFactorY = 1400 / height;
-
-      const x = point.left * scaleFactorX;
-      const y = point.top * scaleFactorY;
-
-      console.log(`Zoom hacia: x=${x}, Y=${y}`); // Verifica las coordenadas
-
-      imageZoomRef.current.centerOn({
-        x,
-        y,
-        scale: 2, // Ajusta la escala para el zoom
-        duration: 300,
-      });
-    }
-  };
-
   // Función para manejar la búsqueda específica y hacer zoom en el punto
   const handleSpecificSearch = (pointId) => {
     // console.log("Punto seleccionado:", pointId);
     setSelectedPoint(pointId);
     bottomSheetRef.current?.expand();
     setShowSpecificSearch(false);
-    zoomToPoint(pointId);
   };
 
   // Funcion para manejar la busqueda de rutas y hacer zoom en la ruta
   const handleSearch = (search) => {
     setSelectedRoute(search);
     setShowSearchBar(false);
-    zoomToRoute(search.origin, search.destination);
-  };
-
-  // zoom al buscar la ruta
-  const zoomToRoute = (originName, destinationName) => {
-    const origin = points.find((p) => p.name === originName);
-    const destination = points.find((p) => p.name === destinationName);
-
-    if (origin && destination && imageZoomRef.current) {
-      const scaleFactorX = 1600 / width;
-      const scaleFactorY = 1400 / height;
-
-      const midX = (origin.left + destination.left) / 2 / scaleFactorX;
-      const midY = (origin.top + destination.top) / 2 / scaleFactorY;
-
-      imageZoomRef.current.centerOn({
-        x: midX,
-        y: midY,
-        scale: 1.5, // Ajusta el zoom para visualizar toda la ruta
-        duration: 300,
-      });
-    }
   };
 
   const clearRoute = () => {
