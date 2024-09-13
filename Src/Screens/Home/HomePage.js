@@ -12,8 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBars, faRoute, faUser } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
-import { SearchRoute } from "./Components/Layout/SearchRoute";
-import { SpecificSearch } from "./Components/Layout/SearchSpecific";
+import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute";
+import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
 import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points, routes } from "./Components/MapComponent/data";
@@ -46,7 +46,7 @@ export const HomePage = () => {
     bottomSheetRef.current?.close();
   };
 
-  // Función para manejar la búsqueda específica y hacer zoom en el punto
+  // Función para manejar la búsqueda específica
   const handleSpecificSearch = (pointId) => {
     // console.log("Punto seleccionado:", pointId);
     setSelectedPoint(pointId);
@@ -54,7 +54,7 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
-  // Funcion para manejar la busqueda de rutas y hacer zoom en la ruta
+  // Funcion para manejar la busqueda de rutas
   const handleSearch = (search) => {
     setSelectedRoute(search);
     setShowSearchBar(false);
