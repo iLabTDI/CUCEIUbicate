@@ -20,6 +20,7 @@ import {
   faBookBookmark,
   faNewspaper,
   faHandsAmericanSignLanguageInterpreting,
+  faFolder,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -83,6 +84,13 @@ const DrawerHeaderButton = () => {
   );
 };
 
+const HeaderWithIcon = ({ title, icon }) => (
+  <View style={styles.header}>
+    <FontAwesomeIcon icon={icon} size={24} color="#fff" />
+    <Text style={styles.headerText}>{title}</Text>
+  </View>
+);
+
 export const MyDrawer = () => {
   const route = useRoute();
   const { user } = route.params;
@@ -92,7 +100,7 @@ export const MyDrawer = () => {
       initialRouteName="Mapa"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#4c669f",
+          backgroundColor: "#0b34b0", // Color azul para el header
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
@@ -130,6 +138,7 @@ export const MyDrawer = () => {
           ),
           headerShown: true,
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Perfil" icon={faUser} />,  // Aquí usas HeaderWithIcon
         }}
       />
       <Drawer.Screen
@@ -141,6 +150,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faBookBookmark} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Directorio" icon={faFolder} />,  
         }}
       />
       <Drawer.Screen
@@ -152,6 +162,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faNewspaper} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Artículos" icon={faNewspaper} />,  // Header personalizado
         }}
       />
       <Drawer.Screen
@@ -167,6 +178,7 @@ export const MyDrawer = () => {
             />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Servicio social" icon={faHandsAmericanSignLanguageInterpreting} />,
         }}
       />
       <Drawer.Screen
@@ -178,6 +190,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faSchool} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Becas" icon={faSchool} />,
         }}
       />
       <Drawer.Screen
@@ -189,6 +202,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faRadio} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Radio CUCEI" icon={faRadio} />,
         }}
       />
       <Drawer.Screen
@@ -200,6 +214,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faFaceSmile} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Reconocimiento facial" icon={faFaceSmile} />,
         }}
       />
       <Drawer.Screen
@@ -211,6 +226,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUserFriends} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Servicios escolares" icon={faUserFriends} />,
         }}
       />
       <Drawer.Screen
@@ -222,6 +238,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faMedkit} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Servicios médicos" icon={faMedkit} />,
         }}
       />
     </Drawer.Navigator>
@@ -242,8 +259,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 100,
     marginBottom: 5,
-    // borderRadius: 40,
-
   },
   drawerHeaderText: {
     color: "white",
@@ -263,4 +278,15 @@ const styles = StyleSheet.create({
   menuIcon: {
     paddingLeft: 16,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
 });
+
