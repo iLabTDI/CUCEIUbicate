@@ -168,6 +168,8 @@ export const CompleteProfile = () => {
                       placeholder="Código de estudiante"
                       placeholderTextColor="#999"
                       value={Codigo}
+                      maxLength={10}
+                      keyboardType="numeric"
                       onChangeText={(text) => {
                         setCodigo(text);
                         setCodigoError(false);
