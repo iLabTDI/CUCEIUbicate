@@ -8,13 +8,16 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { alta_usuario } from "../Api/altaUsuario";
 import { validar_correo } from "../Api/validaciones";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+
+const { width, height } = Dimensions.get('window');
 
 export const RegisterScreen = () => {
   const [email, setEmail] = useState("");
@@ -93,98 +96,71 @@ export const RegisterScreen = () => {
     >
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>
-          <Text style={styles.successText}>Registra tu cuenta!</Text>
+          <Text style={styles.title}>Registra tu cuenta</Text>
           <LottieView
             source={require("../assets/animations/register.json")}
             autoPlay
             loop={true}
-            style={{ width: 200, height: 200, zIndex: 1 }}
+            style={styles.animation}
           />
-          <View style={styles.loginBox}>
-            <View>
-              <Text style={[styles.label, emailError && { color: "red" }]}>
-                Correo Electrónico:
-              </Text>
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} />
               <TextInput
-                style={[styles.input, emailError && { borderColor: "red" }]}
-                placeholder="alumno@cucei.com"
-                placeholderTextColor="gray"
+                style={[styles.input, emailError && styles.inputError]}
+                placeholder="Correo electrónico"
+                placeholderTextColor="#999"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
                 autoCapitalize="none"
                 autoCompleteType="email"
                 keyboardType="email-address"
               />
-
-              <Text style={[styles.label, passwordError && { color: "red" }]}>
-                Contraseña:
-              </Text>
-              <View
-                style={[
-                  styles.passwordInputContainer,
-                  passwordError && { borderColor: "red" },
-                ]}
-              >
-                <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Ingresa tu contraseña"
-                  placeholderTextColor="gray"
-                  value={password}
-                  secureTextEntry={!showPassword}
-                  onChangeText={(text) => setPassword(text)}
-                />
-                <TouchableOpacity
-                  onPress={togglePasswordVisibility}
-                  style={styles.passwordToggle}
-                >
-                  <FontAwesomeIcon
-                    icon={showPassword ? faEyeSlash : faEye}
-                    size={20}
-                    color="black"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={[styles.label, passwordError && { color: "red" }]}>
-                Confirmar Contraseña:
-              </Text>
-              <View
-                style={[
-                  styles.passwordInputContainer,
-                  passwordError && { borderColor: "red" },
-                ]}
-              >
-                <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Confirma tu contraseña"
-                  placeholderTextColor="gray"
-                  value={confirmPassword}
-                  secureTextEntry={!showPassword}
-                  onChangeText={(text) => setConfirmPassword(text)}
-                />
-                <TouchableOpacity
-                  onPress={togglePasswordVisibility}
-                  style={styles.passwordToggle}
-                >
-                  <FontAwesomeIcon
-                    icon={showPassword ? faEyeSlash : faEye}
-                    size={20}
-                    color="black"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                style={styles.customButton}
-                onPress={handleRegister}
-              >
-                <Text style={styles.buttonText}>Continuar</Text>
-              </TouchableOpacity>
-
-              {errorMsg ? (
-                <Text style={styles.errorText}>{errorMsg}</Text>
-              ) : null}
             </View>
+
+            <View style={styles.inputContainer}>
+              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} />
+              <TextInput
+                style={[styles.input, passwordError && styles.inputError]}
+                placeholder="Contraseña"
+                placeholderTextColor="#999"
+                value={password}
+                secureTextEntry={!showPassword}
+                onChangeText={(text) => setPassword(text)}
+              />
+              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  size={20}
+                  color="#999"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} />
+              <TextInput
+                style={[styles.input, passwordError && styles.inputError]}
+                placeholder="Confirmar contraseña"
+                placeholderTextColor="#999"
+                value={confirmPassword}
+                secureTextEntry={!showPassword}
+                onChangeText={(text) => setConfirmPassword(text)}
+              />
+              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  size={20}
+                  color="#999"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Continuar</Text>
+            </TouchableOpacity>
+
+            {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
           </View>
         </View>
       </ScrollView>
@@ -193,102 +169,87 @@ export const RegisterScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#E4EDF9",
-    width: "100%",
-    marginTop: 100,
-  },
   KeyboardAvoidingView: {
     flex: 1,
-    backgroundColor: "#E4EDF9",
-    width: "100%",
+    backgroundColor: "#f0f0f0",
   },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: height * 0.05,
   },
-  loginBox: {
-    width: "85%",
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 10,
-    marginBottom: 70,
-  },
-  iconCircle: {
-    backgroundColor: "white",
-    borderRadius: 60,
-    width: 100,
-    height: 100,
+  container: {
+    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: -25,
+    paddingHorizontal: width * 0.05,
+  },
+  title: {
+    fontSize: width * 0.08,
+    fontWeight: "bold",
+    color: "#0b34b0",
+    marginBottom: height * 0.04,
+    textAlign: "center",
+    marginTop: height * -0.07,  
+  },
+  animation: {
+    width: width * 0.5,
+    height: width * 0.5,
+    marginBottom: height * 0.02,
+  },
+  formContainer: {
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: width * 0.05,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    zIndex: 2,
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  label: {
-    fontSize: 16,
-    marginTop: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 15,
-  },
-  passwordInputContainer: {
+  inputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: height * 0.02,
     borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 5,
-    marginTop: 5,
-    marginBottom: 15,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    paddingHorizontal: width * 0.03,
   },
-  passwordInput: {
+  inputIcon: {
+    marginRight: width * 0.02,
+    color: "#999",
+  },
+  input: {
     flex: 1,
-    padding: 10,
+    paddingVertical: height * 0.015,
+    fontSize: width * 0.04,
+    color: "#333",
+  },
+  inputError: {
+    borderColor: "red",
   },
   passwordToggle: {
-    padding: 10,
+    padding: width * 0.02,
+  },
+  button: {
+    backgroundColor: "#0b34b0",
+    borderRadius: 10,
+    paddingVertical: height * 0.02,
+    alignItems: "center",
+    marginTop: height * 0.02,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: width * 0.04,
+    fontWeight: "bold",
   },
   errorText: {
     color: "red",
     textAlign: "center",
-    paddingTop: 15,
-    fontSize: 15,
-  },
-  customButton: {
-    marginTop: 15,
-    backgroundColor: "#0b34b0",
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  successText: {
-    marginTop: -80,
-    fontSize: 35,
-    fontWeight: "bold",
-    padding: 5,
+    marginTop: height * 0.02,
+    fontSize: width * 0.035,
   },
 });
 
