@@ -9,19 +9,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faMap,
-  faSearch,
   faUser,
-  faBell,
   faSignOutAlt,
   faBars,
-  faDirections,
-  faBook,
   faRadio,
   faFaceSmile,
   faUserFriends,
   faMedkit,
-  faCircle,
-  faHandHoldingHand,
   faSchool,
   faBookBookmark,
   faNewspaper,
@@ -245,10 +239,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   logo: {
-    width: 100,
+    width: 200,
     height: 100,
-    marginBottom: 10,
-    borderRadius: 40,
+    marginBottom: 5,
+    // borderRadius: 40,
+
   },
   drawerHeaderText: {
     color: "white",
