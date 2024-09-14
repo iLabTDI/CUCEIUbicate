@@ -61,7 +61,10 @@ export const LoginScreen = () => {
       setTimeout(() => {
         setModalVisible(false);
         setShowSuccessAnimation(false);
-        navigation.navigate('Principal Home', { user: userData[0] });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Principal Home', params: { user: userData[0] } }],
+        });
       }, 2000);
     } else {
       setShowIncorrectMessage(true);
