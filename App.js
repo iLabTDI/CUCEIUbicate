@@ -11,7 +11,7 @@ import { StatusBar, Platform } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
-// setRandomFallback(getRandomBase64);
+setRandomFallback(getRandomBase64);
 
 function App() {
   return (
@@ -44,16 +44,16 @@ function App() {
           backgroundColor="#333"
           barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
         />
-      <Stack.Navigator initialRouteName="Inicio">
-        <Stack.Screen
+      <Stack.Navigator initialRouteName="Login">
+        {/* <Stack.Screen
           name="Inicio"
           component={LoginScreen}
           options={{ title: "Inicio", headerShown: false }} // Oculta la barra de navegación
-        />
+        /> */}
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ title: "Iniciar Sesión" }}
+          options={{ title: "Iniciar Sesión", headerShown: false }}
         />
         <Stack.Screen
           name="Registro"
