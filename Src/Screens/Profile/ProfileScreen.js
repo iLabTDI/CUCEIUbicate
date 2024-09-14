@@ -7,24 +7,18 @@ import {
   Modal,
   FlatList,
   StyleSheet,
-  Animated,
-  PanResponder,
   Dimensions,
   ScrollView,
   Alert,
 } from "react-native";
 import {
   GestureHandlerRootView,
-  PinchGestureHandler,
-  State,
-  TapGestureHandler,
 } from "react-native-gesture-handler";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faTimes,
   faSignOutAlt,
-  faCalendar,
   faEdit,
   faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
@@ -187,7 +181,6 @@ export const ProfileScreen = () => {
               : "Mostrar Malla Curricular ▼"}
           </Text>
         </TouchableOpacity>
-        <SkeletonPlaceholder></SkeletonPlaceholder>
 
         {isExpanded && (
           <View style={styles.expandedContent}>
