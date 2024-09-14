@@ -29,7 +29,6 @@ import {
   faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
