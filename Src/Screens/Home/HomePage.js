@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   Dimensions,
   Text,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused} from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBars, faRoute, faUser } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -17,6 +17,7 @@ import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific"
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
 import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points, routes } from "./Components/MapComponent/data";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -24,10 +25,30 @@ export const HomePage = () => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
   const imageZoomRef = useRef(null);
+  const isFocused = useIsFocused(); 
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(null);
+
+  useEffect(() => {
+    if (isFocused) {  // <-- Cuando la pantalla se enfoca, cargamos el ícono
+      loadSelectedIcon();
+    }
+  }, [isFocused]);  // <-- Dependencia en isFocused para recargar el ícono
+
+
+  const loadSelectedIcon = async () => {
+    try {
+      const savedIcon = await AsyncStorage.getItem('selectedIcon');
+      if (savedIcon) {
+        setSelectedIcon(JSON.parse(savedIcon));
+      }
+    } catch (error) {
+      console.error('Error loading selected icon:', error);
+    }
+  };
 
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
@@ -46,22 +67,18 @@ export const HomePage = () => {
     bottomSheetRef.current?.close();
   };
 
-  // Función para manejar la búsqueda específica
   const handleSpecificSearch = (pointId) => {
-    // console.log("Punto seleccionado:", pointId);
     setSelectedPoint(pointId);
     bottomSheetRef.current?.expand();
     setShowSpecificSearch(false);
   };
 
-  // Funcion para manejar la busqueda de rutas
   const handleSearch = (search) => {
     setSelectedRoute(search);
     setShowSearchBar(false);
   };
 
   const clearRoute = () => {
-    //limpia la ruta mostrada
     setSelectedRoute(null);
   };
 
@@ -69,7 +86,6 @@ export const HomePage = () => {
     <View style={styles.container}>
       {showSpecificSearch && <View style={styles.overlay} />}
 
-      {/* Iconos de Menú, Perfil y Buscar Ruta */}
       <TouchableOpacity
         style={styles.menu_icon}
         onPress={() => navigation.openDrawer()}>
@@ -79,14 +95,17 @@ export const HomePage = () => {
       <TouchableOpacity
         style={styles.profile_icon}
         onPress={() => navigation.navigate("Perfil")}>
-        <FontAwesomeIcon icon={faUser} size={width * 0.06} color="white" />
+        {selectedIcon ? (
+          <Image source={selectedIcon} style={styles.profileImage} />
+        ) : (
+          <FontAwesomeIcon icon={faUser} size={width * 0.06}  color="white" />
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
         <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="white" />
       </TouchableOpacity>
 
-      {/* Componente de Búsqueda de Ruta */}
       {showSearchBar && (
         <SearchRoute
           onClose={closeSearchBar}
@@ -95,17 +114,15 @@ export const HomePage = () => {
         />
       )}
 
-      {/* Componente de Búsqueda Específica */}
       <SpecificSearch
         points={points}
         onSearch={handleSpecificSearch}
         setShowSpecificSearch={setShowSpecificSearch}
       />
 
-      {/* Componente de Mapa con Puntos y Rutas */}
       <GestureHandlerRootView style={styles.imageContainer}>
         <ImageZoom
-          ref={imageZoomRef} // Referencia para el componente ImageZoom
+          ref={imageZoomRef}
           cropWidth={Dimensions.get("window").width}
           cropHeight={Dimensions.get("window").height}
           imageWidth={1600}
@@ -134,7 +151,6 @@ export const HomePage = () => {
         </ImageZoom>
       </GestureHandlerRootView>
 
-      {/* Componente de Botón Finalizar Ruta */}
       {selectedRoute && (
         <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
           <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
@@ -190,6 +206,13 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.1,
     padding: width * 0.04,
     zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: width * 0.06,
+    height: width * 0.06,
+    // borderRadius: (width * 0.06) / 2,
   },
   imageContainer: {
     flex: 1,
@@ -216,3 +239,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default HomePage;
