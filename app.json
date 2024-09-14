@@ -21,13 +21,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/cucei.png",
         "backgroundColor": "#0000"
-      }
+      },
+      "package": "com.yair_hdz24.CUCEIUbicate"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "08a561e4-8d60-47af-b4b6-f830296c28e8"
+      }
+    }
   }
 }
