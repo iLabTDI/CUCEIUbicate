@@ -11,13 +11,11 @@ import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
-  DrawerItem,
 } from "@react-navigation/drawer";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faMap,
   faUser,
-  faSignOutAlt,
   faBars,
   faRadio,
   faFaceSmile,
@@ -26,7 +24,6 @@ import {
   faSchool,
   faBookBookmark,
   faNewspaper,
-  faHandsAmericanSignLanguageInterpreting,
   faFolder,
   faHandsHelping,
 } from "@fortawesome/free-solid-svg-icons";
