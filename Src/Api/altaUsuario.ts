@@ -1,20 +1,30 @@
 import { supabase } from "./lib/supabase";
 import bcrypt from 'bcryptjs';
 
-const hashPassword = async (password) => {
+// Definir el tipo para las contraseñas (puede ser 'string')
+const hashPassword = async (password: string): Promise<string | null> => {
   try {
     const salt = await bcrypt.genSalt(10); 
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   } catch (error) {
-  
+    console.error('Error al hashear la contraseña:', error);
     return null;
   }
 };
 
-export const alta_usuario = async (Codigo, correo, contraseña, selectedCareer, name, lastName, username) => {
+// Definir los tipos de los parámetros de alta_usuario
+export const alta_usuario = async (
+  Codigo: string, 
+  correo: string, 
+  contraseña: string, 
+  selectedCareer: string, 
+  name: string, 
+  lastName: string, 
+  username: string
+): Promise<void> => {
   try {
-    const hashedPassword = await hashPassword(contraseña); 
+    const hashedPassword = await hashPassword(contraseña);
 
     const { data, error } = await supabase
       .from('users')
@@ -22,15 +32,21 @@ export const alta_usuario = async (Codigo, correo, contraseña, selectedCareer, 
         { 
           code: Codigo,
           email: correo,
-          password: hashedPassword, 
+          password: hashedPassword,
           degree_code: selectedCareer,
           name: name,
           lastnames: lastName,
           username: username
         }
       ]);
-      
+
+    if (error) {
+      console.error('Error al registrar usuario:', error);
+    } else {
+      console.log('Usuario registrado con éxito:', data);
+    }
+
   } catch (error) {
-  
+    console.error('Error en alta_usuario:', error);
   }
 };

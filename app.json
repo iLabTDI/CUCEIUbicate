@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cucei.png",
-    "userInterfaceStyle": "black",
+    "userInterfaceStyle": "white",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/cucei.png",
-        "backgroundColor": "#0000"
+        "backgroundColor": "white"
       },
       "package": "com.yair_hdz24.CUCEIUbicate"
     },

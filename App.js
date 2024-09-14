@@ -11,7 +11,7 @@ import { StatusBar, Platform } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
-setRandomFallback(getRandomBase64);
+// setRandomFallback(getRandomBase64);
 
 function App() {
   return (

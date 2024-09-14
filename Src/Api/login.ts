@@ -2,8 +2,8 @@ import { supabase } from "./lib/supabase";
 import { Alert } from 'react-native';
 import bcrypt from 'bcryptjs';
 
-
-const comparePassword = async (password, hashedPassword) => {
+// Función para comparar contraseñas
+const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
   try {
     const match = await bcrypt.compare(password, hashedPassword);
     return match;
@@ -13,20 +13,21 @@ const comparePassword = async (password, hashedPassword) => {
   }
 };
 
-export const login = async (user, contraseña) => {
+// Función de login
+export const login = async (user: string, contraseña: string): Promise<{ isMatch: boolean, userData: any } | false> => {
   try {
     const { data, error } = await supabase
       .from('users')
-      .select('*') // Seleccionar solamente la contraseña encriptada
+      .select('*')
       .or(`username.eq.${user}, email.eq.${user}`);
 
-    if (error || data.length === 0) {
+    if (error || !data || data.length === 0) {
       return false;
     } else {
       const hashedPassword = data[0].password;
-      const isMatch = await comparePassword(contraseña, hashedPassword); 
+      const isMatch = await comparePassword(contraseña, hashedPassword);
 
-      console.log("log del back",data);
+      console.log("log del back", data);
       return {
         isMatch,
         userData: data,
