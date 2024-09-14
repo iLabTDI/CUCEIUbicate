@@ -28,6 +28,7 @@ import {
   faNewspaper,
   faHandsAmericanSignLanguageInterpreting,
   faFolder,
+  faHandsHelping,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -45,12 +46,12 @@ import { LinearGradient } from "expo-linear-gradient";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
-  const handleLogout = () => {
-    navigation.navigate("Inicio");
-    console.log("Cerrando sesión...");
-  };
+  // const handleLogout = () => {
+  //   navigation.navigate("Inicio");
+  //   console.log("Cerrando sesión...");
+  // };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -68,14 +69,14 @@ const CustomDrawerContent = (props) => {
         </LinearGradient>
         <View style={styles.drawerItemsContainer}>
           <DrawerItemList {...props} />
-          <DrawerItem
+          {/* <DrawerItem
             label="Cerrar Sesión"
             onPress={handleLogout}
             icon={({ color, size }) => (
               <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
             )}
             labelStyle={styles.drawerItemLabel}
-          />
+          /> */}
         </View>
       </DrawerContentScrollView>
     </ScrollView>
@@ -147,6 +148,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
           headerShown: true,
+          drawerItemStyle: { display: 'none' }, //para ocultar la pantalla perfil
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Perfil" icon={faUser} />,
         }}
@@ -186,7 +188,7 @@ export const MyDrawer = () => {
           drawerLabel: "Servicio social",
           drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon
-              icon={faHandsAmericanSignLanguageInterpreting}
+              icon={faHandsHelping}
               size={size}
               color={color}
             />
@@ -195,7 +197,7 @@ export const MyDrawer = () => {
           headerTitle: () => (
             <HeaderWithIcon
               title="Servicio social"
-              icon={faHandsAmericanSignLanguageInterpreting}
+              icon={faHandsHelping}
             />
           ),
         }}
