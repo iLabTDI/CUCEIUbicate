@@ -108,7 +108,7 @@ export const ProfileScreen = () => {
         {
           text: "Sí, cerrar sesión",
           onPress: () => {
-            navigation.navigate("Inicio");
+            navigation.navigate("Login");
           },
         },
       ]
