@@ -9,10 +9,10 @@ const { width } = Dimensions.get('window');
 export const Directory = () => {
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <FontAwesomeIcon icon={faFolder} size={24} color="#fff" />
         <Text style={styles.headerText}>Directorio</Text>
-      </View>
+      </View> */}
       <View style={styles.content}>
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{jsonData.section_description.name}</Text>
