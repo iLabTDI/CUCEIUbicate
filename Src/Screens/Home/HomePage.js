@@ -18,6 +18,7 @@ import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSh
 import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points, routes } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getSession, clearSession } from "../../auth/sessionManager";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,9 +36,20 @@ export const HomePage = () => {
   useEffect(() => {
     if (isFocused) {  // <-- Cuando la pantalla se enfoca, cargamos el ícono
       loadSelectedIcon();
+      checkSession();
     }
   }, [isFocused]);  // <-- Dependencia en isFocused para recargar el ícono
 
+
+  const checkSession = async () => {
+    const session = await getSession();
+    if (!session) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    }
+  }
 
   const loadSelectedIcon = async () => {
     try {

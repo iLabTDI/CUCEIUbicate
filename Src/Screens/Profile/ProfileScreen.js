@@ -11,9 +11,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import {
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -23,6 +21,7 @@ import {
   faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clearSession } from "../../auth/sessionManager";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -96,7 +95,7 @@ export const ProfileScreen = () => {
     setModalVisible(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Alert.alert(
       "Cerrar Sesión",
       "¿Estás seguro de que quieres cerrar sesión?",
@@ -108,7 +107,12 @@ export const ProfileScreen = () => {
         {
           text: "Sí, cerrar sesión",
           onPress: () => {
-            navigation.navigate("Login");
+            clearSession();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
+            });
+            // navigation.navigate("Login");
           },
         },
       ]

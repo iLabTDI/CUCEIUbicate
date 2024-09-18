@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -26,6 +26,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { login } from '../Api/login';
 import { LinearGradient } from 'expo-linear-gradient';
+import { setSession, getSession } from './sessionManager';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,6 +41,20 @@ export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    checkExistingSession();
+  }, []);
+
+  const checkExistingSession = async () => {
+    const session = await getSession();
+    if (session) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Principal Home', params: { user: session } }],
+      });
+    }
+  };
+
   const handleLoginTest = async () => {
     setShowError(false);
     setShowIncorrectMessage(false);
@@ -51,11 +66,12 @@ export const LoginScreen = () => {
 
     setIsLoading(true);
 
-    const { isMatch, userData } = await login(username, password);
+    const result = await login(username, password);
 
     setIsLoading(false);
 
-    if (isMatch) {
+    if (result && result.isMatch) {
+      await setSession(result.userData[0]);
       setShowSuccessAnimation(true);
       setModalVisible(true);
       setTimeout(() => {
@@ -63,7 +79,7 @@ export const LoginScreen = () => {
         setShowSuccessAnimation(false);
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Principal Home', params: { user: userData[0] } }],
+          routes: [{ name: 'Principal Home', params: { user: result.userData[0] } }],
         });
       }, 2000);
     } else {
@@ -300,4 +316,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;      
+export default LoginScreen;
