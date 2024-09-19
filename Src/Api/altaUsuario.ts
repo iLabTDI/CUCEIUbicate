@@ -1,14 +1,18 @@
 import { supabase } from "./lib/supabase";
-import bcrypt from 'bcryptjs';
+import bcrypt from 'react-native-bcrypt';
 
-// Definir el tipo para las contraseñas (puede ser 'string')
-const hashPassword = async (password: string): Promise<string | null> => {
+// Función para encriptar la contraseña de manera síncrona
+const hashPassword = (password) => {
   try {
-    const salt = await bcrypt.genSalt(10); 
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Genera el salt (sin promesa)
+    const salt = bcrypt.genSaltSync(10);
+    
+    // Encripta la contraseña utilizando el salt generado (sin promesa)
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    
     return hashedPassword;
   } catch (error) {
-    console.error('Error al hashear la contraseña:', error);
+    console.error('Error al generar el hash:', error);
     return null;
   }
 };
@@ -24,8 +28,15 @@ export const alta_usuario = async (
   username: string
 ): Promise<void> => {
   try {
-    const hashedPassword = await hashPassword(contraseña);
+    // Llama a la función hashPassword para encriptar la contraseña
+    const hashedPassword = hashPassword(contraseña);
 
+    // Verifica que se haya generado el hash correctamente
+    if (!hashedPassword) {
+      throw new Error('Error al encriptar la contraseña');
+    }
+
+    // Inserta los datos en la base de datos con la contraseña encriptada
     const { data, error } = await supabase
       .from('users')
       .insert([
@@ -40,10 +51,11 @@ export const alta_usuario = async (
         }
       ]);
 
+    // Manejo de posibles errores al insertar en la base de datos
     if (error) {
-      console.error('Error al registrar usuario:', error);
+      console.error('Error al insertar usuario en la base de datos:', error);
     } else {
-      console.log('Usuario registrado con éxito:', data);
+      console.log('Usuario insertado con éxito:', data);
     }
 
   } catch (error) {
