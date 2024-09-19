@@ -7,18 +7,19 @@ import {
   Dimensions,
   Text,
 } from "react-native";
-import { useNavigation, useIsFocused} from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faBars, faRoute, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faRoute, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
+import LottieView from 'lottie-react-native';
 import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
 import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
-import { points, routes } from "./Components/MapComponent/data";
+import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getSession, clearSession } from "../../auth/sessionManager";
+import { getSession, clearSession } from "../../auth/SessionManager";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,20 +27,20 @@ export const HomePage = () => {
   const navigation = useNavigation();
   const bottomSheetRef = useRef(null);
   const imageZoomRef = useRef(null);
-  const isFocused = useIsFocused(); 
+  const isFocused = useIsFocused();
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (isFocused) {  // <-- Cuando la pantalla se enfoca, cargamos el ícono
+    if (isFocused) {
       loadSelectedIcon();
       checkSession();
     }
-  }, [isFocused]);  // <-- Dependencia en isFocused para recargar el ícono
-
+  }, [isFocused]);
 
   const checkSession = async () => {
     const session = await getSession();
@@ -49,7 +50,7 @@ export const HomePage = () => {
         routes: [{ name: "Login" }],
       });
     }
-  }
+  };
 
   const loadSelectedIcon = async () => {
     try {
@@ -60,6 +61,10 @@ export const HomePage = () => {
     } catch (error) {
       console.error('Error loading selected icon:', error);
     }
+  };
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
   };
 
   const handlePointPress = (pointId) => {
@@ -96,6 +101,18 @@ export const HomePage = () => {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <LottieView
+            source={require('../../assets/animations/Map_loading.json')}
+            autoPlay
+            loop
+            style={styles.lottieAnimation}
+          />
+          <Text style={styles.loadingText}>Cargando mapa...</Text>
+        </View>
+      )}
+
       {showSpecificSearch && <View style={styles.overlay} />}
 
       <TouchableOpacity
@@ -152,6 +169,7 @@ export const HomePage = () => {
             source={require("./assets/images/mapa2.webp")}
             style={styles.image}
             resizeMode="contain"
+            onLoad={() => setTimeout(handleImageLoad, 3000)}
           />
           <MapWithPointsAndRoutes
             onPointPress={handlePointPress}
@@ -183,6 +201,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    zIndex: 1000,
+  },
+  lottieAnimation: {
+    width: width * 0.5,
+    height: width * 0.5,
+  },
+  loadingText: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -204,7 +239,7 @@ const styles = StyleSheet.create({
   search_icon: {
     position: "absolute",
     top: height * 0.05,
-    right: 75,
+    right: width * 0.2,
     backgroundColor: "blue",
     borderRadius: width * 0.1,
     padding: width * 0.04,
@@ -224,7 +259,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: width * 0.06,
     height: width * 0.06,
-    // borderRadius: (width * 0.06) / 2,
+    borderRadius: (width * 0.06) / 2,
   },
   imageContainer: {
     flex: 1,
