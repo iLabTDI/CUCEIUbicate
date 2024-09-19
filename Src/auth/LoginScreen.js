@@ -26,7 +26,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { login } from '../Api/login';
 import { LinearGradient } from 'expo-linear-gradient';
-import { setSession, getSession } from './sessionManager';
+import { setSession, getSession } from './SessionManager';
 
 const { width, height } = Dimensions.get('window');
 
