@@ -21,7 +21,7 @@ import {
   faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clearSession } from "../../auth/sessionManager";
+import { clearSession } from "../../auth/SessionManager";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
