@@ -12,9 +12,6 @@ const isURL = (text) => {
 export const School_services = () => {
   return (
     <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.headerText}>{jsonData.section_description.name}</Text>
-      </View> */}
       {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
         const section = jsonData.section_description["sub-sections"][sectionId];
         return (
@@ -24,8 +21,8 @@ export const School_services = () => {
               const element = section["listed-elements"][elementId];
               if (Array.isArray(element)) {
                 return element.map((item, index) => (
-                  <View key={index} style={styles.listItem}>
-                    <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} />
+                  <View key={index} >
+                    {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
                     {isURL(item) ? (
                       <TouchableOpacity onPress={() => Linking.openURL(item)} style={styles.linkContainer}>
                         <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
@@ -39,7 +36,7 @@ export const School_services = () => {
               } else {
                 return (
                   <View key={elementId} style={styles.listItem}>
-                    <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} />
+                    {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
                     {isURL(element) ? (
                       <TouchableOpacity onPress={() => Linking.openURL(element)} style={styles.linkContainer}>
                         <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
@@ -112,11 +109,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginLeft: 8,
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
+  
   listIcon: {
     marginRight: 8,
     marginTop: 5,

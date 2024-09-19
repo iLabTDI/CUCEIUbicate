@@ -9,10 +9,6 @@ const { width } = Dimensions.get('window');
 export const Articles = () => {
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <FontAwesomeIcon icon={faBookOpen} size={24} color="#fff" />
-        <Text style={styles.headerText}>Directorios</Text>
-      </View>
       <View style={styles.content}>
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{jsonData.section_description.name}</Text>
