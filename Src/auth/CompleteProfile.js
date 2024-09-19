@@ -90,7 +90,7 @@ export const CompleteProfile = () => {
   useEffect(() => {
     if (isProfileComplete) {
       const timer = setTimeout(() => {
-        navigation.navigate("Inicio");
+        navigation.navigate("Login");
       }, 4000);
       return () => clearTimeout(timer);
     }
