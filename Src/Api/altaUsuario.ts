@@ -36,7 +36,7 @@ export const alta_usuario = async (
       throw new Error('Error al encriptar la contraseña');
     }
 
-    // Inserta los datos en la base de datos con la contraseña encriptada
+    // Inserta los datos en la base de datos con la contraseña encriptada y devuelve los datos insertados
     const { data, error } = await supabase
       .from('users')
       .insert([
@@ -49,13 +49,15 @@ export const alta_usuario = async (
           lastnames: lastName,
           username: username
         }
-      ]);
+      ])
+      .select();  // Esto indica que deseas que te devuelva los datos insertados
 
     // Manejo de posibles errores al insertar en la base de datos
     if (error) {
       console.error('Error al insertar usuario en la base de datos:', error);
     } else {
-      console.log('Usuario insertado con éxito:', data);
+      // console.log('Usuario insertado con éxito:', data);  
+      console.log('Usuario insertado con éxito:');  
     }
 
   } catch (error) {

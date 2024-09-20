@@ -42,10 +42,10 @@ export const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    checkExistingSession();
+    checkExistingSession(); // checa si existe una session activa
   }, []);
 
-  const checkExistingSession = async () => {
+  const checkExistingSession = async () => { //si existe una sesion activa lo redirige a la pagina principal
     const session = await getSession();
     if (session) {
       navigation.reset({
@@ -58,34 +58,58 @@ export const LoginScreen = () => {
   const handleLoginTest = async () => {
     setShowError(false);
     setShowIncorrectMessage(false);
-
+  
     if (!username || !password) {
       setShowError(true);
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     const result = await login(username, password);
-
     setIsLoading(false);
-
-    if (result && result.isMatch) {
-      await setSession(result.userData[0]);
-      setShowSuccessAnimation(true);
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        setShowSuccessAnimation(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Principal Home', params: { user: result.userData[0] } }],
-        });
-      }, 2000);
+  
+    // console.log("Resultado del login:", result); 
+  
+    //manejo de errores y verificaciones de la respuesta
+    if (!result) {
+      console.log("Error: No se obtuvo resultado del login.");
+    } else if (!result.isMatch) {
+      console.log("Error: El login no coincide.");
+    } else if (!result.userData || result.userData.length === 0) {
+      console.log("Error: No hay datos de usuario en la respuesta.");
+    }
+  
+    if (result && result.isMatch && result.userData) {
+      const userData = result.userData;
+      // console.log("Datos de usuario recibidos:", userData);
+  
+      try {
+        const serializedData = JSON.stringify(userData);
+        // console.log('Datos serializados correctamente:', serializedData);
+  
+        await setSession(userData);
+  
+        setShowSuccessAnimation(true);
+        setModalVisible(true);
+  
+        setTimeout(() => {
+          setModalVisible(false);
+          setShowSuccessAnimation(false);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Principal Home', params: { user: userData } }],
+          });
+        }, 2000);
+      } catch (error) {
+        console.error('Error al serializar los datos:', error);
+      }
     } else {
       setShowIncorrectMessage(true);
     }
   };
+  
+  
 
   const handleRegister = () => {
     navigation.navigate('Registro');
