@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  Animated,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { validar_codigo, validar_usuario } from "../Api/validaciones";
@@ -19,7 +21,13 @@ import { get_degrees } from "../Api/consultas";
 import { alta_usuario } from "../Api/altaUsuario";
 import LottieView from "lottie-react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faUser, faEnvelope, faIdCard, faGraduationCap, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faEnvelope,
+  faIdCard,
+  faGraduationCap,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,6 +44,8 @@ export const CompleteProfile = () => {
   const [usernameError, setUsernameError] = useState(false);
   const [CodigoError, setCodigoError] = useState(false);
   const [careerOptions, setCareerOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   const navigation = useNavigation();
   const route = useRoute();
@@ -52,35 +62,53 @@ export const CompleteProfile = () => {
   }, []);
 
   const handleCompleteProfile = async () => {
-    if (!name || !lastName || !username) {
+    setIsLoading(true);
+
+    if (!name || !lastName || !username || !Codigo || !selectedCareer) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
+      setCodigoError(!Codigo);
+      setIsLoading(false);
       return;
     }
 
-    const usuarioValido = await validar_usuario(username);
-    if (!usuarioValido) {
-      setUsernameError(true);
-      return;
-    }
+    try {
+      const usuarioValido = await validar_usuario(username);
+      if (!usuarioValido) {
+        setUsernameError(true);
+        setIsLoading(false);
+        return;
+      }
 
-    const codigoValido = await validar_codigo(Codigo);
-    if (!codigoValido) {
-      setCodigoError(true);
-      return;
-    }
+      const codigoValido = await validar_codigo(Codigo);
+      if (!codigoValido) {
+        setCodigoError(true);
+        setIsLoading(false);
+        return;
+      }
 
-    alta_usuario(
-      Codigo,
-      correo,
-      contraseña,
-      selectedCareer,
-      name,
-      lastName,
-      username
-    );
-    setIsProfileComplete(true);
+      await alta_usuario(
+        Codigo,
+        correo,
+        contraseña,
+        selectedCareer,
+        name,
+        lastName,
+        username
+      );
+
+      setIsProfileComplete(true);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start();
+    } catch (error) {
+      console.error("Error al completar el perfil:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleModal = () => {
@@ -98,123 +126,157 @@ export const CompleteProfile = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardAvoidingView}>
-        <ScrollView 
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.scrollViewContent}
-        >
-          <View style={styles.container}>
-            {!isProfileComplete ? (
-              <>
-                <Text style={styles.title}>Completa tu Perfil</Text>
-                <LottieView
-                  source={require("../assets/animations/completeProfile.json")}
-                  autoPlay
-                  loop={true}
-                  style={styles.animation}
-                />
-                <View style={styles.formContainer}>
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, nameError && styles.errorInput]}
-                      placeholder="Nombre"
-                      placeholderTextColor="#999"
-                      value={name}
-                      onChangeText={(text) => {
-                        setName(text);
-                        setNameError(false);
-                      }}
-                    />
-                  </View>
-                  {nameError && <Text style={styles.errorText}>Campo requerido</Text>}
-
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, lastNameError && styles.errorInput]}
-                      placeholder="Apellidos"
-                      placeholderTextColor="#999"
-                      value={lastName}
-                      onChangeText={(text) => {
-                        setLastName(text);
-                        setLastNameError(false);
-                      }}
-                    />
-                  </View>
-                  {lastNameError && <Text style={styles.errorText}>Campo requerido</Text>}
-
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, usernameError && styles.errorInput]}
-                      placeholder="Nombre de Usuario"
-                      placeholderTextColor="#999"
-                      value={username}
-                      onChangeText={(text) => {
-                        setUsername(text);
-                        setUsernameError(false);
-                      }}
-                    />
-                  </View>
-                  {usernameError && <Text style={styles.errorText}>Este usuario ya ha sido registrado</Text>}
-
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} />
-                    <TextInput
-                      style={[styles.input, CodigoError && styles.errorInput]}
-                      placeholder="Código de estudiante"
-                      placeholderTextColor="#999"
-                      value={Codigo}
-                      maxLength={10}
-                      keyboardType="numeric"
-                      onChangeText={(text) => {
-                        setCodigo(text);
-                        setCodigoError(false);
-                      }}
-                    />
-                  </View>
-                  {CodigoError && <Text style={styles.errorText}>Este código ya ha sido registrado</Text>}
-
-                  <TouchableOpacity style={styles.pickerContainer} onPress={toggleModal}>
-                    <FontAwesomeIcon icon={faGraduationCap} style={styles.inputIcon} />
-                    <Text style={styles.pickerText}>{selectedCareer || "Seleccione una carrera"}</Text>
-                    <FontAwesomeIcon icon={faChevronDown} style={styles.pickerIcon} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.button} onPress={handleCompleteProfile}>
-                    <Text style={styles.buttonText}>Terminar</Text>
-                  </TouchableOpacity>
+      {!isProfileComplete ? (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardAvoidingView}>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.container}>
+              <Text style={styles.title}>Completa tu Perfil</Text>
+              <LottieView
+                source={require("../assets/animations/completeProfile.json")}
+                autoPlay
+                loop={true}
+                style={styles.animation}
+              />
+              <View style={styles.formContainer}>
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, nameError && styles.errorInput]}
+                    placeholder="Nombre"
+                    placeholderTextColor="#999"
+                    value={name}
+                    onChangeText={(text) => {
+                      setName(text);
+                      setNameError(false);
+                    }}
+                  />
                 </View>
-              </>
-            ) : (
-              <View style={styles.completedContainer}>
-                <Text style={styles.profileCompleteText}>PERFIL COMPLETADO</Text>
-                <Text style={styles.welcomeText}>¡Bienvenido, @{username}!</Text>
-                <Image
-                  source={require("../../assets/images/cucei.png")}
-                  style={styles.logo}
-                />
-                <LottieView
-                  source={require("../assets/animations/Confetti-2.json")}
-                  autoPlay
-                  loop={true}
-                  style={styles.confetti}
-                />
+                {nameError && (
+                  <Text style={styles.errorText}>Campo requerido</Text>
+                )}
+
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, lastNameError && styles.errorInput]}
+                    placeholder="Apellidos"
+                    placeholderTextColor="#999"
+                    value={lastName}
+                    onChangeText={(text) => {
+                      setLastName(text);
+                      setLastNameError(false);
+                    }}
+                  />
+                </View>
+                {lastNameError && (
+                  <Text style={styles.errorText}>Campo requerido</Text>
+                )}
+
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    style={styles.inputIcon}
+                  />
+                  <TextInput
+                    style={[styles.input, usernameError && styles.errorInput]}
+                    placeholder="Nombre de Usuario"
+                    placeholderTextColor="#999"
+                    maxLength={20}
+                    value={username}
+                    onChangeText={(text) => {
+                      setUsername(text);
+                      setUsernameError(false);
+                    }}
+                  />
+                </View>
+                {usernameError && (
+                  <Text style={styles.errorText}>
+                    Este usuario ya ha sido registrado
+                  </Text>
+                )}
+
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, CodigoError && styles.errorInput]}
+                    placeholder="Código de estudiante"
+                    placeholderTextColor="#999"
+                    value={Codigo}
+                    maxLength={10}
+                    keyboardType="numeric"
+                    onChangeText={(text) => {
+                      const numericText = text.replace(/[^0-9]/g, '');
+                      setCodigo(numericText);
+                      setCodigoError(false);
+                    }}
+                  />
+                </View>
+                {CodigoError && (
+                  <Text style={styles.errorText}>
+                    Este código ya ha sido registrado
+                  </Text>
+                )}
+
+                <TouchableOpacity
+                  style={styles.pickerContainer}
+                  onPress={toggleModal}>
+                  <FontAwesomeIcon
+                    icon={faGraduationCap}
+                    style={styles.inputIcon}
+                  />
+                  <Text style={styles.pickerText}>
+                    {selectedCareer || "Seleccione una carrera"}
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    style={styles.pickerIcon}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleCompleteProfile}
+                  disabled={isLoading}>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Terminar</Text>
+                  )}
+                </TouchableOpacity>
               </View>
-            )}
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      ) : (
+        <Animated.View style={[styles.completedContainer, { opacity: fadeAnim }]}>
+          <LottieView
+            source={require("../assets/animations/Confetti-2.json")}
+            autoPlay
+            loop={false}
+            style={styles.confetti}
+          />
+          <View style={styles.completedContent}>
+            <Text style={styles.profileCompleteText}>
+              ¡PERFIL COMPLETADO!
+            </Text>
+            <Text style={styles.welcomeText}>Bienvenido, @{username}</Text>
+            <Image
+              source={require("../../assets/images/cucei.png")}
+              style={styles.logo}
+            />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </Animated.View>
+      )}
 
       <Modal
         visible={isModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={toggleModal}
-      >
+        onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccione una carrera</Text>
@@ -336,7 +398,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   completedContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f0f0f0",
+  },
+  completedContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
   },
   profileCompleteText: {
     fontSize: width * 0.08,
@@ -350,6 +420,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: height * 0.04,
+    color: "#333",
   },
   logo: {
     width: width * 0.6,
