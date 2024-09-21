@@ -6,13 +6,19 @@ import {
   Image,
   Dimensions,
   Text,
+  Animated,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faBars, faRoute, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faRoute,
+  faUser,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
-import LottieView from 'lottie-react-native';
+import LottieView from "lottie-react-native";
 import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
@@ -34,6 +40,8 @@ export const HomePage = () => {
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (isFocused) {
@@ -41,6 +49,14 @@ export const HomePage = () => {
       checkSession();
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: isBottomSheetVisible ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [isBottomSheetVisible, fadeAnim]);
 
   const checkSession = async () => {
     const session = await getSession();
@@ -54,12 +70,12 @@ export const HomePage = () => {
 
   const loadSelectedIcon = async () => {
     try {
-      const savedIcon = await AsyncStorage.getItem('selectedIcon');
+      const savedIcon = await AsyncStorage.getItem("selectedIcon");
       if (savedIcon) {
         setSelectedIcon(JSON.parse(savedIcon));
       }
     } catch (error) {
-      console.error('Error loading selected icon:', error);
+      console.error("Error loading selected icon:", error);
     }
   };
 
@@ -69,6 +85,7 @@ export const HomePage = () => {
 
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
+    setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
   };
 
@@ -81,11 +98,13 @@ export const HomePage = () => {
   };
 
   const handleCloseBottomSheet = () => {
+    setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
   };
 
   const handleSpecificSearch = (pointId) => {
     setSelectedPoint(pointId);
+    setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
     setShowSpecificSearch(false);
   };
@@ -104,7 +123,7 @@ export const HomePage = () => {
       {isLoading && (
         <View style={styles.loadingContainer}>
           <LottieView
-            source={require('../../assets/animations/Map_loading.json')}
+            source={require("../../assets/animations/Map_loading.json")}
             autoPlay
             loop
             style={styles.lottieAnimation}
@@ -112,8 +131,6 @@ export const HomePage = () => {
           <Text style={styles.loadingText}>Cargando mapa...</Text>
         </View>
       )}
-
-      {showSpecificSearch && <View style={styles.overlay} />}
 
       <TouchableOpacity
         style={styles.menu_icon}
@@ -127,7 +144,11 @@ export const HomePage = () => {
         {selectedIcon ? (
           <Image source={selectedIcon} style={styles.profileImage} />
         ) : (
-          <FontAwesomeIcon icon={faUser} size={width * 0.06}  color="white" />
+          <FontAwesomeIcon
+            icon={faUser}
+            size={width * 0.06}
+            color="white"
+          />
         )}
       </TouchableOpacity>
 
@@ -163,8 +184,7 @@ export const HomePage = () => {
           maxScale={2}
           enableCenterFocus={false}
           useNativeDriver={true}
-          centerOn={{ x: 250, y: -20, scale: 0.9 }}
-          >
+          centerOn={{ x: 250, y: -20, scale: 0.9 }}>
           <Image
             source={require("./assets/images/mapa2.webp")}
             style={styles.image}
@@ -187,10 +207,21 @@ export const HomePage = () => {
         </TouchableOpacity>
       )}
 
+      <Animated.View 
+        style={[
+          styles.overlay,
+          {
+            opacity: fadeAnim,
+          },
+        ]} 
+        pointerEvents="none"
+      />
+
       <BottomSheetComponent
         ref={bottomSheetRef}
-        snapPoints={["1%", "35%"]}
+        snapPoints={["25%", "50%", "75%"]}
         selectedPoint={selectedPoint}
+        isVisible={isBottomSheetVisible}
         onClose={handleCloseBottomSheet}
       />
     </View>
@@ -203,9 +234,9 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
     zIndex: 1000,
   },
   lottieAnimation: {
@@ -215,17 +246,13 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 20,
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 1,
+    zIndex: 0,
   },
   menu_icon: {
     position: "absolute",
@@ -253,8 +280,8 @@ const styles = StyleSheet.create({
     borderRadius: width * 0.1,
     padding: width * 0.04,
     zIndex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileImage: {
     width: width * 0.06,
