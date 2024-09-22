@@ -1,5 +1,16 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
-import { View, Image, StyleSheet, Dimensions, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
+} from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faStar, faComment, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -7,12 +18,12 @@ import { bottomSheetContents } from "./bottomSheetContents";
 
 const { width, height } = Dimensions.get("window");
 
-
 export const BottomSheetComponent = React.forwardRef(
   ({ snapPoints, selectedPoint, isVisible, onClose }, ref) => {
     const bottomSheetRef = useRef(null);
     const [newComment, setNewComment] = useState("");
     const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     useEffect(() => {
       if (ref) {
@@ -61,6 +72,45 @@ export const BottomSheetComponent = React.forwardRef(
       setIsCommentInputVisible(false);
     };
 
+    const renderImageCarousel = (images) => {
+      return (
+        <View style={styles.carouselContainer}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(event) => {
+              const slideWidth = event.nativeEvent.layoutMeasurement.width;
+              const index = event.nativeEvent.contentOffset.x / slideWidth;
+              setCurrentImageIndex(Math.round(index));
+            }}
+          >
+            {images.map((image, index) => (
+              <Image
+                key={index}
+                source={image}
+                style={styles.carouselImage}
+                resizeMode="cover"
+              />
+            ))}
+          </ScrollView>
+          {images.length > 1 && (
+            <View style={styles.paginationContainer}>
+              {images.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.paginationDot,
+                    index === currentImageIndex && styles.paginationDotActive,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      );
+    };
+
     return (
       <BottomSheet
         ref={bottomSheetRef}
@@ -81,11 +131,7 @@ export const BottomSheetComponent = React.forwardRef(
                 selectedPoint === content.id && (
                   <View key={content.id} style={styles.contentContainer}>
                     <Text style={styles.title}>{content.id}</Text>
-                    <Image
-                      source={content.imageSource}
-                      style={styles.bottomSheetImage}
-                      resizeMode="cover"
-                    />
+                    {renderImageCarousel(content.images)}
                     <Text style={styles.description}>{content.description}</Text>
                     <View style={styles.ratingContainer}>
                       <Text style={styles.ratingText}>Calificación: </Text>
@@ -163,11 +209,34 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 16,
   },
-  bottomSheetImage: {
+  carouselContainer: {
+    width: width * 0.9,
+    height: height * 0.25,
+    marginBottom: 16,
+  },
+  carouselImage: {
     width: width * 0.9,
     height: height * 0.25,
     borderRadius: 8,
-    marginBottom: 16,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: 'white',
   },
   description: {
     fontSize: 16,
