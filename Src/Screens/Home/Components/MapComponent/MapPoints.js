@@ -1,18 +1,21 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faTimes, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { routes } from './data'; // Importa las rutas de los puntos
+
+const { width, height } = Dimensions.get('window');
 
 export const MapWithPointsAndRoutes = ({
   onPointPress,
   selectedRoute,
   selectedPoint,
   points,
-  clearRoute
+  clearRoute,
+  markedObject,
+  setMarkedObject
 }) => {
-
-
-  
   // Renderiza los puntos en el mapa
   const renderPoints = () => {
     return points.map((point) => (
@@ -26,37 +29,32 @@ export const MapWithPointsAndRoutes = ({
             height: point.height,
             width: point.width,
             backgroundColor: selectedPoint === point.id ? 'yellow' : 'red',
-            transform: [{ rotate: `${point.rotate}deg` }], //pasar como prop el rotate para los obstaculos
+            transform: [{ rotate: `${point.rotate}deg` }],
           },
         ]}
         onPress={() => {
-          onPointPress(point.id)
-          console.log(point.id)
-          console.log(`Coordenadas: x=${point.left}, Y=${point.top}`) // para sacra las coordenadas de los obstaculos
+          onPointPress(point.id);
+          console.log(point.id);
+          console.log(`Coordenadas: x=${point.left}, Y=${point.top}`);
         }}
-
-
-        // onPress={() => Alert.alert(coordenadas)}
       />
     ));
   };
 
-  // Renderizacion la rutaa seleccionadas en el mapa
+  // Renderiza la ruta seleccionada en el mapa
   const renderRoute = () => {
-    if (!selectedRoute || !selectedRoute.origin || !selectedRoute.destination) return null; // Si no hay ruta seleccionada, no renderiza nada
+    if (!selectedRoute || !selectedRoute.origin || !selectedRoute.destination) return null;
 
     const originBuilding = points.find(point => point.name === selectedRoute.origin);
-    const destinationBuilding = points.find(point => point.name === selectedRoute.destination); // Busca los puntos de origen y destino
+    const destinationBuilding = points.find(point => point.name === selectedRoute.destination);
 
-    if (!originBuilding || !destinationBuilding) return null; 
-    
+    if (!originBuilding || !destinationBuilding) return null;
 
-    const routeCoordinates = routes[selectedRoute.origin]?.[selectedRoute.destination]; // Obtiene las coordenadas de la ruta 
+    const routeCoordinates = routes[selectedRoute.origin]?.[selectedRoute.destination];
     
-    if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null; 
- 
-    const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '); // Convierte las coordenadas en un string para renderizar la ruta
-    console.log(pointsStr);
+    if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null;
+
+    const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
     
     return (
       <Svg style={styles.svgContainer}> 
@@ -70,15 +68,36 @@ export const MapWithPointsAndRoutes = ({
     );
   };
 
+  // Renderiza el marcador para el objeto seleccionado
+  const renderMarker = () => {
+    if (!markedObject) return null;
+
+    const markerPosition = {
+      left: markedObject.left + markedObject.width / 2 - 50,
+      top: markedObject.top - 30,
+    };
+
+    return (
+      <View style={[styles.markerContainer, markerPosition]}>
+        <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#ff6b6b" />
+        <Text style={styles.markerText}>{markedObject.name}</Text>
+        <TouchableOpacity onPress={removeMarker} style={styles.removeMarkerButton}>
+          <FontAwesomeIcon icon={faTimes} size={14} color="#666" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  // Función para remover el marcador
+  const removeMarker = () => {
+    setMarkedObject(null);
+  };
+
   return (
     <View style={styles.container}>
       {renderPoints()}
       {renderRoute()}
-      {/* {clearRoute && (
-        <TouchableOpacity style={styles.clearButton} onPress={clearRoute}>
-          <Text style={styles.clearButtonText}>Limpiar Ruta</Text>
-        </TouchableOpacity>
-      )} */}
+      {renderMarker()}
     </View>
   );
 };
@@ -99,17 +118,29 @@ const styles = StyleSheet.create({
     height: '100%',
     pointerEvents: 'none', 
   },
-  clearButton: {
+  markerContainer: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  clearButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    zIndex: 1000
+  markerText: {
+    fontSize: width * 0.03,
+    color: "#333",
+    marginLeft: 6,
+    marginRight: 6,
+  },
+  removeMarkerButton: {
+    padding: 3,
   },
 });
+
+export default MapWithPointsAndRoutes;
