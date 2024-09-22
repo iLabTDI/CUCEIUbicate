@@ -1,21 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  Text,
-  Animated,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions, Text, Animated } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faBars,
-  faRoute,
-  faUser,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faRoute, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
 import LottieView from "lottie-react-native";
@@ -40,6 +27,7 @@ export const HomePage = () => {
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [markedObject, setMarkedObject] = useState(null);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -53,7 +41,7 @@ export const HomePage = () => {
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
@@ -103,9 +91,10 @@ export const HomePage = () => {
   };
 
   const handleSpecificSearch = (pointId) => {
-    setSelectedPoint(pointId);
-    setIsBottomSheetVisible(true);
-    bottomSheetRef.current?.expand();
+    const selectedObject = points.find(point => point.id === pointId);
+    if (selectedObject) {
+      setMarkedObject(selectedObject);
+    }
     setShowSpecificSearch(false);
   };
 
@@ -168,6 +157,7 @@ export const HomePage = () => {
         points={points}
         onSearch={handleSpecificSearch}
         setShowSpecificSearch={setShowSpecificSearch}
+        setMarkedObject={setMarkedObject}
       />
 
       <GestureHandlerRootView style={styles.imageContainer}>
@@ -197,6 +187,8 @@ export const HomePage = () => {
             selectedPoint={selectedPoint}
             points={points}
             clearRoute={clearRoute}
+            markedObject={markedObject}
+            setMarkedObject={setMarkedObject}
           />
         </ImageZoom>
       </GestureHandlerRootView>
@@ -227,6 +219,7 @@ export const HomePage = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
