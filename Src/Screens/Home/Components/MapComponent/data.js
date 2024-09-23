@@ -29,6 +29,16 @@ export const points = [  //Los points son los puntos o id de cada edificio, repr
       width: 83,
       rotate: -2,
     },
+    {
+      id: "Modulo V2",
+      name: "Modulo V2",
+      aliases: ["Edificio V2", "MW"],
+      left: 414,
+      top: 524,
+      height: 19,
+      width: 90,
+      rotate: -2,
+    },
     
   ];
 

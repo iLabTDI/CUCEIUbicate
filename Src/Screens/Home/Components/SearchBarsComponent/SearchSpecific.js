@@ -26,6 +26,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [error, setError] = useState("");
   const animatedWidth = useRef(new Animated.Value(0)).current;
+  const animatedOpacity = useRef(new Animated.Value(0)).current;
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -57,22 +58,36 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 
   const openSearch = () => {
     setShowSpecificSearchState(true);
-    Animated.timing(animatedWidth, {
-      toValue: 1,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
+    Animated.parallel([
+      Animated.timing(animatedWidth, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+      Animated.timing(animatedOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   const closeSearch = () => {
     Keyboard.dismiss();
-    Animated.timing(animatedWidth, {
-      toValue: 0,
-      duration: 300,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start(() => {
+    Animated.parallel([
+      Animated.timing(animatedWidth, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+      Animated.timing(animatedOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
       setShowSpecificSearchState(false);
       setSpecificSearchText("");
       setSearchResults([]);
@@ -103,6 +118,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 
   const handleSelectResult = async (item) => {
     onSearch(item.id);
+    // setMarkedObject(item);
     await updateSearchHistory(item.name);
     closeSearch();
   };
@@ -144,6 +160,15 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
       >
         <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="white" />
       </TouchableOpacity>
+
+      {showSpecificSearch && (
+        <Animated.View style={[
+          styles.overlay,
+          {
+            opacity: animatedOpacity,
+          }
+        ]} />
+      )}
 
       {showSpecificSearch && (
         <Animated.View
@@ -225,6 +250,15 @@ const styles = StyleSheet.create({
     padding: width * 0.04,
     zIndex: 2,
     elevation: 5,
+  },
+  overlay: {
+    position: 'absolute',
+    top: -height * 0.05,
+    left: -width,
+    right: -width * 0.03,
+    bottom: -height,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1,
   },
   searchBarContainer: {
     flexDirection: "row",

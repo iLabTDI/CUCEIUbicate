@@ -38,6 +38,7 @@ import { Scholarships } from "../../../Education/Scholarships";
 import { School_services } from "../../../ScolarServices/School_services";
 import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
+import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
 
 const Drawer = createDrawerNavigator();
@@ -264,6 +265,20 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => (
             <HeaderWithIcon title="Servicios médicos" icon={faMedkit} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="CID"
+        component={CID}
+        options={{
+          drawerLabel: "CID",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faBookBookmark} size={size} color={color} />
+          ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => (
+            <HeaderWithIcon title="CID" icon={faBookBookmark} />
           ),
         }}
       />
