@@ -29,8 +29,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
-import { Directory } from "../../../Community/Directory";
-import { Articles } from "../../../Community/Articles";
+import { Directory } from "../../../community/Directory";
+import { Articles } from "../../../community/Articles";
 import { CUCEI_radio } from "../../../Education/CUCEI_radio";
 import { Facial_recognition } from "../../../ScolarServices/Facial_recognition";
 import { Medical_services } from "../../../ScolarServices/Medical_services";
