@@ -54,7 +54,7 @@ export const points = [  //Los points son los puntos o id de cada edificio, repr
     {
       id: "Modulo T",
       name: "Modulo T",
-      aliases: ["Edificio T", "MW"],
+      aliases: ["Edificio T", "papeleria", "MW"],
       left: 525,
       top: 556,
       height: 14,
@@ -66,7 +66,7 @@ export const points = [  //Los points son los puntos o id de cada edificio, repr
       id: "Globo",
       name: "Globo",
       aliases: ["Globo", "MW"],
-      left: 604,
+      left: 64,
       top: 854,
       height: 50,
       width: 90,
