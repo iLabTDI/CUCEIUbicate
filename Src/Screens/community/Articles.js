@@ -1,12 +1,70 @@
-import * as React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking, Dimensions, Alert } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faExternalLinkAlt, faBookOpen } from '@fortawesome/free-solid-svg-icons';
-import jsonData from "../../../assets/jsons/articles.json";
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get('window');
 
+const jsonFilePath = `${FileSystem.documentDirectory}assets/jsons/articles.json`;
+const articlesUrl = "http://148.202.152.59:8001/articles";
+
 export const Articles = () => {
+  const [jsonData, setJsonData] = useState(null);
+
+  // Función para descargar el archivo JSON
+  const downloadJson = async () => {
+    console.log(`Descargando desde ${articlesUrl}...`);
+    try {
+      // Verifica si el archivo existe y lo borra antes de la descarga
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+
+      const response = await fetch(articlesUrl);
+      if (!response.ok) {
+        throw new Error(`Error al descargar desde ${articlesUrl}`);
+      }
+
+      const json = await response.json();
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      console.log(`Archivo guardado en: ${jsonFilePath}`);
+      setJsonData(json); // Establece los datos JSON
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
+      
+      // Si hay un error, intenta cargar el archivo existente si está disponible
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        console.log(`Usando archivo existente en: ${jsonFilePath}`);
+        try {
+          const json = await FileSystem.readAsStringAsync(jsonFilePath);
+          setJsonData(JSON.parse(json)); // Establece los datos JSON
+        } catch (readError) {
+          console.error("Error al leer el archivo:", readError);
+          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+        }
+      } else {
+        console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
+        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    downloadJson(); // Inicia la descarga y verificación
+  }, []);
+
+  if (!jsonData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
@@ -41,18 +99,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  header: {
-    backgroundColor: '#0b34b0',
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginLeft: 10,
+    alignItems: 'center',
   },
   content: {
     padding: 20,
