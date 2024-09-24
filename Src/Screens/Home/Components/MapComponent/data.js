@@ -14,8 +14,8 @@ export const points = [  //Los points son los puntos o id de cada edificio, repr
       name: "Modulo Z",
       aliases: ["modulo z", "Edificio Z", "edificio z"],
       left: 240,
-      top: 649,
-      height: 45,
+      top: 653,
+      height: 43,
       width: 18,
       rotate: 5,
     },
@@ -39,9 +39,42 @@ export const points = [  //Los points son los puntos o id de cada edificio, repr
       width: 90,
       rotate: -2,
     },
+
+    {
+      id: "Modulo U",
+      name: "Modulo U",
+      aliases: ["Edificio U", "MW"], //variables de busqueda
+      left: 527,
+      top: 524,
+      height: 19,
+      width: 95,
+      rotate: -2,
+    },
+
+    {
+      id: "Modulo T",
+      name: "Modulo T",
+      aliases: ["Edificio T", "MW"],
+      left: 525,
+      top: 556,
+      height: 14,
+      width: 100,
+      rotate: 0,
+    },
+
+    {
+      id: "Globo",
+      name: "Globo",
+      aliases: ["Globo", "MW"],
+      left: 604,
+      top: 854,
+      height: 50,
+      width: 90,
+      rotate: -2,
+    },
     
   ];
-
+////////////////////////////////////////////////////////////////
 export const routes = {
   'Modulo X': {
     'Modulo Z': [
