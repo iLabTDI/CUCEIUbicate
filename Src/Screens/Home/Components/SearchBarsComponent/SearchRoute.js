@@ -13,14 +13,7 @@ import {
   Dimensions,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faTimes,
-  faMapMarkerAlt,
-  faArrowUp,
-  faExchangeAlt,
-  faSearch,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faMapMarkerAlt, faArrowUp, faExchangeAlt, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get('window');
@@ -58,7 +51,15 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       Alert.alert("Error", "El origen o destino no existen en el mapa. Por favor, verifique los nombres.");
       return;
     }
+
+    // Concatenar origen y destino en una clave única (ejemplo: "Modulo X - Modulo Z" o "Modulo Z - Modulo X")
+    const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
+    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
     
+    console.log(searchKey, reverseSearchKey);
+    // Enviar ambas claves al componente principal para que intente buscar la imagen
+    onSearch({ searchKey, reverseSearchKey });
+
     const search = { origin: originText.trim(), destination: destinationText.trim() };
     try {
       setSearchHistory((prevHistory) => {
@@ -69,7 +70,6 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
         AsyncStorage.setItem("searchHistory", JSON.stringify(newHistory));
         return newHistory;
       });
-      onSearch(search);
     } catch (error) {
       console.error("Error updating search history:", error);
     }
@@ -106,6 +106,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
   const swapLocations = () => {
     setOriginText(destinationText);
     setDestinationText(originText);
+    console.log(destinationText, originText);
   };
 
   return (
@@ -126,7 +127,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <FontAwesomeIcon icon={faArrowUp} size={20} color="#0033A0" />
               <TextInput
                 style={styles.input}
-                placeholder="Origen"
+                placeholder="Origen: Modulo X"
                 placeholderTextColor={"#888"}
                 value={originText}
                 onChangeText={setOriginText}
