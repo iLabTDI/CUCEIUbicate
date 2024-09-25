@@ -1,8 +1,11 @@
-import * as React from "react";
-import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Linking } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faLink, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import jsonData from "../../../assets/jsons/scholar_services.json";
+import { faLink } from '@fortawesome/free-solid-svg-icons';
+import * as FileSystem from 'expo-file-system';
+
+const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`;
+const scholarServicesUrl = "http://148.202.152.59:8001/json/scholar_services";
 
 const isURL = (text) => {
   const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
@@ -10,19 +13,73 @@ const isURL = (text) => {
 };
 
 export const School_services = () => {
+  const [jsonData, setJsonData] = useState(null);
+
+  const downloadJson = async () => {
+    try {
+      // Verificar y eliminar el archivo anterior si existe
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+
+      // Descargar nuevo archivo JSON
+      const response = await fetch(scholarServicesUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP status ${response.status}`);
+      }
+
+      const json = await response.json();
+      if (!json || typeof json !== 'object') {
+        throw new Error('Invalid JSON response');
+      }
+
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      setJsonData(json);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      Alert.alert("Download Error", error.toString());
+
+      // Intentar cargar desde el archivo local si existe
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+        if (fileInfo.exists) {
+          const json = await FileSystem.readAsStringAsync(jsonFilePath);
+          setJsonData(JSON.parse(json));
+        } else {
+          Alert.alert("Error", "No local data available.");
+        }
+      } catch (readError) {
+        console.error("Error reading the file:", readError);
+        Alert.alert("Read Error", readError.toString());
+      }
+    }
+  };
+
+  useEffect(() => {
+    downloadJson();
+  }, []);
+
+  if (!jsonData || !jsonData.section_description) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0b34b0" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
+      {jsonData.section_description["sub-sections"] && Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
         const section = jsonData.section_description["sub-sections"][sectionId];
         return (
           <View key={sectionId} style={styles.card}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
-            {Object.keys(section["listed-elements"]).map((elementId) => {
+            {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => {
               const element = section["listed-elements"][elementId];
               if (Array.isArray(element)) {
                 return element.map((item, index) => (
-                  <View key={index} >
-                    {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
+                  <View key={index}>
                     {isURL(item) ? (
                       <TouchableOpacity onPress={() => Linking.openURL(item)} style={styles.linkContainer}>
                         <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
@@ -36,7 +93,6 @@ export const School_services = () => {
               } else {
                 return (
                   <View key={elementId} style={styles.listItem}>
-                    {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
                     {isURL(element) ? (
                       <TouchableOpacity onPress={() => Linking.openURL(element)} style={styles.linkContainer}>
                         <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
@@ -61,15 +117,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  header: {
-    backgroundColor: '#0b34b0',
-    padding: 20,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    backgroundColor: '#f5f5f5',
   },
   card: {
     backgroundColor: '#fff',
@@ -109,10 +161,10 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginLeft: 8,
   },
-  
-  listIcon: {
-    marginRight: 8,
-    marginTop: 5,
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
 });
 
