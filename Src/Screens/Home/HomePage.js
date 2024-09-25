@@ -23,6 +23,7 @@ import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSession } from "../../auth/SessionManager";
 import { routesImages } from "./Routes/Route_data";
+import ChatbotButton from "../ChatBot/Chatboot_Button";
 
 const { width, height } = Dimensions.get("window");
 
@@ -221,6 +222,7 @@ export const HomePage = () => {
         style={[styles.overlay, { opacity: fadeAnim }]}
         pointerEvents="none"
       />
+      <ChatbotButton />
 
       <BottomSheetComponent
         ref={bottomSheetRef}
