@@ -39,6 +39,7 @@ const animalIcons = [
 
 const careerImages = {
   INFO: require("./malla_informatica.jpg"),
+  INRO: require("./Iconos_animales/abeja.png"),
 };
 
 export const ProfileScreen = () => {
