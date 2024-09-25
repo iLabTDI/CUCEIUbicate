@@ -1,24 +1,78 @@
-import * as React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import jsonData from "../../../assets/jsons/medical_services.json";
+import * as FileSystem from 'expo-file-system';
+
+const jsonFilePath = `${FileSystem.documentDirectory}medical_services.json`;
+const medicalServicesUrl = "http://148.202.152.59:8001/json/medical_services";
 
 export const Medical_services = () => {
+  const [jsonData, setJsonData] = useState(null);
+
+  const downloadJson = async () => {
+    try {
+      // Verifica si el archivo existe y lo borra antes de la descarga
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+
+      const response = await fetch(medicalServicesUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP status ${response.status}`);
+      }
+
+      const json = await response.json();
+      if (!json || typeof json !== 'object') {
+        throw new Error('Respuesta JSON no válida');
+      }
+
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      setJsonData(json); // Establece los datos JSON
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      Alert.alert("Error de descarga", error.toString());
+
+      // Intenta cargar el archivo existente si está disponible
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+        if (fileInfo.exists) {
+          const json = await FileSystem.readAsStringAsync(jsonFilePath);
+          setJsonData(JSON.parse(json));
+        } else {
+          Alert.alert("Error", "No hay datos locales disponibles.");
+        }
+      } catch (readError) {
+        console.error("Error al leer el archivo:", readError);
+        Alert.alert("Error de lectura", readError.toString());
+      }
+    }
+  };
+
+  useEffect(() => {
+    downloadJson(); // Inicia la descarga y verificación
+  }, []);
+
+  if (!jsonData || !jsonData.section_description) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0b34b0" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.headerText}>{jsonData.section_description.name}</Text>
-      </View> */}
       <View style={styles.card}>
         <Text style={styles.descriptionText}>{jsonData.section_description.description}</Text>
       </View>
-      {Object.keys(jsonData.section_description.sub_sections).map((sectionId) => {
+      {jsonData.section_description.sub_sections && Object.keys(jsonData.section_description.sub_sections).map((sectionId) => {
         const section = jsonData.section_description.sub_sections[sectionId];
         return (
           <View key={sectionId} style={styles.card}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
-            {Object.keys(section["listed-elements"]).map((elementId) => (
+            {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => (
               <View key={elementId} style={styles.listItem}>
                 <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} />
                 <Text style={styles.text}>
@@ -38,15 +92,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  header: {
-    backgroundColor: '#0b34b0',
-    padding: 20,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    backgroundColor: '#f5f5f5',
   },
   card: {
     backgroundColor: '#fff',

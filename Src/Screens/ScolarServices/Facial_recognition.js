@@ -1,12 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import jsonData from '../../../assets/jsons/face_access.json';
+import * as FileSystem from 'expo-file-system';
+
+const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`; // Cambié la ruta aquí
+const faceAccessUrl = "http://148.202.152.59:8001/json/face_access";
 
 export const Facial_recognition = () => {
+  const [jsonData, setJsonData] = useState(null);
+
+  const downloadJson = async () => {
+    console.log(`Descargando desde ${faceAccessUrl}...`);
+    try {
+      // Verifica si el archivo existe y lo borra antes de la descarga
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+
+      const response = await fetch(faceAccessUrl);
+      if (!response.ok) {
+        throw new Error(`Error al descargar desde ${faceAccessUrl}`);
+      }
+
+      const json = await response.json();
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      console.log(`Archivo guardado en: ${jsonFilePath}`);
+      setJsonData(json); // Establece los datos JSON
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
+
+      // Si hay un error, intenta cargar el archivo existente si está disponible
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        console.log(`Usando archivo existente en: ${jsonFilePath}`);
+        try {
+          const json = await FileSystem.readAsStringAsync(jsonFilePath);
+          setJsonData(JSON.parse(json)); // Establece los datos JSON
+        } catch (readError) {
+          console.error("Error al leer el archivo:", readError);
+          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+        }
+      } else {
+        console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
+        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    downloadJson(); // Inicia la descarga y verificación
+  }, []);
+
+  if (!jsonData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0b34b0" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.content}>
       <View style={styles.card}>
@@ -15,7 +74,7 @@ export const Facial_recognition = () => {
           {jsonData["section-description"].description}
         </Text>
       </View>
-      </View>
+    </View>
   );
 };
 
@@ -49,4 +108,12 @@ const styles = StyleSheet.create({
     color: '#333',
     lineHeight: 24,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
 });
+
+export default Facial_recognition;
