@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 
 // Usa documentDirectory sin intentar escribir en una subcarpeta que no existe
 const jsonFilePath = `${FileSystem.documentDirectory}articles.json`; // Cambié la ruta aquí
-const articlesUrl = "http://148.202.152.59:8001/articles";
+const articlesUrl = "http://148.202.152.59:8001/json/articles";
 
 export const Articles = () => {
   const [jsonData, setJsonData] = useState(null);

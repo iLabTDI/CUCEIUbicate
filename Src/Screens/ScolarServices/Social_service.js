@@ -1,8 +1,11 @@
-import * as React from "react";
-import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faLink, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import jsonData from "../../../assets/jsons/social_service.json";
+import { faLink } from '@fortawesome/free-solid-svg-icons';
+import * as FileSystem from 'expo-file-system';
+
+const jsonFilePath = `${FileSystem.documentDirectory}social_service.json`;
+const socialServiceUrl = "http://148.202.152.59:8001/json/social_service";
 
 const isURL = (text) => {
   const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
@@ -28,6 +31,60 @@ const renderElement = (element, index) => {
 };
 
 export const Social_service = () => {
+  const [jsonData, setJsonData] = useState(null);
+
+  const downloadJson = async () => {
+    console.log(`Descargando desde ${socialServiceUrl}...`);
+    try {
+      // Verifica si el archivo existe y lo borra antes de la descarga
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+
+      const response = await fetch(socialServiceUrl);
+      if (!response.ok) {
+        throw new Error(`Error al descargar desde ${socialServiceUrl}`);
+      }
+
+      const json = await response.json();
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      console.log(`Archivo guardado en: ${jsonFilePath}`);
+      setJsonData(json); // Establece los datos JSON
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
+
+      // Si hay un error, intenta cargar el archivo existente si está disponible
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        console.log(`Usando archivo existente en: ${jsonFilePath}`);
+        try {
+          const json = await FileSystem.readAsStringAsync(jsonFilePath);
+          setJsonData(JSON.parse(json)); // Establece los datos JSON
+        } catch (readError) {
+          console.error("Error al leer el archivo:", readError);
+          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+        }
+      } else {
+        console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
+        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    downloadJson(); // Inicia la descarga y verificación
+  }, []);
+
+  if (!jsonData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0b34b0" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
@@ -40,7 +97,6 @@ export const Social_service = () => {
               const element = section["listed-elements"][elementId];
               return (
                 <View key={elementId}>
-                  {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
                   {renderElement(element, elementId)}
                 </View>
               );
@@ -54,8 +110,7 @@ export const Social_service = () => {
                   {subsection["listed-elements"] && Object.keys(subsection["listed-elements"]).map((elementId) => {
                     const element = subsection["listed-elements"][elementId];
                     return (
-                      <View key={elementId} >
-                        {/* <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} /> */}
+                      <View key={elementId}>
                         {renderElement(element, elementId)}
                       </View>
                     );
@@ -74,16 +129,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  header: {
-    backgroundColor: '#0b34b0',
-    padding: 20,
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
   },
   card: {
     backgroundColor: '#fff',
@@ -132,15 +177,11 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     marginLeft: 8,
   },
-  listItem: {
-    // flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-    // flexWrap: 'wrap',
-  },                      
-  listIcon: {
-    marginRight: 3,
-    marginTop: 5,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
   },
 });
 
