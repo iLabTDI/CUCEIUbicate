@@ -41,33 +41,6 @@ export const MapWithPointsAndRoutes = ({
     ));
   };
 
-  // Renderiza la ruta seleccionada en el mapa
-  const renderRoute = () => {
-    if (!selectedRoute || !selectedRoute.origin || !selectedRoute.destination) return null;
-
-    const originBuilding = points.find(point => point.name === selectedRoute.origin);
-    const destinationBuilding = points.find(point => point.name === selectedRoute.destination);
-
-    if (!originBuilding || !destinationBuilding) return null;
-
-    const routeCoordinates = routes[selectedRoute.origin]?.[selectedRoute.destination];
-    
-    if (!routeCoordinates || !Array.isArray(routeCoordinates) || routeCoordinates.length === 0) return null;
-
-    const pointsStr = routeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
-    
-    return (
-      <Svg style={styles.svgContainer}> 
-        <Polyline
-          points={pointsStr}
-          stroke="blue"
-          strokeWidth="4"
-          fill="none"
-        />
-      </Svg>
-    );
-  };
-
   // Renderiza el marcador para el objeto seleccionado
   const renderMarker = () => {
     if (!markedObject) return null;
@@ -96,7 +69,6 @@ export const MapWithPointsAndRoutes = ({
   return (
     <View style={styles.container}>
       {renderPoints()}
-      {renderRoute()}
       {renderMarker()}
     </View>
   );
