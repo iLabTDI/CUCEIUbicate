@@ -6,7 +6,8 @@ import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get('window');
 
-const jsonFilePath = `${FileSystem.documentDirectory}assets/jsons/articles.json`;
+// Usa documentDirectory sin intentar escribir en una subcarpeta que no existe
+const jsonFilePath = `${FileSystem.documentDirectory}articles.json`; // Cambié la ruta aquí
 const articlesUrl = "http://148.202.152.59:8001/articles";
 
 export const Articles = () => {

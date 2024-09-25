@@ -4,8 +4,8 @@ import { View, Text, StyleSheet, ScrollView, Dimensions, ActivityIndicator, Imag
 import * as FileSystem from 'expo-file-system';
 
 const { width } = Dimensions.get('window');
-const LOCAL_JSON_PATH = `${FileSystem.documentDirectory}assets/jsons/directory.json`; // Ruta local
-const API_URL = "http://148.202.152.59:8001/"; // Asegúrate de que esta URL sea correcta
+const LOCAL_JSON_PATH = `${FileSystem.documentDirectory}directory.json`; // Cambié la ruta a documentDirectory sin subcarpetas
+const API_URL = "http://148.202.152.59:8001/";
 
 export const Directory = () => {
   const [jsonData, setJsonData] = useState([]); // Inicializa como un array vacío
@@ -15,9 +15,8 @@ export const Directory = () => {
   const fetchJsonData = async () => {
     try {
       const fileInfo = await FileSystem.getInfoAsync(LOCAL_JSON_PATH);
-      console.log("Información del archivo:", fileInfo); // Verifica si el archivo existe
+      console.log("Información del archivo:", fileInfo);
 
-      // Si el archivo existe, borrarlo antes de la descarga
       if (fileInfo.exists) {
         console.log("Borrando archivo existente antes de la descarga...");
         await FileSystem.deleteAsync(LOCAL_JSON_PATH);
@@ -26,15 +25,12 @@ export const Directory = () => {
       console.log("Iniciando la solicitud a la API...");
       const response = await fetch(API_URL);
       
-      // Comprueba si la respuesta fue exitosa
       if (!response.ok) {
         throw new Error('Error en la solicitud: ' + response.statusText);
       }
 
       const data = await response.json();
-    
-
-      // Asegúrate de que los datos son un array
+      
       if (Array.isArray(data)) {
         console.log("Guardando datos en el sistema de archivos local...");
         await FileSystem.writeAsStringAsync(LOCAL_JSON_PATH, JSON.stringify(data));
@@ -44,9 +40,10 @@ export const Directory = () => {
       }
     } catch (error) {
       console.error("Error al cargar el JSON:", error);
-      setError("Error al cargar los datos: " + error.message); // Proporciona más información sobre el error
+      setError("Error al cargar los datos: " + error.message);
       
-      // Si hay un error, intenta cargar el archivo existente si está disponible
+      // Intentar cargar el archivo existente si hay un error
+      const fileInfo = await FileSystem.getInfoAsync(LOCAL_JSON_PATH);
       if (fileInfo.exists) {
         console.log("Cargando datos desde el archivo existente...");
         try {
@@ -68,13 +65,11 @@ export const Directory = () => {
     console.log("Iniciando la carga inicial de datos...");
     fetchJsonData(); // Carga inicial de datos
 
-    // Establece un intervalo para volver a cargar el archivo cada mes (30 días)
     const intervalId = setInterval(() => {
       console.log("Actualizando datos de la API...");
       fetchJsonData();
     }, 30 * 24 * 60 * 60 * 1000); // 30 días en milisegundos
 
-    // Limpia el intervalo cuando el componente se desmonta
     return () => clearInterval(intervalId);
   }, []);
 
@@ -86,7 +81,6 @@ export const Directory = () => {
     );
   }
 
-  // Manejo de error
   if (error) {
     return (
       <View style={styles.errorContainer}>
@@ -95,7 +89,6 @@ export const Directory = () => {
     );
   }
 
-  // Verifica que jsonData existe y es un array
   if (!jsonData || !Array.isArray(jsonData)) {
     return (
       <View style={styles.errorContainer}>
@@ -184,7 +177,7 @@ const styles = StyleSheet.create({
   image: {
     width: 50,
     height: 50,
-    borderRadius: 25, // Para hacer la imagen circular
+    borderRadius: 25,
   },
 });
 
