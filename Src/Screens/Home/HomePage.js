@@ -1,8 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions, Text, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  Text,
+  Animated,
+  Alert,
+} from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faBars, faRoute, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faRoute, faUser } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
 import LottieView from "lottie-react-native";
@@ -12,7 +21,8 @@ import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSh
 import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getSession, clearSession } from "../../auth/SessionManager";
+import { getSession } from "../../auth/SessionManager";
+import { routesImages } from "./Routes/Route_data";
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,7 +33,10 @@ export const HomePage = () => {
   const isFocused = useIsFocused();
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedRouteImage, setSelectedRouteImage] = useState(null); // Imagen de la ruta
+  const [currentMapImage, setCurrentMapImage] = useState(
+    require("./assets/images/mapa2.webp")
+  ); // Imagen actual del mapa
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,20 +104,28 @@ export const HomePage = () => {
   };
 
   const handleSpecificSearch = (pointId) => {
-    const selectedObject = points.find(point => point.id === pointId);
+    const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
       setMarkedObject(selectedObject);
     }
     setShowSpecificSearch(false);
   };
 
-  const handleSearch = (search) => {
-    setSelectedRoute(search);
+  const handleSearch = ({ searchKey, reverseSearchKey }) => {
+    // Buscar primero la ruta directa, si no existe, buscar la ruta inversa
+    if (routesImages[searchKey]) {
+      setSelectedRouteImage(routesImages[searchKey]); // Guardar la imagen de la ruta
+      setCurrentMapImage(routesImages[searchKey]); // Reemplazar el mapa base con la ruta seleccionada
+    } else if (routesImages[reverseSearchKey]) {
+      setSelectedRouteImage(routesImages[reverseSearchKey]); // Guardar la imagen de la ruta
+      setCurrentMapImage(routesImages[reverseSearchKey]); // Reemplazar el mapa base con la ruta inversa
+    }
     setShowSearchBar(false);
   };
 
   const clearRoute = () => {
-    setSelectedRoute(null);
+    setSelectedRouteImage(null); // Limpiar la ruta seleccionada
+    setCurrentMapImage(require("./assets/images/mapa2.webp")); // Restaurar el mapa base
   };
 
   return (
@@ -133,11 +154,7 @@ export const HomePage = () => {
         {selectedIcon ? (
           <Image source={selectedIcon} style={styles.profileImage} />
         ) : (
-          <FontAwesomeIcon
-            icon={faUser}
-            size={width * 0.06}
-            color="white"
-          />
+          <FontAwesomeIcon icon={faUser} size={width * 0.06} color="white" />
         )}
       </TouchableOpacity>
 
@@ -175,15 +192,16 @@ export const HomePage = () => {
           enableCenterFocus={false}
           useNativeDriver={true}
           centerOn={{ x: 250, y: -20, scale: 0.9 }}>
+          {/* Muestra la imagen actual del mapa (base o con ruta seleccionada) */}
           <Image
-            source={require("./assets/images/mapa2.webp")}
+            source={currentMapImage} // Aqui se muestra la imagen actual del mapa
             style={styles.image}
             resizeMode="contain"
             onLoad={() => setTimeout(handleImageLoad, 3000)}
           />
           <MapWithPointsAndRoutes
             onPointPress={handlePointPress}
-            selectedRoute={selectedRoute}
+            selectedRoute={selectedRouteImage}
             selectedPoint={selectedPoint}
             points={points}
             clearRoute={clearRoute}
@@ -193,19 +211,14 @@ export const HomePage = () => {
         </ImageZoom>
       </GestureHandlerRootView>
 
-      {selectedRoute && (
+      {selectedRouteImage && (
         <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
           <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
         </TouchableOpacity>
       )}
 
-      <Animated.View 
-        style={[
-          styles.overlay,
-          {
-            opacity: fadeAnim,
-          },
-        ]} 
+      <Animated.View
+        style={[styles.overlay, { opacity: fadeAnim }]}
         pointerEvents="none"
       />
 
@@ -220,11 +233,8 @@ export const HomePage = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
@@ -232,10 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     zIndex: 1000,
   },
-  lottieAnimation: {
-    width: width * 0.5,
-    height: width * 0.5,
-  },
+  lottieAnimation: { width: width * 0.5, height: width * 0.5 },
   loadingText: {
     marginTop: 20,
     fontSize: 18,
@@ -281,15 +288,8 @@ const styles = StyleSheet.create({
     height: width * 0.06,
     borderRadius: (width * 0.06) / 2,
   },
-  imageContainer: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    width: undefined,
-    height: undefined,
-    alignSelf: "stretch",
-  },
+  imageContainer: { flex: 1 },
+  image: { flex: 1, width: undefined, height: undefined, alignSelf: "stretch" },
   finalizeButton: {
     position: "absolute",
     bottom: 20,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     padding: 15,
     borderRadius: 10,
-    zIndex: 3,
+    zIndex: 0,
   },
   finalizeButtonText: {
     color: "white",
