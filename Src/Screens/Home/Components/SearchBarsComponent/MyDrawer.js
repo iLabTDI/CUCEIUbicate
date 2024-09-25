@@ -26,6 +26,7 @@ import {
   faNewspaper,
   faFolder,
   faHandsHelping,
+  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -40,6 +41,7 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
+import { Chatbot } from "../../../ChatBot/Chatbot";
 
 const Drawer = createDrawerNavigator();
 
@@ -279,6 +281,20 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => (
             <HeaderWithIcon title="CID" icon={faBookBookmark} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="ChatbotScreen"
+        component={Chatbot}
+        options={{
+          drawerLabel: "Chatbot",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faRobot} size={size} color={color} />
+          ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => (
+            <HeaderWithIcon title="Chatbot" icon={faRobot} />
           ),
         }}
       />
