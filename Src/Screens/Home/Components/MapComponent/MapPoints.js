@@ -28,7 +28,7 @@ export const MapWithPointsAndRoutes = ({
             top: point.top,
             height: point.height,
             width: point.width,
-            backgroundColor: selectedPoint === point.id ? 'yellow' : 'red',
+            // backgroundColor: selectedPoint === point.id ? 'yellow' : 'red',
             transform: [{ rotate: `${point.rotate}deg` }],
           },
         ]}
