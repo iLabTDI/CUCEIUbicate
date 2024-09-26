@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faStar, faComment, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faComment, faPaperPlane, faMapMarkerAlt, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { bottomSheetContents } from "./bottomSheetContents";
 
 const { width, height } = Dimensions.get("window");
@@ -21,10 +21,9 @@ const { width, height } = Dimensions.get("window");
 export const BottomSheetComponent = React.forwardRef(
   ({ snapPoints, selectedPoint, isVisible, onClose }, ref) => {
     const bottomSheetRef = useRef(null);
-    const [newComment, setNewComment] = useState("");
-    const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+    // Efecto para exponer los métodos expand y close al componente padre
     useEffect(() => {
       if (ref) {
         ref.current = {
@@ -34,6 +33,7 @@ export const BottomSheetComponent = React.forwardRef(
       }
     }, [ref]);
 
+    // Efecto para controlar la visibilidad del BottomSheet
     useEffect(() => {
       if (isVisible) {
         bottomSheetRef.current?.expand();
@@ -42,6 +42,7 @@ export const BottomSheetComponent = React.forwardRef(
       }
     }, [isVisible]);
 
+    // Función para manejar los cambios de posición del BottomSheet
     const handleSheetChanges = useCallback(
       (index) => {
         if (index === -1) {
@@ -51,27 +52,7 @@ export const BottomSheetComponent = React.forwardRef(
       [onClose]
     );
 
-    const renderStars = (rating) => {
-      const stars = [];
-      for (let i = 1; i <= 5; i++) {
-        stars.push(
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            size={16}
-            color={i <= rating ? "#FFD700" : "#D3D3D3"}
-          />
-        );
-      }
-      return stars;
-    };
-
-    const handleAddComment = () => {
-      console.log("Nuevo comentario:", newComment);
-      setNewComment("");
-      setIsCommentInputVisible(false);
-    };
-
+    // Función para renderizar el carrusel de imágenes
     const renderImageCarousel = (images) => {
       return (
         <View style={styles.carouselContainer}>
@@ -130,51 +111,27 @@ export const BottomSheetComponent = React.forwardRef(
               (content) =>
                 selectedPoint === content.id && (
                   <View key={content.id} style={styles.contentContainer}>
-                    <Text style={styles.title}>{content.id}</Text>
+                    <View style={styles.header}>
+                      <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#000" style={styles.headerIcon} />
+                      <Text style={styles.title}>{content.id}</Text>
+                    </View>
                     {renderImageCarousel(content.images)}
-                    <Text style={styles.description}>{content.description}</Text>
-                    <View style={styles.ratingContainer}>
-                      <Text style={styles.ratingText}>Calificación: </Text>
-                      {renderStars(content.rating)}
-                      <Text style={styles.ratingNumber}>({content.rating})</Text>
-                    </View>
-                    <View style={styles.recommendationsContainer}>
-                      <Text style={styles.sectionTitle}>Recomendaciones:</Text>
-                      {content.recommendations.map((rec, index) => (
-                        <Text key={index} style={styles.recommendationText}>• {rec}</Text>
-                      ))}
-                    </View>
-                    <View style={styles.commentsContainer}>
-                      <Text style={styles.sectionTitle}>Comentarios:</Text>
-                      {content.comments.map((comment, index) => (
-                        <View key={index} style={styles.commentBox}>
-                          <Text style={styles.commentUser}>{comment.user}</Text>
-                          <Text style={styles.commentText}>{comment.text}</Text>
-                        </View>
-                      ))}
-                    </View>
-                    {isCommentInputVisible ? (
-                      <View style={styles.commentInputContainer}>
-                        <TextInput
-                          style={styles.commentInput}
-                          placeholder="Escribe tu comentario..."
-                          value={newComment}
-                          onChangeText={setNewComment}
-                          multiline
-                        />
-                        <TouchableOpacity style={styles.sendButton} onPress={handleAddComment}>
-                          <FontAwesomeIcon icon={faPaperPlane} size={16} color="#0066CC" />
-                        </TouchableOpacity>
+                    <View style={styles.infoContainer}>
+                      <View style={styles.descriptionContainer}>
+                        <FontAwesomeIcon icon={faInfoCircle} size={20} color="#0066CC" style={styles.descriptionIcon} />
+                        <Text style={styles.description}>{content.description}</Text>
                       </View>
-                    ) : (
-                      <TouchableOpacity 
-                        style={styles.addCommentButton}
-                        onPress={() => setIsCommentInputVisible(true)}
-                      >
-                        <FontAwesomeIcon icon={faComment} size={16} color="#0066CC" />
-                        <Text style={styles.addCommentText}>Agregar comentario</Text>
-                      </TouchableOpacity>
-                    )}
+                      
+                      <View style={styles.recommendationsContainer}>
+                        <Text style={styles.sectionTitle}>Recomendaciones:</Text>
+                        {content.recommendations.map((rec, index) => (
+                          <View key={index} style={styles.recommendationItem}>
+                            <FontAwesomeIcon icon={faStar} size={16} color="#FFD700" style={styles.recommendationIcon} />
+                            <Text style={styles.recommendationText}>{rec}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
                   </View>
                 )
             )}
@@ -187,37 +144,46 @@ export const BottomSheetComponent = React.forwardRef(
 
 const styles = StyleSheet.create({
   bottomSheetBackground: {
-    backgroundColor: 'white',
+    backgroundColor: '#f8f9fa',
   },
   bottomSheetIndicator: {
-    backgroundColor: '#0066CC',
-    padding: 4,
+    backgroundColor: '#000',
     width: 50,
+    height: 5,
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   bottomSheetContent: {
-    padding: 16,
+    flexGrow: 1,
   },
   contentContainer: {
-    alignItems: "center",
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  headerIcon: {
+    marginRight: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    color: '#000',
   },
   carouselContainer: {
-    width: width * 0.9,
-    height: height * 0.25,
-    marginBottom: 16,
+    width: '100%',
+    aspectRatio: 16 / 9,
   },
   carouselImage: {
-    width: width * 0.9,
-    height: height * 0.25,
-    borderRadius: 8,
+    width: width,
+    height: '100%',
   },
   paginationContainer: {
     flexDirection: 'row',
@@ -238,94 +204,67 @@ const styles = StyleSheet.create({
   paginationDotActive: {
     backgroundColor: 'white',
   },
-  description: {
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 16,
+  infoContainer: {
+    padding: 16,
   },
-  ratingContainer: {
+  descriptionContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: '#fff',
+    borderRadius: 8,
     marginBottom: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  ratingText: {
+  descriptionIcon: {
+    marginRight: 10,
+    marginTop: 3,
+  },
+  description: {
+    flex: 1,
     fontSize: 16,
     color: '#333',
-    marginRight: 8,
-  },
-  ratingNumber: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 8,
+    lineHeight: 24,
   },
   recommendationsContainer: {
-    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 8,
     marginBottom: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#000',
+    marginBottom: 12,
+  },
+  recommendationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
+  },
+  recommendationIcon: {
+    marginRight: 8,
   },
   recommendationText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 4,
-  },
-  commentsContainer: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  commentBox: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
-  },
-  commentUser: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  commentText: {
-    fontSize: 14,
-    color: '#333',
-  },
-  addCommentButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 8,
-  },
-  addCommentText: {
-    color: '#0066CC',
-    marginLeft: 8,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  commentInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 8,
-    width: '100%',
-  },
-  commentInput: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
-  },
-  sendButton: {
-    marginLeft: 8,
   },
 });
 

@@ -22,24 +22,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearSession } from "../../auth/SessionManager";
+import { animalIcons, careerImages } from "./Data_iconos_mallas";
+
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-const animalIcons = [
-  { id: "1", uri: require("./Iconos_animales/abeja.png") },
-  { id: "2", uri: require("./Iconos_animales/ajolote.png") },
-  { id: "3", uri: require("./Iconos_animales/Conejo.png") },
-  { id: "4", uri: require("./Iconos_animales/cucaracha.png") },
-  { id: "5", uri: require("./Iconos_animales/elefante.png") },
-  { id: "6", uri: require("./Iconos_animales/Leon.png") },
-  { id: "7", uri: require("./Iconos_animales/tigre.png") },
-  { id: "8", uri: require("./Iconos_animales/mono.png") },
-];
-
-const careerImages = {
-  INFO: require("./malla_informatica.jpg"),
-};
 
 export const ProfileScreen = () => {
   const route = useRoute();
@@ -48,7 +35,7 @@ export const ProfileScreen = () => {
   const userData = Array.isArray(user) ? user[0] : user;
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isEditMode, setEditMode] = useState(false);
+  // const [isEditMode, setEditMode] = useState(false);
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -128,11 +115,9 @@ export const ProfileScreen = () => {
           </View>
           <View style={styles.content}>
             <View style={styles.avatarContainer}>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Image source={selectedIcon} style={styles.avatar} />
-              </TouchableOpacity>
+              <Image source={selectedIcon} style={styles.avatar} />
               <TouchableOpacity
-                onPress={() => setEditMode(!isEditMode)}
+                onPress={() => setModalVisible(true)}
                 style={styles.editIcon}>
                 <FontAwesomeIcon icon={faEdit} size={18} color="#fff" />
               </TouchableOpacity>
