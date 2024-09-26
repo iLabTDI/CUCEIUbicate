@@ -226,7 +226,7 @@ export const HomePage = () => {
 
       <BottomSheetComponent
         ref={bottomSheetRef}
-        snapPoints={["25%", "50%", "75%"]}
+        snapPoints={[ "50%", "75%"]}
         selectedPoint={selectedPoint}
         isVisible={isBottomSheetVisible}
         onClose={handleCloseBottomSheet}
