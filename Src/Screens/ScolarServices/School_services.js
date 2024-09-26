@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Linking } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faLink } from '@fortawesome/free-solid-svg-icons';
-import * as FileSystem from 'expo-file-system';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+  Linking,
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
+import * as FileSystem from "expo-file-system";
 
 const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`;
 const scholarServicesUrl = "http://148.202.152.59:8001/json/scholar_services";
@@ -30,8 +39,8 @@ export const School_services = () => {
       }
 
       const json = await response.json();
-      if (!json || typeof json !== 'object') {
-        throw new Error('Invalid JSON response');
+      if (!json || typeof json !== "object") {
+        throw new Error("Invalid JSON response");
       }
 
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
@@ -64,50 +73,68 @@ export const School_services = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0b34b0" />
+        <Text style={styles.loadingText}>Cargando servicios escolares...</Text>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container}>
-      {jsonData.section_description["sub-sections"] && Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
-        const section = jsonData.section_description["sub-sections"][sectionId];
-        return (
-          <View key={sectionId} style={styles.card}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-            {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => {
-              const element = section["listed-elements"][elementId];
-              if (Array.isArray(element)) {
-                return element.map((item, index) => (
-                  <View key={index}>
-                    {isURL(item) ? (
-                      <TouchableOpacity onPress={() => Linking.openURL(item)} style={styles.linkContainer}>
-                        <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
-                        <Text style={styles.link}>{item}</Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <Text style={styles.text}>{item}</Text>
-                    )}
-                  </View>
-                ));
-              } else {
-                return (
-                  <View key={elementId} style={styles.listItem}>
-                    {isURL(element) ? (
-                      <TouchableOpacity onPress={() => Linking.openURL(element)} style={styles.linkContainer}>
-                        <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
-                        <Text style={styles.link}>{element}</Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <Text style={styles.text}>{element}</Text>
-                    )}
-                  </View>
-                );
-              }
-            })}
-          </View>
-        );
-      })}
+      {jsonData.section_description["sub-sections"] &&
+        Object.keys(jsonData.section_description["sub-sections"]).map(
+          (sectionId) => {
+            const section =
+              jsonData.section_description["sub-sections"][sectionId];
+            return (
+              <View key={sectionId} style={styles.card}>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+                {section["listed-elements"] &&
+                  Object.keys(section["listed-elements"]).map((elementId) => {
+                    const element = section["listed-elements"][elementId];
+                    if (Array.isArray(element)) {
+                      return element.map((item, index) => (
+                        <View key={index}>
+                          {isURL(item) ? (
+                            <TouchableOpacity
+                              onPress={() => Linking.openURL(item)}
+                              style={styles.linkContainer}>
+                              <FontAwesomeIcon
+                                icon={faLink}
+                                size={16}
+                                color="#0b34b0"
+                              />
+                              <Text style={styles.link}>{item}</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <Text style={styles.text}>{item}</Text>
+                          )}
+                        </View>
+                      ));
+                    } else {
+                      return (
+                        <View key={elementId} style={styles.listItem}>
+                          {isURL(element) ? (
+                            <TouchableOpacity
+                              onPress={() => Linking.openURL(element)}
+                              style={styles.linkContainer}>
+                              <FontAwesomeIcon
+                                icon={faLink}
+                                size={16}
+                                color="#0b34b0"
+                              />
+                              <Text style={styles.link}>{element}</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <Text style={styles.text}>{element}</Text>
+                          )}
+                        </View>
+                      );
+                    }
+                  })}
+              </View>
+            );
+          }
+        )}
     </ScrollView>
   );
 };
@@ -115,20 +142,25 @@ export const School_services = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#0b34b0",
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     margin: 10,
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
@@ -136,34 +168,34 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0b34b0',
+    fontWeight: "bold",
+    color: "#0b34b0",
     marginBottom: 15,
   },
   text: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     marginBottom: 8,
     lineHeight: 24,
-    textAlign: 'justify',
+    textAlign: "justify",
   },
   linkContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   link: {
     flex: 1,
     fontSize: 16,
-    color: '#0b34b0',
-    textDecorationLine: 'underline',
+    color: "#0b34b0",
+    textDecorationLine: "underline",
     marginLeft: 8,
   },
   listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
 });
