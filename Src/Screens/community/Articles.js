@@ -6,8 +6,7 @@ import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get('window');
 
-// Usa documentDirectory sin intentar escribir en una subcarpeta que no existe
-const jsonFilePath = `${FileSystem.documentDirectory}articles.json`; // Cambié la ruta aquí
+const jsonFilePath = `${FileSystem.documentDirectory}articles.json`;
 const articlesUrl = "http://148.202.152.59:8001/json/articles";
 
 export const Articles = () => {
@@ -35,7 +34,7 @@ export const Articles = () => {
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
       Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
-      
+
       // Si hay un error, intenta cargar el archivo existente si está disponible
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
@@ -49,7 +48,7 @@ export const Articles = () => {
         }
       } else {
         console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+        Alert.alert("Error", "Sin conexión a internet"); // Modificación aquí
       }
     }
   };
