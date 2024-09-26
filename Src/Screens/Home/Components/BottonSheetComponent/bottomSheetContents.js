@@ -1,8 +1,10 @@
 export const bottomSheetContents = [
   {
     id: "Modulo A",
-    images: [require("./Modulos/Modulo_A/PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_A/SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_A/PRIMER_PISO.png"),
+      require("./Modulos/Modulo_A/SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo A alberga aulas amplias y es ideal para conferencias y seminarios.",
     recommendations: [
@@ -42,8 +44,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo E",
-    images: [require("./Modulos/Modulo_E/E_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_E/E_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_E/E_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_E/E_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo E alberga una variedad de aulas y oficinas administrativas.",
     recommendations: [
@@ -53,8 +57,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo F",
-    images: [require("./Modulos/Modulo_F/F.png")],
-    images: [require("./Modulos/Modulo_F/F_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_F/F.png"),
+      require("./Modulos/Modulo_F/F_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo F es conocido por sus amplios laboratorios de física y química.",
     recommendations: [
@@ -74,8 +80,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo H",
-    images: [require("./Modulos/Modulo_H/H_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_H/H_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_H/H_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_H/H_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo H destaca por su diseño espacioso y moderno, ideal para conferencias.",
     recommendations: [
@@ -95,8 +103,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo J",
-    images: [require("./Modulos/Modulo_J/J_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_J/J_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_J/J_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_J/J_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo J es conocido por sus espacios de enseñanza interactivos.",
     recommendations: [
@@ -126,8 +136,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo M",
-    images: [require("./Modulos/Modulo_M/M_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_M/M_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_M/M_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_M/M_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo M es conocido por albergar laboratorios de alta tecnología.",
     recommendations: [
@@ -137,8 +149,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo N",
-    images: [require("./Modulos/Modulo_N/N_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_N/N_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_N/N_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_N/N_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo N cuenta con espacios de enseñanza moderna y oficinas administrativas.",
     recommendations: [
@@ -148,8 +162,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo O",
-    images: [require("./Modulos/Modulo_O/O_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_O/O_SEGUNDO_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_O/O_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_O/O_SEGUNDO_PISO.png"),
+    ],
     description:
       "El Módulo O alberga aulas especializadas para cursos de ingeniería y tecnología.",
     recommendations: [
@@ -190,8 +206,7 @@ export const bottomSheetContents = [
   {
     id: "Modulo S",
     images: [require("./Modulos/Modulo_S/S.png")],
-    description:
-      "El Módulo S alberga aulas y laboratorios de alta tecnología.",
+    description: "El Módulo S alberga aulas y laboratorios de alta tecnología.",
     recommendations: [
       "Visita el laboratorio de informática en el segundo piso.",
       "Explora las aulas interactivas en el primer piso.",
@@ -199,9 +214,8 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo S2",
-    images: [require("./Modulos/Modulo_S/S2.png")],
-    description:
-      "El Módulo S alberga aulas y laboratorios de alta tecnología.",
+    images: [require("./Modulos/Modulo_S2/S2.png")],
+    description: "El Módulo S alberga aulas y laboratorios de alta tecnología.",
     recommendations: [
       "Visita el laboratorio de informática en el segundo piso.",
       "Explora las aulas interactivas en el primer piso.",
@@ -220,6 +234,26 @@ export const bottomSheetContents = [
   {
     id: "Modulo U",
     images: [require("./Modulos/Modulo_U/U.png")],
+    description:
+      "El Módulo U es conocido por su enfoque en la investigación avanzada.",
+    recommendations: [
+      "Visita los laboratorios de investigación avanzada en el segundo piso.",
+      "Explora las aulas especializadas en el primer piso.",
+    ],
+  },
+  {
+    id: "Alfa",
+    images: [require("./Modulos/Modulo_UCT1/UCT1.png")],
+    description:
+      "El Módulo U es conocido por su enfoque en la investigación avanzada.",
+    recommendations: [
+      "Visita los laboratorios de investigación avanzada en el segundo piso.",
+      "Explora las aulas especializadas en el primer piso.",
+    ],
+  },
+  {
+    id: "Beta",
+    images: [require("./Modulos/Modulo_UCT2/UCT2.png")],
     description:
       "El Módulo U es conocido por su enfoque en la investigación avanzada.",
     recommendations: [
@@ -263,8 +297,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo X",
-    images: [require("./Modulos/Modulo_X/X.png")],
-    images: [require("./Modulos/Modulo_X/CONEXION_W-X.png")],
+    images: [
+      require("./Modulos/Modulo_X/X.png"),
+      require("./Modulos/Modulo_X/CONEXION_W-X.png"),
+    ],
     description:
       "El Módulo X es un edificio moderno diseñado para albergar aulas y laboratorios de última generación.",
     recommendations: [
@@ -274,10 +310,12 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo Y",
-    images: [require("./Modulos/Modulo_Y/Y_FRENTE.png")],
-    images: [require("./Modulos/Modulo_Y/Y_PRIMER_PISO.png")],
-    images: [require("./Modulos/Modulo_Y/Y_SEGUNDO_PISO.png")],
-    images: [require("./Modulos/Modulo_Y/Y_TERCER_PISO.png")],
+    images: [
+      require("./Modulos/Modulo_Y/Y_FRENTE.png"),
+      require("./Modulos/Modulo_Y/Y_PRIMER_PISO.png"),
+      require("./Modulos/Modulo_Y/Y_SEGUNDO_PISO.png"),
+      require("./Modulos/Modulo_Y/Y_TERCER_PISO.png"),
+    ],
     description:
       "El Módulo X es un edificio moderno diseñado para albergar aulas y laboratorios de última generación.",
     recommendations: [
@@ -287,8 +325,10 @@ export const bottomSheetContents = [
   },
   {
     id: "Modulo Z",
-    images: [require("./Modulos/Modulo_Z/Z.png")],
-    images: [require("./Modulos/Modulo_Z/Z_CHEDRAUI.png")],
+    images: [
+      require("./Modulos/Modulo_Z/Z.png"),
+      require("./Modulos/Modulo_Z/Z_CHEDRAUI.png"),
+    ],
     description:
       "El Módulo Z es conocido por su arquitectura innovadora y sus espacios versátiles para diferentes actividades académicas.",
     recommendations: [
