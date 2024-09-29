@@ -15,7 +15,7 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet"; // Co
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos de FontAwesome
 import { faMapMarkerAlt, faInfoCircle, faChevronLeft, faChevronRight, faToilet, faChalkboardTeacher, faMapSigns } from "@fortawesome/free-solid-svg-icons"; // Íconos específicos
 import { bottomSheetContents } from "./bottomSheetContents"; 
-import { ImageWithLoadingIndicator } from "./ImageWithLoadingIndicator"; // Componente para mostrar una imagen con un indicador de carga
+// import { ImageWithLoadingIndicator } from "./ImageWithLoadingIndicator"; // Componente para mostrar una imagen con un indicador de carga
 
 // Obtenemos el ancho de la ventana actual
 const { width } = Dimensions.get("window");
@@ -97,7 +97,7 @@ export const BottomSheetComponent = React.forwardRef(
           >
             {/* Mapea las imágenes recibidas y las renderiza */}
             {images.map((image, index) => (
-              <ImageWithLoadingIndicator
+              <Image
                 key={index}
                 source={image} // Fuente de la imagen
                 style={styles.carouselImage} // Estilo de la imagen

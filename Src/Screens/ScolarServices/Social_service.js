@@ -10,7 +10,6 @@ import {
   Alert,
   Dimensions
 } from "react-native";
-import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity, ActivityIndicator } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faLink, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from 'expo-file-system';
