@@ -1,21 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking, Dimensions, Alert } from "react-native";
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ScrollView, 
+  Linking, 
+  Dimensions, 
+  Alert,
+  ActivityIndicator
+} from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt, faBook, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get('window');
 
+// Ruta del archivo JSON local
 const jsonFilePath = `${FileSystem.documentDirectory}articles.json`;
+// URL de la API para obtener los artículos
 const articlesUrl = "http://148.202.152.59:8001/json/articles";
 
 export const Articles = () => {
+  // Estado para almacenar los datos de los artículos
   const [jsonData, setJsonData] = useState(null);
+  // Estado para controlar la visualización del indicador de carga
+  const [isLoading, setIsLoading] = useState(true);
 
   // Función para descargar el archivo JSON
   const downloadJson = async () => {
     console.log(`Descargando desde ${articlesUrl}...`);
     try {
+      setIsLoading(true);
       // Verifica si el archivo existe y lo borra antes de la descarga
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
@@ -33,8 +49,8 @@ export const Articles = () => {
       setJsonData(json); // Establece los datos JSON
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
-
+      Alert.alert("Error", `No se pudo descargar el archivo: ${error.message}`);
+      
       // Si hay un error, intenta cargar el archivo existente si está disponible
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
@@ -44,43 +60,70 @@ export const Articles = () => {
           setJsonData(JSON.parse(json)); // Establece los datos JSON
         } catch (readError) {
           console.error("Error al leer el archivo:", readError);
-          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+          Alert.alert("Error", `No se pudo leer el archivo: ${readError.message}`);
         }
       } else {
         console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
         Alert.alert("Error", "Sin conexión a internet"); // Modificación aquí
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Efecto para descargar los datos al montar el componente
   useEffect(() => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-  if (!jsonData) {
+  // Función para abrir enlaces externos
+  const openExternalLink = (url) => {
+    Linking.openURL(url).catch((err) => console.error('Error al abrir el enlace:', err));
+  };
+
+  // Renderiza el indicador de carga mientras se obtienen los datos
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Cargando...</Text>
+        <ActivityIndicator size="large" color="#0b34b0" />
+        <Text style={styles.loadingText}>Cargando artículos...</Text>
       </View>
     );
   }
 
+  // Renderiza un mensaje de error si no se pudieron obtener los datos
+  if (!jsonData) {
+    return (
+      <View style={styles.errorContainer}>
+        <FontAwesomeIcon icon={faInfoCircle} size={50} color="#e74c3c" />
+        <Text style={styles.errorText}>No se pudieron cargar los artículos.</Text>
+      </View>
+    );
+  }
+
+  // Renderiza el contenido principal
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
+        {/* Sección de descripción */}
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{jsonData.section_description.name}</Text>
+          <View style={styles.cardHeader}>
+            <FontAwesomeIcon icon={faBook} size={24} color="#0b34b0" />
+            <Text style={styles.sectionTitle}>{jsonData.section_description.name}</Text>
+          </View>
           {jsonData.section_description.description.map((desc, index) => (
             <Text key={index} style={styles.descriptionText}>{desc}</Text>
           ))}
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => Linking.openURL(jsonData.section_description.description[2])}
+            onPress={() => openExternalLink(jsonData.section_description.description[2])}
           >
             <Text style={styles.linkButtonText}>Ver Ley</Text>
             <FontAwesomeIcon icon={faExternalLinkAlt} size={16} color="#fff" />
           </TouchableOpacity>
         </View>
+        
+        {/* Sección de artículos */}
         {Object.keys(jsonData.artículos).map((articuloId) => (
           <View key={articuloId} style={styles.card}>
             <Text style={styles.articleTitle}>Artículo {articuloId}</Text>
@@ -97,32 +140,55 @@ export const Articles = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f2f5',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f0f2f5',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#0b34b0',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f2f5',
+  },
+  errorText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: '#e74c3c',
+    textAlign: 'center',
   },
   content: {
-    padding: 20,
+    padding: 16,
   },
   card: {
     backgroundColor: '#fff',
     padding: 20,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 5,
   },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
   sectionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginBottom: 15,
+    marginLeft: 10,
   },
   descriptionText: {
     fontSize: 16,

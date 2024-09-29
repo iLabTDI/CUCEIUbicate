@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -19,28 +19,15 @@ import {
   faSignOutAlt,
   faEdit,
   faCalendarDay,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clearSession } from "../../auth/SessionManager";
+import { animalIcons, careerImages } from "./Data_iconos_mallas";
+import ImageZoom from "react-native-image-pan-zoom";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-const animalIcons = [
-  { id: "1", uri: require("./Iconos_animales/abeja.png") },
-  { id: "2", uri: require("./Iconos_animales/ajolote.png") },
-  { id: "3", uri: require("./Iconos_animales/Conejo.png") },
-  { id: "4", uri: require("./Iconos_animales/cucaracha.png") },
-  { id: "5", uri: require("./Iconos_animales/elefante.png") },
-  { id: "6", uri: require("./Iconos_animales/Leon.png") },
-  { id: "7", uri: require("./Iconos_animales/tigre.png") },
-  { id: "8", uri: require("./Iconos_animales/mono.png") },
-];
-
-const careerImages = {
-  INFO: require("./malla_informatica.jpg"),
-  INRO: require("./Iconos_animales/abeja.png"),
-};
 
 export const ProfileScreen = () => {
   const route = useRoute();
@@ -49,20 +36,16 @@ export const ProfileScreen = () => {
   const userData = Array.isArray(user) ? user[0] : user;
 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [isEditMode, setEditMode] = useState(false);
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const imageZoomRef = useRef(null);
 
   useEffect(() => {
     loadSelectedIcon();
     const timer = setInterval(() => setCurrentDate(new Date()), 1000 * 60);
     return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    loadSelectedIcon();
   }, []);
 
   const loadSelectedIcon = async () => {
@@ -91,8 +74,8 @@ export const ProfileScreen = () => {
   };
 
   const handleAvatarChange = (newAvatar) => {
-    setSelectedIcon(newAvatar); // <-- Actualizamos el estado
-    saveSelectedIcon(newAvatar); // <-- Guardamos en AsyncStorage
+    setSelectedIcon(newAvatar);
+    saveSelectedIcon(newAvatar);
     setModalVisible(false);
   };
 
@@ -113,7 +96,6 @@ export const ProfileScreen = () => {
               index: 0,
               routes: [{ name: "Login" }],
             });
-            // navigation.navigate("Login");
           },
         },
       ]
@@ -129,11 +111,9 @@ export const ProfileScreen = () => {
           </View>
           <View style={styles.content}>
             <View style={styles.avatarContainer}>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Image source={selectedIcon} style={styles.avatar} />
-              </TouchableOpacity>
+              <Image source={selectedIcon} style={styles.avatar} />
               <TouchableOpacity
-                onPress={() => setEditMode(!isEditMode)}
+                onPress={() => setModalVisible(true)}
                 style={styles.editIcon}>
                 <FontAwesomeIcon icon={faEdit} size={18} color="#fff" />
               </TouchableOpacity>
@@ -189,11 +169,15 @@ export const ProfileScreen = () => {
 
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <TouchableOpacity onPress={toggleCurriculumModal}>
+            <TouchableOpacity onPress={toggleCurriculumModal} style={styles.curriculumImageContainer}>
               <Image
                 source={careerImages[userData.degree_code]}
                 style={styles.curriculumImage}
+                resizeMode="contain"
               />
+              <View style={styles.zoomIconContainer}>
+                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+              </View>
             </TouchableOpacity>
           </View>
         )}
@@ -231,24 +215,48 @@ export const ProfileScreen = () => {
           animationType="fade"
           transparent={true}
           visible={isCurriculumModalVisible}
-          onRequestClose={toggleCurriculumModal}>
+          onRequestClose={toggleCurriculumModal}
+        >
           <View style={styles.curriculumModalOverlay}>
             <TouchableOpacity
               style={styles.closeModalButton}
-              onPress={toggleCurriculumModal}>
+              onPress={toggleCurriculumModal}
+            >
               <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
             </TouchableOpacity>
+            <ImageZoom
+              ref={imageZoomRef}
+              cropWidth={windowWidth}
+              cropHeight={windowHeight}
+              imageWidth={windowWidth}
+              imageHeight={windowHeight}
+              enableSwipeDown={true}
+              onSwipeDown={toggleCurriculumModal}
+              minScale={1}
+              maxScale={3}
+              useNativeDriver={true}
+            >
+              <Image
+                source={careerImages[userData.degree_code]}
+                style={styles.modalImage}
+                resizeMode="contain"
+              />
+            </ImageZoom>
           </View>
         </Modal>
       </GestureHandlerRootView>
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "#f0f0f0",
     padding: 20,
+  },
+  gestureHandlerRoot: {
+    flex: 1,
   },
   card: {
     backgroundColor: "white",
@@ -298,9 +306,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  editIconText: {
-    fontSize: 18,
-  },
   name: {
     fontSize: 26,
     fontWeight: "bold",
@@ -337,10 +342,25 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
   },
+  curriculumImageContainer: {
+    position: 'relative',
+    width: windowWidth - 70,
+    height: (windowWidth - 70) * 0.75,
+    maxHeight: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   curriculumImage: {
-    width: 350,
-    height: 300,
-    resizeMode: "contain",
+    width: '100%',
+    height: '100%',
+  },
+  zoomIconContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 20,
+    padding: 8,
   },
   modalOverlay: {
     flex: 1,
@@ -386,21 +406,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  expandedCurriculumImage: {
-    width: windowWidth,
-    height: windowHeight,
-  },
   closeModalButton: {
     position: "absolute",
     width: 40,
     height: 40,
     top: 40,
     right: 20,
-    backgroundColor: "#007BFF",
+    backgroundColor: "rgba(0, 123, 255, 0.7)",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
+  },
+  modalImage: {
+    width: windowWidth,
+    height: windowHeight,
   },
   calendarContainer: {
     flexDirection: "row",

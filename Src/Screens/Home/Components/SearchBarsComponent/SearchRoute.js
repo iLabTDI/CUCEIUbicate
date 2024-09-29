@@ -11,16 +11,10 @@ import {
   Alert,
   Platform,
   Dimensions,
+  FlatList,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faTimes,
-  faMapMarkerAlt,
-  faArrowUp,
-  faExchangeAlt,
-  faSearch,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faMapMarkerAlt, faArrowUp, faExchangeAlt, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +23,8 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originText, setOriginText] = useState("");
   const [destinationText, setDestinationText] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
+  const [originSuggestions, setOriginSuggestions] = useState([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
 
   useEffect(() => {
     const loadSearchHistory = async () => {
@@ -58,7 +54,12 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       Alert.alert("Error", "El origen o destino no existen en el mapa. Por favor, verifique los nombres.");
       return;
     }
+
+    const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
+    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
     
+    onSearch({ searchKey, reverseSearchKey });
+
     const search = { origin: originText.trim(), destination: destinationText.trim() };
     try {
       setSearchHistory((prevHistory) => {
@@ -69,7 +70,6 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
         AsyncStorage.setItem("searchHistory", JSON.stringify(newHistory));
         return newHistory;
       });
-      onSearch(search);
     } catch (error) {
       console.error("Error updating search history:", error);
     }
@@ -108,6 +108,40 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     setDestinationText(originText);
   };
 
+  const handleOriginChange = (text) => {
+    setOriginText(text);
+    if (text.trim().length > 0) {
+      const suggestions = points
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
+        .map(point => point.name);
+      setOriginSuggestions(suggestions);
+    } else {
+      setOriginSuggestions([]);
+    }
+  };
+
+  const handleDestinationChange = (text) => {
+    setDestinationText(text);
+    if (text.trim().length > 0) {
+      const suggestions = points
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
+        .map(point => point.name);
+      setDestinationSuggestions(suggestions);
+    } else {
+      setDestinationSuggestions([]);
+    }
+  };
+
+  const selectSuggestion = (text, isOrigin) => {
+    if (isOrigin) {
+      setOriginText(text);
+      setOriginSuggestions([]);
+    } else {
+      setDestinationText(text);
+      setDestinationSuggestions([]);
+    }
+  };
+
   return (
     <Modal animationType="slide" transparent={true} visible={true}>
       <KeyboardAvoidingView 
@@ -126,22 +160,52 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <FontAwesomeIcon icon={faArrowUp} size={20} color="#0033A0" />
               <TextInput
                 style={styles.input}
-                placeholder="Origen"
+                placeholder="Origen:"
                 placeholderTextColor={"#888"}
                 value={originText}
-                onChangeText={setOriginText}
+                onChangeText={handleOriginChange}
               />
             </View>
+            {originSuggestions.length > 0 && (
+              <FlatList
+                data={originSuggestions}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.suggestionItem}
+                    onPress={() => selectSuggestion(item, true)}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item}
+                style={styles.suggestionList}
+              />
+            )}
             <View style={styles.inputContainer}>
               <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#0033A0" />
               <TextInput
                 style={styles.input}
-                placeholder="Destino"
+                placeholder="Destino:"
                 placeholderTextColor={"#888"}
                 value={destinationText}
-                onChangeText={setDestinationText}
+                onChangeText={handleDestinationChange}
               />
             </View>
+            {destinationSuggestions.length > 0 && (
+              <FlatList
+                data={destinationSuggestions}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.suggestionItem}
+                    onPress={() => selectSuggestion(item, false)}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item}
+                style={styles.suggestionList}
+              />
+            )}
             <View style={styles.buttonsContainer}>
               <TouchableOpacity style={styles.iconButton} onPress={swapLocations}>
                 <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#fff" />
@@ -240,6 +304,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: "#000",
+  },
+  suggestionList: {
+    maxHeight: 100,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
   },
   buttonsContainer: {
     flexDirection: "row",

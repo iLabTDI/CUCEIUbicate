@@ -69,6 +69,7 @@ export const Medical_services = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0b34b0" />
+        <Text style={styles.loadingText}>Cargando servicios médicos...</Text>
       </View>
     );
   }
@@ -108,6 +109,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#0b34b0",
   },
   errorContainer: {
     flex: 1,

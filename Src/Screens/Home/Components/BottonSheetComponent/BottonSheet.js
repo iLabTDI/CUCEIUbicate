@@ -1,3 +1,4 @@
+// Importamos los módulos y componentes necesarios de React y React Native
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -5,35 +6,42 @@ import {
   StyleSheet,
   Dimensions,
   Text,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faStar, faComment, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { bottomSheetContents } from "./bottomSheetContents";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet"; // Componente BottomSheet
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos de FontAwesome
+import { faMapMarkerAlt, faInfoCircle, faChevronLeft, faChevronRight, faToilet, faChalkboardTeacher, faMapSigns } from "@fortawesome/free-solid-svg-icons"; // Íconos específicos
+import { bottomSheetContents } from "./bottomSheetContents"; 
+import { ImageWithLoadingIndicator } from "./ImageWithLoadingIndicator"; // Componente para mostrar una imagen con un indicador de carga
 
-const { width, height } = Dimensions.get("window");
+// Obtenemos el ancho de la ventana actual
+const { width } = Dimensions.get("window");
 
+// Definimos el componente BottomSheetComponent utilizando forwardRef para poder manipular el BottomSheet desde el exterior
 export const BottomSheetComponent = React.forwardRef(
   ({ snapPoints, selectedPoint, isVisible, onClose }, ref) => {
-    const bottomSheetRef = useRef(null);
-    const [newComment, setNewComment] = useState("");
-    const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const bottomSheetRef = useRef(null); // Referencia del BottomSheet
+    const scrollRef = useRef(null); // Referencia del ScrollView para manejar el deslizamiento de imágenes
+    const [currentImageIndex, setCurrentImageIndex] = useState(0); // Estado para almacenar el índice de la imagen actual en el carrusel
+    const [loadedImages, setLoadedImages] = useState([]); // Estado para almacenar las imágenes que se han cargado
 
+    // Efecto que permite expandir o cerrar el BottomSheet desde fuera usando la referencia
     useEffect(() => {
       if (ref) {
         ref.current = {
-          expand: () => bottomSheetRef.current?.expand(),
-          close: () => bottomSheetRef.current?.close(),
+          expand: () => bottomSheetRef.current?.expand(), // Expande el BottomSheet
+          close: () => bottomSheetRef.current?.close(),   // Cierra el BottomSheet
         };
       }
     }, [ref]);
 
+    
+
+    // Efecto que se activa cuando la visibilidad del BottomSheet cambia
+    // Si isVisible es true, expande el BottomSheet, de lo contrario lo cierra
     useEffect(() => {
       if (isVisible) {
         bottomSheetRef.current?.expand();
@@ -42,141 +50,174 @@ export const BottomSheetComponent = React.forwardRef(
       }
     }, [isVisible]);
 
+    // Callback que detecta cambios en el estado del BottomSheet (si se ha cerrado o no)
     const handleSheetChanges = useCallback(
       (index) => {
-        if (index === -1) {
-          onClose();
+        if (index === -1) {  // Cuando el índice es -1, el BottomSheet está cerrado
+          onClose(); // Ejecuta la función onClose para notificar el cierre
         }
       },
       [onClose]
     );
 
-    const renderStars = (rating) => {
-      const stars = [];
-      for (let i = 1; i <= 5; i++) {
-        stars.push(
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            size={16}
-            color={i <= rating ? "#FFD700" : "#D3D3D3"}
-          />
-        );
-      }
-      return stars;
-    };
+    // Callback que avanza a la siguiente imagen en el carrusel
+    const goToNextImage = useCallback((imagesLength) => {
+      const nextIndex = (currentImageIndex + 1) % imagesLength; // Calcula el índice de la siguiente imagen
+      scrollRef.current.scrollTo({ x: nextIndex * width, animated: true }); // Desplaza el ScrollView a la siguiente imagen
+      setCurrentImageIndex(nextIndex); // Actualiza el estado del índice actual
+    }, [currentImageIndex]);
 
-    const handleAddComment = () => {
-      console.log("Nuevo comentario:", newComment);
-      setNewComment("");
-      setIsCommentInputVisible(false);
-    };
+    // Callback que retrocede a la imagen anterior en el carrusel
+    const goToPrevImage = useCallback((imagesLength) => {
+      const prevIndex = currentImageIndex === 0 ? imagesLength - 1 : currentImageIndex - 1; // Calcula el índice de la imagen anterior
+      scrollRef.current.scrollTo({ x: prevIndex * width, animated: true }); // Desplaza el ScrollView a la imagen anterior
+      setCurrentImageIndex(prevIndex); // Actualiza el estado del índice actual
+    }, [currentImageIndex]);
 
-    const renderImageCarousel = (images) => {
+    // Callback que se ejecuta cuando se detiene el desplazamiento en el carrusel
+    // Calcula el índice de la imagen actual basado en la posición de desplazamiento
+    const handleMomentumScrollEnd = useCallback((event) => {
+      const slideWidth = event.nativeEvent.layoutMeasurement.width;
+      const index = Math.round(event.nativeEvent.contentOffset.x / slideWidth);
+      setCurrentImageIndex(index); // Actualiza el estado con el nuevo índice
+    }, []);
+
+    // Función que renderiza el carrusel de imágenes
+    const renderImageCarousel = useCallback((images) => {
       return (
         <View style={styles.carouselContainer}>
           <ScrollView
+            ref={scrollRef}
             horizontal
             pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(event) => {
-              const slideWidth = event.nativeEvent.layoutMeasurement.width;
-              const index = event.nativeEvent.contentOffset.x / slideWidth;
-              setCurrentImageIndex(Math.round(index));
-            }}
+            showsHorizontalScrollIndicator={false} // Oculta el indicador de desplazamiento horizontal
+            onMomentumScrollEnd={handleMomentumScrollEnd} // Ejecuta el callback al final del desplazamiento
+            scrollEventThrottle={16} // Controla la frecuencia de los eventos de desplazamiento
+            contentContainerStyle={styles.scrollViewContent}
           >
+            {/* Mapea las imágenes recibidas y las renderiza */}
             {images.map((image, index) => (
-              <Image
+              <ImageWithLoadingIndicator
                 key={index}
-                source={image}
-                style={styles.carouselImage}
-                resizeMode="cover"
+                source={image} // Fuente de la imagen
+                style={styles.carouselImage} // Estilo de la imagen
+                resizeMode="cover" // La imagen se ajusta para cubrir el área del contenedor
+                onLoad={() => setLoadedImages(prev => [...prev, index])} // Actualiza el estado cuando la imagen se carga
               />
             ))}
           </ScrollView>
+          {/* Si hay más de una imagen, muestra los botones para avanzar y retroceder */}
           {images.length > 1 && (
-            <View style={styles.paginationContainer}>
-              {images.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.paginationDot,
-                    index === currentImageIndex && styles.paginationDotActive,
-                  ]}
-                />
-              ))}
-            </View>
+            <>
+              {/* Botón para ir a la imagen anterior */}
+              <TouchableOpacity
+                style={styles.prevButton}
+                onPress={() => goToPrevImage(images.length)}
+                activeOpacity={0.6}
+              >
+                <FontAwesomeIcon icon={faChevronLeft} size={24} color="#fff" />
+              </TouchableOpacity>
+              {/* Botón para ir a la siguiente imagen */}
+              <TouchableOpacity
+                style={styles.nextButton}
+                onPress={() => goToNextImage(images.length)}
+                activeOpacity={0.6}
+              >
+                <FontAwesomeIcon icon={faChevronRight} size={24} color="#fff" />
+              </TouchableOpacity>
+              {/* Paginación visual para mostrar qué imagen está activa */}
+              <View style={styles.paginationContainer}>
+                {images.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.paginationDot,
+                      index === currentImageIndex && styles.paginationDotActive, // Resalta el punto correspondiente a la imagen actual
+                    ]}
+                  />
+                ))}
+              </View>
+            </>
           )}
         </View>
       );
-    };
+    }, [currentImageIndex, goToNextImage, goToPrevImage, handleMomentumScrollEnd]);
 
     return (
+      // Componente BottomSheet de @gorhom/bottom-sheet
       <BottomSheet
         ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backgroundStyle={styles.bottomSheetBackground}
-        handleIndicatorStyle={styles.bottomSheetIndicator}
-        enablePanDownToClose={true}
+        index={-1} // El índice -1 indica que el BottomSheet comienza cerrado
+        snapPoints={snapPoints} // Puntos de anclaje para el BottomSheet
+        onChange={handleSheetChanges} // Callback para manejar los cambios de estado del BottomSheet
+        backgroundStyle={styles.bottomSheetBackground} // Estilo de fondo del BottomSheet
+        handleIndicatorStyle={styles.bottomSheetIndicator} // Estilo del indicador de arrastre del BottomSheet
+        enablePanDownToClose={true} // Permite cerrar el BottomSheet arrastrando hacia abajo
       >
+        {/* El KeyboardAvoidingView permite que el contenido del BottomSheet evite el teclado en iOS */}
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardAvoidingView}
         >
-          <BottomSheetScrollView contentContainerStyle={styles.bottomSheetContent}>
-            {bottomSheetContents.map(
-              (content) =>
-                selectedPoint === content.id && (
-                  <View key={content.id} style={styles.contentContainer}>
-                    <Text style={styles.title}>{content.id}</Text>
-                    {renderImageCarousel(content.images)}
-                    <Text style={styles.description}>{content.description}</Text>
-                    <View style={styles.ratingContainer}>
-                      <Text style={styles.ratingText}>Calificación: </Text>
-                      {renderStars(content.rating)}
-                      <Text style={styles.ratingNumber}>({content.rating})</Text>
-                    </View>
-                    <View style={styles.recommendationsContainer}>
-                      <Text style={styles.sectionTitle}>Recomendaciones:</Text>
-                      {content.recommendations.map((rec, index) => (
-                        <Text key={index} style={styles.recommendationText}>• {rec}</Text>
-                      ))}
-                    </View>
-                    <View style={styles.commentsContainer}>
-                      <Text style={styles.sectionTitle}>Comentarios:</Text>
-                      {content.comments.map((comment, index) => (
-                        <View key={index} style={styles.commentBox}>
-                          <Text style={styles.commentUser}>{comment.user}</Text>
-                          <Text style={styles.commentText}>{comment.text}</Text>
-                        </View>
-                      ))}
-                    </View>
-                    {isCommentInputVisible ? (
-                      <View style={styles.commentInputContainer}>
-                        <TextInput
-                          style={styles.commentInput}
-                          placeholder="Escribe tu comentario..."
-                          value={newComment}
-                          onChangeText={setNewComment}
-                          multiline
-                        />
-                        <TouchableOpacity style={styles.sendButton} onPress={handleAddComment}>
-                          <FontAwesomeIcon icon={faPaperPlane} size={16} color="#0066CC" />
-                        </TouchableOpacity>
-                      </View>
-                    ) : (
-                      <TouchableOpacity 
-                        style={styles.addCommentButton}
-                        onPress={() => setIsCommentInputVisible(true)}
-                      >
-                        <FontAwesomeIcon icon={faComment} size={16} color="#0066CC" />
-                        <Text style={styles.addCommentText}>Agregar comentario</Text>
-                      </TouchableOpacity>
-                    )}
+          <BottomSheetScrollView
+            contentContainerStyle={styles.bottomSheetContent}
+          >
+            {/* Solo muestra contenido si se ha seleccionado un punto y tiene datos asociados */}
+            {selectedPoint && bottomSheetContents[selectedPoint] && (
+              <View style={styles.contentContainer}>
+                <View style={styles.header}>
+                  {/* Icono y nombre del lugar seleccionado */}
+                  <FontAwesomeIcon
+                    icon={faMapMarkerAlt}
+                    size={24}
+                    color="#4A90E2"
+                    style={styles.headerIcon}
+                  />
+                  <Text style={styles.title}>{bottomSheetContents[selectedPoint].name}</Text>
+                </View>
+                {/* Carrusel de imágenes del lugar seleccionado */}
+                {renderImageCarousel(bottomSheetContents[selectedPoint]["images-path"])}
+                <View style={styles.infoContainer}>
+                  {/* Sección de descripción del lugar */}
+                  <View style={styles.descriptionContainer}>
+                    <FontAwesomeIcon
+                      icon={faInfoCircle}
+                      size={20}
+                      color="blue"
+                      style={styles.descriptionIcon}
+                    />
+                    <Text style={styles.description}>
+                      {bottomSheetContents[selectedPoint].description}
+                    </Text>
                   </View>
-                )
+
+                  {/* Detalles adicionales del lugar, como aulas, lugares relevantes y baños */}
+                  <View style={styles.detailsContainer}>
+                    <View style={styles.detailItem}>
+                      <FontAwesomeIcon icon={faChalkboardTeacher} size={20} color="blue" style={styles.detailIcon} />
+                      <Text style={styles.detailText}>Aulas: {bottomSheetContents[selectedPoint].classrooms}</Text>
+                    </View>
+                    
+                    <View style={styles.detailItem}>
+                      <FontAwesomeIcon icon={faMapSigns} size={20} color="blue" style={styles.detailIcon} />
+                      <Text style={styles.detailTitle}>Lugares relevantes:</Text>
+                    </View>
+                    {/* Muestra los lugares relevantes asociados */}
+                    {bottomSheetContents[selectedPoint]["relevant-places"].map((place, index) => (
+                      <Text key={index} style={styles.detailSubText}>{place}</Text>
+                    ))}
+                    
+                    <View style={styles.detailItem}>
+                      <FontAwesomeIcon icon={faToilet} size={20} color="blue" style={styles.detailIcon} />
+                      <Text style={styles.detailTitle}>Baños:</Text>
+                    </View>
+                    {/* Muestra los baños asociados */}
+                    {bottomSheetContents[selectedPoint].bathrooms.map((bathroom, index) => (
+                      <Text key={index} style={styles.detailSubText}>{bathroom}</Text>
+                    ))}
+                  </View>
+                </View>
+              </View>
             )}
           </BottomSheetScrollView>
         </KeyboardAvoidingView>
@@ -185,147 +226,162 @@ export const BottomSheetComponent = React.forwardRef(
   }
 );
 
+// Estilos del componente
 const styles = StyleSheet.create({
   bottomSheetBackground: {
-    backgroundColor: 'white',
+    backgroundColor: "#f8f9fa",
   },
   bottomSheetIndicator: {
-    backgroundColor: '#0066CC',
-    padding: 4,
+    backgroundColor: "#4A90E2",
     width: 50,
+    height: 5,
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   bottomSheetContent: {
-    padding: 16,
+    flexGrow: 1,
   },
   contentContainer: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
     alignItems: "center",
+    width: "100%",
+    padding: 16,
+    backgroundColor: "#f8f9fa",
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  headerIcon: {
+    marginRight: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+    fontWeight: "bold",
+    color: "#333",
   },
   carouselContainer: {
-    width: width * 0.9,
-    height: height * 0.25,
+    width: "100%",
+    height: width * (9 / 16),
+    position: "relative",
     marginBottom: 16,
   },
+  scrollViewContent: {
+    height: "100%",
+  },
   carouselImage: {
-    width: width * 0.9,
-    height: height * 0.25,
-    borderRadius: 8,
+    width: width,
+    height: "100%",
+  },
+  prevButton: {
+    position: "absolute",
+    left: 10,
+    top: "50%",
+    zIndex: 1,
+    transform: [{ translateY: -20 }],
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 10,
+    borderRadius: 50,
+  },
+  nextButton: {
+    position: "absolute",
+    right: 10,
+    top: "50%",
+    zIndex: 1,
+    transform: [{ translateY: -20 }],
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 10,
+    borderRadius: 50,
   },
   paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     bottom: 10,
     left: 0,
     right: 0,
   },
   paginationDot: {
     width: 8,
-    height: 8,
+    height: 8,          
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     marginHorizontal: 4,
   },
   paginationDotActive: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
+  },
+  infoContainer: {
+    padding: 16,
+  },
+  descriptionContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  descriptionIcon: {
+    marginRight: 10,
+    marginTop: 3,
   },
   description: {
+    flex: 1,
     fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 16,
+    color: "#333",
+    lineHeight: 24,
   },
-  ratingContainer: {
+  detailsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginTop: 16,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  ratingText: {
+  detailIcon: {
+    marginRight: 10,
+  },
+  detailText: {
     fontSize: 16,
     color: '#333',
-    marginRight: 8,
   },
-  ratingNumber: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 8,
-  },
-  recommendationsContainer: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  sectionTitle: {
+  detailTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
   },
-  recommendationText: {
+  detailSubText: {
     fontSize: 14,
-    color: '#333',
-    marginBottom: 4,
-  },
-  commentsContainer: {
-    width: '100%',
-    marginBottom: 16,
-  },
-  commentBox: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    padding: 12,
+    color: '#666',
+    marginLeft: 30,
     marginBottom: 8,
-  },
-  commentUser: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  commentText: {
-    fontSize: 14,
-    color: '#333',
-  },
-  addCommentButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 8,
-  },
-  addCommentText: {
-    color: '#0066CC',
-    marginLeft: 8,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  commentInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 8,
-    width: '100%',
-  },
-  commentInput: {
-    flex: 1,
-    fontSize: 14,
-    color: '#333',
-  },
-  sendButton: {
-    marginLeft: 8,
   },
 });
 
