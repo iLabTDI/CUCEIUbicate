@@ -11,7 +11,12 @@ import {
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native"; // Hooks de navegación y control de enfoque
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos
-import { faBars, faRoute, faUser, faTimes } from "@fortawesome/free-solid-svg-icons"; // Iconos específicos
+import {
+  faBars,
+  faRoute,
+  faUser,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons"; // Iconos específicos
 import { GestureHandlerRootView } from "react-native-gesture-handler"; // Manejo de gestos
 import ImageZoom from "react-native-image-pan-zoom"; // Componente para hacer zoom en la imagen
 import LottieView from "lottie-react-native"; // Animaciones Lottie
@@ -141,10 +146,10 @@ export const HomePage = () => {
     // Verificar si existe una imagen para la ruta seleccionada
     if (routesImages[searchKey]) {
       routeImage = routesImages[searchKey];
-      routePoints = searchKey.split('-'); // Dividir los puntos de la ruta
+      routePoints = searchKey.split("-"); // Dividir los puntos de la ruta
     } else if (routesImages[reverseSearchKey]) {
       routeImage = routesImages[reverseSearchKey];
-      routePoints = reverseSearchKey.split('-');
+      routePoints = reverseSearchKey.split("-");
     }
 
     // Si se encuentra la imagen de la ruta, establecer la ruta activa
@@ -153,6 +158,11 @@ export const HomePage = () => {
       setCurrentMapImage(routeImage); // Cambiar la imagen del mapa
       setIsRouteActive(true); // Marcar la ruta como activa
       setActiveRoutePoints(routePoints); // Establecer los puntos de la ruta activa
+    } else {
+      Alert.alert(
+        "Error",
+        "No se encontró la ruta. Por favor verifica tu búsqueda."
+      );
     }
 
     setShowSearchBar(false); // Ocultar la barra de búsqueda
@@ -161,7 +171,7 @@ export const HomePage = () => {
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
     setSelectedRouteImage(null); // Limpiar la imagen de la ruta
-    setCurrentMapImage(require("./assets/images/mapa2.webp")); // Restablecer la imagen del mapa
+    setCurrentMapImage(require("./assets/images/mapa.webp")); // Restablecer la imagen del mapa
     setIsRouteActive(false); // Marcar la ruta como inactiva
     setActiveRoutePoints([]); // Limpiar los puntos de la ruta activa
   };
@@ -184,16 +194,14 @@ export const HomePage = () => {
       {/* Botón del menú */}
       <TouchableOpacity
         style={styles.menu_icon}
-        onPress={() => navigation.openDrawer()}
-      >
+        onPress={() => navigation.openDrawer()}>
         <FontAwesomeIcon icon={faBars} size={width * 0.06} color="white" />
       </TouchableOpacity>
 
       {/* Botón de perfil */}
       <TouchableOpacity
         style={styles.profile_icon}
-        onPress={() => navigation.navigate("Perfil")}
-      >
+        onPress={() => navigation.navigate("Perfil")}>
         {selectedIcon ? (
           <Image source={selectedIcon} style={styles.profileImage} />
         ) : (
@@ -238,8 +246,7 @@ export const HomePage = () => {
           maxScale={2}
           enableCenterFocus={false}
           useNativeDriver={true}
-          centerOn={{ x: 250, y: -20, scale: 0.9 }}
-        >
+          centerOn={{ x: 250, y: -20, scale: 0.9 }}>
           <Image
             source={currentMapImage}
             style={styles.image}
