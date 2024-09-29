@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// Importamos las dependencias necesarias
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -29,14 +30,18 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
+// Obtenemos las dimensiones de la pantalla para un diseño responsivo
 const { width, height } = Dimensions.get("window");
 
 export const CompleteProfile = () => {
+  // Estados para manejar los inputs del formulario
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [Codigo, setCodigo] = useState("");
   const [selectedCareer, setSelectedCareer] = useState("");
+  
+  // Estados para manejar la lógica de la UI
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [nameError, setNameError] = useState(false);
@@ -45,14 +50,19 @@ export const CompleteProfile = () => {
   const [CodigoError, setCodigoError] = useState(false);
   const [careerOptions, setCareerOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [fadeAnim] = useState(new Animated.Value(0));
+  
+  // Animaciones
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const shakeAnimation = useRef(new Animated.Value(0)).current;
 
+  // Hooks de navegación y ruta
   const navigation = useNavigation();
   const route = useRoute();
   const { mail, pass } = route.params;
   const correo = mail;
   const contraseña = pass;
 
+  // Efecto para cargar las opciones de carrera al montar el componente
   useEffect(() => {
     const fetchDegrees = async () => {
       const degrees = await get_degrees();
@@ -61,33 +71,41 @@ export const CompleteProfile = () => {
     fetchDegrees();
   }, []);
 
+  // Función para manejar la finalización del perfil
   const handleCompleteProfile = async () => {
     setIsLoading(true);
 
+    // Validación de campos vacíos
     if (!name || !lastName || !username || !Codigo || !selectedCareer) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       setCodigoError(!Codigo);
       setIsLoading(false);
+      shakeForm(); // Animación de sacudida si hay campos vacíos
       return;
     }
 
     try {
+      // Validación de usuario
       const usuarioValido = await validar_usuario(username);
       if (!usuarioValido) {
         setUsernameError(true);
         setIsLoading(false);
+        shakeForm(); // Animación de sacudida si el usuario no es válido
         return;
       }
 
+      // Validación de código
       const codigoValido = await validar_codigo(Codigo);
       if (!codigoValido) {
         setCodigoError(true);
         setIsLoading(false);
+        shakeForm(); // Animación de sacudida si el código no es válido
         return;
       }
 
+      // Registro de usuario
       await alta_usuario(
         Codigo,
         correo,
@@ -98,6 +116,7 @@ export const CompleteProfile = () => {
         username
       );
 
+      // Animación de finalización del perfil
       setIsProfileComplete(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -111,10 +130,12 @@ export const CompleteProfile = () => {
     }
   };
 
+  // Función para alternar la visibilidad del modal
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+  // Efecto para navegar a la pantalla de login después de completar el perfil
   useEffect(() => {
     if (isProfileComplete) {
       const timer = setTimeout(() => {
@@ -123,6 +144,16 @@ export const CompleteProfile = () => {
       return () => clearTimeout(timer);
     }
   }, [isProfileComplete, navigation]);
+
+  // Función para animar la sacudida del formulario en caso de error
+  const shakeForm = () => {
+    Animated.sequence([
+      Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: -10, duration: 100, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
+      Animated.timing(shakeAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
+    ]).start();
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -133,7 +164,12 @@ export const CompleteProfile = () => {
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.scrollViewContent}>
-            <View style={styles.container}>
+            <Animated.View 
+              style={[
+                styles.container, 
+                { transform: [{ translateX: shakeAnimation }] }
+              ]}
+            >
               <Text style={styles.title}>Completa tu Perfil</Text>
               <LottieView
                 source={require("../assets/animations/completeProfile.json")}
@@ -142,6 +178,7 @@ export const CompleteProfile = () => {
                 style={styles.animation}
               />
               <View style={styles.formContainer}>
+                {/* Campo de nombre */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
                   <TextInput
@@ -159,6 +196,7 @@ export const CompleteProfile = () => {
                   <Text style={styles.errorText}>Campo requerido</Text>
                 )}
 
+                {/* Campo de apellidos */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
                   <TextInput
@@ -176,6 +214,7 @@ export const CompleteProfile = () => {
                   <Text style={styles.errorText}>Campo requerido</Text>
                 )}
 
+                {/* Campo de nombre de usuario */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon
                     icon={faEnvelope}
@@ -199,6 +238,7 @@ export const CompleteProfile = () => {
                   </Text>
                 )}
 
+                {/* Campo de código de estudiante */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} />
                   <TextInput
@@ -221,6 +261,7 @@ export const CompleteProfile = () => {
                   </Text>
                 )}
 
+                {/* Selector de carrera */}
                 <TouchableOpacity
                   style={styles.pickerContainer}
                   onPress={toggleModal}>
@@ -237,6 +278,7 @@ export const CompleteProfile = () => {
                   />
                 </TouchableOpacity>
 
+                {/* Botón para completar el perfil */}
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleCompleteProfile}
@@ -248,10 +290,11 @@ export const CompleteProfile = () => {
                   )}
                 </TouchableOpacity>
               </View>
-            </View>
+            </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
       ) : (
+        // Vista de perfil completado
         <Animated.View style={[styles.completedContainer, { opacity: fadeAnim }]}>
           <LottieView
             source={require("../assets/animations/Confetti-2.json")}
@@ -272,6 +315,7 @@ export const CompleteProfile = () => {
         </Animated.View>
       )}
 
+      {/* Modal para seleccionar carrera */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -303,10 +347,11 @@ export const CompleteProfile = () => {
   );
 };
 
+// Estilos para el componente
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#f0f0f0", // Fondo gris claro para toda la pantalla
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -314,20 +359,20 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: width * 0.05,
+    padding: width * 0.05, // Padding basado en el ancho de la pantalla
   },
   container: {
     alignItems: "center",
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: width * 0.08, // Tamaño de fuente relativo al ancho de la pantalla
     fontWeight: "bold",
-    marginBottom: height * 0.02,
-    color: "#0b34b0",
+    marginBottom: height * 0.02, // Margen inferior basado en la altura de la pantalla
+    color: "#0b34b0", // Color azul profundo para el título
   },
   animation: {
-    width: width * 0.6,
-    height: width * 0.4,
+    width: width * 0.6, // 60% del ancho de la pantalla
+    height: width * 0.4, // 40% del ancho de la pantalla
     marginBottom: height * 0.02,
   },
   formContainer: {
@@ -339,7 +384,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 5,
+    elevation: 5, // Para sombra en Android
   },
   inputContainer: {
     flexDirection: "row",
@@ -352,7 +397,7 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: width * 0.02,
-    color: "#0b34b0",
+    color: "#0b34b0", // Color azul profundo para los íconos
   },
   input: {
     flex: 1,
@@ -360,7 +405,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.04,
   },
   errorInput: {
-    borderColor: "red",
+    borderColor: "red", // Borde rojo para inputs con error
   },
   errorText: {
     color: "red",
