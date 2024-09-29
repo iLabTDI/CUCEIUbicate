@@ -443,8 +443,8 @@ export const bottomSheetContents = {
     ],
     description: "El Módulo W es un edificio versátil que alberga múltiples aulas y áreas comunes."
   },
-  "Edificio X": {
-    name: "Edificio X",
+  "Modulo X": {
+    name: "Modulo X",
     classrooms: "X-01 ~ X-23",
     "relevant-places": [
       "Cubículo X-301",
