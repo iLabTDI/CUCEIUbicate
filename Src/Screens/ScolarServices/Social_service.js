@@ -53,8 +53,6 @@ export const Social_service = () => {
   const [jsonData, setJsonData] = useState(null);
   // Estado para controlar la visualización del indicador de carga
   const [isLoading, setIsLoading] = useState(true);
-  // Estado para manejar errores
-  const [error, setError] = useState(null);
   const [error, setError] = useState(null); // Nuevo estado para manejar errores
 
   // Función para descargar y guardar el JSON
@@ -63,11 +61,7 @@ export const Social_service = () => {
     try {
       setIsLoading(true);
       // Verifica si el archivo existe y lo borra antes de la descarga
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
-      }
-
+      
       const response = await fetch(socialServiceUrl);
       if (!response.ok) {
         throw new Error(`Error al descargar desde ${socialServiceUrl}`);
