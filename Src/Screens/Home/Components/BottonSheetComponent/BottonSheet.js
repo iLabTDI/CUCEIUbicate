@@ -183,7 +183,7 @@ export const BottomSheetComponent = React.forwardRef(
                     <FontAwesomeIcon
                       icon={faInfoCircle}
                       size={20}
-                      color="blue"
+                      color="#0000ff"
                       style={styles.descriptionIcon}
                     />
                     <Text style={styles.description}>
@@ -194,12 +194,12 @@ export const BottomSheetComponent = React.forwardRef(
                   {/* Detalles adicionales del lugar, como aulas, lugares relevantes y baños */}
                   <View style={styles.detailsContainer}>
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faChalkboardTeacher} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faChalkboardTeacher} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailText}>Aulas: {bottomSheetContents[selectedPoint].classrooms}</Text>
                     </View>
                     
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faMapSigns} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faMapSigns} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailTitle}>Lugares relevantes:</Text>
                     </View>
                     {/* Muestra los lugares relevantes asociados */}
@@ -208,7 +208,7 @@ export const BottomSheetComponent = React.forwardRef(
                     ))}
                     
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faToilet} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faToilet} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailTitle}>Baños:</Text>
                     </View>
                     {/* Muestra los baños asociados */}
