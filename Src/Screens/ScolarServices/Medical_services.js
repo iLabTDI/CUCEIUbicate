@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from 'expo-file-system';
@@ -9,15 +9,11 @@ const medicalServicesUrl = "http://148.202.152.59:8001/json/medical_services";
 
 export const Medical_services = () => {
   const [jsonData, setJsonData] = useState(null);
+  const [error, setError] = useState(null); // Nuevo estado para manejar errores
 
   const downloadJson = async () => {
     try {
-      // Verifica si el archivo existe y lo borra antes de la descarga
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
-      }
-
+      // Intentar descargar el nuevo archivo JSON sin eliminar el anterior
       const response = await fetch(medicalServicesUrl);
       if (!response.ok) {
         throw new Error(`HTTP status ${response.status}`);
@@ -28,24 +24,31 @@ export const Medical_services = () => {
         throw new Error('Respuesta JSON no válida');
       }
 
+      // Guardar el nuevo archivo JSON
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       setJsonData(json); // Establece los datos JSON
+      setError(null); // Reinicia el error si la descarga es exitosa
+
+      // No es necesario eliminar el archivo viejo porque ya se ha sobrescrito con éxito
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      Alert.alert("Error de descarga", error.toString());
+      setError("Sin conexión a internet"); // Establece el mensaje de error
 
       // Intenta cargar el archivo existente si está disponible
       try {
         const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
         if (fileInfo.exists) {
+          console.log(`Usando archivo existente en: ${jsonFilePath}`);
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
           setJsonData(JSON.parse(json));
+          setError(null); // Reinicia el error si se pueden leer los datos locales
         } else {
-          Alert.alert("Error", "No hay datos locales disponibles.");
+          console.log("No hay datos locales disponibles.");
+          // Mantiene el mensaje de error existente
         }
       } catch (readError) {
         console.error("Error al leer el archivo:", readError);
-        Alert.alert("Error de lectura", readError.toString());
+        setError("No se pudo leer el archivo local");
       }
     }
   };
@@ -53,6 +56,14 @@ export const Medical_services = () => {
   useEffect(() => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   if (!jsonData || !jsonData.section_description) {
     return (
@@ -103,6 +114,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#0b34b0",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#fff',

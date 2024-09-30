@@ -64,7 +64,7 @@ export const Articles = () => {
         }
       } else {
         console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+        Alert.alert("Error", "Sin conexión a internet"); // Modificación aquí
       }
     } finally {
       setIsLoading(false);

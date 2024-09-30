@@ -4,52 +4,54 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  Alert,
+  ScrollView,
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 
-const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`; // Cambié la ruta aquí
+const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`;
 const faceAccessUrl = "http://148.202.152.59:8001/json/face_access";
 
 export const Facial_recognition = () => {
   const [jsonData, setJsonData] = useState(null);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
   const downloadJson = async () => {
     console.log(`Descargando desde ${faceAccessUrl}...`);
     try {
-      // Verifica si el archivo existe y lo borra antes de la descarga
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
-      }
-
+      // Intentar descargar el nuevo archivo JSON sin eliminar el anterior
       const response = await fetch(faceAccessUrl);
       if (!response.ok) {
         throw new Error(`Error al descargar desde ${faceAccessUrl}`);
       }
 
       const json = await response.json();
+
+      // Guardar el nuevo archivo JSON
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       console.log(`Archivo guardado en: ${jsonFilePath}`);
       setJsonData(json); // Establece los datos JSON
+      setError(null); // Reinicia el error si la descarga es exitosa
+
+      // No es necesario eliminar el archivo viejo porque ya se ha sobrescrito con éxito
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
+      setError("Sin conexión a internet"); // Establece el mensaje de error
 
-      // Si hay un error, intenta cargar el archivo existente si está disponible
+      // Intentar cargar el archivo existente si está disponible
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
         console.log(`Usando archivo existente en: ${jsonFilePath}`);
         try {
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
           setJsonData(JSON.parse(json)); // Establece los datos JSON
+          setError(null); // Reinicia el error si se pueden leer los datos locales
         } catch (readError) {
           console.error("Error al leer el archivo:", readError);
-          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+          setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
         }
       } else {
         console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+        // Mantiene el mensaje de error existente
       }
     }
   };
@@ -57,6 +59,14 @@ export const Facial_recognition = () => {
   useEffect(() => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   if (!jsonData) {
     return (
@@ -68,19 +78,21 @@ export const Facial_recognition = () => {
   }
 
   return (
-    <View style={styles.content}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{jsonData["section-description"].name}</Text>
-        <Text style={styles.descriptionText}>
-          {jsonData["section-description"].description}
-        </Text>
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.content}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{jsonData["section-description"].name}</Text>
+          <Text style={styles.descriptionText}>
+            {jsonData["section-description"].description}
+          </Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
@@ -119,6 +131,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#0b34b0",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
   },
 });
 

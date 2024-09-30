@@ -23,16 +23,11 @@ const isURL = (text) => {
 
 export const School_services = () => {
   const [jsonData, setJsonData] = useState(null);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
   const downloadJson = async () => {
     try {
-      // Verificar y eliminar el archivo anterior si existe
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
-      }
-
-      // Descargar nuevo archivo JSON
+      // Intentar descargar el nuevo archivo JSON sin eliminar el anterior
       const response = await fetch(scholarServicesUrl);
       if (!response.ok) {
         throw new Error(`HTTP status ${response.status}`);
@@ -40,27 +35,34 @@ export const School_services = () => {
 
       const json = await response.json();
       if (!json || typeof json !== "object") {
-        throw new Error("Invalid JSON response");
+        throw new Error("Respuesta JSON no válida");
       }
 
+      // Guardar el nuevo archivo JSON
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       setJsonData(json);
+      setError(null); // Reinicia el error si la descarga es exitosa
+
+      // No es necesario eliminar el archivo viejo porque ya se ha sobrescrito con éxito
     } catch (error) {
-      console.error("Error downloading file:", error);
-      Alert.alert("Download Error", error.toString());
+      console.error("Error al descargar el archivo:", error);
+      setError("Sin conexión a internet"); // Establece el mensaje de error
 
       // Intentar cargar desde el archivo local si existe
       try {
         const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
         if (fileInfo.exists) {
+          console.log(`Usando archivo existente en: ${jsonFilePath}`);
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
           setJsonData(JSON.parse(json));
+          setError(null); // Reinicia el error si se pueden leer los datos locales
         } else {
-          Alert.alert("Error", "No local data available.");
+          console.log("No hay datos locales disponibles.");
+          // Mantiene el mensaje de error existente
         }
       } catch (readError) {
-        console.error("Error reading the file:", readError);
-        Alert.alert("Read Error", readError.toString());
+        console.error("Error al leer el archivo:", readError);
+        setError("No se pudo leer el archivo local");
       }
     }
   };
@@ -68,6 +70,14 @@ export const School_services = () => {
   useEffect(() => {
     downloadJson();
   }, []);
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   if (!jsonData || !jsonData.section_description) {
     return (
@@ -154,6 +164,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#0b34b0",
+  },
+  errorContainer: { // Estilos para el mensaje de error
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  errorContainer: { // Estilos para el mensaje de error
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 20,
+  },
+  errorText: { // Estilos para el texto de error
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: "#fff",

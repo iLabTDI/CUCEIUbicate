@@ -53,7 +53,7 @@ export const Directory = () => {
       
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
-        throw new Error('Error en la solicitud: ' + response.statusText);
+        throw new Error("Error en la solicitud: " + response.statusText);
       }
 
       const data = await response.json();
@@ -63,13 +63,13 @@ export const Directory = () => {
         console.log("Guardando datos en el sistema de archivos local...");
         await FileSystem.writeAsStringAsync(LOCAL_JSON_PATH, JSON.stringify(data));
         setJsonData(data);
+        setError(null); // Reiniciar el error si la descarga es exitosa
       } else {
         throw new Error("Los datos de la API no son un array");
       }
     } catch (error) {
       console.error("Error al cargar el JSON:", error);
-      setError("Error al cargar los datos: " + error.message);
-      
+
       // Intentar cargar el archivo existente si hay un error
       const fileInfo = await FileSystem.getInfoAsync(LOCAL_JSON_PATH);
       if (fileInfo.exists) {
@@ -77,11 +77,14 @@ export const Directory = () => {
         try {
           const existingData = await FileSystem.readAsStringAsync(LOCAL_JSON_PATH);
           setJsonData(JSON.parse(existingData)); // Establece los datos existentes
+          setError(null); // Reiniciar el error si se cargan los datos locales
         } catch (readError) {
           console.error("Error al leer el archivo existente:", readError);
+          setError("No se pudo leer el archivo local");
         }
       } else {
         console.log("No hay archivo existente para cargar.");
+        setError("Sin conexión a internet");
       }
     } finally {
       console.log("Finalizando el proceso de carga.");
@@ -152,7 +155,7 @@ export const Directory = () => {
             <View style={styles.cardHeader}>
               {/* <FontAwesomeIcon icon={faUser} size={20} color="#fff" /> */}
               <Image
-                source={{ uri: contact.imagen }}
+                source={{ uri: getImageUrl(contact.imagen) }}
                 style={styles.image}
                 resizeMode="cover"
               />

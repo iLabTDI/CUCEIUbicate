@@ -52,8 +52,7 @@ export const Social_service = () => {
   const [jsonData, setJsonData] = useState(null);
   // Estado para controlar la visualización del indicador de carga
   const [isLoading, setIsLoading] = useState(true);
-  // Estado para manejar errores
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // Nuevo estado para manejar errores
 
   // Función para descargar y guardar el JSON
   const downloadJson = async () => {
@@ -61,11 +60,7 @@ export const Social_service = () => {
     try {
       setIsLoading(true);
       // Verifica si el archivo existe y lo borra antes de la descarga
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
-      }
-
+      
       const response = await fetch(socialServiceUrl);
       if (!response.ok) {
         throw new Error(`Error al descargar desde ${socialServiceUrl}`);
@@ -75,24 +70,32 @@ export const Social_service = () => {
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       console.log(`Archivo guardado en: ${jsonFilePath}`);
       setJsonData(json);
-    } catch (error) {
-      console.error("Error al descargar el archivo:", error);
-      setError(error.message);
+      setError(null); // Reinicia el error si la descarga es exitosa
 
-      // Si hay un error, intenta cargar el archivo existente si está disponible
+      // Eliminar el archivo viejo solo después de guardar el nuevo con éxito
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
-        console.log(`Usando archivo existente en: ${jsonFilePath}`);
-        try {
+        await FileSystem.deleteAsync(jsonFilePath);
+      }
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      setError("Sin conexión a internet"); // Establece el mensaje de error
+
+      // Si hay un error, intenta cargar el archivo existente si está disponible
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+        if (fileInfo.exists) {
+          console.log(`Usando archivo existente en: ${jsonFilePath}`);
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(json));
-        } catch (readError) {
-          console.error("Error al leer el archivo:", readError);
-          setError(`No se pudo leer el archivo: ${readError.message}`);
+          setJsonData(JSON.parse(json)); // Establece los datos JSON
+          setError(null); // Reinicia el error si se pueden leer los datos locales
+        } else {
+          console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
+          // Mantiene el mensaje de error existente
         }
-      } else {
-        console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        setError(`No se pudo obtener el archivo: ${jsonFilePath}`);
+      } catch (readError) {
+        console.error("Error al leer el archivo:", readError);
+        setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
       }
     } finally {
       setIsLoading(false);
@@ -104,8 +107,15 @@ export const Social_service = () => {
     downloadJson();
   }, []);
 
-  // Renderiza el indicador de carga mientras se obtienen los datos
-  if (isLoading) {
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0b34b0" />
@@ -257,18 +267,23 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
-  listItem: {
-    flexDirection: 'row',
-    marginBottom: 8,
-    paddingLeft: 10,
-  },
-  bullet: {
-    fontSize: 16,
-    color: '#0b34b0',
-    marginRight: 5,
-  },
-  listItemContent: {
+  loadingContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  errorContainer: { // Estilos para el mensaje de error
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 20,
+  },
+  errorText: { // Estilos para el texto de error
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
   },
 });
 
