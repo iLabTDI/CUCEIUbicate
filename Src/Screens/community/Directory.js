@@ -35,6 +35,12 @@ export const Directory = () => {
   // Estado para manejar y mostrar errores
   const [error, setError] = useState(null);
 
+   // Función para obtener la URL completa de la imagen
+   const getImageUrl = (imagePath) => {
+    const imageName = imagePath.split('/').pop(); // Extrae el nombre de la imagen
+    return `http://148.202.152.59:8001/get-image/${imageName}`;
+  };
+
   // Función para obtener los datos del directorio
   const fetchJsonData = async () => {
     try {
