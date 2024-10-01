@@ -26,6 +26,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originSuggestions, setOriginSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
 
+  // Carga el historial de búsqueda al iniciar
   useEffect(() => {
     const loadSearchHistory = async () => {
       try {
@@ -41,12 +42,15 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     loadSearchHistory();
   }, []);
 
+  // Maneja la búsqueda de ruta
   const handleSearch = async () => {
+    // Validación de campos
     if (originText.trim() === "" || destinationText.trim() === "") {
       Alert.alert("Error", "Por favor, complete ambos campos de búsqueda.");
       return;
     }
 
+    // Verifica existencia de origen y destino
     const originExists = points.some(point => new RegExp(`^${originText.trim()}$`, 'i').test(point.name));
     const destinationExists = points.some(point => new RegExp(`^${destinationText.trim()}$`, 'i').test(point.name));
 
@@ -55,17 +59,19 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       return;
     }
 
-    const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
-    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
+    // Prepara y ejecuta la búsqueda
+    const searchKey = `${originText.trim()} - ${destinationText.trim()}`; // Esta es la clave de busqueda que es el origen y destino
+    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`; // Esta es la clave pero inversa
     
     onSearch({ searchKey, reverseSearchKey });
 
+    // Actualiza el historial
     const search = { origin: originText.trim(), destination: destinationText.trim() };
     try {
       setSearchHistory((prevHistory) => {
         const newHistory = [
           search,
-          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)),
+          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)), 
         ];
         AsyncStorage.setItem("searchHistory", JSON.stringify(newHistory));
         return newHistory;
@@ -75,11 +81,13 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Selecciona una búsqueda del historial
   const selectSearchFromHistory = (item) => {
     setOriginText(item.origin);
     setDestinationText(item.destination);
   };
 
+  // Limpia todo el historial de búsqueda
   const clearSearchHistory = async () => {
     try {
       setSearchHistory([]);
@@ -89,6 +97,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Elimina un elemento del historial
   const removeSearchItem = async (item) => {
     try {
       setSearchHistory((prevHistory) =>
@@ -103,28 +112,31 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Intercambia origen y destino en los inputs
   const swapLocations = () => {
     setOriginText(destinationText);
     setDestinationText(originText);
   };
 
+  // Maneja cambios en el campo de origen y genera sugerencias
   const handleOriginChange = (text) => {
-    setOriginText(text);
+    setOriginText(text); // establece el texto de origen
     if (text.trim().length > 0) {
       const suggestions = points
-        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
-        .map(point => point.name);
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase())) // filtra los puntos que comienzan con el texto
+        .map(point => point.name); // mapea los nombres de los puntos
       setOriginSuggestions(suggestions);
     } else {
       setOriginSuggestions([]);
     }
   };
 
+  // Maneja cambios en el campo de destino y genera sugerencias
   const handleDestinationChange = (text) => {
     setDestinationText(text);
     if (text.trim().length > 0) {
       const suggestions = points
-        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase())) // mismo caso para el destino
         .map(point => point.name);
       setDestinationSuggestions(suggestions);
     } else {
@@ -132,6 +144,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Selecciona una sugerencia para origen o destino
   const selectSuggestion = (text, isOrigin) => {
     if (isOrigin) {
       setOriginText(text);
