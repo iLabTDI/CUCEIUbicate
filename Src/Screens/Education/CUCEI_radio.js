@@ -58,11 +58,14 @@ export const CUCEI_radio = () => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-  if (error) {
+  if (error)  {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar Radio Cucei. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
 
