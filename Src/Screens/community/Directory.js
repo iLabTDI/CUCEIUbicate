@@ -18,8 +18,8 @@ import {
   faMapMarkerAlt, 
   faPhone, 
   faEnvelope, 
-  faUser
 } from '@fortawesome/free-solid-svg-icons';
+import { ErrorComponent } from "../Components/ErrorComponent";
 
 const { width } = Dimensions.get('window');
 // Ruta para almacenar el archivo JSON localmente
@@ -136,9 +136,12 @@ export const Directory = () => {
   // Renderizar un mensaje de error si ocurrió algún problema
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar el directorio. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={fetchJsonData} 
+      />
     );
   }
 
@@ -222,11 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f2f5',
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#e74c3c', // Color rojo para errores
-    textAlign: 'center',
+    padding: 20,
   },
   content: {
     padding: 16,

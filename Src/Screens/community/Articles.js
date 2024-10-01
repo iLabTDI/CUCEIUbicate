@@ -11,7 +11,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faExternalLinkAlt, faBook, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt, faBook } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get('window');
@@ -49,7 +49,7 @@ export const Articles = () => {
       setJsonData(json); // Establece los datos JSON
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      Alert.alert("Error", `No se pudo descargar el archivo: ${error.message}`);
+      // Alert.alert("Error", `No se pudo descargar el archivo: ${error.message}`);
       
       // Si hay un error, intenta cargar el archivo existente si está disponible
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
@@ -60,11 +60,11 @@ export const Articles = () => {
           setJsonData(JSON.parse(json)); // Establece los datos JSON
         } catch (readError) {
           console.error("Error al leer el archivo:", readError);
-          Alert.alert("Error", `No se pudo leer el archivo: ${readError.message}`);
+          // Alert.alert("Error", `No se pudo leer el archivo: ${readError.message}`);
         }
       } else {
         console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        Alert.alert("Error", "Sin conexión a internet"); // Modificación aquí
+        // Alert.alert("Error", "Sin conexión a internet"); // Modificación aquí
       }
     } finally {
       setIsLoading(false);
@@ -92,12 +92,14 @@ export const Articles = () => {
   }
 
   // Renderiza un mensaje de error si no se pudieron obtener los datos
-  if (!jsonData) {
+  if (!jsonData)  {
     return (
-      <View style={styles.errorContainer}>
-        <FontAwesomeIcon icon={faInfoCircle} size={50} color="#e74c3c" />
-        <Text style={styles.errorText}>No se pudieron cargar los artículos.</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar los articulos. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
 
@@ -158,12 +160,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f2f5',
-  },
-  errorText: {
-    marginTop: 20,
-    fontSize: 18,
-    color: '#e74c3c',
-    textAlign: 'center',
   },
   content: {
     padding: 16,
