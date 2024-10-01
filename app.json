@@ -16,17 +16,23 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "yairhdz24"
+      "bundleIdentifier": "yairhdz24",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara para tomar fotos.",
+        "NSPhotoLibraryUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para seleccionar imágenes.",
+        "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/cucei.png",
         "backgroundColor": "white"
       },
-      "package": "com.yair_hdz24.CUCEIUbicate"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.yair_hdz24.CUCEIUbicate",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE", 
+        "WRITE_EXTERNAL_STORAGE"  
+      ]
     },
     "plugins": [
       "expo-secure-store"
