@@ -5,11 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cucei.png",
-    "userInterfaceStyle": "white",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "white"  
+      "backgroundColor": "#FFFFFF"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -26,12 +26,12 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
-        "backgroundColor": "white" 
+        "backgroundColor": "#FFFFFF"
       },
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
         "READ_EXTERNAL_STORAGE", 
-        "WRITE_EXTERNAL_STORAGE"  
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "plugins": [
