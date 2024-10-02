@@ -5,10 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cucei.png",
-    "userInterfaceStyle": "#FFFFFF",
+    "userInterfaceStyle": "white",
     "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "contain"
+      "resizeMode": "contain",
+      "backgroundColor": "white"  
     },
     "assetBundlePatterns": [
       "**/*"
@@ -25,7 +26,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "white" 
       },
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
