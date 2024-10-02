@@ -22,7 +22,7 @@
     "@supabase/supabase-js": "^2.39.8",
     "@types/react": "~18.2.79",
     "bcryptjs": "^2.4.3",
-    "expo": "~51.0.34",
+    "expo": "^51.0.35",
     "expo-dev-client": "^4.0.27",
     "expo-linear-gradient": "^13.0.2",
     "expo-secure-store": "~13.0.2",
