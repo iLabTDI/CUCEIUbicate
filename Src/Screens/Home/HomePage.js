@@ -195,7 +195,7 @@ export const HomePage = () => {
       <TouchableOpacity
         style={styles.menu_icon}
         onPress={() => navigation.openDrawer()}>
-        <FontAwesomeIcon icon={faBars} size={width * 0.06} color="white" />
+        <FontAwesomeIcon icon={faBars} size={width * 0.06} color="#FFFFFF" />
       </TouchableOpacity>
 
       {/* Botón de perfil */}
@@ -205,13 +205,13 @@ export const HomePage = () => {
         {selectedIcon ? (
           <Image source={selectedIcon} style={styles.profileImage} />
         ) : (
-          <FontAwesomeIcon icon={faUser} size={width * 0.06} color="white" />
+          <FontAwesomeIcon icon={faUser} size={width * 0.06} color="#FFFFFF" />
         )}
       </TouchableOpacity>
 
       {/* Botón de búsqueda */}
       <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
-        <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="white" />
+        <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="#FFFFFF" />
       </TouchableOpacity>
 
       {/* Componente de búsqueda de rutas */}
@@ -358,13 +358,13 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "red",
+    backgroundColor: "#FF0000",
     padding: 15,
     borderRadius: 10,
     zIndex: 0,
   },
   finalizeButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     textAlign: "center",
     fontWeight: "bold",
   },

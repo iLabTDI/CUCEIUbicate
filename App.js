@@ -19,7 +19,7 @@ function App() {
 
     <NavigationContainer>
         <StatusBar //Barra de estaco dolor negra
-          backgroundColor="#333"
+          backgroundColor="#000000"
           barStyle={Platform.OS === "ios" ? "dark-content" : "light-content"}
         />
       <Stack.Navigator initialRouteName="Login">

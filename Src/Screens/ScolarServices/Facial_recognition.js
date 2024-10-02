@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import { ErrorComponent } from '../Components/ErrorComponent';
 
 const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`;
 const faceAccessUrl = "http://148.202.152.59:8001/json/face_access";
@@ -60,14 +61,19 @@ export const Facial_recognition = () => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-  if (error) {
+   // Renderiza un mensaje de error si no se pudieron obtener los datos
+   if (error)  {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar el Reconocimiento Facial. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
 
+ 
   if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
@@ -100,11 +106,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -118,7 +124,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     lineHeight: 24,
   },
   loadingContainer: {
@@ -131,18 +137,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#0b34b0",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
   },
 });
 

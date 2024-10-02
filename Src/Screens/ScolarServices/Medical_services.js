@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-nat
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from 'expo-file-system';
+import { ErrorComponent } from '../Components/ErrorComponent';
 
 const jsonFilePath = `${FileSystem.documentDirectory}medical_services.json`;
 const medicalServicesUrl = "http://148.202.152.59:8001/json/medical_services";
@@ -57,11 +58,16 @@ export const Medical_services = () => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-  if (error) {
+
+  // Renderiza un mensaje de error si no se pudieron obtener los datos
+  if (error)  {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar los Servicios Medicos. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
 
@@ -115,24 +121,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#0b34b0",
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
-  },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     margin: 10,
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
@@ -146,7 +140,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     textAlign: 'justify',
     lineHeight: 24,
   },
@@ -162,7 +156,7 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     textAlign: 'justify',
     lineHeight: 24,
   },

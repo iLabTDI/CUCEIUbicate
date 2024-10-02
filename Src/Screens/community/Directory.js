@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFFFFF',
   },
   position: {
     fontSize: 14,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     flex: 1,
   },
   linkText: {

@@ -134,7 +134,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
       style={styles.resultItem}
       onPress={() => handleSelectResult(item)}
     >
-      <FontAwesomeIcon icon={faSearch} size={16} color="#666" style={styles.resultIcon} />
+      <FontAwesomeIcon icon={faSearch} size={16} color="#666666" style={styles.resultIcon} />
       <Text style={styles.resultText}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -147,7 +147,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         handleSpecificSearch(item);
       }}
     >
-      <FontAwesomeIcon icon={faHistory} size={16} color="#666" style={styles.resultIcon} />
+      <FontAwesomeIcon icon={faHistory} size={16} color="#666666" style={styles.resultIcon} />
       <Text style={styles.resultText}>{item}</Text>
     </TouchableOpacity>
   );
@@ -158,7 +158,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         style={styles.search_icon}
         onPress={toggleSpecificSearch}
       >
-        <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="white" />
+        <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="#FFFFFF" />
       </TouchableOpacity>
 
       {showSpecificSearch && (
@@ -192,7 +192,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
             ref={inputRef}
             style={styles.searchInput}
             placeholder="Buscar lugares..."
-            placeholderTextColor="#999"
+            placeholderTextColor="#999999"
             value={specificSearchText}
             onChangeText={handleSpecificSearch}
           />
@@ -201,10 +201,10 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
             setError("");
             setSearchResults([]);
           }}>
-            <FontAwesomeIcon icon={faHistory} size={20} color="#666" />
+            <FontAwesomeIcon icon={faHistory} size={20} color="#666666" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
-            <FontAwesomeIcon icon={faTimes} size={20} color="#666" />
+            <FontAwesomeIcon icon={faTimes} size={20} color="#666666" />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   search_icon: {
     top: Platform.OS === 'ios' ? height * 0.001 : -height * 0.002,
     right: Platform.OS === 'ios' ? -5 : 0,
-    backgroundColor: "blue",
+    backgroundColor: "#0000ff",
     borderRadius: width * 0.1,
     padding: width * 0.04,
     zIndex: 2,
@@ -263,11 +263,11 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 25,
     paddingHorizontal: 20,
     height: 48,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: width * 0.04,
-    color: "#333",
+    color: "#333333",
   },
   historyIcon: {
     padding: width * 0.015,
@@ -291,10 +291,10 @@ const styles = StyleSheet.create({
     top: height * 0.07,
     right: width * 0.03,
     width: width * 0.8,
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
     maxHeight: height * 0.4,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   resultText: {
     fontSize: width * 0.04,
-    color: "#333",
+    color: "#333333",
   },
   errorContainer: {
     flexDirection: "row",

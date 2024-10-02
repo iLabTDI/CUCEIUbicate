@@ -166,7 +166,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Buscar Ruta</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+                <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
             <View style={styles.inputContainer}>
@@ -174,7 +174,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Origen:"
-                placeholderTextColor={"#888"}
+                placeholderTextColor={"#888888"}
                 value={originText}
                 onChangeText={handleOriginChange}
               />
@@ -199,7 +199,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Destino:"
-                placeholderTextColor={"#888"}
+                placeholderTextColor={"#888888"}
                 value={destinationText}
                 onChangeText={handleDestinationChange}
               />
@@ -221,10 +221,10 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             )}
             <View style={styles.buttonsContainer}>
               <TouchableOpacity style={styles.iconButton} onPress={swapLocations}>
-                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faSearch} size={20} color="#FFFFFF" />
                 <Text style={styles.searchButtonText}>Buscar</Text>
               </TouchableOpacity>
             </View>
@@ -248,7 +248,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             </ScrollView>
             {searchHistory.length > 0 && (
               <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-                <FontAwesomeIcon icon={faTrash} size={18} color="#fff" />
+                <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
                 <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
               </TouchableOpacity>
             )}
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   suggestionList: {
     maxHeight: 100,
     width: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     marginTop: 5,
     marginBottom: 10,
@@ -352,18 +352,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   searchButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontWeight: "bold",
     marginLeft: 10,
     fontSize: 16,
   },
   searchHistoryContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 20,
     width: "100%",
     maxHeight: height * 0.4,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   searchHistoryText: {
     flex: 1,
     fontSize: 16,
-    color: "#333",
+    color: "#000000",
   },
   clearHistoryButton: {
     marginTop: 15,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   clearHistoryButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontWeight: "bold",
     marginLeft: 10,
     fontSize: 16,
