@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
+import { ErrorComponent } from "../Components/ErrorComponent";
 
 const jsonFilePath = `${FileSystem.documentDirectory}cid.json`;
 const cidUrl = "http://148.202.152.59:8001/json/cid";
