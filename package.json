@@ -23,6 +23,8 @@
     "@types/react": "~18.2.79",
     "bcryptjs": "^2.4.3",
     "expo": "^51.0.35",
+    "expo-av": "^14.0.7",
+    "expo-blur": "^13.0.2",
     "expo-dev-client": "^4.0.27",
     "expo-linear-gradient": "^13.0.2",
     "expo-secure-store": "~13.0.2",
