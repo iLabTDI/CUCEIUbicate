@@ -19,7 +19,7 @@ export const Facial_recognition = () => {
   const downloadJson = async () => {
     console.log(`Descargando desde ${faceAccessUrl}...`);
     try {
-      // Intentar descargar el nuevo archivo JSON sin eliminar el anterior
+      // Intentar descargar el nuevo archivo JSON
       const response = await fetch(faceAccessUrl);
       if (!response.ok) {
         throw new Error(`Error al descargar desde ${faceAccessUrl}`);
@@ -32,8 +32,6 @@ export const Facial_recognition = () => {
       console.log(`Archivo guardado en: ${jsonFilePath}`);
       setJsonData(json); // Establece los datos JSON
       setError(null); // Reinicia el error si la descarga es exitosa
-
-      // No es necesario eliminar el archivo viejo porque ya se ha sobrescrito con éxito
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
       setError("Sin conexión a internet"); // Establece el mensaje de error
@@ -61,8 +59,8 @@ export const Facial_recognition = () => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-   // Renderiza un mensaje de error si no se pudieron obtener los datos
-   if (error)  {
+  // Renderiza un mensaje de error si no se pudieron obtener los datos
+  if (error) {
     return (
       <ErrorComponent
         title="Sin conexión a internet"
@@ -73,7 +71,6 @@ export const Facial_recognition = () => {
     );
   }
 
- 
   if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
@@ -91,6 +88,12 @@ export const Facial_recognition = () => {
           <Text style={styles.descriptionText}>
             {jsonData["section-description"].description}
           </Text>
+          <Text style={styles.listTitle}>Pasos a seguir:</Text>
+          {jsonData["section-description"]["listed-elements"] && Object.keys(jsonData["section-description"]["listed-elements"]).map((key) => (
+            <Text key={key} style={styles.listItem}>
+              {jsonData["section-description"]["listed-elements"][key]}
+            </Text>
+          ))}
         </View>
       </View>
     </ScrollView>
@@ -126,6 +129,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333333',
     lineHeight: 24,
+  },
+  listTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0b34b0',
+    marginTop: 15,
+  },
+  listItem: {
+    fontSize: 16,
+    color: '#333333',
+    lineHeight: 24,
+    marginTop: 5,
   },
   loadingContainer: {
     flex: 1,

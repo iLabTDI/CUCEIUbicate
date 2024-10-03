@@ -1,72 +1,84 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import * as FileSystem from 'expo-file-system';
-import { ErrorComponent } from '../Components/ErrorComponent';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faChevronRight,
+  faMedkit,
+  faSync,
+} from "@fortawesome/free-solid-svg-icons";
+import * as FileSystem from "expo-file-system";
+import { ErrorComponent } from "../Components/ErrorComponent";
 
+const { width } = Dimensions.get("window");
 const jsonFilePath = `${FileSystem.documentDirectory}medical_services.json`;
 const medicalServicesUrl = "http://148.202.152.59:8001/json/medical_services";
 
 export const Medical_services = () => {
   const [jsonData, setJsonData] = useState(null);
-  const [error, setError] = useState(null); // Nuevo estado para manejar errores
+  const [error, setError] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const downloadJson = async () => {
+    setIsRefreshing(true);
     try {
-      // Intentar descargar el nuevo archivo JSON sin eliminar el anterior
+      // Attempt to download the new JSON file
       const response = await fetch(medicalServicesUrl);
       if (!response.ok) {
         throw new Error(`HTTP status ${response.status}`);
       }
 
       const json = await response.json();
-      if (!json || typeof json !== 'object') {
-        throw new Error('Respuesta JSON no válida');
+      if (!json || typeof json !== "object") {
+        throw new Error("Invalid JSON response");
       }
 
-      // Guardar el nuevo archivo JSON
+      // Save the new JSON file
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-      setJsonData(json); // Establece los datos JSON
-      setError(null); // Reinicia el error si la descarga es exitosa
-
-      // No es necesario eliminar el archivo viejo porque ya se ha sobrescrito con éxito
+      setJsonData(json);
+      setError(null);
     } catch (error) {
-      console.error("Error al descargar el archivo:", error);
-      setError("Sin conexión a internet"); // Establece el mensaje de error
+      console.error("Error downloading file:", error);
+      setError("No internet connection");
 
-      // Intenta cargar el archivo existente si está disponible
+      // Try to load existing file if available
       try {
         const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
         if (fileInfo.exists) {
-          console.log(`Usando archivo existente en: ${jsonFilePath}`);
+          console.log(`Using existing file at: ${jsonFilePath}`);
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
           setJsonData(JSON.parse(json));
-          setError(null); // Reinicia el error si se pueden leer los datos locales
+          setError(null);
         } else {
-          console.log("No hay datos locales disponibles.");
-          // Mantiene el mensaje de error existente
+          console.log("No local data available.");
         }
       } catch (readError) {
-        console.error("Error al leer el archivo:", readError);
-        setError("No se pudo leer el archivo local");
+        console.error("Error reading local file:", readError);
+        setError("Could not read local file");
       }
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    downloadJson(); // Inicia la descarga y verificación
+    downloadJson();
   }, []);
 
-
-  // Renderiza un mensaje de error si no se pudieron obtener los datos
-  if (error)  {
+  if (error) {
     return (
       <ErrorComponent
-        title="Sin conexión a internet"
-        message="No se pudo cargar los Servicios Medicos. Por favor, verifica tu conexión a internet e intenta nuevamente."
-        buttonText="Reintentar"
-        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+        title="No internet connection"
+        message="Unable to load Medical Services. Please check your internet connection and try again."
+        buttonText="Retry"
+        onRetry={downloadJson}
       />
     );
   }
@@ -75,32 +87,60 @@ export const Medical_services = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0b34b0" />
-        <Text style={styles.loadingText}>Cargando servicios médicos...</Text>
+        <Text style={styles.loadingText}>Cargando Servicios Medicos...</Text>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container}>
+      {/* Description Card */}
       <View style={styles.card}>
-        <Text style={styles.descriptionText}>{jsonData.section_description.description}</Text>
+        <Text style={styles.descriptionText}>
+          {jsonData.section_description.description}
+        </Text>
       </View>
-      {jsonData.section_description.sub_sections && Object.keys(jsonData.section_description.sub_sections).map((sectionId) => {
-        const section = jsonData.section_description.sub_sections[sectionId];
-        return (
-          <View key={sectionId} style={styles.card}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-            {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => (
-              <View key={elementId} style={styles.listItem}>
-                <FontAwesomeIcon icon={faChevronRight} size={12} color="#0b34b0" style={styles.listIcon} />
-                <Text style={styles.text}>
-                  {section["listed-elements"][elementId]}
-                </Text>
-              </View>
-            ))}
-          </View>
-        );
-      })}
+
+      {/* Sections */}
+      {jsonData.section_description["sub-sections"] &&
+        Object.entries(jsonData.section_description["sub-sections"]).map(
+          ([sectionId, section]) => (
+            <View key={`section-${sectionId}`} style={styles.card}>
+              <Text style={styles.sectionTitle}>{section.title}</Text>
+              {section["listed-elements"] &&
+                Object.entries(section["listed-elements"]).map(
+                  ([elementId, element]) => (
+                    <View
+                      key={`element-${sectionId}-${elementId}`}
+                      style={styles.listItem}>
+                      <FontAwesomeIcon
+                        icon={faChevronRight}
+                        size={12}
+                        color="#0b34b0"
+                        style={styles.listIcon}
+                      />
+                      <Text style={styles.text}>{element}</Text>
+                    </View>
+                  )
+                )}
+            </View>
+          )
+        )}
+      {/* Refresh Button */}
+      <TouchableOpacity
+        onPress={downloadJson}
+        style={styles.refreshButton}
+        disabled={isRefreshing}>
+        <FontAwesomeIcon
+          icon={faSync}
+          size={16}
+          color="#FFFFFF"
+          style={isRefreshing ? styles.rotating : null}
+        />
+        <Text style={styles.refreshButtonText}>
+          {isRefreshing ? "Refreshing..." : "Refresh Data"}
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -108,25 +148,44 @@ export const Medical_services = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f0f4f8",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f4f8",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
     color: "#0b34b0",
   },
+
+  refreshButton: {
+    backgroundColor: "#4CAF50",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+  },
+  refreshButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  rotating: {
+    transform: [{ rotate: "45deg" }],
+  },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     margin: 10,
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000000',
+    shadowColor: "#000000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
@@ -134,30 +193,36 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0b34b0',
+    fontWeight: "bold",
+    color: "#0b34b0",
     marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    paddingBottom: 10,
   },
   descriptionText: {
     fontSize: 16,
-    color: '#333333',
-    textAlign: 'justify',
+    color: "#333333",
+    textAlign: "justify",
     lineHeight: 24,
   },
   listItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
   },
   listIcon: {
-    marginRight: 8,
+    marginRight: 10,
     marginTop: 5,
   },
   text: {
     flex: 1,
     fontSize: 16,
-    color: '#333333',
-    textAlign: 'justify',
+    color: "#333333",
+    textAlign: "justify",
     lineHeight: 24,
   },
 });
