@@ -515,7 +515,7 @@ export const bottomSheetContents = {
   },
   "Modulo Z2": {
     name: "Módulo Z2",
-    classrooms: "Z2-01 ~ Z2-10",
+    classrooms: "Z1-01 ~ Z1-15",
     "relevant-places": [
       "Auditorio en el primer piso",
       "Áreas de trabajo grupal en el segundo piso"
@@ -524,9 +524,9 @@ export const bottomSheetContents = {
       "W.C Hombres 1er Piso",
       "W.C Mujeres 1er Piso"
     ],
-    "image-path": [
+    "images-path": [
       require("./Modulos/Modulo_Z2/Z2.png")
     ],
     description: "El Módulo Z2 es una extensión del Módulo Z, diseñado para conferencias y eventos académicos."
-  }
+  },
 };

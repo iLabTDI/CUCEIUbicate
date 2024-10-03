@@ -55,7 +55,7 @@ export const MapWithPointsAndRoutes = ({
         <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#ff6b6b" />
         <Text style={styles.markerText}>{markedObject.name}</Text>
         <TouchableOpacity onPress={removeMarker} style={styles.removeMarkerButton}>
-          <FontAwesomeIcon icon={faTimes} size={14} color="#666" />
+          <FontAwesomeIcon icon={faTimes} size={14} color="#666666" />
         </TouchableOpacity>
       </View>
     );
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   markerText: {
     fontSize: width * 0.03,
-    color: "#333",
+    color: "#000000",
     marginLeft: 6,
     marginRight: 6,
   },

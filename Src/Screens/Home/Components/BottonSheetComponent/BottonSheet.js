@@ -15,7 +15,7 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet"; // Co
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos de FontAwesome
 import { faMapMarkerAlt, faInfoCircle, faChevronLeft, faChevronRight, faToilet, faChalkboardTeacher, faMapSigns } from "@fortawesome/free-solid-svg-icons"; // Íconos específicos
 import { bottomSheetContents } from "./bottomSheetContents"; 
-import { ImageWithLoadingIndicator } from "./ImageWithLoadingIndicator"; // Componente para mostrar una imagen con un indicador de carga
+// import { ImageWithLoadingIndicator } from "./ImageWithLoadingIndicator"; // Componente para mostrar una imagen con un indicador de carga
 
 // Obtenemos el ancho de la ventana actual
 const { width } = Dimensions.get("window");
@@ -97,7 +97,7 @@ export const BottomSheetComponent = React.forwardRef(
           >
             {/* Mapea las imágenes recibidas y las renderiza */}
             {images.map((image, index) => (
-              <ImageWithLoadingIndicator
+              <Image
                 key={index}
                 source={image} // Fuente de la imagen
                 style={styles.carouselImage} // Estilo de la imagen
@@ -115,7 +115,7 @@ export const BottomSheetComponent = React.forwardRef(
                 onPress={() => goToPrevImage(images.length)}
                 activeOpacity={0.6}
               >
-                <FontAwesomeIcon icon={faChevronLeft} size={24} color="#fff" />
+                <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFFFFF" />
               </TouchableOpacity>
               {/* Botón para ir a la siguiente imagen */}
               <TouchableOpacity
@@ -123,7 +123,7 @@ export const BottomSheetComponent = React.forwardRef(
                 onPress={() => goToNextImage(images.length)}
                 activeOpacity={0.6}
               >
-                <FontAwesomeIcon icon={faChevronRight} size={24} color="#fff" />
+                <FontAwesomeIcon icon={faChevronRight} size={24} color="#FFFFFF" />
               </TouchableOpacity>
               {/* Paginación visual para mostrar qué imagen está activa */}
               <View style={styles.paginationContainer}>
@@ -183,7 +183,7 @@ export const BottomSheetComponent = React.forwardRef(
                     <FontAwesomeIcon
                       icon={faInfoCircle}
                       size={20}
-                      color="blue"
+                      color="#0000ff"
                       style={styles.descriptionIcon}
                     />
                     <Text style={styles.description}>
@@ -194,12 +194,12 @@ export const BottomSheetComponent = React.forwardRef(
                   {/* Detalles adicionales del lugar, como aulas, lugares relevantes y baños */}
                   <View style={styles.detailsContainer}>
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faChalkboardTeacher} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faChalkboardTeacher} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailText}>Aulas: {bottomSheetContents[selectedPoint].classrooms}</Text>
                     </View>
                     
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faMapSigns} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faMapSigns} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailTitle}>Lugares relevantes:</Text>
                     </View>
                     {/* Muestra los lugares relevantes asociados */}
@@ -208,7 +208,7 @@ export const BottomSheetComponent = React.forwardRef(
                     ))}
                     
                     <View style={styles.detailItem}>
-                      <FontAwesomeIcon icon={faToilet} size={20} color="blue" style={styles.detailIcon} />
+                      <FontAwesomeIcon icon={faToilet} size={20} color="#0000ff" style={styles.detailIcon} />
                       <Text style={styles.detailTitle}>Baños:</Text>
                     </View>
                     {/* Muestra los baños asociados */}
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   paginationDotActive: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
   },
   infoContainer: {
     padding: 16,
@@ -322,11 +322,11 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
     marginBottom: 16,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -342,15 +342,15 @@ const styles = StyleSheet.create({
   description: {
     flex: 1,
     fontSize: 16,
-    color: "#333",
+    color: "#000000",
     lineHeight: 24,
   },
   detailsContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
     marginTop: 16,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -369,17 +369,17 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 16,
-    color: '#333',
+    color: '#000000',
   },
   detailTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#000000',
     marginBottom: 8,
   },
   detailSubText: {
     fontSize: 14,
-    color: '#666',
+    color: '#666666',
     marginLeft: 30,
     marginBottom: 8,
   },

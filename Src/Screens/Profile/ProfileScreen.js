@@ -115,7 +115,7 @@ export const ProfileScreen = () => {
               <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.editIcon}>
-                <FontAwesomeIcon icon={faEdit} size={18} color="#fff" />
+                <FontAwesomeIcon icon={faEdit} size={18} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
             <Text style={styles.name}>
@@ -153,7 +153,7 @@ export const ProfileScreen = () => {
             <TouchableOpacity
               onPress={handleLogout}
               style={styles.logoutButton}>
-              <FontAwesomeIcon icon={faSignOutAlt} size={16} color="#ffff" />
+              <FontAwesomeIcon icon={faSignOutAlt} size={16} color="#FFFFFF" />
               <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
             </TouchableOpacity>
           </View>
@@ -176,7 +176,7 @@ export const ProfileScreen = () => {
                 resizeMode="contain"
               />
               <View style={styles.zoomIconContainer}>
-                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faSearch} size={20} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
           </View>
@@ -222,7 +222,7 @@ export const ProfileScreen = () => {
               style={styles.closeModalButton}
               onPress={toggleCurriculumModal}
             >
-              <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+              <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <ImageZoom
               ref={imageZoomRef}
@@ -259,9 +259,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   headerText: {
-    color: "white",
+    color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 16,
     marginBottom: 8,
-    color: "#333",
+    color: "#333333",
   },
   bold: {
     fontWeight: "bold",
@@ -332,12 +332,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   expandButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
   expandedContent: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 15,
     alignItems: "center",
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 20,
     width: "90%",
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logoutButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     marginLeft: 10,
     fontSize: 16,
     fontWeight: "bold",

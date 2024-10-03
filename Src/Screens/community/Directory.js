@@ -18,8 +18,8 @@ import {
   faMapMarkerAlt, 
   faPhone, 
   faEnvelope, 
-  faUser
 } from '@fortawesome/free-solid-svg-icons';
+import { ErrorComponent } from "../Components/ErrorComponent";
 
 const { width } = Dimensions.get('window');
 // Ruta para almacenar el archivo JSON localmente
@@ -34,6 +34,12 @@ export const Directory = () => {
   const [loading, setLoading] = useState(true);
   // Estado para manejar y mostrar errores
   const [error, setError] = useState(null);
+
+   // Función para obtener la URL completa de la imagen
+   const getImageUrl = (imagePath) => {
+    const imageName = imagePath.split('/').pop(); // Extrae el nombre de la imagen
+    return `http://148.202.152.59:8001/get-image/${imageName}`;
+  };
 
   // Función para obtener los datos del directorio
   const fetchJsonData = async () => {
@@ -130,9 +136,12 @@ export const Directory = () => {
   // Renderizar un mensaje de error si ocurrió algún problema
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar el directorio. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={fetchJsonData} 
+      />
     );
   }
 
@@ -216,11 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f2f5',
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#e74c3c', // Color rojo para errores
-    textAlign: 'center',
+    padding: 20,
   },
   content: {
     padding: 16,
@@ -229,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -254,7 +259,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFFFFF',
   },
   position: {
     fontSize: 14,
@@ -277,7 +282,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     flex: 1,
   },
   linkText: {
