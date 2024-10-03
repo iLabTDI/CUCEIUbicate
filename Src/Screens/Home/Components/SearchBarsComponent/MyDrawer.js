@@ -41,7 +41,7 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
-import { Chatbot } from "../../../ChatBot/Chatbot";
+import  Chatbot  from "../../../ChatBot/Chatbot";
 
 const Drawer = createDrawerNavigator();
 
