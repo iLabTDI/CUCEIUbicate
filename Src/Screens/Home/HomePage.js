@@ -16,6 +16,8 @@ import {
   faRoute,
   faUser,
   faTimes,
+  faVideo,
+  faPlay,
 } from "@fortawesome/free-solid-svg-icons"; // Iconos específicos
 import { GestureHandlerRootView } from "react-native-gesture-handler"; // Manejo de gestos
 import ImageZoom from "react-native-image-pan-zoom"; // Componente para hacer zoom en la imagen
@@ -29,6 +31,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // Almacen
 import { getSession } from "../../auth/SessionManager"; // Función para obtener la sesión
 import { routesImages } from "./Routes/Route_data"; // Datos de las rutas
 import ChatbotButton from "../ChatBot/Chatboot_Button"; // Componente del botón del chatbot
+import { VideoModal } from "./Components/VideoComponent/VideoModal";
+import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 
 // Obtener las dimensiones de la pantalla para cálculos responsivos
 const { width, height } = Dimensions.get("window");
@@ -56,6 +60,8 @@ export const HomePage = () => {
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false); // Control de visibilidad del BottomSheet
   const [isRouteActive, setIsRouteActive] = useState(false); // Control de si una ruta está activa
   const [activeRoutePoints, setActiveRoutePoints] = useState([]); // Puntos de la ruta activa
+  const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
+  const [currentVideoUri, setCurrentVideoUri] = useState("");
 
   // Animación para el overlay del BottomSheet
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -142,14 +148,17 @@ export const HomePage = () => {
   const handleSearch = ({ searchKey, reverseSearchKey }) => {
     let routeImage;
     let routePoints;
+    let videoUri;
 
     // Verificar si existe una imagen para la ruta seleccionada
     if (routesImages[searchKey]) {
       routeImage = routesImages[searchKey];
       routePoints = searchKey.split("-"); // Dividir los puntos de la ruta
+      videoUri = routeVideos[searchKey]; // Obtener el video de la ruta
     } else if (routesImages[reverseSearchKey]) {
       routeImage = routesImages[reverseSearchKey];
       routePoints = reverseSearchKey.split("-");
+      videoUri = routeVideos[reverseSearchKey]; // Obtener el video de la ruta
     }
 
     // Si se encuentra la imagen de la ruta, establecer la ruta activa
@@ -158,6 +167,9 @@ export const HomePage = () => {
       setCurrentMapImage(routeImage); // Cambiar la imagen del mapa
       setIsRouteActive(true); // Marcar la ruta como activa
       setActiveRoutePoints(routePoints); // Establecer los puntos de la ruta activa
+      setCurrentVideoUri(videoUri);
+      // setCurrentVideoUri(videoUri);
+      console.log("Video URI set:", videoUri); // Agregar este log
     } else {
       Alert.alert(
         "Error",
@@ -174,6 +186,11 @@ export const HomePage = () => {
     setCurrentMapImage(require("./assets/images/mapa.webp")); // Restablecer la imagen del mapa
     setIsRouteActive(false); // Marcar la ruta como inactiva
     setActiveRoutePoints([]); // Limpiar los puntos de la ruta activa
+    setCurrentVideoUri("");
+  };
+
+  const toggleVideoModal = () => {
+    setIsVideoModalVisible(!isVideoModalVisible);
   };
 
   return (
@@ -274,16 +291,26 @@ export const HomePage = () => {
         </TouchableOpacity>
       )}
 
-      {/* Overlay para el BottomSheet */}
       <Animated.View
         style={[styles.overlay, { opacity: fadeAnim }]}
         pointerEvents="none"
       />
 
-      {/* Botón del chatbot */}
+      {isRouteActive && currentVideoUri && (
+        <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
+          <FontAwesomeIcon icon={faPlay} size={24} color="#FFFFFF" />
+          <Text style={styles.videoButtonText}>Ver Video</Text>
+        </TouchableOpacity>
+      )}
+
+      <VideoModal
+        isVisible={isVideoModalVisible}
+        onClose={toggleVideoModal}
+        videoUri={currentVideoUri}
+      />
+
       {!isRouteActive && !showSearchBar && <ChatbotButton />}
 
-      {/* Componente BottomSheet */}
       <BottomSheetComponent
         ref={bottomSheetRef}
         snapPoints={["50%", "75%"]}
@@ -361,12 +388,41 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF0000",
     padding: 15,
     borderRadius: 10,
-    zIndex: 0,
+    // zIndex: 0,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   finalizeButtonText: {
     color: "#FFFFFF",
     textAlign: "center",
     fontWeight: "bold",
+    fontSize: 18,
+  },
+  videoButton: {
+    position: "absolute",
+    bottom: 80,
+    right: 20,
+    backgroundColor: "#0b34b0",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 30,
+    // zIndex: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  videoButtonText: {
+    color: "#FFFFFF",
+    marginLeft: 8,
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
