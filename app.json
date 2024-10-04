@@ -20,7 +20,17 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara para tomar fotos.",
         "NSPhotoLibraryUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para seleccionar imágenes.",
-        "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes."
+        "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true, 
+          "NSExceptionDomains": {
+            "148.202.152.59": {
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true,
+              "NSTemporaryExceptionMinimumTLSVersion": "TLSv1.0"
+            }
+          }
+        }
       }
     },
     "android": {
@@ -30,9 +40,12 @@
       },
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
-        "READ_EXTERNAL_STORAGE", 
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ],
+      "usesCleartextTraffic": true
     },
     "plugins": [
       "expo-secure-store"
