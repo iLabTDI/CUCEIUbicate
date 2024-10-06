@@ -30,7 +30,7 @@ import { points } from "./Components/MapComponent/data"; // Datos de los puntos
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Almacenamiento local asíncrono
 import { getSession } from "../../auth/SessionManager"; // Función para obtener la sesión
 import { routesImages } from "./Routes/Route_data"; // Datos de las rutas
-import ChatbotButton from "../ChatBot/Chatboot_Button"; // Componente del botón del chatbot
+import { ChatbotButton } from "../ChatBot/Chatboot_Button"; // Componente del botón del chatbot
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 
