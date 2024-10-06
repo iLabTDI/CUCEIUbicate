@@ -84,8 +84,8 @@ export const ChatbotButton = () => {
   return (
     <View style={styles.container}>
       {showTooltip && (
-        <View style={styles.tooltip}>
-          <Text style={styles.tooltipText}>¡Hola! ¿Necesitas ayuda?</Text>
+        <View style={styles.tooltip} >
+          <Text style={styles.tooltipText} onPress={handlePress} >¡Hola! ¿Necesitas ayuda?</Text>
           <TouchableOpacity style={styles.closeTooltipButton} onPress={dismissTooltip}>
             <FontAwesomeIcon icon={faTimes} size={16} color="#FFFFFF" />
           </TouchableOpacity>
