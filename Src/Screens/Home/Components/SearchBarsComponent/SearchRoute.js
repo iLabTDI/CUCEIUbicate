@@ -26,6 +26,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originSuggestions, setOriginSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
 
+  // Carga el historial de búsqueda al iniciar
   useEffect(() => {
     const loadSearchHistory = async () => {
       try {
@@ -41,12 +42,15 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     loadSearchHistory();
   }, []);
 
+  // Maneja la búsqueda de ruta
   const handleSearch = async () => {
+    // Validación de campos
     if (originText.trim() === "" || destinationText.trim() === "") {
       Alert.alert("Error", "Por favor, complete ambos campos de búsqueda.");
       return;
     }
 
+    // Verifica existencia de origen y destino
     const originExists = points.some(point => new RegExp(`^${originText.trim()}$`, 'i').test(point.name));
     const destinationExists = points.some(point => new RegExp(`^${destinationText.trim()}$`, 'i').test(point.name));
 
@@ -55,17 +59,19 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       return;
     }
 
-    const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
-    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
+    // Prepara y ejecuta la búsqueda
+    const searchKey = `${originText.trim()} - ${destinationText.trim()}`; // Esta es la clave de busqueda que es el origen y destino
+    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`; // Esta es la clave pero inversa
     
     onSearch({ searchKey, reverseSearchKey });
 
+    // Actualiza el historial
     const search = { origin: originText.trim(), destination: destinationText.trim() };
     try {
       setSearchHistory((prevHistory) => {
         const newHistory = [
           search,
-          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)),
+          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)), 
         ];
         AsyncStorage.setItem("searchHistory", JSON.stringify(newHistory));
         return newHistory;
@@ -75,11 +81,13 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Selecciona una búsqueda del historial
   const selectSearchFromHistory = (item) => {
     setOriginText(item.origin);
     setDestinationText(item.destination);
   };
 
+  // Limpia todo el historial de búsqueda
   const clearSearchHistory = async () => {
     try {
       setSearchHistory([]);
@@ -89,6 +97,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Elimina un elemento del historial
   const removeSearchItem = async (item) => {
     try {
       setSearchHistory((prevHistory) =>
@@ -103,28 +112,31 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Intercambia origen y destino en los inputs
   const swapLocations = () => {
     setOriginText(destinationText);
     setDestinationText(originText);
   };
 
+  // Maneja cambios en el campo de origen y genera sugerencias
   const handleOriginChange = (text) => {
-    setOriginText(text);
+    setOriginText(text); // establece el texto de origen
     if (text.trim().length > 0) {
       const suggestions = points
-        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
-        .map(point => point.name);
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase())) // filtra los puntos que comienzan con el texto
+        .map(point => point.name); // mapea los nombres de los puntos
       setOriginSuggestions(suggestions);
     } else {
       setOriginSuggestions([]);
     }
   };
 
+  // Maneja cambios en el campo de destino y genera sugerencias
   const handleDestinationChange = (text) => {
     setDestinationText(text);
     if (text.trim().length > 0) {
       const suggestions = points
-        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase()))
+        .filter(point => point.name.toLowerCase().startsWith(text.toLowerCase())) // mismo caso para el destino
         .map(point => point.name);
       setDestinationSuggestions(suggestions);
     } else {
@@ -132,6 +144,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  // Selecciona una sugerencia para origen o destino
   const selectSuggestion = (text, isOrigin) => {
     if (isOrigin) {
       setOriginText(text);
@@ -153,7 +166,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Buscar Ruta</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+                <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
             <View style={styles.inputContainer}>
@@ -161,7 +174,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Origen:"
-                placeholderTextColor={"#888"}
+                placeholderTextColor={"#888888"}
                 value={originText}
                 onChangeText={handleOriginChange}
               />
@@ -186,7 +199,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Destino:"
-                placeholderTextColor={"#888"}
+                placeholderTextColor={"#888888"}
                 value={destinationText}
                 onChangeText={handleDestinationChange}
               />
@@ -208,10 +221,10 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             )}
             <View style={styles.buttonsContainer}>
               <TouchableOpacity style={styles.iconButton} onPress={swapLocations}>
-                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faSearch} size={20} color="#FFFFFF" />
                 <Text style={styles.searchButtonText}>Buscar</Text>
               </TouchableOpacity>
             </View>
@@ -235,7 +248,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             </ScrollView>
             {searchHistory.length > 0 && (
               <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-                <FontAwesomeIcon icon={faTrash} size={18} color="#fff" />
+                <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
                 <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
               </TouchableOpacity>
             )}
@@ -267,7 +280,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -308,7 +321,7 @@ const styles = StyleSheet.create({
   suggestionList: {
     maxHeight: 100,
     width: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     marginTop: 5,
     marginBottom: 10,
@@ -339,18 +352,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   searchButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontWeight: "bold",
     marginLeft: 10,
     fontSize: 16,
   },
   searchHistoryContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 20,
     width: "100%",
     maxHeight: height * 0.4,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -376,7 +389,7 @@ const styles = StyleSheet.create({
   searchHistoryText: {
     flex: 1,
     fontSize: 16,
-    color: "#333",
+    color: "#000000",
   },
   clearHistoryButton: {
     marginTop: 15,
@@ -388,7 +401,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   clearHistoryButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontWeight: "bold",
     marginLeft: 10,
     fontSize: 16,

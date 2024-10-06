@@ -16,7 +16,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 const { width, height } = Dimensions.get('window');
 const REAPPEAR_DELAY = 5 * 60 * 1000; // 5 minutes en minisegundos
 
-const ChatbotButton = () => {
+export const ChatbotButton = () => {
   const navigation = useNavigation();
   const [showTooltip, setShowTooltip] = useState(true);
   const [showBot, setShowBot] = useState(true);
@@ -84,10 +84,10 @@ const ChatbotButton = () => {
   return (
     <View style={styles.container}>
       {showTooltip && (
-        <View style={styles.tooltip}>
-          <Text style={styles.tooltipText}>¡Hola! ¿Necesitas ayuda?</Text>
+        <View style={styles.tooltip} >
+          <Text style={styles.tooltipText} onPress={handlePress} >¡Hola! ¿Necesitas ayuda?</Text>
           <TouchableOpacity style={styles.closeTooltipButton} onPress={dismissTooltip}>
-            <FontAwesomeIcon icon={faTimes} size={16} color="#fff" />
+            <FontAwesomeIcon icon={faTimes} size={16} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       )}
@@ -99,7 +99,7 @@ const ChatbotButton = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.closeButton} onPress={hideBot}>
-          <FontAwesomeIcon icon={faTimes} size={16} color="#fff" />
+          <FontAwesomeIcon icon={faTimes} size={16} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3498db',
     borderRadius: 30,
     padding: 10,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     maxWidth: width * 0.7,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   tooltipText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
     marginRight: 20,

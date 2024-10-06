@@ -43,11 +43,14 @@ export const ProfileScreen = () => {
   const imageZoomRef = useRef(null);
 
   useEffect(() => {
+    // Carga el ícono seleccionado del almacenamiento local al cargar la pantalla
     loadSelectedIcon();
-    const timer = setInterval(() => setCurrentDate(new Date()), 1000 * 60);
-    return () => clearInterval(timer);
-  }, []);
+    // Establece un temporizador para actualizar la fecha cada minuto
+    const timerId = setTimeout(() => setCurrentDate(new Date()), 1000 * 60);
+    return () => clearTimeout(timerId);
+  }, [currentDate]);
 
+  // Carga el ícono seleccionado almacenado localmente
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -59,6 +62,7 @@ export const ProfileScreen = () => {
     }
   };
 
+  // Guarda el ícono seleccionado en el almacenamiento local
   const saveSelectedIcon = async (icon) => {
     try {
       await AsyncStorage.setItem("selectedIcon", JSON.stringify(icon));
@@ -67,18 +71,28 @@ export const ProfileScreen = () => {
     }
   };
 
-  const toggleExpand = () => setIsExpanded(!isExpanded);
-
-  const toggleCurriculumModal = () => {
-    setCurriculumModalVisible(!isCurriculumModalVisible);
+  // Alterna la visibilidad de los modales (expansión y currículum)
+  const toggleModal = (modalName) => {
+    switch (modalName) {
+      case 'expand':
+        setIsExpanded(!isExpanded);
+        break;
+      case 'curriculum':
+        setCurriculumModalVisible(!isCurriculumModalVisible);
+        break;
+      default:
+        break;
+    }
   };
 
+  // Maneja el cambio del avatar y guarda el nuevo ícono seleccionado
   const handleAvatarChange = (newAvatar) => {
     setSelectedIcon(newAvatar);
     saveSelectedIcon(newAvatar);
     setModalVisible(false);
   };
 
+  // Muestra un mensaje de alerta para confirmar el cierre de sesión
   const handleLogout = async () => {
     Alert.alert(
       "Cerrar Sesión",
@@ -90,16 +104,19 @@ export const ProfileScreen = () => {
         },
         {
           text: "Sí, cerrar sesión",
-          onPress: () => {
-            clearSession();
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Login" }],
-            });
-          },
+          onPress: confirmLogout,
         },
       ]
     );
+  };
+
+  // Confirma el cierre de sesión y redirige a la pantalla de login
+  const confirmLogout = () => {
+    clearSession();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
   };
 
   return (
@@ -110,14 +127,16 @@ export const ProfileScreen = () => {
             <Text style={styles.headerText}>Información del Perfil</Text>
           </View>
           <View style={styles.content}>
+            {/* Contenedor del avatar del usuario */}
             <View style={styles.avatarContainer}>
               <Image source={selectedIcon} style={styles.avatar} />
               <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.editIcon}>
-                <FontAwesomeIcon icon={faEdit} size={18} color="#fff" />
+                <FontAwesomeIcon icon={faEdit} size={18} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
+            {/* Información básica del usuario */}
             <Text style={styles.name}>
               {userData.name} {userData.lastnames}
             </Text>
@@ -139,6 +158,7 @@ export const ProfileScreen = () => {
               </Text>
             </View>
 
+            {/* Contenedor para la fecha y hora actual */}
             <View style={styles.calendarContainer}>
               <FontAwesomeIcon icon={faCalendarDay} size={20} color="#0b34b0" />
               <Text style={styles.dateText}>
@@ -150,16 +170,18 @@ export const ProfileScreen = () => {
                 })}
               </Text>
             </View>
+            {/* Botón para cerrar sesión */}
             <TouchableOpacity
               onPress={handleLogout}
               style={styles.logoutButton}>
-              <FontAwesomeIcon icon={faSignOutAlt} size={16} color="#ffff" />
+              <FontAwesomeIcon icon={faSignOutAlt} size={16} color="#FFFFFF" />
               <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <TouchableOpacity onPress={toggleExpand} style={styles.expandButton}>
+        {/* Botón para mostrar u ocultar la malla curricular */}
+        <TouchableOpacity onPress={() => toggleModal('expand')} style={styles.expandButton}>
           <Text style={styles.expandButtonText}>
             {isExpanded
               ? "Ocultar Malla Curricular ▲"
@@ -167,21 +189,23 @@ export const ProfileScreen = () => {
           </Text>
         </TouchableOpacity>
 
+        {/* Contenido expandido con la imagen de la malla curricular */}
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <TouchableOpacity onPress={toggleCurriculumModal} style={styles.curriculumImageContainer}>
+            <TouchableOpacity onPress={() => toggleModal('curriculum')} style={styles.curriculumImageContainer}>
               <Image
                 source={careerImages[userData.degree_code]}
                 style={styles.curriculumImage}
                 resizeMode="contain"
               />
               <View style={styles.zoomIconContainer}>
-                <FontAwesomeIcon icon={faSearch} size={20} color="#fff" />
+                <FontAwesomeIcon icon={faSearch} size={20} color="#FFFFFF" />
               </View>
             </TouchableOpacity>
           </View>
         )}
 
+        {/* Modal para seleccionar un nuevo icono de avatar */}
         <Modal
           animationType="fade"
           transparent={true}
@@ -211,18 +235,21 @@ export const ProfileScreen = () => {
           </View>
         </Modal>
 
+        {/* Modal para mostrar la malla curricular en detalle con zoom */}
         <Modal
           animationType="fade"
           transparent={true}
           visible={isCurriculumModalVisible}
-          onRequestClose={toggleCurriculumModal}
+          onRequestClose={() => toggleModal('curriculum')}
         >
           <View style={styles.curriculumModalOverlay}>
             <TouchableOpacity
               style={styles.closeModalButton}
-              onPress={toggleCurriculumModal}
+              onPress={() => toggleModal('curriculum')}
+              accessibilityLabel="Cerrar modal de malla curricular"
+              accessible={true}
             >
-              <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+              <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <ImageZoom
               ref={imageZoomRef}
@@ -231,7 +258,7 @@ export const ProfileScreen = () => {
               imageWidth={windowWidth}
               imageHeight={windowHeight}
               enableSwipeDown={true}
-              onSwipeDown={toggleCurriculumModal}
+              onSwipeDown={() => toggleModal('curriculum')}
               minScale={1}
               maxScale={3}
               useNativeDriver={true}
@@ -259,9 +286,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -275,7 +302,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   headerText: {
-    color: "white",
+    color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
@@ -318,7 +345,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 16,
     marginBottom: 8,
-    color: "#333",
+    color: "#333333",
   },
   bold: {
     fontWeight: "bold",
@@ -332,12 +359,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   expandButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
   expandedContent: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 15,
     alignItems: "center",
@@ -369,7 +396,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 20,
     width: "90%",
@@ -396,7 +423,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 16,
   },
@@ -442,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logoutButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     marginLeft: 10,
     fontSize: 16,
     fontWeight: "bold",

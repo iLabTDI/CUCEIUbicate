@@ -1,22 +1,25 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
-import Svg, { Polyline } from 'react-native-svg';
+import React, { useState, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Animated,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTimes, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import { routes } from './data'; // Importa las rutas de los puntos
-
-const { width, height } = Dimensions.get('window');
 
 export const MapWithPointsAndRoutes = ({
   onPointPress,
-  selectedRoute,
-  selectedPoint,
   points,
-  clearRoute,
   markedObject,
-  setMarkedObject
+  setMarkedObject,
 }) => {
-  // Renderiza los puntos en el mapa
+  const handlePointPress = (point) => {
+    onPointPress(point.id); // Llama a la función onPointPress con el ID del punto presionado
+    // setMarkedObject(point); // Marca el punto como seleccionado
+  };
+
   const renderPoints = () => {
     return points.map((point) => (
       <TouchableOpacity
@@ -28,20 +31,16 @@ export const MapWithPointsAndRoutes = ({
             top: point.top,
             height: point.height,
             width: point.width,
-            // backgroundColor: selectedPoint === point.id ? 'yellow' : 'red',
             transform: [{ rotate: `${point.rotate}deg` }],
           },
         ]}
         onPress={() => {
-          onPointPress(point.id);
-          console.log(point.id);
-          console.log(`Coordenadas: x=${point.left}, Y=${point.top}`);
-        }}
-      />
+          handlePointPress(point);
+          console.log("Punto presionado:", point.id);
+        }}></TouchableOpacity>
     ));
   };
 
-  // Renderiza el marcador para el objeto seleccionado
   const renderMarker = () => {
     if (!markedObject) return null;
 
@@ -54,16 +53,17 @@ export const MapWithPointsAndRoutes = ({
       <View style={[styles.markerContainer, markerPosition]}>
         <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#ff6b6b" />
         <Text style={styles.markerText}>{markedObject.name}</Text>
-        <TouchableOpacity onPress={removeMarker} style={styles.removeMarkerButton}>
-          <FontAwesomeIcon icon={faTimes} size={14} color="#666" />
+        <TouchableOpacity
+          onPress={removeMarker}
+          style={styles.removeMarkerButton}>
+          <FontAwesomeIcon icon={faTimes} size={14} color="#666666" />
         </TouchableOpacity>
       </View>
     );
   };
 
-  // Función para remover el marcador
   const removeMarker = () => {
-    setMarkedObject(null);
+    setMarkedObject(null); // Remueve la marca establecida en el mapa
   };
 
   return (
@@ -74,39 +74,36 @@ export const MapWithPointsAndRoutes = ({
   );
 };
 
+// Estilos del componente MapWithPointsAndRoutes
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
   point: {
-    position: 'absolute',
-    opacity: 0.5
-  },
-  svgContainer: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    pointerEvents: 'none', 
+    position: "absolute",
+    opacity: 0,
+    // backgroundColor: '#FF0000',
+    borderRadius: 5,
   },
   markerContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
     borderRadius: 16,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   markerText: {
-    fontSize: width * 0.03,
-    color: "#333",
+    fontSize: 14,
+    color: "#000000",
     marginLeft: 6,
     marginRight: 6,
   },

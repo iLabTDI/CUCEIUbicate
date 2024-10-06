@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
+import { ErrorComponent } from "../Components/ErrorComponent";
 
 const jsonFilePath = `${FileSystem.documentDirectory}cid.json`;
 const cidUrl = "http://148.202.152.59:8001/json/cid";
 
 export const CID = () => {
   const [jsonData, setJsonData] = useState(null);
+  const [error, setError] = useState(null); // Estado para manejar errores
 
   const downloadJson = async () => {
     console.log(`Descargando desde ${cidUrl}...`);
@@ -28,7 +30,8 @@ export const CID = () => {
       setJsonData(json); // Establece los datos JSON
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
+      setError("Sin conexión a internet"); // Establece el mensaje de error
+      // Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
 
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
@@ -36,15 +39,17 @@ export const CID = () => {
         try {
           const json = await FileSystem.readAsStringAsync(jsonFilePath);
           setJsonData(JSON.parse(json)); // Establece los datos JSON
+          setError(null); // Reinicia el error si se pueden leer los datos locales
         } catch (readError) {
           console.error("Error al leer el archivo:", readError);
-          Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
+          setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
+          // Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
         }
       } else {
         console.log(
           `No se pudo descargar y el archivo no existe: ${jsonFilePath}`
         );
-        Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
+        // Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
       }
     }
   };
@@ -52,6 +57,20 @@ export const CID = () => {
   useEffect(() => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
+
+
+  // Renderiza un mensaje de error si no se pudieron obtener los datos
+  if (error)  {
+    return (
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar el CID. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
+    );
+  }
+
 
   if (!jsonData) {
     return (
@@ -105,11 +124,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     padding: 20,
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -134,7 +153,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 16,
-    color: "#333",
+    color: "#333333",
     lineHeight: 24,
     marginBottom: 8,
   },

@@ -1,0 +1,661 @@
+{
+  "intents": [
+    {
+      "tag": "artículos",
+      "patterns": [
+        "Artículos importantes",
+        "¿Qué artículos debería conocer",
+        "artículos importantes",
+        "articulos importantes",
+        "artículos que debería conocer",
+        "articulos que deberia conocer"
+      ],
+      "responses": [
+        "A continuación nombraré algunos artículos relevantes para tu trayectoria como estudiante en esta casa de estudios: Artículo 25,27,33,34,35,36,49,90. Si deseas consultar más, puedes visitar el siguiente link para ver el Reglamento General de Evaluación y Promoción de alumnos:https://secgral.udg.mx/sites/default/files/Normatividad_general/rgepa-oct-2017.pdf",
+        "Los artículos más importantes que debes conocer para poder sobrellevar tu trayectoria como estudiante son: Artículo 25,27,33,34,35,36,49,90, estos abordan aspectos importantes sobre la evaluación en tus materias, que hacer en caso de reprobar algunas, periodos ordinarios y extraordinarios, etcétera. Si deseas saber más sobre alguno de ellos, pregúntame.",
+        "Los artículos 25,27,33,34,35,36,49 y 90 son esenciales para tu trayectoria académica, pregúntame específicamente por alguno de ellos si quieres saber más. ",
+        "Para tu proceso académico y de evaluación, los artículos 25,27,33,34,35,36,49 y 90 son imprescindibles. Puedes preguntarme sobre alguno de ellos si quieres saber más"
+      ]
+    },
+    {
+      "tag": "artículo_25",
+      "patterns": [
+        "¿Qué dice el artículo 25?",
+        "que dice el articulo 25",
+        "que dice el articulo 25?",
+        "qué dice el artículo 25",
+        "que dice el artículo 25?",
+        "explícame el artículo 25",
+        "Artículo 25",
+        "Articulo 25",
+        "cómo se califica el extraordinario según el artículo 25?",
+        "que dice el articulo 25 sobre la calificación en el extraordinario",
+        "artículo 25",
+        "articulo 25,"
+      ],
+      "responses": [
+        "El artículo 25 explica que la calificación del extraordinario tiene una ponderación del 80% y se suma con la obtenida en el periodo ordinario para obtener la calificación final.",
+        "Según el artículo 25, la calificación del extraordinario pesa un 80% para la calificación final, y se combina con el 40% del periodo ordinario.",
+        "El artículo 25 establece que la calificación del extraordinario tiene una ponderación del 80%, mientras que la del periodo ordinario pesa un 40% para la calificación final.",
+        "De acuerdo con el artículo 25, la calificación final del extraordinario se obtiene al sumar un 80% de la calificación del extraordinario y un 40% de la del ordinario."
+      ]
+    },
+    {
+      "tag": "artículo_27",
+      "patterns": [
+        "Qué dice el artículo 27",
+        "artículo 27",
+        "articulo 27",
+        "Artículo 27",
+        "Articulo 27",
+        "Que dice el articulo 27",
+        "Qué dice el artículo 27?",
+        "Que dice el artículu 27?",
+        "explicame el artículo 27",
+        "Requisitos extraordinario",
+        "Requisitos para presentar extraordinario",
+        "requisitos extraordinario",
+        "¿qué necesito para presentar extraordinario?",
+        "qué necesito para presentar extraordinario?",
+        "que necesito para tener derecho a extraordinario",
+        "extraordinario",
+        "cuales son los requisitos para el extraordinario según el artículo 27?",
+        "Que necesito para hacer un extraordinario según el articulo 27?"
+      ],
+      "responses": [
+        "El artículo 27 establece los requisitos para el registro de la calificación en el periodo extraordinario, como estar inscrito, haber pagado el arancel y tener un 65% de asistencia.",
+        "Para presentar un extraordinario según el artículo 27, debes estar inscrito, tener al menos 65% de asistencia, y haber pagado el arancel correspondiente.",
+        "El artículo 27 exige que estés inscrito, pagues el arancel y tengas 65% de asistencia para hacer un extraordinario",
+        "Según el artículo 27, necesitas estar inscrito, haber pagado el arancel y tener al menos un 65% de asistencia para hacer un extraordinario."
+      ]
+    },
+    {
+      "tag": "artículo_33",
+      "patterns": [
+        "Qué pasa si repruebo el extraordinario según el artículo 33",
+        "Qué dice el artículo 33 sobre reprobar",
+        "Repruebo el extraordinario, qué dice el artículo 33",
+        "qué dice el articulo 33 sobre repeticion de materias?",
+        "Que pasa si repruebo el extraordinario",
+        "reprobar extraordinario",
+        "que pasa si repruebo el extraordinario?",
+        "qué pasa si repruebo el extraordinario?",
+        "Qué pasa si repruebo el extraordinario?",
+        "repetir materia extraordinario",
+        "Repetir materia extraordinario",
+        "Recursar materia extraordinario",
+        "reprobe el extraordinario, que hago",
+        "que debo hacer si reprobe un extraordinario",
+        "que hago si reprobe un extraordinario",
+        "qué debo hacer si reprobé un extraordinario",
+        "qué hago si reprobé un extraordinario",
+        "que dice el artículo 33",
+        "que dice el artículo 33?",
+        "qué dice el artículo 33?",
+        "Qué dice el artículo 33?"
+      ],
+      "responses": [
+        "El artículo 33 indica que si repruebas el extraordinario, deberás repetir la materia en el ciclo escolar inmediato siguiente. ",
+        "Según el artículo 33, si no apruebas el extraordinario, tienes que repetir la materia en el próximo ciclo donde se ofrezca. ",
+        "El artículo 33 establece que si no logras una calificación aprobatoria en el extraordinario, tendrás que repetir la materia.",
+        "Si repruebas el extraordinario, según el artículo 33, debes repetir la materia en el ciclo siguiente.",
+        "Artículo 33",
+        "Articulo 33",
+        "articulo 33",
+        "artículo 33"
+      ]
+    },
+    {
+      "tag": "artículo_34",
+      "patterns": [
+        "Qué dice el artículo 34 sobre la baja",
+        "Baja definitiva y el artículo 34",
+        "Qué pasa con la baja en el artículo 34",
+        "Puedo solicitar una oportunidad según el artículo 34?",
+        "Que pasa si fui dado de baja",
+        "Baja por artículo 33",
+        "baja por articulo 33",
+        "Que significa la baja por artículo 33?",
+        "Qué significa la baja por artículo 33?",
+        "que signfifica la baja por articulo 33?",
+        "Artículo 34",
+        "Articulo 34",
+        "articulo 34",
+        "artículo 34",
+        "Qué dice el artículo 34?",
+        "Que dice el artículo 34?",
+        "que dice el artículo 34?",
+        "qué dice el artículo 34?",
+        "que dice el artículo 34",
+        "qué dice el artículo 34"
+      ],
+      "responses": [
+        "El artículo 34 te permite solicitar una nueva oportunidad para acreditar materias si fuiste dado de baja por el artículo 33. Debes hacerlo antes del inicio del siguiente ciclo.",
+        "Si te dieron de baja bajo el artículo 33, puedes pedir otra oportunidad de acreditar las materias antes del inicio del ciclo siguiente, como lo dice el artículo 34. ",
+        "El artículo 34 permite que si fuiste dado de baja por el artículo 33, puedes pedir una nueva oportunidad para acreditar las materias en el siguiente ciclo. ",
+        "El artículo 34 establece que si fuiste dado de baja, puedes solicitar otra oportunidad por escrito antes de que empiece el siguiente ciclo. "
+      ]
+    },
+    {
+      "tag": "artículo_35",
+      "patterns": [
+        "qué dice el artículo 35",
+        "explicame el artículo 35",
+        "que dice el articulo 35 sobre la baja",
+        "Que pasa con los que son dados de baja según el artículo 35?",
+        "Artículo 35",
+        "Articulo 35",
+        "articulo 35",
+        "artículo 35",
+        "Qué dice el artículo 35?",
+        "Que dice el artículo 35?",
+        "que dice el artículo 35?",
+        "qué dice el artículo 35?",
+        "que dice el artículo 35",
+        "qué dice el artículo 35",
+        "que pasa si me dieron de baja de la carrera?",
+        "que hago si me dieron de baja de la carrera?",
+        "qué hago si me dan de baja de la carrera?",
+        "Qué hago si me dan de baja de la carrera?",
+        "Que hago si me dan de baja de la carrera?",
+        "Qué pasa si me dieron de baja de la carrera?",
+        "Qué pasa si me dan de baja de la carrera?"
+      ],
+      "responses": [
+        "El artículo 35 establece que los alumnos dados de baja no podrán reingresar a la misma carrera o posgrado por el cual fueron dados de baja. ",
+        "Según el artículo 35, si te dan de baja, no podrás reingresar a la misma carrera o posgrado.",
+        "El artículo 35 dice que si te dan de baja, no puedes reingresar a la carrera o posgrado por el que fuiste dado de baja.",
+        "El artículo 35 aclara que no puedes reingresar a la misma carrera o posgrado si fuiste dado de baja bajo ciertos artículos. "
+      ]
+    },
+    {
+      "tag": "artículo_49",
+      "patterns": [
+        "cómo solicitar revisión de examen según el artículo 49?",
+        "que dice el articulo 49 sobre revision de examenes",
+        "donde puedo pedir una revisión de examen, articulo 49",
+        "como pido revisión de evaluación según el articulo 49?",
+        "Artículo 49",
+        "Articulo 49",
+        "articulo 49",
+        "artículo 49",
+        "Qué dice el artículo 49?",
+        "Que dice el artículo 49?",
+        "que dice el artículo 49?",
+        "qué dice el artículo 49?",
+        "que dice el artículo 49",
+        "qué dice el artículo 49",
+        "cómo solicito revisión de calificación",
+        "cómo solicito revisión de mis trabajos?",
+        "Cómo solicito revisión ante el comité",
+        "solicitar revisión de calificación"
+      ],
+      "responses": [
+        "El artículo 49 dice que puedes pedir una revisión de examen al jefe del departamento de la materia o al director de la escuela si consideras que hubo un error.",
+        "Según el artículo 49, puedes solicitar la revisión de una evaluación o examen si consideras que hubo un error. Debes hacerlo ante el jefe de departamento o el director.",
+        "El artículo 49 te permite solicitar la revisión de tu calificación si crees que hubo un error. Puedes hacerlo por escrito ante el jefe de departamento o director de la escuela.",
+        "Si crees que tu calificación es errónea, el artículo 49 te permite pedir una revisión por escrito al jefe del departamento o director de la escuela."
+      ]
+    },
+    {
+      "tag": "artículo_90",
+      "patterns": [
+        "Qué dice el artículo 90?",
+        "Artículo 90",
+        "Articulo 90",
+        "articulo 90",
+        "artículo 90",
+        "Qué dice el artículo 90?",
+        "Que dice el artículo 90?",
+        "que dice el artículo 90?",
+        "qué dice el artículo 90?",
+        "que dice el artículo 90",
+        "qué dice el artículo 90",
+        "cuál es la responsabilidad en el artículo 90?",
+        "explícame el artículo 90 sobre las sanciones",
+        "qué infracciones ameritan sanción según el artículo 90?",
+        "violar normas",
+        "sanciones",
+        "faltas administrativas",
+        "dañar instalaciones",
+        "faltas de respeto"
+      ],
+      "responses": [
+        "El artículo 90 establece que los miembros de la comunidad universitaria que infrinjan el orden jurídico interno de la universidad incurren en responsabilidad y ameritan sanciones administrativas.",
+        "Según el artículo 90, incurrir en faltas a las normas universitarias, como violar obligaciones o faltar al respeto a los directivos y compañeros, amerita sanciones. ",
+        "El artículo 90 menciona que violar normas, faltar al respeto a compañeros o dañar instalaciones de la universidad son causas de sanciones.",
+        "El artículo 90 define que violar las normas internas, dañar instalaciones o usar indebidamente los bienes universitarios puede llevar a sanciones administrativas."
+      ]
+    },
+    {
+      "tag": "CID",
+      "patterns": [
+        "Qué es el CID",
+        "CID",
+        "Cid",
+        "cid",
+        "que es el cid",
+        "Qué es el CID?",
+        "que es el cid",
+        "qué es el cid",
+        "qué es el cid?",
+        "¿Qué es el cid?",
+        "¿Qué es el cid?",
+        "Biblioteca",
+        "biblioteca"
+      ],
+      "responses": [
+        "En el centro Integral de Documentación (coloquialmente conocido como 'Biblioteca'), espacio en donde tendrás acceso a libros, revistas e información electrónica, todo ello para el apoyo a tu formación académica y profesional.Además, el CID brinda servicios como préstamo externo, préstamo de equipos de cómputo, cubículos de estudio, servicio de copiado e internet inalámbrico. El horario de atención es de 8:00 a 19:45 horas, de lunes a viernes y los sábados de 8:00 a 13:45 horas.",
+        "El CID (Biblioteca) es un espacio donde puedes acceder a libros, revistas, y recursos electrónicos. Ofrece servicios como préstamo de libros, uso de computadoras, cubículos de estudio, y más. Su horario de atención es de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45. ",
+        "En el CID (Biblioteca) puedes encontrar libros, revistas y recursos electrónicos, además de servicios como préstamo de equipos de cómputo, copiado, e internet inalámbrico. El horario es de 8:00 a 19:45 de lunes a viernes, y sábados de 8:00 a 13:45. ",
+        "El CID Biblioteca) ofrece préstamo de libros, acceso a equipos de cómputo, cubículos de estudio, copiado e internet. Su horario es de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45."
+      ]
+    },
+    {
+      "tag": "horario_biblioteca",
+      "patterns": [
+        "Cuál es el horario de la biblioteca?",
+        "a qué hora abre la biblioteca?",
+        "horario de la biblioteca",
+        "hasta qué hora está abierta la biblioteca?",
+        "cuando cierra la biblioteca?",
+        "horario biblioteca",
+        "Horario biblioteca",
+        "¿Cuál es el horario de biblioteca?",
+        "¿A qué hora cierra la biblioteca?",
+        "a que hora cierra biblioteca",
+        "a que hora cierra biblioteca?",
+        "a qué hora cierra la biblioteca?"
+      ],
+      "responses": [
+        "El horario de atención de la biblioteca es de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45.",
+        "La biblioteca está abierta de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45.",
+        "Puedes visitar la biblioteca de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45.",
+        "El horario de la biblioteca es de lunes a viernes de 8:00 a 19:45, y los sábados de 8:00 a 13:45. ¡No olvides revisarlo antes de ir!"
+      ]
+    },
+    {
+      "tag": "CAG",
+      "patterns": [
+        "Qué es el CAG?",
+        "Explícame qué hace el CAG",
+        "CAG para aprender idiomas",
+        "Qué idiomas puedo aprender en el CAG?",
+        "CAG",
+        "cag",
+        "Cag",
+        "Idiomas CUCEI",
+        "idiomas",
+        "idiomas biblioteca",
+        "Idiomas biblioteca",
+        "Idiomas"
+      ],
+      "responses": [
+        "El Centro de Aprendizaje Global (CAG) es un espacio para el autoaprendizaje de idiomas, con materiales y equipo multimedia. Aquí puedes aprender idiomas como francés, italiano, japonés, portugués, inglés, alemán, español y ruso. ¿Te gustaría más información?",
+        "El CAG es un espacio donde puedes aprender varios idiomas como francés, inglés, japonés, alemán, entre otros. Está ubicado en la planta alta del CID y tiene dos laboratorios de cómputo, además de áreas de lectura y video. ¿Te interesa saber más?",
+        "En el CAG puedes encontrar materiales para aprender idiomas como francés, japonés, portugués, ruso, entre otros. También cuentan con apoyo de becarios y practicantes del Departamento de Lenguas Modernas. El horario de servicio es de lunes a viernes de 8:00 a 20:00, y sábados de 8:00 a 14:00. ¿Te gustaría saber más?",
+        "El CAG está ubicado en la planta alta del CID y ofrece materiales y equipos para aprender idiomas como inglés, francés, ruso, italiano, y más. Su horario es de lunes a viernes de 8:00 a 20:00 y los sábados de 8:00 a 14:00. ¿Necesitas más detalles?"
+      ]
+    },
+    {
+      "tag": "registro_facial",
+      "patterns": [
+        "Cómo me registro en el sistema de reconocimiento facial?",
+        "registro facial en CUCEI",
+        "Cómo subo mi foto para el acceso en CUCEI?",
+        "darse de alta en el sistema de reconocimiento facial CUCEI",
+        "problemas con el registro facial",
+        "registro facial",
+        "cambiar foto registro facial",
+        "Registro facial",
+        "como cambio mi foto del registro facial?",
+        "cómo cambio mi foto del registro facial?",
+        "¿Cómo cambio mi foto del registro facial?",
+        "Cómo cambio mi foto del registro facial?"
+      ],
+      "responses": [
+        "Para registrarte en el sistema de reconocimiento facial de CUCEI, sigue estos pasos: 1) Ingresa a https://acceso.cucei.udg.mx, 2) Haz clic en 'Subir Foto' en la sección 'COMUNIDAD CUCEI', selecciona si eres estudiante o trabajador, y luego ingresa tu código y NIP de SIIAU. ¿Te gustaría que te explique algún paso más en detalle?",
+        "El registro facial en CUCEI se realiza a través de https://acceso.cucei.udg.mx. Una vez ahí, selecciona 'Subir Foto', ingresa tu código y NIP de SIIAU, y sigue las instrucciones para subir tu foto. Si necesitas cambiar la foto, puedes acudir a la entrada 'Revolución'. ¿Te ayudo con algo más?",
+        "Para darte de alta en el sistema de reconocimiento facial, entra a https://acceso.cucei.udg.mx, elige 'Subir Foto' según seas estudiante o trabajador, ingresa tu código y NIP de SIIAU, y sigue las recomendaciones para subir la foto. ¿Te explico más detalles?",
+        "Si tienes problemas con el registro facial, puedes cambiar tu foto en la entrada 'Revolución' con los prestadores de servicio social, en un horario de 7 am a 5 pm. Para el registro inicial, accede a https://acceso.cucei.udg.mx y sigue los pasos. ¿Necesitas más ayuda?"
+      ]
+    },
+    {
+      "tag": "servicios_medicos",
+      "patterns": [
+        "Qué servicios médicos ofrece CUCEI?",
+        "dónde puedo recibir atención médica en CUCEI?",
+        "servicios médicos en CUCEI",
+        "qué tipo de atención médica hay en CUCEI?",
+        "dónde está la unidad de servicios médicos?",
+        "servicios medicos",
+        "cucei tiene doctores?",
+        "a dónde puedo ir si me siento mal?"
+      ],
+      "responses": [
+        "CUCEI ofrece distintos servicios médicos, como medicina general, psicología y nutrición. Puedes encontrarlos en la Unidad de Servicios Médicos, ubicada en el módulo L, al lado de la división de ciencias básicas, con un horario de atención de 8:00 a 20:00 horas.",
+        "La Unidad de Servicios Médicos de CUCEI se encuentra en el módulo L, cerca de la división de ciencias básicas. Ofrecen medicina general, psicología y nutrición, de lunes a viernes de 8:00 a 20:00 horas.",
+        "En CUCEI tienes acceso a servicios médicos como medicina general, psicología y nutrición. Están en el módulo L, y el horario de atención es de 8:00 a 20:00 horas. Si presentas alguna emergencia médica, puedes marcar al 33 32 34 84 11.",
+        "Si necesitas atención médica en CUCEI, puedes ir a la Unidad de Servicios Médicos en el módulo L. Cuentan con medicina general, psicología y nutrición, y su horario es de 8:00 a 20:00 horas."
+      ]
+    },
+    {
+      "tag": "unidad_servicios_medicos",
+      "patterns": [
+        "Dónde está la unidad de servicios médicos?",
+        "ubicación de la unidad de servicios médicos",
+        "horario de la unidad de servicios médicos en CUCEI",
+        "Qué servicios hay en la unidad médica?",
+        "Cómo contacto a la unidad de servicios médicos en CUCEI?",
+        "unidad de servicios médicos",
+        "unidad de servicios medicos",
+        "Unidad de servicios médicos",
+        "enfermería cucei",
+        "Enfermería",
+        "Enfermería cucei",
+        "Enfermeria",
+        "Enfermería CUCEI",
+        "Enfermeria CUCEI"
+      ],
+      "responses": [
+        "La Unidad de Servicios Médicos está en el módulo L, al lado de la división de ciencias básicas. Ofrecen medicina general, psicología y nutrición, de 8:00 a 20:00 horas.",
+        "Puedes encontrar la Unidad de Servicios Médicos en el módulo L de CUCEI, al lado de la división de ciencias básicas. Su horario es de lunes a viernes de 8:00 a 20:00 horas.",
+        "En la Unidad de Servicios Médicos puedes recibir atención de medicina general, psicología y nutrición. Está ubicada en el módulo L, y el horario de atención es de 8:00 a 20:00 horas.",
+        "Si tú o algún compañero necesita atención médica urgente, puedes marcar al 33 32 34 84 11 para recibir asistencia inmediata en las instalaciones."
+      ]
+    },
+    {
+      "tag": "laboratorio_analisis_clinicos",
+      "patterns": [
+        "Dónde está el laboratorio de análisis clínicos?",
+        "qué servicios ofrece el laboratorio de análisis clínicos en CUCEI?",
+        "horario del laboratorio de análisis clínicos",
+        "puedo hacerme estudios en el laboratorio de CUCEI?",
+        "Contacto del laboratorio de análisis clínicos en CUCEI",
+        "analisis clinicos",
+        "análisis clinicos",
+        "análisis clínicos",
+        "analisis clínicos",
+        "Análisis clínicos",
+        "Análisis Clínicos",
+        "Laboratorio de análisis clínicos",
+        "¿Dónde me pueden sacar sangre en CUCEI?",
+        "Donde me pueden sacar sangre",
+        "Donde me pueden sacar sangre en CUCEI",
+        "Lugar para sacar sangre CUCEI",
+        "Lugar para analizar sangre CUCEI"
+      ],
+      "responses": [
+        "El Laboratorio de Análisis Clínicos está en el módulo H de CUCEI y está abierto de 8:15 a 15:00 horas. Puedes contactarlos por WhatsApp en el 33 3351 4696 para preguntar por la disponibilidad de análisis.",
+        "En el módulo H de CUCEI se encuentra el Laboratorio de Análisis Clínicos. Ofrecen diferentes análisis dependiendo de la disponibilidad, y el horario es de 8:15 a 15:00 horas. Para más información, puedes escribir al WhatsApp 33 3351 4696.",
+        "El Laboratorio de Análisis Clínicos de CUCEI está abierto de 8:15 a 15:00 horas en el módulo H. Puedes contactarlos en el WhatsApp 33 3351 4696 para consultar sobre la disponibilidad de los análisis.",
+        "Si necesitas análisis clínicos, el laboratorio de CUCEI está en el módulo H y su horario es de 8:15 a 15:00 horas. Puedes preguntar por la disponibilidad de estudios al 33 3351 4696."
+      ]
+    },
+    {
+      "tag": "radio_cucei",
+      "patterns": [
+        "Qué es Radio CUCEI?",
+        "cómo puedo escuchar Radio CUCEI?",
+        "transmisión de radio en CUCEI",
+        "qué frecuencia tiene Radio CUCEI?",
+        "dónde puedo sintonizar Radio CUCEI?",
+        "radio cucei",
+        "Radio cucei",
+        "cucei radio",
+        "CUCEI radio",
+        "Cucei radio",
+        "donde escucho radio cucei",
+        "donde puedo escuchar radio cucei"
+      ],
+      "responses": [
+        "Radio CUCEI es un sistema de radiodifusión experimental que transmite desde el laboratorio de audio y acústica en el módulo N. Puedes sintonizarla en FM en la frecuencia 96.7 Mhz dentro del campus o escucharla en línea en http://radio.cucei.udg.mx.",
+        "Puedes escuchar Radio CUCEI en la frecuencia 96.7 Mhz si estás en el área del CUCEI, o también en línea a través de http://radio.cucei.udg.mx.",
+        "Radio CUCEI transmite en FM en la frecuencia 96.7 Mhz, pero también puedes escucharla vía internet en su página oficial: http://radio.cucei.udg.mx.",
+        "Radio CUCEI no solo es una estación experimental, también difunde actividades del CUCEI, como eventos, programación de exámenes y actividades culturales. Puedes sintonizarla en 96.7 Mhz o en línea."
+      ]
+    },
+    {
+      "tag": "justificacion_faltas",
+      "patterns": [
+        "Cómo justifico mis faltas en CUCEI?",
+        "Qué necesito para justificar mis faltas?",
+        "Cuántas faltas puedo justificar?",
+        "Dónde justifico mis faltas?",
+        "Justificar faltas",
+        "justificar faltas",
+        "cómo justifico mis faltas?",
+        "como puedo justificar faltas?",
+        "cómo puedo justificar mis faltas?",
+        "que tengo que hacer para justificar mis faltas?",
+        "qué tengo que hacer para justificar mis faltas?"
+      ],
+      "responses": [
+        "Para justificar faltas en CUCEI, solo se puede justificar el 20% de las faltas en el semestre. Debes presentar una receta médica de una institución certificada como el IMSS en tu coordinación.",
+        "Recuerda que solo se justifican los días marcados en la receta, a excepción de incapacidades expedidas por el IMSS.",
+        "Una vez verificada la información, el justificante se enviará a tu profesor dentro de las siguientes 24 horas hábiles."
+      ]
+    },
+    {
+      "tag": "solicitud_documentos",
+      "patterns": [
+        "Cómo pido una constancia?",
+        "Cómo solicito mi kardex certificado?",
+        "Dónde puedo pedir documentos en CUCEI?",
+        "Cómo solicito documentos en control escolar?",
+        "Dónde está el kiosko de control escolar?",
+        "Qué documentos puedo solicitar en CUCEI?",
+        "Donde solicito un kardex",
+        "cómo solicito un kardex?",
+        "dónde puedo sacar un kardex",
+        "kardex",
+        "contancia para beca",
+        "kardex certificado",
+        "constancia sin calificaciones",
+        "Constancia sin calificaciones",
+        "Kardex certificado",
+        "Constancia para beca",
+        "Kardex",
+        "Dónde solicito documentos?"
+      ],
+      "responses": [
+        "Puedes solicitar documentos como constancia para beca, kardex certificado, o constancia sin calificaciones en el kiosko frente a control escolar en el módulo A (donde está Proulex).",
+        "Para otros documentos, puedes seguir los siguientes pasos: Ingresa a http://escolar.cucei.udg.mx/cescolar/login.aspx, selecciona 'solicitar algún documento' y elige el documento que necesitas.",
+        "Algunos documentos que puedes solicitar incluyen: copia certificada de acta de nacimiento, constancia con calificaciones, constancia para beca, y más. El costo será cargado a tu cuenta y puedes pagar una semana después de hacer el trámite.",
+        "No necesitas haber pagado para recibir el documento, solo el comprobante de trámite es suficiente."
+      ]
+    },
+    {
+      "tag": "orden_pago",
+      "patterns": [
+        "Cómo consulto mi orden de pago?",
+        "Dónde descargo mi orden de pago?",
+        "Cómo pago mis documentos?",
+        "Dónde se paga la orden de pago?",
+        "Cuánto tiempo tarda en reflejarse el pago?",
+        "dónde veo mi orden de pago?",
+        "dónde veo mi orden de pago",
+        "orden de pago",
+        "Orden de pago",
+        "Dónde consulto mi orden de pago?"
+      ],
+      "responses": [
+        "Para consultar tu orden de pago, debes ingresar a la plataforma LEO: https://leoalumnos.udg.mx. Desplázate hasta abajo y selecciona 'orden de pago'.",
+        "Una vez descargado el formato, puedes ir al banco y pagar en ventanilla o cajero automático usando el número de convenio.",
+        "El pago tarda alrededor de 3 días en reflejarse, después de lo cual aparecerá en $0 en el sistema.",
+        "Si tienes una situación que te impida pagar, puedes solicitar una condonación, pero asegúrate de estar pendiente de las páginas oficiales de tu coordinación, ya que al inicio del semestre publican un formulario para este trámite."
+      ]
+    },
+    {
+      "tag": "agenda_materias",
+      "patterns": [
+        "Cómo agendo mis materias?",
+        "Cuándo es el pre-registro de materias?",
+        "Dónde puedo ver la oferta académica?",
+        "Qué son los NRC?",
+        "Cómo hago el pre-registro de materias?",
+        "Qué pasa si no hago el pre-registro de materias?",
+        "Agendar materias",
+        "Cómo agendo materias?",
+        "Cómo puedo agendar materias?"
+      ],
+      "responses": [
+        "Para agendar tus materias, debes hacer el pre-registro en LEO: https://leoalumnos.udg.mx. Selecciona el apartado 'Mis cursos' y luego 'Pre-registro a cursos'. Ahí podrás insertar las claves de las materias que quieres cursar.",
+        "Si no haces el pre-registro, no podrás agendar conforme al orden de tu coordinación y serás mandado a la Agenda General.",
+        "Para consultar la oferta académica, ingresa a LEO en el apartado 'Malla curricular' y selecciona 'Oferta académica'. Ahí podrás ver los NRC correspondientes a las secciones de cada materia.",
+        "El día que te toque agendar, deberás insertar los NRC de las materias que te interesan. Si alguna marca error, elimina el NRC y selecciona otro disponible."
+      ]
+    },
+    {
+      "tag": "servicio_social",
+      "patterns": [
+        "¿Qué es el servicio social?",
+        "¿Para qué sirve el servicio social?",
+        "¿Qué implica el servicio social en CUCEI?",
+        "servicio social",
+        "Servicio social"
+      ],
+      "responses": [
+        "El servicio social es una actividad que los estudiantes realizan en beneficio de la sociedad y una forma de aplicar los conocimientos y habilidades adquiridos durante su formación académica.",
+        "El servicio social permite a los estudiantes contribuir a la comunidad, aplicando los conocimientos y competencias que han adquirido durante sus estudios académicos.",
+        "A través del servicio social, los estudiantes ponen en práctica sus habilidades aprendidas, al mismo tiempo que apoyan a la sociedad y generan un impacto positivo.",
+        "El servicio social es una oportunidad para que los estudiantes usen su formación académica en beneficio de la sociedad, mientras adquieren experiencia en su campo."
+      ]
+    },
+
+    {
+      "tag": "caracteristicas_servicio_social",
+      "patterns": [
+        "¿Cuántas horas debo hacer de servicio social?",
+        "¿Dónde puedo realizar el servicio social?",
+        "¿El servicio social es obligatorio?",
+        "¿Cuánto tiempo dura el servicio social en CUCEI?",
+        "horas servicio social",
+        "Horas servicio social?",
+        "Es obligatorio el servicio social?",
+        "el servicio social es obligatiorio?",
+        "cuanto tiempo dura el servicio social?"
+      ],
+      "responses": [
+        "El servicio social en CUCEI es obligatorio y consiste en 480 horas continuas que deben completarse en un plazo no menor a seis meses y no mayor a dos años.",
+        "Solo puede realizarse en instituciones públicas o de asistencia social. Las empresas con fines de lucro están excluidas, y las instituciones externas a la U de G deben tener un convenio firmado para aceptar prestadores de servicio social.",
+        "El servicio social en CUCEI es un requisito obligatorio de 480 horas que deben cumplirse de manera continua, en un periodo de entre seis meses y dos años. Solo puede realizarse en instituciones públicas o de asistencia social, excluyendo a empresas con fines de lucro. Para instituciones externas a la U de G, es necesario que exista un convenio firmado.",
+        "En CUCEI, el servicio social es una actividad obligatoria que requiere la realización de 480 horas de manera continua, en un plazo mínimo de seis meses y máximo de dos años. Solo puede llevarse a cabo en instituciones públicas o de asistencia social, mientras que las empresas con fines de lucro no son elegibles. Además, las instituciones externas deben contar con un convenio firmado con la U de G para participar."
+      ]
+    },
+    {
+      "tag": "consideraciones_servicio_social",
+      "patterns": [
+        "¿Qué requisitos debo cumplir antes de hacer el servicio social?",
+        "¿Puedo hacer el servicio social si trabajo?",
+        "¿Qué documentos necesito para empezar mi servicio social?",
+        "requisitos servicio social",
+        "Requisitos servicio social",
+        "Cuáles son los requisitos para hacer mi servicio social?",
+        "Qué necesito para hacer el servicio social?",
+        "qué necesito para hacer el servicio social?",
+        "que necesito para el servicio social",
+        "qué necesito para el servicio social"
+      ],
+      "responses": [
+        "Para realizar el servicio social en CUCEI, debes cumplir con el 60% de los créditos, ser alumno regular o egresado, y no tener una plaza de servicio social activa.",
+        "Si trabajas y no puedes hacerlo de lunes a viernes, debes presentar en la Unidad de Servicio Social una carta de trabajo original, los últimos dos recibos de nómina y otros documentos que validen tu situación laboral.",
+        "Para llevar a cabo el servicio social en CUCEI, es necesario contar con al menos el 60% de los créditos completados, ser estudiante regular o egresado, y no tener una plaza de servicio social vigente. En caso de estar trabajando y no poder realizarlo de lunes a viernes, deberás presentar en la Unidad de Servicio Social una carta de trabajo original y tus dos últimos recibos de nómina, entre otros documentos que justifiquen tu situación laboral.",
+        "En CUCEI, para realizar el servicio social, debes tener al menos el 60% de tus créditos, ser un alumno regular o haber egresado, y no contar con una plaza de servicio social activa. Si trabajas y no puedes hacerlo de lunes a viernes, necesitas entregar en la Unidad de Servicio Social una carta de trabajo original, acompañada de los dos últimos recibos de nómina y otros documentos que acrediten tu condición laboral."
+      ]
+    },
+    {
+      "tag": "aclaraciones_servicio_social",
+      "patterns": [
+        "¿Dónde puedo hacer preguntas sobre mi servicio social?",
+        "¿Cuál es el horario de la Unidad de Servicio Social?",
+        "¿Cómo contacto a la Unidad de Servicio Social?",
+        "Horario oficina servicio social",
+        "horario oficina servicio social",
+        "a qué hora cierra la oficina de servicio social?",
+        "A dónde puedo ir para preguntar sobre mi servicio social?",
+        "Dudas servicio social",
+        "Tengo dudas sobre el servicio social"
+      ],
+      "responses": [
+        "La Unidad de Servicio Social está en el Módulo A, planta alta. El horario es de lunes a viernes de 9 a 16 horas y de 17 a 20 horas, y los sábados de 9 a 12 horas. Puedes enviar tus consultas al correo ussocial@cucei.udg.mx.",
+        "Para agilizar tu consulta por correo, incluye tu nombre completo, carrera, código de alumno, estatus en SIIAU, si ya has tenido plaza de servicio social y tu pregunta específica.",
+        "La Unidad de Servicio Social se encuentra en el Módulo A, planta alta. Su horario de atención es de lunes a viernes, de 9:00 a 16:00 y de 17:00 a 20:00 horas, y los sábados de 9:00 a 12:00. Para consultas por correo, puedes escribir a ussocial@cucei.udg.mx, incluyendo tu nombre completo, carrera, código de alumno, estatus en SIIAU, si ya has tenido una plaza de servicio social y tu pregunta específica.",
+        "Puedes dirigirte a la Unidad de Servicio Social en el Módulo A, planta alta, de lunes a viernes de 9:00 a 16:00 horas y de 17:00 a 20:00 horas, o los sábados de 9:00 a 12:00. Si prefieres hacer consultas por correo electrónico, escríbelas a ussocial@cucei.udg.mx y no olvides incluir tu nombre, carrera, código de alumno, estatus en SIIAU, si has tenido plaza de servicio social antes y tu consulta detallada."
+      ]
+    },
+    {
+      "tag": "tramite_servicio_social",
+      "patterns": [
+        "¿Cómo empiezo mi servicio social?",
+        "¿Cómo me registro para el servicio social?",
+        "¿Dónde tramito el servicio social en CUCEI?",
+        "Tramite servicio social",
+        "Cómo tramito mi servicio social?",
+        "cómo tramito mi servicio social?",
+        "Registro servicio social",
+        "registro servicio social",
+        "Como registrar mi servicio social",
+        "Empezar servicio social",
+        "empezar servicio social",
+        "Trámite servicio social"
+      ],
+      "responses": [
+        "Consulta las fechas de registro en www.cucei.udg.mx. Inicia sesión en www.siiau.udg.mx con tu código de estudiante y contraseña. Luego, ingresa al portal del servicio social en http://ss.siiau.udg.mx y completa los pasos para registrarte como aspirante a prestador de servicio social.",
+        "Primero, consulta las fechas de registro en la página www.cucei.udg.mx. Luego, accede a www.siiau.udg.mx usando tu código de estudiante y contraseña. Una vez dentro, dirígete al portal de servicio social en http://ss.siiau.udg.mx y sigue los pasos para registrarte como aspirante a prestador de servicio social.",
+        "Para comenzar tu registro de servicio social, revisa las fechas en www.cucei.udg.mx. Después, inicia sesión en www.siiau.udg.mx con tu código y contraseña. Una vez dentro, accede a http://ss.siiau.udg.mx para completar los pasos necesarios y registrarte como aspirante a prestador.",
+        "Consulta las fechas de registro en www.cucei.udg.mx y luego inicia sesión en www.siiau.udg.mx con tus credenciales de estudiante. A continuación, visita http://ss.siiau.udg.mx para completar el registro como aspirante a prestador de servicio social, siguiendo las indicaciones del sistema."
+      ]
+    },
+    {
+      "tag": "reportes_bimestrales_servicio_social",
+      "patterns": [
+        "¿Cómo presento mis reportes de servicio social?",
+        "¿Cuándo debo entregar los reportes bimestrales?",
+        "¿Qué formato debo seguir para los reportes bimestrales?",
+        "Reportes servicio social",
+        "reportes servicio social",
+        "Cómo hago mis reportes de servicio social?",
+        "Cómo hago los reportes de mi servicio social?",
+        "formato reportes servicio social",
+        "Formato reportes servicio social",
+        "como hago mis reportes de servicio social?",
+        "cómo hago mis reportes de servicio social?"
+      ],
+      "responses": [
+        "Debes elaborar un reporte bimestral cada dos meses para validar tus horas de servicio social. Este documento debe estar sellado y firmado por la dependencia receptora, luego escaneado en PDF o JPG para enviarlo con el reporte electrónico.",
+        "Para completar tu reporte bimestral, inicia sesión en el portal de servicio social y selecciona 'Administración de Servicio Social'. Una vez que hayas subido el documento, entrégalo en la Unidad de Servicio Social dentro de los 7 días hábiles.",
+        "Cada dos meses deberás presentar un reporte bimestral para validar las horas de tu servicio social. Este debe estar firmado y sellado por la dependencia donde prestas el servicio, escanearlo en formato PDF o JPG y enviarlo junto con el reporte electrónico.",
+        "Para completar tu reporte bimestral, ingresa al portal de servicio social, selecciona la opción 'Administración de Servicio Social', y sube el documento firmado y sellado. Recuerda que también debes entregarlo físicamente en la Unidad de Servicio Social en un plazo de 7 días hábiles."
+      ]
+    },
+    {
+      "tag": "termino_servicio_social",
+      "patterns": [
+        "¿Qué hago si ya terminé mi servicio social?",
+        "¿Cómo tramito la constancia de servicio social?",
+        "¿Qué necesito para la constancia de servicio social?",
+        "que pasa si ya termine mi servicio social",
+        "qué hago si ya terminé mi servicio social?",
+        "Tramite finalización servicio social?",
+        "que sigue si ya terminé mi servicio social?",
+        "qué hago si ya completé mis horas de servicio social?"
+      ],
+      "responses": [
+        "Si ya completaste las 480 horas de servicio social, debes tramitar la constancia de acreditación. Para ello, necesitas entregar el oficio de término firmado y sellado, y el reporte final en el Sistema de Administración de Servicio Social.",
+        "También deberás adjuntar 4 fotografías recientes tamaño credencial y llenar el cuestionario de evaluación disponible en el portal de servicio social.",
+        "Una vez que hayas cumplido las 480 horas de servicio social, el siguiente paso es solicitar la constancia de acreditación. Para ello, necesitas presentar el oficio de término, debidamente firmado y sellado, junto con el reporte final en el Sistema de Administración de Servicio Social.",
+        "Además de entregar el reporte final y el oficio de término, deberás subir 4 fotografías recientes tamaño credencial y completar el cuestionario de evaluación disponible en el portal de servicio social para finalizar el trámite."
+      ]
+    },
+    {
+      "tag": "Edificio X",
+      "patterns": [
+        "A que heule el edificio X"
+      ],
+      "responses": [
+        "El edificio X tiene un Olor bastante peculiar ya que se dice que la mayoria de estudiantes de la carrera de computación no se bañan, por lo que el olor a sobaco es bastante fuerte."
+      ]
+    }
+  ]
+}

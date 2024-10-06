@@ -41,7 +41,7 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
-import { Chatbot } from "../../../ChatBot/Chatbot";
+import  Chatbot  from "../../../ChatBot/Chatbot";
 
 const Drawer = createDrawerNavigator();
 
@@ -90,14 +90,14 @@ const DrawerHeaderButton = () => {
     <TouchableOpacity
       onPress={() => navigation.openDrawer()}
       style={styles.menuIcon}>
-      <FontAwesomeIcon icon={faBars} size={23} color="white" />
+      <FontAwesomeIcon icon={faBars} size={23} color="#FFFFFF" />
     </TouchableOpacity>
   );
 };
 
 const HeaderWithIcon = ({ title, icon }) => (
   <View style={styles.header}>
-    <FontAwesomeIcon icon={icon} size={24} color="#fff" />
+    <FontAwesomeIcon icon={icon} size={24} color="#FFFFFF" />
     <Text style={styles.headerText}>{title}</Text>
   </View>
 );
@@ -113,7 +113,7 @@ export const MyDrawer = () => {
         headerStyle: {
           backgroundColor: "#0b34b0",
         },
-        headerTintColor: "#fff",
+        headerTintColor: "#FFFFFF",
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -123,7 +123,7 @@ export const MyDrawer = () => {
         },
         drawerActiveBackgroundColor: "#e0e0e0",
         drawerActiveTintColor: "#4c669f",
-        drawerInactiveTintColor: "#333",
+        drawerInactiveTintColor: "#000000",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
     marginLeft: 8,

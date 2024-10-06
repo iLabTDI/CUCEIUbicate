@@ -296,56 +296,56 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    fontSize: width * 0.06, // 6% del ancho de la pantalla
+    fontSize: width * 0.06, 
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginBottom: height * 0.02, // 2% de la altura de la pantalla
+    marginBottom: height * 0.02,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: height * 0.02, // 2% de la altura de la pantalla
+    marginBottom: height * 0.02, 
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 10,
-    paddingHorizontal: width * 0.03, // 3% del ancho de la pantalla
+    paddingHorizontal: width * 0.03, 
   },
   inputIcon: {
-    marginRight: width * 0.02, // 2% del ancho de la pantalla
+    marginRight: width * 0.02, 
     color: '#0b34b0',
   },
   input: {
     flex: 1,
-    paddingVertical: height * 0.015, // 1.5% de la altura de la pantalla
-    fontSize: width * 0.04, // 4% del ancho de la pantalla
+    paddingVertical: height * 0.015, 
+    fontSize: width * 0.04, 
     color: '#333',
   },
   passwordToggle: {
-    padding: width * 0.02, // 2% del ancho de la pantalla
+    padding: width * 0.02, 
   },
   button: {
     backgroundColor: '#0b34b0',
     borderRadius: 10,
-    paddingVertical: height * 0.02, // 2% de la altura de la pantalla
+    paddingVertical: height * 0.02, 
     alignItems: 'center',
-    marginTop: height * 0.02, // 2% de la altura de la pantalla
+    marginTop: height * 0.02, 
     width: '100%',
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.04, // 4% del ancho de la pantalla
+    fontSize: width * 0.04, 
     fontWeight: 'bold',
   },
   registerText: {
-    marginTop: height * 0.02, // 2% de la altura de la pantalla
-    fontSize: width * 0.035, // 3.5% del ancho de la pantalla
+    marginTop: height * 0.02, 
+    fontSize: width * 0.035, 
     color: '#0b34b0',
   },
   errorText: {
     color: 'red',
     textAlign: 'center',
-    marginTop: height * 0.02, // 2% de la altura de la pantalla
-    fontSize: width * 0.035, // 3.5% del ancho de la pantalla
+    marginTop: height * 0.02, 
+    fontSize: width * 0.035, 
   },
   modalContainer: {
     flex: 1,
@@ -354,8 +354,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   animation: {
-    width: width * 0.6, // 60% del ancho de la pantalla
-    height: width * 0.6, // 60% del ancho de la pantalla
+    width: width * 0.6, 
+    height: width * 0.6, 
   },
 });
 
