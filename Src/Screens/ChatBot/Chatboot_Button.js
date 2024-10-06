@@ -16,7 +16,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 const { width, height } = Dimensions.get('window');
 const REAPPEAR_DELAY = 5 * 60 * 1000; // 5 minutes en minisegundos
 
-const ChatbotButton = () => {
+export const ChatbotButton = () => {
   const navigation = useNavigation();
   const [showTooltip, setShowTooltip] = useState(true);
   const [showBot, setShowBot] = useState(true);
