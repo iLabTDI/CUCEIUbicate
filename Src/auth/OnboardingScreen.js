@@ -37,7 +37,7 @@ const onboardingData = [
         id: '3',
         title: 'Mantente informado',
         description: 'Recibe notificaciones importantes y accede a toda la información del campus.',
-        animation: require('../assets/animations/complete.json'),
+        animation: require('../assets/animations/Camino.json'),
     },
 ];
 
@@ -143,7 +143,7 @@ export const OnboardingScreen = () => {
       flatListRef.current.scrollToIndex({ index: currentIndex + 1 });
     } else {
       try {
-        await AsyncStorage.setItem('@onboarding_completee', 'true');
+        await AsyncStorage.setItem('@onboarding_complete', 'true');
         navigation.replace('Login');
       } catch (err) {
         console.log('Error al guardar el estado de onboarding', err);
