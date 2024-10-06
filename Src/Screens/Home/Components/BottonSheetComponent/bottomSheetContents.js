@@ -234,20 +234,20 @@ export const bottomSheetContents = {
   },
   "Modulo O": {
     name: "Módulo O",
-    classrooms: "O-01 ~ O-25",
+    classrooms: "O-01 ~ O-4",
     "relevant-places": [
-      "Aulas de ingeniería en el primer piso",
+      "Aqui se encuentra la cordinacion industrial",
       "Laboratorios de tecnología en el segundo piso"
     ],
     bathrooms: [
-      "W.C Mixto 1er Piso",
-      "W.C Mixto 2do Piso"
+      "no hay ",
+      "-"
     ],
     "images-path": [
       require("./Modulos/Modulo_O/O_PRIMER_PISO.png"),
       require("./Modulos/Modulo_O/O_SEGUNDO_PISO.png")
     ],
-    description: "El Módulo O alberga aulas especializadas para cursos de ingeniería y tecnología."
+    description: "En el modulo O se encuentra el auditorio Antonio de la torre"
   },
   "Modulo P": {
     name: "Módulo P",

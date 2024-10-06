@@ -7,6 +7,7 @@ import {
   ScrollView, // Agregamos ScrollView para permitir desplazamiento si es necesario
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import { ErrorComponent } from '../Components/ErrorComponent';
 
 const jsonFilePath = `${FileSystem.documentDirectory}radio_cucei.json`; // Ruta para guardar el JSON
 const radioCuceiUrl = "http://148.202.152.59:8001/json/radio_cucei";
@@ -58,11 +59,14 @@ export const CUCEI_radio = () => {
     downloadJson(); // Inicia la descarga y verificación
   }, []);
 
-  if (error) {
+  if (error)  {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar Radio Cucei. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
 
@@ -97,11 +101,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -115,7 +119,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     lineHeight: 24,
   },
   loadingContainer: {
@@ -123,18 +127,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
   },
 });
 

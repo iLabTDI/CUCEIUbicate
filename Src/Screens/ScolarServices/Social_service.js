@@ -13,6 +13,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faLink, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import * as FileSystem from 'expo-file-system';
+import { ErrorComponent } from "../Components/ErrorComponent";
 
 // Obtener el ancho de la pantalla para cálculos de estilo responsivos
 const { width } = Dimensions.get('window');
@@ -107,14 +108,17 @@ export const Social_service = () => {
     downloadJson();
   }, []);
 
-  if (error) {
+  // Renderiza un mensaje de error si no se pudieron obtener los datos
+  if (error)  {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <ErrorComponent
+        title="Sin conexión a internet"
+        message="No se pudo cargar el Servicios Social. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        buttonText="Reintentar"
+        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+      />
     );
   }
-
   if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
@@ -200,25 +204,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0b34b0',
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f2f5',
-  },
-  errorText: {
-    marginTop: 20,
-    fontSize: 18,
-    color: '#e74c3c',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     margin: 10,
     padding: 20,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
@@ -250,7 +241,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
     marginBottom: 8,
     lineHeight: 24,
   },
@@ -272,18 +263,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-  },
-  errorContainer: { // Estilos para el mensaje de error
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 20,
-  },
-  errorText: { // Estilos para el texto de error
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
   },
 });
 
