@@ -656,6 +656,16 @@
       "responses": [
         "El edificio X tiene un Olor bastante peculiar ya que se dice que la mayoria de estudiantes de la carrera de computación no se bañan, por lo que el olor a sobaco es bastante fuerte."
       ]
+    },
+    {
+      "tag": "Creador",
+      "patterns": [
+        "Quien es tu creador?",
+        "por quien fuiste programado?"
+      ],
+      "responses": [
+        "Por el mas foking guapo de Yair."
+      ]
     }
   ]
 }
