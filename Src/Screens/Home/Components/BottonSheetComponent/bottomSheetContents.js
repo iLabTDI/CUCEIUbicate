@@ -3,47 +3,47 @@
 export const bottomSheetContents = {
   "Modulo A": {
     name: "Módulo A",
-    classrooms: "A-01 ~ A-20",
+    classrooms: "A-01 ~ A-10",
     "relevant-places": [
-      "Auditorio en el segundo piso",
-      "Sala de estudios en el primer piso"
+      "Primer piso: Auditorio Enrique Díaz de León, Unidad de primer contacto, Coordinación de servicios académicos, Coordinación de programas docentes, Coordinación de servicios académicos, Unidad de primer contacto, Coordinación de control escolar (y Unidad de ingreso), Egresados y títulos, Coordinación de investigación..",
+      "Segundo piso: Módulo de actividades cullturales y deportivas, Unidad de servicio social, Coordinación de comisiones del consejo del centro, Coordinación de planeación, Coordinación de finanzas, Unidad de Adquisición y suministras, Unidad de difusión, Coordinación personal.. "
     ],
     bathrooms: [
-      "W.C Hombres 1er Piso",
-      "W.C Mujeres 2do Piso"
+      "Primer piso: W.C Hombres y W.C Mujeres",
+      "Segundo piso: W.C Hombres y W.C Mujeres"
     ],
     "images-path": [
       require("./Modulos/Modulo_A/PRIMER_PISO.png"),
       require("./Modulos/Modulo_A/SEGUNDO_PISO.png")
     ],
-    description: "El Módulo A alberga aulas amplias y es ideal para conferencias y seminarios."
+    description: "El Módulo A conocido anteriormente como Rectoria, contiene gran variedad de salas de coordinación y el Auditorio Enrique Díaz de León. Asimismo, tiene aulas que pertenecen al Proulex donde los alumnos pueden aprender idiomas."
   },
   "Modulo B": {
     name: "Módulo B",
-    classrooms: "B-01 ~ B-15",
+    classrooms: "B-101 ~ B-105, B-201 ~ B-205",
     "relevant-places": [
-      "Espacios administrativos en el primer piso",
-      "Sala de profesores en el segundo piso"
+      "Primer piso: Coordinación de Extensión y Unidad de Tutorías, Coordinación de Programas Especiales, Coordinación de vinculación, Consultorio.",
+      "Segundo piso: Maestría en Ciencias de la Educación Física y Deporte.",
     ],
     bathrooms: [
-      "W.C Mixto 1er Piso",
-      "W.C Mixto 2do Piso"
+      "-"
     ],
     "images-path": [
       require("./Modulos/Modulo_B/B_CUCS.png")
     ],
-    description: "El Módulo B se destaca por su diseño clásico y su funcionalidad para actividades administrativas."
+    description: "El Módulo B se destaca por impartir clases de carreras relacionadas al CUCS."
   },
   "Modulo C": {
     name: "Módulo C",
-    classrooms: "C-01 ~ C-18",
+    classrooms: "C-101 ~ C-103, C-201 ~ C-205,     C-301 ~ C-302",
     "relevant-places": [
-      "Laboratorios de biotecnología en el primer piso",
-      "Área de investigación en el tercer piso"
+      "Primer piso: Sociedad de alumnos, Coordinación de Licenciatura en Cultura Física y Deportes.",
+      "Segundo piso: -",
+      "Tercer piso: Coordinación de Investigación, Laboratorio de Psicología de la Actividad Física, CEDOS I: Biblioteca Especializada en Cultura Física y Deportes."
     ],
     bathrooms: [
-      "W.C Hombres 2do Piso",
-      "W.C Mujeres 2do Piso"
+      "Primer piso: W.C Hombres",
+      "Segundo piso: W.C Mujeres"
     ],
     "images-path": [
       require("./Modulos/Modulo_C/C_CUCS.png")
@@ -52,19 +52,19 @@ export const bottomSheetContents = {
   },
   "Modulo D": {
     name: "Módulo D",
-    classrooms: "D-01 ~ D-25",
+    classrooms: "-",
     "relevant-places": [
-      "Biblioteca en el segundo piso",
-      "Sala de conferencias en el tercer piso"
+      "Primer piso: Ciencia y tecnología del plasma, Laboratorio de procesamineto de polímeros, Labpratorio de procesos biotecnológicos, Planta piloto de procesos biotecnológicos.",
+      "Segundo piso: Cubículo de académicos, Laboratorio de Química del estado sólido, Laboratorio de electroquímica, Laboratorio de bioinformática y química metabólica.",
+      "Tercer piso: Coordinación de investigadores de imgeniería química, Labpratorio de microbiología e inocuidad de alimentos, Laboratorio B, Laboratorio de Morfología."
     ],
     bathrooms: [
-      "W.C Hombres 1er Piso",
-      "W.C Mujeres 1er y 3er Piso"
+      "-"
     ],
     "images-path": [
       require("./Modulos/Modulo_D/D.png")
     ],
-    description: "El Módulo D ofrece espacios modernos para actividades académicas y administrativas."
+    description: "El Módulo D ofrece laboratorios para distintas carreras relacionadas a las ciencias y tencologías, cubículos para académicos y demás."
   },
   "Modulo E": {
     name: "Módulo E",
