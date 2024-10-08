@@ -1,76 +1,73 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
 import { ErrorComponent } from "../Components/ErrorComponent";
 
 const jsonFilePath = `${FileSystem.documentDirectory}cid.json`;
 const cidUrl = "http://148.202.152.59:8001/json/cid";
+// const cidUrl = "http://localhost:8001/json/cid";
 
 export const CID = () => {
   const [jsonData, setJsonData] = useState(null);
   const [error, setError] = useState(null); // Estado para manejar errores
 
-  const downloadJson = async () => {
-    console.log(`Descargando desde ${cidUrl}...`);
+  const loadJson = async () => {
     try {
+      // Intentar cargar el archivo local si existe
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
+        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
+        const json = await FileSystem.readAsStringAsync(jsonFilePath);
+        setJsonData(JSON.parse(json)); // Establece los datos JSON desde el archivo local
+        setError(null); // Reinicia el error si se pueden leer los datos locales
+      } else {
+        // Si el archivo no existe, intenta descargarlo
+        await downloadJson();
       }
+    } catch (error) {
+      console.error("Error al cargar o descargar el archivo:", error);
+      setError("No se pudo cargar el CID. Por favor, verifica tu conexión a internet e intenta nuevamente."); // Actualiza el mensaje de error
+    }
+  };
 
+  const downloadJson = async () => {
+    try {
+      console.log(`Descargando desde ${cidUrl}...`);
       const response = await fetch(cidUrl);
       if (!response.ok) {
         throw new Error(`Error al descargar desde ${cidUrl}`);
       }
 
       const json = await response.json();
+
+      // Guardar el nuevo archivo JSON
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       console.log(`Archivo guardado en: ${jsonFilePath}`);
-      setJsonData(json); // Establece los datos JSON
+      setJsonData(json); // Establece los datos JSON desde la descarga
+      console.log(json);
+      setError(null); // Reinicia el error si la descarga es exitosa
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
-      setError("Sin conexión a internet"); // Establece el mensaje de error
-      // Alert.alert("Error", `No se pudo descargar el archivo: ${jsonFilePath}`);
-
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        console.log(`Usando archivo existente en: ${jsonFilePath}`);
-        try {
-          const json = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(json)); // Establece los datos JSON
-          setError(null); // Reinicia el error si se pueden leer los datos locales
-        } catch (readError) {
-          console.error("Error al leer el archivo:", readError);
-          setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
-          // Alert.alert("Error", `No se pudo leer el archivo: ${jsonFilePath}`);
-        }
-      } else {
-        console.log(
-          `No se pudo descargar y el archivo no existe: ${jsonFilePath}`
-        );
-        // Alert.alert("Error", `No se pudo obtener el archivo: ${jsonFilePath}`);
-      }
+      setError("No se pudo descargar el CID. Por favor, verifica tu conexión a internet e intenta nuevamente."); // Actualiza el mensaje de error
     }
   };
 
   useEffect(() => {
-    downloadJson(); // Inicia la descarga y verificación
+    loadJson(); // Inicia la carga del JSON al montar el componente
   }, []);
 
-
   // Renderiza un mensaje de error si no se pudieron obtener los datos
-  if (error)  {
+  if (error) {
     return (
       <ErrorComponent
-        title="Sin conexión a internet"
-        message="No se pudo cargar el CID. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        title="Error de carga"
+        message={error}
         buttonText="Reintentar"
         onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
       />
     );
   }
-
 
   if (!jsonData) {
     return (
@@ -118,7 +115,7 @@ export const CID = () => {
 
 const styles = StyleSheet.create({
   ScrollView: {
-    felx: 1,
+    flex: 1,
   },
   content: {
     padding: 20,
