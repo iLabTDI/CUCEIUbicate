@@ -1,208 +1,184 @@
 import React, { useEffect, useState } from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  Linking, 
-  TouchableOpacity, 
-  ActivityIndicator, 
-  Alert,
-  Dimensions
-} from "react-native";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faLink, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import * as FileSystem from 'expo-file-system';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, TouchableOpacity } from "react-native";
+import * as FileSystem from "expo-file-system";
+import { ScrollView } from "react-native-gesture-handler";
 import { ErrorComponent } from "../Components/ErrorComponent";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { 
+  faHandshake, 
+  faGraduationCap, 
+  faClipboardList, 
+  faChevronRight,
+  faSpinner
+} from '@fortawesome/free-solid-svg-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-// Obtener el ancho de la pantalla para cálculos de estilo responsivos
-const { width } = Dimensions.get('window');
-
-// Ruta del archivo JSON local
 const jsonFilePath = `${FileSystem.documentDirectory}social_service.json`;
-// URL de la API para obtener los datos del servicio social
 const socialServiceUrl = "http://148.202.152.59:8001/json/social_service";
 
-// Función para verificar si un texto es una URL válida
-const isURL = (text) => {
-  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
-  return urlPattern.test(text);
-};
-
-// Función recursiva para renderizar elementos del JSON
-const renderElement = (element, index) => {
-  if (Array.isArray(element)) {
-    return element.map((item, idx) => renderElement(item, `${index}-${idx}`));
-  } else if (typeof element === 'string') {
-    return isURL(element) ? (
-      <TouchableOpacity key={index} onPress={() => Linking.openURL(element)} style={styles.linkContainer}>
-        <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
-        <Text style={styles.link}>{element}</Text>
-      </TouchableOpacity>
-    ) : (
-      <Text key={index} style={styles.text}>{element}</Text>
-    );
-  } else if (typeof element === 'object') {
-    return Object.keys(element).map((key) => renderElement(element[key], `${index}-${key}`));
-  }
-  return null;
-};
-
 export const Social_service = () => {
-  // Estado para almacenar los datos del JSON
   const [jsonData, setJsonData] = useState(null);
-  // Estado para controlar la visualización del indicador de carga
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // Nuevo estado para manejar errores
+  const [error, setError] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Función para descargar y guardar el JSON
-  const downloadJson = async () => {
-    console.log(`Descargando desde ${socialServiceUrl}...`);
+  const loadJson = async () => {
     try {
-      setIsLoading(true);
-      // Verifica si el archivo existe y lo borra antes de la descarga
-      
-      const response = await fetch(socialServiceUrl);
-      if (!response.ok) {
-        throw new Error(`Error al descargar desde ${socialServiceUrl}`);
-      }
-
-      const json = await response.json();
-      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-      console.log(`Archivo guardado en: ${jsonFilePath}`);
-      setJsonData(json);
-      setError(null); // Reinicia el error si la descarga es exitosa
-
-      // Eliminar el archivo viejo solo después de guardar el nuevo con éxito
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
-        await FileSystem.deleteAsync(jsonFilePath);
+        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
+        const json = await FileSystem.readAsStringAsync(jsonFilePath);
+        setJsonData(JSON.parse(json));
+        setError(null);
+      } else {
+        await downloadJson();
       }
     } catch (error) {
-      console.error("Error al descargar el archivo:", error);
-      setError("Sin conexión a internet"); // Establece el mensaje de error
-
-      // Si hay un error, intenta cargar el archivo existente si está disponible
-      try {
-        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-        if (fileInfo.exists) {
-          console.log(`Usando archivo existente en: ${jsonFilePath}`);
-          const json = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(json)); // Establece los datos JSON
-          setError(null); // Reinicia el error si se pueden leer los datos locales
-        } else {
-          console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-          // Mantiene el mensaje de error existente
-        }
-      } catch (readError) {
-        console.error("Error al leer el archivo:", readError);
-        setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
-      }
-    } finally {
-      setIsLoading(false);
+      console.error("Error al cargar o descargar el archivo:", error);
+      setError("No se pudo cargar el Servicio Social. Por favor, verifica tu conexión a internet e intenta nuevamente.");
     }
   };
 
-  // Efecto para descargar los datos al montar el componente
+  const downloadJson = async () => {
+    setIsRefreshing(true);
+    try {
+      console.log(`Descargando desde ${socialServiceUrl}...`);
+      const response = await fetch(socialServiceUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP status ${response.status}`);
+      }
+
+      const json = await response.json();
+
+      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+      setJsonData(json);
+      setError(null);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      setError("No se pudo descargar el Servicio Social. Por favor, verifica tu conexión a internet e intenta nuevamente.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    downloadJson();
+    loadJson();
   }, []);
 
-  // Renderiza un mensaje de error si no se pudieron obtener los datos
-  if (error)  {
+  if (error) {
     return (
       <ErrorComponent
-        title="Sin conexión a internet"
-        message="No se pudo cargar el Servicios Social. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        title="Error de carga"
+        message={error}
         buttonText="Reintentar"
-        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+        onRetry={downloadJson}
       />
     );
   }
+
   if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b34b0" />
-        <Text style={styles.loadingText}>Cargando servicio social...</Text>
+        <FontAwesomeIcon icon={faSpinner} size={40} color="#0056b3" spin />
+        <Text style={styles.loadingText}>Cargando Servicio Social...</Text>
       </View>
     );
   }
 
-  // Renderiza un mensaje de error si ocurrió algún problema
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <FontAwesomeIcon icon={faExclamationTriangle} size={50} color="#e74c3c" />
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
+  const getIcon = (sectionId) => {
+    const icons = {
+      1: faHandshake,
+      2: faGraduationCap,
+      3: faClipboardList,
+      default: faHandshake
+    };
+    return icons[sectionId] || icons.default;
+  };
 
-  // Renderiza el contenido principal
   return (
-    <ScrollView style={styles.container}>
-      {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
-        const section = jsonData.section_description["sub-sections"][sectionId];
-        return (
-          <View key={sectionId} style={styles.card}>
-            <View style={styles.sectionHeader}>
-              {/* <FontAwesomeIcon icon={faCheckCircle} size={24} color="#0b34b0" /> */}
-              <Text style={styles.sectionTitle}>{section.title}</Text>
-            </View>
-            {section.content && renderElement(section.content, `content-${sectionId}`)}
-            {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => {
-              const element = section["listed-elements"][elementId];
-              return (
-                <View key={elementId} style={styles.listItem}>
-                  <Text style={styles.bullet}>•</Text>
-                  <View style={styles.listItemContent}>
-                    {renderElement(element, `listed-${sectionId}-${elementId}`)}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <LinearGradient
+          colors={['#0056b3', '#007bff']}
+          style={styles.header}
+        >
+          <FontAwesomeIcon icon={faHandshake} size={24} color="#fff" />
+          <Text style={styles.headerTitle}>Servicio Social</Text>
+        </LinearGradient>
+        {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
+          const section = jsonData.section_description["sub-sections"][sectionId];
+          return (
+            <View key={sectionId} style={styles.card}>
+              <View style={styles.sectionHeader}>
+                <FontAwesomeIcon icon={getIcon(sectionId)} size={24} color="#0056b3" />
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+              </View>
+              {section.content && <Text style={styles.content}>{section.content}</Text>}
+              {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => {
+                const element = section["listed-elements"][elementId];
+                return (
+                  <View key={elementId} style={styles.listItem}>
+                    <FontAwesomeIcon icon={faChevronRight} size={14} color="#0056b3" />
+                    <Text style={styles.listItemText}>{element}</Text>
                   </View>
-                </View>
-              );
-            })}
-            {section["mini-subsections"] && Object.keys(section["mini-subsections"]).map((subsectionId) => {
-              const subsection = section["mini-subsections"][subsectionId];
-              return (
-                <View key={subsectionId} style={styles.subsection}>
-                  <Text style={styles.subsectionTitle}>{subsection.title}</Text>
-                  {subsection.content && renderElement(subsection.content, `subsection-content-${subsectionId}`)}
-                  {subsection["listed-elements"] && Object.keys(subsection["listed-elements"]).map((elementId) => {
-                    const element = subsection["listed-elements"][elementId];
-                    return (
-                      <View key={elementId} style={styles.listItem}>
-                        <Text style={styles.bullet}>•</Text>
-                        <View style={styles.listItemContent}>
-                          {renderElement(element, `subsection-listed-${subsectionId}-${elementId}`)}
+                );
+              })}
+              {section["mini-subsections"] && Object.keys(section["mini-subsections"]).map((subsectionId) => {
+                const subsection = section["mini-subsections"][subsectionId];
+                return (
+                  <View key={subsectionId} style={styles.miniSubsection}>
+                    <Text style={styles.miniSubsectionTitle}>{subsection.title}</Text>
+                    {subsection.content && <Text style={styles.content}>{subsection.content}</Text>}
+                    {subsection["listed-elements"] && Object.keys(subsection["listed-elements"]).map((elementId) => {
+                      const element = subsection["listed-elements"][elementId];
+                      return (
+                        <View key={elementId} style={styles.listItem}>
+                          {/* <FontAwesomeIcon icon={faChevronRight} size={14} color="#0056b3" /> */}
+                          <Text style={styles.listItemText}>{element}</Text>
                         </View>
-                      </View>
-                    );
-                  })}
-                </View>
-              );
-            })}
-          </View>
-        );
-      })}
-    </ScrollView>
+                      );
+                    })}
+                  </View>
+                );
+              })}
+            </View>
+          );
+        })}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f0f4f8',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f0f2f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginLeft: 10,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#f0f4f8',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#0b34b0',
+    color: '#0056b3',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -223,46 +199,34 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#0b34b0',
+    color: '#0056b3',
     marginLeft: 10,
-    flex: 1,
   },
-  subsection: {
-    marginTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    paddingTop: 15,
-  },
-  subsectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#0b34b0',
-    marginBottom: 10,
-  },
-  text: {
+  content: {
     fontSize: 16,
-    color: '#333333',
-    marginBottom: 8,
+    color: '#333',
+    marginBottom: 10,
     lineHeight: 24,
   },
-  linkContainer: {
+  listItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    flexWrap: 'wrap',
+    marginBottom: 10,
   },
-  link: {
+  listItemText: {
     fontSize: 16,
-    color: '#0b34b0',
-    textDecorationLine: 'underline',
-    marginLeft: 8,
-    flex: 1,
+    color: '#333',
+    marginLeft: 10,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+  miniSubsection: {
+    marginTop: 15,
+    marginLeft: 15,
+  },
+  miniSubsectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0056b3',
+    marginBottom: 10,
   },
 });
 
