@@ -48,7 +48,17 @@
       "usesCleartextTraffic": true
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "networkSecurityConfig": {
+              "usesCleartextTraffic": true
+            }
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
