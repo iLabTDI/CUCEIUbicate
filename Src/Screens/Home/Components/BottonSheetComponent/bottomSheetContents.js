@@ -330,7 +330,7 @@ export const bottomSheetContents = {
     description: "El Módulo T contiene aulas de aprendizaje para estudiantes."
   },
   "Modulo U": {
-    name: "Módulo U",
+    name: "Módulo U", 
     classrooms: "U-01 ~ U-24",
     "relevant-places": [
       "Primer piso: Papeleria, Cooperativa, Jobs U1 y U2, Oficinas Jobs."
