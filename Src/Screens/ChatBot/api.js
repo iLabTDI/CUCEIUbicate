@@ -26,12 +26,19 @@ const handleGenericAPIRequest = async (message) => {
 
         const result = await chat.sendMessage(message);
         const response = await result.response;
-        const text = await response.text();
+        let text = await response.text();
+
+        // Limpieza del texto: elimina caracteres no deseados y formatea adecuadamente
+        text = text.replace(/\*/g, '') // Eliminar asteriscos
+                   .replace(/[_~]/g, '') // Eliminar subrayados, tildes que pueden ser del Markdown
+                   .replace(/```[\s\S]*?```/g, '') // Eliminar bloques de código (``` ... ```)
+                   .replace(/(^|\s)-(\s)/g, '$1• '); // Reemplazar guiones por viñetas para mejorar la legibilidad
+
         console.log("La respuesta es: " + text);
         return text;
     } catch (error) {
         console.error("Error sending chat request:", error);
-        return null;
+        return "Lo siento, hubo un error al procesar tu solicitud.";
     }
 };
 
