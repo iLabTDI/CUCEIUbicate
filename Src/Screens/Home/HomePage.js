@@ -9,8 +9,8 @@ import {
   Animated,
   Alert,
 } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native"; // Hooks de navegación y control de enfoque
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faBars,
   faRoute,
@@ -18,21 +18,24 @@ import {
   faTimes,
   faVideo,
   faPlay,
-} from "@fortawesome/free-solid-svg-icons"; // Iconos específicos
-import { GestureHandlerRootView } from "react-native-gesture-handler"; // Manejo de gestos
-import ImageZoom from "react-native-image-pan-zoom"; // Componente para hacer zoom en la imagen
-import LottieView from "lottie-react-native"; // Animaciones Lottie
-import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute"; // Componente de búsqueda de rutas
-import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific"; // Componente de búsqueda específica
-import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet"; // Componente BottomSheet
-import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints"; // Mapa con puntos y rutas
-import { points } from "./Components/MapComponent/data"; // Datos de los puntos
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Almacenamiento local asíncrono
-import { getSession } from "../../auth/SessionManager"; // Función para obtener la sesión
-import { routesImages } from "./Routes/Route_data"; // Datos de las rutas
-import { ChatbotButton } from "../ChatBot/Chatboot_Button"; // Componente del botón del chatbot
+  faDownload,
+} from "@fortawesome/free-solid-svg-icons";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ImageZoom from "react-native-image-pan-zoom";
+import LottieView from "lottie-react-native";
+import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute";
+import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
+import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
+import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
+import { points } from "./Components/MapComponent/data";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getSession } from "../../auth/SessionManager";
+import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
+import { DownloadAssets } from "./Routes/DownloadAssets";
+import { DeleteLocalFiles } from "./Routes/DeleteLocalFiles";
+import * as FileSystem from "expo-file-system";
 
 // Obtener las dimensiones de la pantalla para cálculos responsivos
 const { width, height } = Dimensions.get("window");
@@ -41,10 +44,8 @@ export const HomePage = () => {
   // Hooks de navegación y control de si la pantalla está en foco
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-
-  // Referencias para componentes y animaciones
-  const bottomSheetRef = useRef(null);
   const imageZoomRef = useRef(null);
+  const bottomSheetRef = useRef(null);
 
   // Estados para manejar la lógica y la UI de la aplicación
   const [selectedPoint, setSelectedPoint] = useState(null); // Punto seleccionado en el mapa
@@ -62,6 +63,8 @@ export const HomePage = () => {
   const [activeRoutePoints, setActiveRoutePoints] = useState([]); // Puntos de la ruta activa
   const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
   const [currentVideoUri, setCurrentVideoUri] = useState("");
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
 
   // Animación para el overlay del BottomSheet
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -69,8 +72,9 @@ export const HomePage = () => {
   // Efecto que se ejecuta cuando la pantalla está enfocada
   useEffect(() => {
     if (isFocused) {
-      loadSelectedIcon(); // Cargar el icono seleccionado
-      checkSession(); // Verificar la sesión del usuario
+      checkSession().then(() => {
+        loadSelectedIcon(); // Verificar sesión antes de cargar el icono
+      });
     }
   }, [isFocused]);
 
@@ -82,6 +86,35 @@ export const HomePage = () => {
       useNativeDriver: true,
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
+
+  useEffect(() => {
+    checkFirstLaunch();
+  }, []);
+
+  // Verificar si es la primera vez que se abre la aplicación
+  const checkFirstLaunch = async () => {
+    try {
+      const value = await AsyncStorage.getItem("@first_launch");
+      if (value === null) {
+        setIsFirstLaunch(true);
+        await AsyncStorage.setItem("@first_launch", "false");
+        setShowDownloadModal(true); // Mostrar el modal si es el primer lanzamiento
+      } else {
+        setIsFirstLaunch(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el CheckLaunch:", error);
+    }
+  };
+
+  const handleShowDownloadModal = () => {
+    setIsVideoModalVisible(false); // Cerrar el modal de video si está abierto
+    setShowDownloadModal(true);
+  };
+
+  const handleCloseDownloadModal = () => {
+    setShowDownloadModal(false);
+  };
 
   // Función para verificar la sesión del usuario
   const checkSession = async () => {
@@ -109,7 +142,15 @@ export const HomePage = () => {
 
   // Función que se llama cuando se carga la imagen del mapa
   const handleImageLoad = () => {
-    setIsLoading(false); // Ocultar la pantalla de carga
+    setIsLoading(false);
+    if (isFirstLaunch) {
+      setIsFirstLaunch(false);
+    }
+  };
+
+  const handleFilesDeleted = async () => {
+    await AsyncStorage.removeItem("@first_launch");
+    setIsFirstLaunch(true);
   };
 
   // Función que se ejecuta cuando se presiona un punto en el mapa
@@ -144,41 +185,52 @@ export const HomePage = () => {
     setShowSpecificSearch(false); // Ocultar la búsqueda específica
   };
 
-  // Función para manejar la búsqueda de rutas
-  const handleSearch = ({ searchKey, reverseSearchKey }) => {
-    let routeImage;
-    let routePoints;
-    let videoUri;
-
-    // Verificar si existe una imagen para la ruta seleccionada
-    if (routesImages[searchKey]) {
-      routeImage = routesImages[searchKey];
-      routePoints = searchKey.split("-"); // Dividir los puntos de la ruta
-      videoUri = routeVideos[searchKey]; // Obtener el video de la ruta
-    } else if (routesImages[reverseSearchKey]) {
-      routeImage = routesImages[reverseSearchKey];
-      routePoints = reverseSearchKey.split("-");
-      videoUri = routeVideos[reverseSearchKey]; // Obtener el video de la ruta
-    }
-
-    // Si se encuentra la imagen de la ruta, establecer la ruta activa
-    if (routeImage) {
-      setSelectedRouteImage(routeImage); // Establecer la imagen de la ruta
-      setCurrentMapImage(routeImage); // Cambiar la imagen del mapa
-      setIsRouteActive(true); // Marcar la ruta como activa
-      setActiveRoutePoints(routePoints); // Establecer los puntos de la ruta activa
-      setCurrentVideoUri(videoUri);
-      // setCurrentVideoUri(videoUri);
-      console.log("Video URI set:", videoUri); // Agregar este log
-    } else {
+  const handleSearch = async ({ searchKey, reverseSearchKey }) => {
+    try {
+      const localUri = `${FileSystem.documentDirectory}${searchKey}.webp`;
+  
+      // Verificar si existe la imagen para searchKey
+      const fileExists = await FileSystem.getInfoAsync(localUri);
+  
+      if (fileExists.exists) {
+        setSelectedRouteImage(localUri);
+        setCurrentMapImage({ uri: localUri });
+        setIsRouteActive(true);
+  
+        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        setCurrentVideoUri(videoUri || "");
+        
+        setShowSearchBar(false);
+        return;
+      }
+  
+      // Si no se encontró la imagen para searchKey, verificar reverseSearchKey
+      const reverseLocalUri = `${FileSystem.documentDirectory}${reverseSearchKey}.webp`;
+      const reverseFileExists = await FileSystem.getInfoAsync(reverseLocalUri);
+  
+      if (reverseFileExists.exists) {
+        setSelectedRouteImage(reverseLocalUri);
+        setCurrentMapImage({ uri: reverseLocalUri });
+        setIsRouteActive(true);
+  
+        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        setCurrentVideoUri(videoUri || "");
+        
+        setShowSearchBar(false);
+        return;
+      }
+  
+      // Si no se encontró la imagen para ninguna de las keys
       Alert.alert(
         "Error",
-        "No se encontró la ruta. Por favor verifica tu búsqueda."
+        "La imagen de la ruta no se encuentra disponible. Por favor, asegúrese de descargar todos los archivos necesarios."
       );
+    } catch (error) {
+      console.error("Error en la búsqueda de la ruta:", error);
     }
-
-    setShowSearchBar(false); // Ocultar la barra de búsqueda
+    setShowSearchBar(false);
   };
+  
 
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
@@ -187,14 +239,19 @@ export const HomePage = () => {
     setIsRouteActive(false); // Marcar la ruta como inactiva
     setActiveRoutePoints([]); // Limpiar los puntos de la ruta activa
     setCurrentVideoUri("");
+    setIsVideoModalVisible(false);
   };
 
   const toggleVideoModal = () => {
-    setIsVideoModalVisible(!isVideoModalVisible);
+    if (currentVideoUri) {
+      setIsVideoModalVisible(!isVideoModalVisible);
+    }
   };
 
   return (
     <View style={styles.container}>
+      {/* Componente para descargar los recursos necesarios */}
+
       {/* Pantalla de carga */}
       {isLoading && (
         <View style={styles.loadingContainer}>
@@ -283,6 +340,18 @@ export const HomePage = () => {
           />
         </ImageZoom>
       </GestureHandlerRootView>
+
+      <TouchableOpacity
+        style={styles.downloadButton}
+        onPress={handleShowDownloadModal}>
+        <FontAwesomeIcon icon={faDownload} size={24} color="#FFFFFF" />
+      </TouchableOpacity>
+
+      {showDownloadModal && (
+        <DownloadAssets onClose={handleCloseDownloadModal} />
+      )}
+
+      <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
 
       {/* Botón para finalizar la ruta */}
       {isRouteActive && (
@@ -388,7 +457,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF0000",
     padding: 15,
     borderRadius: 10,
-    // zIndex: 0,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -409,7 +477,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 30,
-    // zIndex: 0,
     flexDirection: "row",
     alignItems: "center",
     elevation: 5,
@@ -423,6 +490,16 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontWeight: "bold",
     fontSize: 16,
+  },
+  downloadButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 80,
+    backgroundColor: "#007bff",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 20,
   },
 });
 
