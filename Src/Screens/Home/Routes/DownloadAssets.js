@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import * as FileSystem from "expo-file-system";
+import * as Permissions from "expo-permissions"; // Importa los permisos
 import { supabase } from "../../../Api/lib/supabase";
 import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,9 +20,21 @@ export const DownloadAssets = ({ onClose }) => {
 
   useEffect(() => {
     if (showModal) {
-      checkExistingFiles();
+      checkPermissionsAndDownload();
     }
   }, [showModal]);
+
+  const checkPermissionsAndDownload = async () => {
+    // Solicita los permisos de almacenamiento
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    if (status === "granted") {
+      // Si los permisos son otorgados, verifica si los archivos ya existen
+      checkExistingFiles();
+    } else {
+      setDownloadStatus("error");
+      console.error("Permiso denegado para acceder al almacenamiento.");
+    }
+  };
 
   const checkExistingFiles = async () => {
     try {
@@ -258,26 +271,24 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: "white",
   },
+  progressBarContainer: {
+    height: 10,
+    width: "100%",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  progressBar: {
+    height: "100%",
+    borderRadius: 5,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
   lottieAnimation: {
     width: 200,
     height: 200,
   },
-  progressBarContainer: {
-    width: "100%",
-    height: 10,
-    backgroundColor: "#e9ecef",
-    borderRadius: 5,
-    overflow: "hidden",
-  },
-  progressBar: {
-    height: "100%",
-  },
-  closeButton: {
-    position: "absolute",
-    right: 10,
-    top: 10,
-    padding: 10,
-  },
 });
-
-export default DownloadAssets;
