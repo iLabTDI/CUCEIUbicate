@@ -71,7 +71,7 @@ const TypingAnimation = () => {
   );
 };
 
-const Chatbot = () => {
+export const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [showWelcome, setShowWelcome] = useState(true);
@@ -498,4 +498,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chatbot;
