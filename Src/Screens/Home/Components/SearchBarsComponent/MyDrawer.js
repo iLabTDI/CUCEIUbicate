@@ -27,6 +27,7 @@ import {
   faFolder,
   faHandsHelping,
   faRobot,
+  faArchive,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -41,8 +42,8 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
-import  Chatbot  from "../../../ChatBot/Chatbot";
-
+import { Chatbot } from "../../../ChatBot/Chatbot";
+import { FileManagement } from "../../../Archivos/FileManagement";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
@@ -148,7 +149,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
           headerShown: true,
-          drawerItemStyle: { display: 'none' }, //para ocultar la pantalla perfil
+          drawerItemStyle: { display: "none" }, //para ocultar la pantalla perfil
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Perfil" icon={faUser} />,
         }}
@@ -187,18 +188,11 @@ export const MyDrawer = () => {
         options={{
           drawerLabel: "Servicio social",
           drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon
-              icon={faHandsHelping}
-              size={size}
-              color={color}
-            />
+            <FontAwesomeIcon icon={faHandsHelping} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => (
-            <HeaderWithIcon
-              title="Servicio social"
-              icon={faHandsHelping}
-            />
+            <HeaderWithIcon title="Servicio social" icon={faHandsHelping} />
           ),
         }}
       />
@@ -293,9 +287,19 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faRobot} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Chatbot" icon={faRobot} />
+          headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
+        }}
+      />
+      <Drawer.Screen
+        name="FileManagementScreen"
+        component={FileManagement}
+        options={{
+          drawerLabel: "Manejo de Descargas",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faArchive} size={size} color={color} />
           ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="Manejo de Descargas" icon={faArchive} />,
         }}
       />
     </Drawer.Navigator>
