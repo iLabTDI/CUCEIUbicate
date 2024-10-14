@@ -18,7 +18,6 @@ import {
   faTimes,
   faVideo,
   faPlay,
-  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
@@ -41,44 +40,41 @@ import * as FileSystem from "expo-file-system";
 const { width, height } = Dimensions.get("window");
 
 export const HomePage = () => {
-  // Hooks de navegación y control de si la pantalla está en foco
-  const navigation = useNavigation();
-  const isFocused = useIsFocused();
-  const imageZoomRef = useRef(null);
-  const bottomSheetRef = useRef(null);
+  const navigation = useNavigation(); // Hook de navegación para manejar redirecciones entre pantallas
+  const isFocused = useIsFocused(); // Hook para detectar si la pantalla está en foco
+  const imageZoomRef = useRef(null); // Referencia para la funcionalidad de zoom en la imagen del mapa
+  const bottomSheetRef = useRef(null); // Referencia para el componente de BottomSheet
 
-  // Estados para manejar la lógica y la UI de la aplicación
-  const [selectedPoint, setSelectedPoint] = useState(null); // Punto seleccionado en el mapa
-  const [showSearchBar, setShowSearchBar] = useState(false); // Control de visibilidad de la barra de búsqueda
-  const [selectedRouteImage, setSelectedRouteImage] = useState(null); // Imagen de la ruta seleccionada
+  // Estados para controlar la lógica y la UI
+  const [selectedPoint, setSelectedPoint] = useState(null); // Para guardar el punto seleccionado en el mapa
+  const [showSearchBar, setShowSearchBar] = useState(false); // Controlar si la barra de búsqueda se muestra
+  const [selectedRouteImage, setSelectedRouteImage] = useState(null); // Guardar la imagen de la ruta seleccionada
   const [currentMapImage, setCurrentMapImage] = useState(
     require("./assets/images/mapa.webp")
-  ); // Imagen actual del mapa
-  const [showSpecificSearch, setShowSpecificSearch] = useState(false); // Control de visibilidad de la búsqueda específica
-  const [selectedIcon, setSelectedIcon] = useState(null); // Icono de perfil seleccionado
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  ); // Imagen actual del mapa por defecto
+  const [showSpecificSearch, setShowSpecificSearch] = useState(false); // Controlar si la búsqueda específica se muestra
+  const [selectedIcon, setSelectedIcon] = useState(null); // Guardar el icono de perfil seleccionado
+  const [isLoading, setIsLoading] = useState(true); // Controlar el estado de carga del mapa
   const [markedObject, setMarkedObject] = useState(null); // Objeto marcado en el mapa
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false); // Control de visibilidad del BottomSheet
-  const [isRouteActive, setIsRouteActive] = useState(false); // Control de si una ruta está activa
-  const [activeRoutePoints, setActiveRoutePoints] = useState([]); // Puntos de la ruta activa
-  const [isVideoModalVisible, setIsVideoModalVisible] = useState(false);
-  const [currentVideoUri, setCurrentVideoUri] = useState("");
-  const [showDownloadModal, setShowDownloadModal] = useState(false);
-  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false); // Controlar visibilidad del BottomSheet
+  const [isRouteActive, setIsRouteActive] = useState(false); // Controlar si una ruta está activa
+  const [activeRoutePoints, setActiveRoutePoints] = useState([]); // Guardar los puntos de la ruta activa
+  const [isVideoModalVisible, setIsVideoModalVisible] = useState(false); // Controlar visibilidad del modal de video
+  const [currentVideoUri, setCurrentVideoUri] = useState(""); // URI del video actual
+  const [showDownloadModal, setShowDownloadModal] = useState(false); // Controlar visibilidad del modal de descarga
+  const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
-  // Animación para el overlay del BottomSheet
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Animación para el overlay del BottomSheet
 
-  // Efecto que se ejecuta cuando la pantalla está enfocada
   useEffect(() => {
     if (isFocused) {
       checkSession().then(() => {
         loadSelectedIcon(); // Verificar sesión antes de cargar el icono
+        setShowDownloadModal(false);
       });
     }
   }, [isFocused]);
 
-  // Efecto para manejar la animación del overlay del BottomSheet
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0, // Control de opacidad del overlay
@@ -87,34 +83,6 @@ export const HomePage = () => {
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
 
-  useEffect(() => {
-    checkFirstLaunch();
-  }, []);
-
-  // Verificar si es la primera vez que se abre la aplicación
-  const checkFirstLaunch = async () => {
-    try {
-      const value = await AsyncStorage.getItem("@first_launch");
-      if (value === null) {
-        setIsFirstLaunch(true);
-        await AsyncStorage.setItem("@first_launch", "false");
-        setShowDownloadModal(true); // Mostrar el modal si es el primer lanzamiento
-      } else {
-        setIsFirstLaunch(false);
-      }
-    } catch (error) {
-      console.error("Error al obtener el CheckLaunch:", error);
-    }
-  };
-
-  const handleShowDownloadModal = () => {
-    setIsVideoModalVisible(false); // Cerrar el modal de video si está abierto
-    setShowDownloadModal(true);
-  };
-
-  const handleCloseDownloadModal = () => {
-    setShowDownloadModal(false);
-  };
 
   // Función para verificar la sesión del usuario
   const checkSession = async () => {
@@ -128,7 +96,39 @@ export const HomePage = () => {
     }
   };
 
-  // Función para cargar el icono de perfil seleccionado desde AsyncStorage
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      const hasLaunched = await AsyncStorage.getItem('hasLaunchedd');
+      if (hasLaunched === null) {
+        // Si no hay valor guardado, es la primera vez que se lanza
+        setIsFirstLaunch(true);
+        await AsyncStorage.setItem('hasLaunchedd', 'true'); // Marcar como lanzado
+      } else {
+        setIsFirstLaunch(false);
+      }
+    };
+
+    checkFirstLaunch();
+  }, []);
+
+  useEffect(() => {
+    if (isFirstLaunch) {
+      setShowDownloadModal(true); // Muestra el modal si es el primer lanzamiento
+    }
+  }, [isFirstLaunch]);
+
+    // Función para manejar el cierre del modal de descarga
+    const handleCloseDownloadModal = () => {
+      setShowDownloadModal(false);
+    };
+  
+     // Función para ejecutar cuando los archivos se hayan descargado
+     const handleDownloadComplete = () => {
+      setShowDownloadModal(false); // Ocultar el modal cuando se completen las descargas
+    };
+  
+
+  // Cargar el icono de perfil seleccionado desde AsyncStorage
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon"); // Obtener el icono almacenado
@@ -149,9 +149,10 @@ export const HomePage = () => {
   };
 
   const handleFilesDeleted = async () => {
-    await AsyncStorage.removeItem("@first_launch");
-    setIsFirstLaunch(true);
-  };
+    await AsyncStorage.removeItem("hasLaunchedd");
+    setShowDownloadModal(true);  // Aquí se debería activar el modal
+    console.log("Modal de descarga debe aparecer ahora");  // Verifica si esto se imprime en la consola
+};
 
   // Función que se ejecuta cuando se presiona un punto en el mapa
   const handlePointPress = (pointId) => {
@@ -160,7 +161,7 @@ export const HomePage = () => {
     bottomSheetRef.current?.expand(); // Expandir el BottomSheet
   };
 
-  // Función para alternar la visibilidad de la barra de búsqueda
+  // Alternar la visibilidad de la barra de búsqueda
   const toggleSearchBar = () => {
     setShowSearchBar((prev) => !prev); // Cambiar el estado de la barra de búsqueda
   };
@@ -170,13 +171,13 @@ export const HomePage = () => {
     setShowSearchBar(false); // Ocultar la barra de búsqueda
   };
 
-  // Función para cerrar el BottomSheet
+  // Cerrar el BottomSheet
   const handleCloseBottomSheet = () => {
     setIsBottomSheetVisible(false); // Ocultar el BottomSheet
     bottomSheetRef.current?.close(); // Cerrar el BottomSheet
   };
 
-  // Función para manejar la búsqueda específica
+  // Manejar la búsqueda específica
   const handleSpecificSearch = (pointId) => {
     const selectedObject = points.find((point) => point.id === pointId); // Encontrar el punto seleccionado
     if (selectedObject) {
@@ -185,52 +186,50 @@ export const HomePage = () => {
     setShowSpecificSearch(false); // Ocultar la búsqueda específica
   };
 
+  // Función para manejar la búsqueda
   const handleSearch = async ({ searchKey, reverseSearchKey }) => {
     try {
       const localUri = `${FileSystem.documentDirectory}${searchKey}.webp`;
-  
+
       // Verificar si existe la imagen para searchKey
       const fileExists = await FileSystem.getInfoAsync(localUri);
-  
+
       if (fileExists.exists) {
         setSelectedRouteImage(localUri);
         setCurrentMapImage({ uri: localUri });
         setIsRouteActive(true);
-  
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+
+        const videoUri =
+          routeVideos[searchKey] || routeVideos[reverseSearchKey];
         setCurrentVideoUri(videoUri || "");
-        
+
         setShowSearchBar(false);
         return;
       }
-  
-      // Si no se encontró la imagen para searchKey, verificar reverseSearchKey
+
+      // Verificar reverseSearchKey si no se encontró la imagen
       const reverseLocalUri = `${FileSystem.documentDirectory}${reverseSearchKey}.webp`;
       const reverseFileExists = await FileSystem.getInfoAsync(reverseLocalUri);
-  
+
       if (reverseFileExists.exists) {
         setSelectedRouteImage(reverseLocalUri);
         setCurrentMapImage({ uri: reverseLocalUri });
         setIsRouteActive(true);
-  
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+
+        const videoUri =
+          routeVideos[searchKey] || routeVideos[reverseSearchKey];
         setCurrentVideoUri(videoUri || "");
-        
+
         setShowSearchBar(false);
         return;
       }
-  
-      // Si no se encontró la imagen para ninguna de las keys
-      Alert.alert(
-        "Error",
-        "La imagen de la ruta no se encuentra disponible. Por favor, asegúrese de descargar todos los archivos necesarios."
-      );
+
+      // Si no se encontró la imagen para ninguna de las claves, mostrar una alerta
+      Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
     } catch (error) {
-      console.error("Error en la búsqueda de la ruta:", error);
+      console.error("Error al buscar ruta:", error);
     }
-    setShowSearchBar(false);
   };
-  
 
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
@@ -260,6 +259,7 @@ export const HomePage = () => {
             autoPlay
             loop
             style={styles.lottieAnimation}
+            onAnimationFinish={handleImageLoad} // Una vez termine la animación, cargamos la app
           />
           <Text style={styles.loadingText}>Cargando mapa...</Text>
         </View>
@@ -341,14 +341,14 @@ export const HomePage = () => {
         </ImageZoom>
       </GestureHandlerRootView>
 
-      <TouchableOpacity
-        style={styles.downloadButton}
-        onPress={handleShowDownloadModal}>
-        <FontAwesomeIcon icon={faDownload} size={24} color="#FFFFFF" />
-      </TouchableOpacity>
-
       {showDownloadModal && (
-        <DownloadAssets onClose={handleCloseDownloadModal} />
+        <DownloadAssets
+          onClose={handleCloseDownloadModal}
+          onViewDownload={() => { navigation.navigate("FileManagementScreen"); setShowDownloadModal(false); }}
+          
+          onDownloadComplete={handleDownloadComplete}
+          visible={showDownloadModal}
+        />
       )}
 
       <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
