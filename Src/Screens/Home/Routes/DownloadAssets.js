@@ -8,8 +8,6 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import { supabase } from "../../../Api/lib/supabase";
-import * as FileSystem from "expo-file-system";
 import LottieView from "lottie-react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -17,47 +15,16 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-export const DownloadAssets = ({ onClose, onViewDownload }) => {
-  const [showModal, setShowModal] = useState(false);
+const { width, height } = Dimensions.get("window");
+
+export const DownloadAssets = ({ onClose, onViewDownload, visible }) => {
+  const [showModal, setShowModal] = useState(visible);
   const [filesExist, setFilesExist] = useState(false);
 
   useEffect(() => {
-    checkExistingFiles();
-  }, []);
+    setShowModal(visible); // Controlar la visibilidad desde la prop
+  }, [visible]);
 
-  const checkExistingFiles = async () => {
-    try {
-      const { data, error } = await supabase.storage
-        .from("route_images")
-        .list("nuevas");
-
-      if (error) throw error;
-
-      const fileInfoPromises = data
-        .filter((file) => file.name.endsWith(".webp"))
-        .map(async (file) => {
-          const localUri = `${FileSystem.documentDirectory}${file.name}`;
-          const fileExists = await FileSystem.getInfoAsync(localUri);
-          return fileExists.exists;
-        });
-
-      const fileExistsResults = await Promise.all(fileInfoPromises);
-      const allFilesExist = fileExistsResults.every((exists) => exists);
-
-      setFilesExist(allFilesExist);
-      setShowModal(!allFilesExist);
-      if (allFilesExist) {
-        onDownloadComplete(); // Notifica que ya están descargados
-      }
-    } catch (error) {
-      console.error("Error checking existing files:", error);
-      setShowModal(true);
-    }
-  };
-
-  if (filesExist) {
-    return null;
-  }
   return (
     <Modal
       animationType="fade"
@@ -68,8 +35,8 @@ export const DownloadAssets = ({ onClose, onViewDownload }) => {
         <View style={styles.modalContent}>
           <LottieView
             source={require("../../../assets/animations/Archivo.json")}
-            autoPlay
-            loop
+            autoPlay={true}
+            loop={true}
             style={styles.lottieAnimation}
           />
           <Text style={styles.title}>Archivos Necesarios</Text>
@@ -168,4 +135,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
