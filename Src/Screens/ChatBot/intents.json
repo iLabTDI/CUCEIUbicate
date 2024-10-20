@@ -651,7 +651,11 @@
     {
       "tag": "Edificio X",
       "patterns": [
-        "A que heule el edificio X"
+        "A que huele el edificio X?",
+        "A que huele el edificio x?",
+        "A que huele el Edificio X",
+        "A que huele el Edificio x",
+        "Que hay en el edificio X"
       ],
       "responses": [
         "El edificio X tiene un Olor bastante peculiar ya que se dice que la mayoria de estudiantes de la carrera de computación no se bañan, por lo que el olor a sobaco es bastante fuerte."

@@ -93,7 +93,7 @@ export const Chatbot = () => {
     });
 
     const activityInterval = setInterval(() => {
-      if (Date.now() - lastActivityTime.current > 600000) { // 10 minutes
+      if (Date.now() - lastActivityTime.current > 500000) { // 10 minutes
         clearMessages();
       }
     }, 60000); // Check every minute
@@ -106,7 +106,7 @@ export const Chatbot = () => {
 
   const checkSessionValidity = async () => {
     const lastActiveTime = await AsyncStorage.getItem('lastActiveTime');
-    if (lastActiveTime && Date.now() - parseInt(lastActiveTime) > 600000) {
+    if (lastActiveTime && Date.now() - parseInt(lastActiveTime) > 500000) {
       clearMessages();
     }
   };
@@ -138,7 +138,7 @@ export const Chatbot = () => {
         const parsedMessages = JSON.parse(savedMessages);
         const lastActive = parseInt(lastActiveTime);
         
-        if (Date.now() - lastActive < 600000) { // 10 minutes
+        if (Date.now() - lastActive < 500000) { // 10 minutes
           setMessages(parsedMessages);
         } else {
           clearMessages();
@@ -367,11 +367,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   messageBubble: {
-    padding: 10,
+    padding: 12,
     borderRadius: 20,
-    marginVertical: 5,
+    marginVertical: 6,
     flexDirection: 'row',
     alignItems: 'flex-end',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   userBubble: {
     alignSelf: 'flex-end',
