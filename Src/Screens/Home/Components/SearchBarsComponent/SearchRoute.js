@@ -60,10 +60,12 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
 
     // Prepara y ejecuta la búsqueda
-    const searchKey = `${originText.trim()} - ${destinationText.trim()}`; // Esta es la clave de busqueda que es el origen y destino
-    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`; // Esta es la clave pero inversa
+    const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
+    const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
     
+    // Llama a la función de búsqueda proporcionada por el componente HomePage
     onSearch({ searchKey, reverseSearchKey });
+    console.log('onSearch:', { searchKey, reverseSearchKey });
 
     // Actualiza el historial
     const search = { origin: originText.trim(), destination: destinationText.trim() };
@@ -182,7 +184,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             {originSuggestions.length > 0 && (
               <FlatList
                 data={originSuggestions}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.suggestionItem}
                     onPress={() => selectSuggestion(item, true)}
@@ -207,7 +209,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             {destinationSuggestions.length > 0 && (
               <FlatList
                 data={destinationSuggestions}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.suggestionItem}
                     onPress={() => selectSuggestion(item, false)}
@@ -239,7 +241,9 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
                   style={styles.searchHistoryItem}
                   onPress={() => selectSearchFromHistory(item)}
                 >
-                  <Text style={styles.searchHistoryText}>{item.origin} - {item.destination}</Text>
+                  <Text style={styles.searchHistoryText}>
+                    {item.origin} - {item.destination}
+                  </Text>
                   <TouchableOpacity onPress={() => removeSearchItem(item)}>
                     <FontAwesomeIcon icon={faTimes} size={18} color="#ff6347" />
                   </TouchableOpacity>

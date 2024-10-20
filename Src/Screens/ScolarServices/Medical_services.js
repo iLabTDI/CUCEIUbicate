@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faChevronRight,
-  faMedkit,
-  faSync,
-} from "@fortawesome/free-solid-svg-icons";
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView } from "react-native";
 import * as FileSystem from "expo-file-system";
+import { ScrollView } from "react-native-gesture-handler";
 import { ErrorComponent } from "../Components/ErrorComponent";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { 
+  faHospital, 
+  faUserMd, 
+  faProcedures,
+} from '@fortawesome/free-solid-svg-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const { width } = Dimensions.get("window");
 const jsonFilePath = `${FileSystem.documentDirectory}medical_services.json`;
 const medicalServicesUrl = "http://148.202.152.59:8001/json/medical_services";
 
@@ -26,129 +19,134 @@ export const Medical_services = () => {
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const loadJson = async () => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
+      if (fileInfo.exists) {
+        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
+        const json = await FileSystem.readAsStringAsync(jsonFilePath);
+        setJsonData(JSON.parse(json));
+        setError(null);
+      } else {
+        await downloadJson();
+      }
+    } catch (error) {
+      console.error("Error al cargar o descargar el archivo:", error);
+      setError("No se pudo cargar los Servicios Médicos. Por favor, verifica tu conexión a internet e intenta nuevamente.");
+    }
+  };
+
   const downloadJson = async () => {
     setIsRefreshing(true);
     try {
-      // Attempt to download the new JSON file
+      console.log(`Descargando desde ${medicalServicesUrl}...`);
       const response = await fetch(medicalServicesUrl);
       if (!response.ok) {
         throw new Error(`HTTP status ${response.status}`);
       }
 
       const json = await response.json();
-      if (!json || typeof json !== "object") {
-        throw new Error("Invalid JSON response");
-      }
 
-      // Save the new JSON file
       await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
       setJsonData(json);
       setError(null);
     } catch (error) {
-      console.error("Error downloading file:", error);
-      setError("No internet connection");
-
-      // Try to load existing file if available
-      try {
-        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-        if (fileInfo.exists) {
-          console.log(`Using existing file at: ${jsonFilePath}`);
-          const json = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(json));
-          setError(null);
-        } else {
-          console.log("No local data available.");
-        }
-      } catch (readError) {
-        console.error("Error reading local file:", readError);
-        setError("Could not read local file");
-      }
+      console.error("Error al descargar el archivo:", error);
+      setError("No se pudo descargar los Servicios Médicos. Por favor, verifica tu conexión a internet e intenta nuevamente.");
     } finally {
       setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    downloadJson();
+    loadJson();
   }, []);
 
   if (error) {
     return (
       <ErrorComponent
-        title="No internet connection"
-        message="Unable to load Medical Services. Please check your internet connection and try again."
-        buttonText="Retry"
+        title="Error de carga"
+        message={error}
+        buttonText="Reintentar"
         onRetry={downloadJson}
       />
     );
   }
 
-  if (!jsonData || !jsonData.section_description) {
+  if (!jsonData) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b34b0" />
-        <Text style={styles.loadingText}>Cargando Servicios Medicos...</Text>
+        <ActivityIndicator size="large" color="#0056b3" />
+        <Text style={styles.loadingText}>Cargando Servicios Médicos...</Text>
       </View>
     );
   }
 
-  return (
-    <ScrollView style={styles.container}>
-      {/* Description Card */}
-      <View style={styles.card}>
-        <Text style={styles.descriptionText}>
-          {jsonData.section_description.description}
-        </Text>
-      </View>
+  const getIcon = (sectionId) => {
+    const icons = {
+      1: faUserMd,
+      2: faProcedures,
+    };
+    return icons[sectionId];
+  };
 
-      {/* Sections */}
-      {jsonData.section_description["sub-sections"] &&
-        Object.entries(jsonData.section_description["sub-sections"]).map(
-          ([sectionId, section]) => (
-            <View key={`section-${sectionId}`} style={styles.card}>
-              <Text style={styles.sectionTitle}>{section.title}</Text>
-              {section["listed-elements"] &&
-                Object.entries(section["listed-elements"]).map(
-                  ([elementId, element]) => (
-                    <View
-                      key={`element-${sectionId}-${elementId}`}
-                      style={styles.listItem}>
-                      <FontAwesomeIcon
-                        icon={faChevronRight}
-                        size={12}
-                        color="#0b34b0"
-                        style={styles.listIcon}
-                      />
-                      <Text style={styles.text}>{element}</Text>
-                    </View>
-                  )
-                )}
-            </View>
-          )
-        )}
-      {/* Refresh Button */}
-      <TouchableOpacity
-        onPress={downloadJson}
-        style={styles.refreshButton}
-        disabled={isRefreshing}>
-        <FontAwesomeIcon
-          icon={faSync}
-          size={16}
-          color="#FFFFFF"
-          style={isRefreshing ? styles.rotating : null}
-        />
-        <Text style={styles.refreshButtonText}>
-          {isRefreshing ? "Refreshing..." : "Refresh Data"}
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <LinearGradient
+          colors={['#0056b3', '#007bff']}
+          style={styles.header}
+        >
+          <FontAwesomeIcon icon={faHospital} size={24} color="#FFFFFF" />
+          <Text style={styles.headerTitle}>Servicios Médicos</Text>
+        </LinearGradient>
+        <View style={styles.card}>
+          <Text style={styles.description}>{jsonData.section_description.description}</Text>
+        </View>
+        {jsonData.section_description["sub-sections"] &&
+          Object.entries(jsonData.section_description["sub-sections"]).map(
+            ([sectionId, section]) => (
+              <View key={`section-${sectionId}`} style={styles.card}>
+                <View style={styles.sectionHeader}>
+                  <FontAwesomeIcon icon={getIcon(sectionId)} size={24} color="#0b34b0" />
+                  <Text style={styles.sectionTitle}>{section.title}</Text>
+                </View>
+                {section["listed-elements"] &&
+                  Object.entries(section["listed-elements"]).map(
+                    ([elementId, element]) => (
+                      <View key={`element-${sectionId}-${elementId}`} style={styles.listItem}>
+                        <Text style={styles.listItemText}>{element}</Text>
+                      </View>
+                    )
+                  )}
+              </View>
+            )
+          )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f0f4f8',
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f0f4f8",
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginLeft: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -159,26 +157,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#0b34b0",
-  },
-
-  refreshButton: {
-    backgroundColor: "#4CAF50",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    margin: 10,
-    borderRadius: 5,
-  },
-  refreshButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginLeft: 5,
-  },
-  rotating: {
-    transform: [{ rotate: "45deg" }],
+    color: "#0056b3",
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -191,39 +170,31 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
+  description: {
+    fontSize: 16,
+    color: '#333333',
+    lineHeight: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#0b34b0",
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-    paddingBottom: 10,
-  },
-  descriptionText: {
-    fontSize: 16,
-    color: "#333333",
-    textAlign: "justify",
-    lineHeight: 24,
+    fontWeight: 'bold',
+    color: '#0b34b0',
+    marginLeft: 10,
   },
   listItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  listIcon: {
-    marginRight: 10,
-    marginTop: 5,
-  },
-  text: {
-    flex: 1,
+  listItemText: {
     fontSize: 16,
-    color: "#333333",
-    textAlign: "justify",
-    lineHeight: 24,
+    color: '#333',
+    marginLeft: 10,
   },
 });
 

@@ -24,11 +24,15 @@
     "@types/react": "~18.2.79",
     "bcryptjs": "^2.4.3",
     "expo": "^51.0.35",
+    "expo-asset": "^10.0.10",
     "expo-av": "^14.0.7",
     "expo-blur": "^13.0.2",
+    "expo-build-properties": "^0.12.5",
     "expo-dev-client": "^4.0.27",
     "expo-linear-gradient": "^13.0.2",
+    "expo-network": "^6.0.1",
     "expo-secure-store": "~13.0.2",
+    "expo-sqlite": "^14.0.6",
     "expo-status-bar": "~1.12.1",
     "lottie-react-native": "^7.0.0",
     "react": "18.2.0",
@@ -59,6 +63,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.10",
+    "sqlite": "^5.1.1",
     "typescript": "~5.3.3"
   },
   "devDependencies": {

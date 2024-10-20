@@ -10,63 +10,55 @@ import * as FileSystem from 'expo-file-system';
 import { ErrorComponent } from '../Components/ErrorComponent';
 
 const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`;
-const faceAccessUrl = "http://148.202.152.59:8001/json/face_access";
+const faceAccessUrl = "http://148.202.152.59:8001/json/face_access"; // URL para descargar el archivo JSON
 
 export const Facial_recognition = () => {
   const [jsonData, setJsonData] = useState(null);
   const [error, setError] = useState(null); // Estado para manejar errores
 
-  const downloadJson = async () => {
-    console.log(`Descargando desde ${faceAccessUrl}...`);
+  const loadJson = async () => {
     try {
-      // Intentar descargar el nuevo archivo JSON
-      const response = await fetch(faceAccessUrl);
-      if (!response.ok) {
-        throw new Error(`Error al descargar desde ${faceAccessUrl}`);
-      }
-
-      const json = await response.json();
-
-      // Guardar el nuevo archivo JSON
-      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-      console.log(`Archivo guardado en: ${jsonFilePath}`);
-      setJsonData(json); // Establece los datos JSON
-      setError(null); // Reinicia el error si la descarga es exitosa
-    } catch (error) {
-      console.error("Error al descargar el archivo:", error);
-      setError("Sin conexión a internet"); // Establece el mensaje de error
-
-      // Intentar cargar el archivo existente si está disponible
+      // Intentar cargar el archivo local si existe
       const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
       if (fileInfo.exists) {
-        console.log(`Usando archivo existente en: ${jsonFilePath}`);
-        try {
-          const json = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(json)); // Establece los datos JSON
-          setError(null); // Reinicia el error si se pueden leer los datos locales
-        } catch (readError) {
-          console.error("Error al leer el archivo:", readError);
-          setError("No se pudo leer el archivo local"); // Actualiza el mensaje de error
-        }
+        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
+        const json = await FileSystem.readAsStringAsync(jsonFilePath);
+        setJsonData(JSON.parse(json)); // Establece los datos JSON desde el archivo local
+        setError(null); // Reinicia el error si se pueden leer los datos locales
       } else {
-        console.log(`No se pudo descargar y el archivo no existe: ${jsonFilePath}`);
-        // Mantiene el mensaje de error existente
+        // Si el archivo no existe, intenta descargarlo
+        console.log(`Descargando desde ${faceAccessUrl}...`);
+        const response = await fetch(faceAccessUrl);
+        if (!response.ok) {
+          throw new Error(`Error al descargar desde ${faceAccessUrl}`);
+        }
+
+        const json = await response.json();
+
+        // Guardar el nuevo archivo JSON
+        await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
+        console.log(`Archivo guardado en: ${jsonFilePath}`);
+        setJsonData(json); // Establece los datos JSON desde la descarga
+        setError(null); // Reinicia el error si la descarga es exitosa
       }
+    } catch (error) {
+      console.error("Error al cargar o descargar el archivo:", error);
+      setError("No se pudo cargar el Reconocimiento Facial. Por favor, verifica tu conexión a internet e intenta nuevamente."); // Actualiza el mensaje de error
     }
   };
 
   useEffect(() => {
-    downloadJson(); // Inicia la descarga y verificación
+    loadJson(); // Inicia la carga del JSON al montar el componente
   }, []);
 
   // Renderiza un mensaje de error si no se pudieron obtener los datos
   if (error) {
     return (
       <ErrorComponent
-        title="Sin conexión a internet"
-        message="No se pudo cargar el Reconocimiento Facial. Por favor, verifica tu conexión a internet e intenta nuevamente."
+        title="Error de carga"
+        message={error}
         buttonText="Reintentar"
-        onRetry={downloadJson} // Llamar a downloadJson al presionar el botón
+        onRetry={loadJson} // Llamar a loadJson al presionar el botón
       />
     );
   }

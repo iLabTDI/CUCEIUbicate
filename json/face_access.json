@@ -1,0 +1,45 @@
+{
+    "section-description": {
+      "name": "Reconocimiento Facial",
+      "description": "Este proceso te permitirá registrar tu rostro en el sistema para el acceso al campus de manera más rápida y segura. Sigue los pasos a continuación para completar el proceso. Este sistema está diseñado para proporcionar un acceso eficiente, reduciendo el tiempo de espera y aumentando la seguridad en el campus. Asegúrate de seguir cada paso cuidadosamente para evitar errores durante el registro.",
+      "listed-elements": {
+        "1": "Asegúrate de estar en un lugar bien iluminado, preferentemente con luz natural para evitar sombras en tu rostro.",
+        "2": "Mantén la cámara al nivel de tu rostro y asegúrate de que tu rostro esté centrado en la pantalla durante todo el proceso.",
+        "3": "Sigue las instrucciones en pantalla para capturar tu rostro desde diferentes ángulos, incluyendo mirando hacia la izquierda, derecha, arriba y abajo.",
+        "4": "Asegúrate de no usar accesorios como gafas de sol, gorros o cualquier objeto que pueda cubrir tu rostro durante la captura.",
+        "5": "Verifica la información y asegúrate de que todas las imágenes sean claras y nítidas antes de enviarlas.",
+        "6": "Envía la información para completar el registro. Recibirás una notificación una vez que el registro haya sido exitoso.",
+        "7": "En caso de algún error en la captura, recibirás instrucciones para volver a intentar el proceso."
+      },
+      "tips": {
+        "title": "Consejos para un registro exitoso",
+        "content": [
+          "Utiliza un fondo neutro para evitar distracciones durante la captura.",
+          "Evita movimientos bruscos mientras la cámara está capturando tu rostro.",
+          "Si usas lentes, realiza la captura con y sin ellos para mejorar la precisión del reconocimiento.",
+          "Si tienes el cabello largo, asegúrate de que esté recogido para que no cubra ninguna parte de tu rostro."
+        ]
+      },
+      "troubleshooting": {
+        "title": "Solución de problemas comunes",
+        "content": [
+          {
+            "issue": "La cámara no se enciende.",
+            "solution": "Verifica que la aplicación tenga permisos para acceder a la cámara en la configuración de tu dispositivo."
+          },
+          {
+            "issue": "El sistema no reconoce mi rostro.",
+            "solution": "Asegúrate de que la iluminación sea adecuada y que no haya sombras en tu rostro. Intenta realizar la captura nuevamente siguiendo las instrucciones."
+          },
+          {
+            "issue": "Recibo un mensaje de error al enviar los datos.",
+            "solution": "Verifica tu conexión a internet y asegúrate de que todos los campos requeridos estén completos antes de intentar nuevamente."
+          },
+          {
+            "issue": "La imagen capturada está borrosa.",
+            "solution": "Mantén la cámara estable y asegúrate de que la lente esté limpia. Vuelve a capturar la imagen asegurándote de no moverte."
+          }
+        ]
+      }
+    }
+  }

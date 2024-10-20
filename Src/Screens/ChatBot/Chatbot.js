@@ -16,7 +16,6 @@ import {
   Animated,
   AppState
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { BlurView } from 'expo-blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -72,12 +71,12 @@ const TypingAnimation = () => {
   );
 };
 
-const Chatbot = () => {
+export const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
-  const lottieRef = useRef();
+  const lottieRef = useRef(null);
   const flatListRef = useRef();
   const appState = useRef(AppState.currentState);
   const lastActivityTime = useRef(Date.now());
@@ -499,4 +498,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chatbot;
