@@ -34,7 +34,7 @@ export const DownloadAssets = ({ onClose, onViewDownload, visible }) => {
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <LottieView
-            source={require("../../../assets/animations/Archivo.json")}
+            source={require("../../../assets/animations/Archivo2.json")}
             autoPlay={true}
             loop={true}
             style={styles.lottieAnimation}
