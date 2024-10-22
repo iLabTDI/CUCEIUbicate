@@ -15,8 +15,6 @@ import {
   faBars,
   faRoute,
   faUser,
-  faTimes,
-  faVideo,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -44,6 +42,7 @@ export const HomePage = () => {
   const imageZoomRef = useRef(null);
   const bottomSheetRef = useRef(null);
 
+  // Estados del componente
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [selectedRouteImage, setSelectedRouteImage] = useState(null);
@@ -62,8 +61,12 @@ export const HomePage = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
+  // Valores animados
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const loadingOpacity = useRef(new Animated.Value(1)).current;
+  const contentOpacity = useRef(new Animated.Value(0)).current;
 
+  // Efecto para manejar la sesión y cargar el icono seleccionado
   useEffect(() => {
     if (isFocused) {
       checkSession().then(() => {
@@ -72,6 +75,7 @@ export const HomePage = () => {
     }
   }, [isFocused]);
 
+  // Efecto para manejar la animación del BottomSheet
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0,
@@ -80,12 +84,13 @@ export const HomePage = () => {
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
 
+  // Efecto para verificar si es la primera vez que se lanza la aplicación
   useEffect(() => {
     const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem('hasLaunchedd');
+      const hasLaunched = await AsyncStorage.getItem("hasLaunchedd");
       if (hasLaunched === null) {
         setIsFirstLaunch(true);
-        await AsyncStorage.setItem('hasLaunchedd', 'true');
+        await AsyncStorage.setItem("hasLaunchedd", "true");
       } else {
         setIsFirstLaunch(false);
       }
@@ -94,12 +99,14 @@ export const HomePage = () => {
     checkFirstLaunch();
   }, []);
 
+  // Efecto para mostrar el modal de descarga en el primer lanzamiento
   useEffect(() => {
     if (!isLoading && isFirstLaunch) {
       setShowDownloadModal(true);
     }
   }, [isLoading, isFirstLaunch]);
 
+  // Función para verificar la sesión del usuario
   const checkSession = async () => {
     const session = await getSession();
     if (!session) {
@@ -110,10 +117,12 @@ export const HomePage = () => {
     }
   };
 
+  // Función para cerrar el modal de descarga
   const handleCloseDownloadModal = () => {
     setShowDownloadModal(false);
   };
 
+  // Función para cargar el icono seleccionado
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -125,21 +134,39 @@ export const HomePage = () => {
     }
   };
 
+  // Función mejorada para manejar la carga de la imagen
   const handleImageLoad = () => {
-    setIsLoading(false);
+    // Inicia la animación de desvanecimiento de la pantalla de carga
+    Animated.parallel([
+      Animated.timing(loadingOpacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(contentOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setIsLoading(false);
+    });
   };
 
+  // Función para manejar la eliminación de archivos
   const handleFilesDeleted = async () => {
     await AsyncStorage.removeItem("hasLaunchedd");
     setShowDownloadModal(true);
   };
 
+  // Función para manejar la pulsación de un punto en el mapa
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
   };
 
+  // Funciones para manejar la barra de búsqueda
   const toggleSearchBar = () => {
     setShowSearchBar((prev) => !prev);
   };
@@ -148,11 +175,13 @@ export const HomePage = () => {
     setShowSearchBar(false);
   };
 
+  // Función para cerrar el BottomSheet
   const handleCloseBottomSheet = () => {
     setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
   };
 
+  // Función para manejar la búsqueda específica
   const handleSpecificSearch = (pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
@@ -161,7 +190,9 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
+  // Función para manejar la búsqueda de rutas
   const handleSearch = async ({ searchKey, reverseSearchKey }) => {
+    console.log("onSearch:", { searchKey, reverseSearchKey });
     try {
       const localUri = `${FileSystem.documentDirectory}${searchKey}.webp`;
       const fileExists = await FileSystem.getInfoAsync(localUri);
@@ -170,8 +201,9 @@ export const HomePage = () => {
         setSelectedRouteImage(localUri);
         setCurrentMapImage({ uri: localUri });
         setIsRouteActive(true);
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
-        setCurrentVideoUri(videoUri || "");
+        const videoUri =
+          routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        setCurrentVideoUri(videoUri);
         setShowSearchBar(false);
         return;
       }
@@ -183,8 +215,9 @@ export const HomePage = () => {
         setSelectedRouteImage(reverseLocalUri);
         setCurrentMapImage({ uri: reverseLocalUri });
         setIsRouteActive(true);
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
-        setCurrentVideoUri(videoUri || "");
+        const videoUri =
+          routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        setCurrentVideoUri(videoUri);
         setShowSearchBar(false);
         return;
       }
@@ -195,164 +228,211 @@ export const HomePage = () => {
     }
   };
 
+  // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
     setSelectedRouteImage(null);
     setCurrentMapImage(require("./assets/images/mapa.webp"));
     setIsRouteActive(false);
     setActiveRoutePoints([]);
-    setCurrentVideoUri("");
+    setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
   };
 
+  // Función para alternar la visibilidad del modal de video
   const toggleVideoModal = () => {
     if (currentVideoUri) {
       setIsVideoModalVisible(!isVideoModalVisible);
     }
   };
 
+  // Función para manejar la vista de descarga
   const handleViewDownload = () => {
     setShowDownloadModal(false);
-    navigation.navigate("FileManagementScreen", { startDownloadAutomatically: true });
+    navigation.navigate("FileManagementScreen", {
+      startDownloadAutomatically: true,
+    });
   };
 
   return (
     <View style={styles.container}>
-      {isLoading && (
-        <View style={styles.loadingContainer}>
-          <LottieView
-            source={require("../../assets/animations/Map_loading.json")}
-            autoPlay
-            loop={false}
-            style={styles.lottieAnimation}
-            onAnimationFinish={handleImageLoad}
+      {/* Pantalla de carga animada */}
+      <Animated.View 
+        style={[
+          styles.loadingContainer, 
+          { opacity: loadingOpacity }
+        ]}
+        pointerEvents={isLoading ? "auto" : "none"}
+      >
+        <LottieView
+          source={require("../../assets/animations/Map_loading.json")}
+          autoPlay
+          loop={false}
+          style={styles.lottieAnimation}
+          onAnimationFinish={handleImageLoad}
+        />
+        <Text style={styles.loadingText}>Cargando mapa...</Text>
+      </Animated.View>
+
+      {/* Contenido principal */}
+      <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
+        {/* Botón del menú */}
+        <TouchableOpacity
+          style={styles.menu_icon}
+          onPress={() => navigation.openDrawer()}>
+          <FontAwesomeIcon
+            icon={faBars}
+            size={width * 0.06}
+            color="#FFFFFF"
           />
-          <Text style={styles.loadingText}>Cargando mapa...</Text>
-        </View>
-      )}
+        </TouchableOpacity>
 
-      {!isLoading && (
-        <>
-          <TouchableOpacity
-            style={styles.menu_icon}
-            onPress={() => navigation.openDrawer()}>
-            <FontAwesomeIcon icon={faBars} size={width * 0.06} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profile_icon}
-            onPress={() => navigation.navigate("Perfil")}>
-            {selectedIcon ? (
-              <Image source={selectedIcon} style={styles.profileImage} />
-            ) : (
-              <FontAwesomeIcon icon={faUser} size={width * 0.06} color="#FFFFFF" />
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
-            <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          {showSearchBar && (
-            <SearchRoute
-              onClose={closeSearchBar}
-              onSearch={handleSearch}
-              points={points}
+        {/* Botón de perfil */}
+        <TouchableOpacity
+          style={styles.profile_icon}
+          onPress={() => navigation.navigate("Perfil")}>
+          {selectedIcon ? (
+            <Image source={selectedIcon} style={styles.profileImage} />
+          ) : (
+            <FontAwesomeIcon
+              icon={faUser}
+              size={width * 0.06}
+              color="#FFFFFF"
             />
           )}
+        </TouchableOpacity>
 
-          <SpecificSearch
+        {/* Botón de búsqueda */}
+        <TouchableOpacity
+          style={styles.search_icon}
+          onPress={toggleSearchBar}>
+          <FontAwesomeIcon
+            icon={faRoute}
+            size={width * 0.06}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+
+        {/* Componente de búsqueda de ruta */}
+        {showSearchBar && (
+          <SearchRoute
+            onClose={closeSearchBar}
+            onSearch={handleSearch}
             points={points}
-            onSearch={handleSpecificSearch}
-            setShowSpecificSearch={setShowSpecificSearch}
-            setMarkedObject={setMarkedObject}
           />
+        )}
 
-          <GestureHandlerRootView style={styles.imageContainer}>
-            <ImageZoom
-              ref={imageZoomRef}
-              cropWidth={Dimensions.get("window").width}
-              cropHeight={Dimensions.get("window").height}
-              imageWidth={1600}
-              imageHeight={1400}
-              enableSwipeDown={false}
-              panToMove={true}
-              pinchToZoomInSensitivity={1}
-              minScale={0.5}
-              maxScale={2}
-              enableCenterFocus={false}
-              useNativeDriver={true}
-              centerOn={{ x: 250, y: -20, scale: 0.9 }}>
-              <Image
-                source={currentMapImage}
-                style={styles.image}
-                resizeMode="contain"
-              />
-              <MapWithPointsAndRoutes
-                onPointPress={handlePointPress}
-                selectedRoute={selectedRouteImage}
-                selectedPoint={selectedPoint}
-                points={points}
-                clearRoute={clearRoute}
-                markedObject={markedObject}
-                setMarkedObject={setMarkedObject}
-                isRouteActive={isRouteActive}
-                activeRoutePoints={activeRoutePoints}
-              />
-            </ImageZoom>
-          </GestureHandlerRootView>
+        {/* Componente de búsqueda específica */}
+        <SpecificSearch
+          points={points}
+          onSearch={handleSpecificSearch}
+          setShowSpecificSearch={setShowSpecificSearch}
+          setMarkedObject={setMarkedObject}
+        />
 
-          {showDownloadModal && (
-            <DownloadAssets
-              onClose={handleCloseDownloadModal}
-              onViewDownload={handleViewDownload}
-              visible={showDownloadModal}
+        {/* Contenedor del mapa con zoom */}
+        <GestureHandlerRootView style={styles.imageContainer}>
+          <ImageZoom
+            ref={imageZoomRef}
+            cropWidth={Dimensions.get("window").width}
+            cropHeight={Dimensions.get("window").height}
+            imageWidth={1600}
+            imageHeight={1400}
+            enableSwipeDown={false}
+            panToMove={true}
+            pinchToZoomInSensitivity={1}
+            minScale={0.5}
+            maxScale={2}
+            enableCenterFocus={false}
+            useNativeDriver={true}
+            centerOn={{ x: 250, y: -20, scale: 0.9 }}>
+            <Image
+              source={currentMapImage}
+              style={styles.image}
+              resizeMode="contain"
             />
-          )}
+            <MapWithPointsAndRoutes
+              onPointPress={handlePointPress}
+              selectedRoute={selectedRouteImage}
+              selectedPoint={selectedPoint}
+              points={points}
+              clearRoute={clearRoute}
+              markedObject={markedObject}
+              setMarkedObject={setMarkedObject}
+              isRouteActive={isRouteActive}
+              activeRoutePoints={activeRoutePoints}
+            />
+          </ImageZoom>
+        </GestureHandlerRootView>
 
-          <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
-
-          {isRouteActive && (
-            <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
-              <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
-            </TouchableOpacity>
-          )}
-
-          <Animated.View
-            style={[styles.overlay, { opacity: fadeAnim }]}
-            pointerEvents="none"
+        {/* Modal de descarga de assets */}
+        {showDownloadModal && (
+          <DownloadAssets
+            onClose={handleCloseDownloadModal}
+            onViewDownload={handleViewDownload}
+            visible={showDownloadModal}
           />
+        )}
 
-          {isRouteActive && currentVideoUri && (
-            <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
-              <FontAwesomeIcon icon={faPlay} size={24} color="#FFFFFF" />
-              <Text style={styles.videoButtonText}>Ver Video</Text>
-            </TouchableOpacity>
-          )}
+        {/* Componente para eliminar archivos locales */}
+        <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
 
-          <VideoModal
-            isVisible={isVideoModalVisible}
-            onClose={toggleVideoModal}
-            videoUri={currentVideoUri}
-          />
+        {/* Botón para finalizar ruta */}
+        {isRouteActive && (
+          <TouchableOpacity
+            style={styles.finalizeButton}
+            onPress={clearRoute}>
+            <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
+          </TouchableOpacity>
+        )}
 
-          {!isRouteActive && !showSearchBar && <ChatbotButton />}
+        {/* Overlay para el BottomSheet */}
+        <Animated.View
+          style={[styles.overlay, { opacity: fadeAnim }]}
+          pointerEvents="none"
+        />
 
-          <BottomSheetComponent
-            ref={bottomSheetRef}
-            snapPoints={["50%", "75%"]}
-            selectedPoint={selectedPoint}
-            isVisible={isBottomSheetVisible}
-            onClose={handleCloseBottomSheet}
-          />
-        </>
-      )}
+        {/* Botón para ver video */}
+        {isRouteActive && currentVideoUri && (
+          <TouchableOpacity
+            style={styles.videoButton}
+            onPress={toggleVideoModal}>
+            <FontAwesomeIcon icon={faPlay} size={24} color="#FFFFFF" />
+            <Text style={styles.videoButtonText}>Ver Video</Text>
+          
+          </TouchableOpacity>
+        )}
+
+        {/* Modal de video */}
+        <VideoModal
+          isVisible={isVideoModalVisible}
+          onClose={toggleVideoModal}
+          videoUri={currentVideoUri}
+        />
+
+        {/* Botón del chatbot */}
+        {!isRouteActive && !showSearchBar && <ChatbotButton />}
+
+        {/* Componente BottomSheet */}
+        <BottomSheetComponent
+          ref={bottomSheetRef}
+          snapPoints={["50%", "75%"]}
+          selectedPoint={selectedPoint}
+          isVisible={isBottomSheetVisible}
+          onClose={handleCloseBottomSheet}
+        />
+      </Animated.View>
     </View>
   );
 };
 
 // Estilos del componente
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { 
+    flex: 1 
+  },
+  content: {
+    flex: 1,
+  },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
@@ -360,7 +440,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     zIndex: 1000,
   },
-  lottieAnimation: { width: width * 0.5, height: width * 0.5 },
+  lottieAnimation: { 
+    width: width * 0.5, 
+    height: width * 0.5 
+  },
   loadingText: {
     marginTop: 20,
     fontSize: 18,
@@ -406,8 +489,15 @@ const styles = StyleSheet.create({
     height: width * 0.06,
     borderRadius: (width * 0.06) / 2,
   },
-  imageContainer: { flex: 1 },
-  image: { flex: 1, width: undefined, height: undefined, alignSelf: "stretch" },
+  imageContainer: { 
+    flex: 1 
+  },
+  image: { 
+    flex: 1, 
+    width: undefined, 
+    height: undefined, 
+    alignSelf: "stretch" 
+  },
   finalizeButton: {
     position: "absolute",
     bottom: 20,
