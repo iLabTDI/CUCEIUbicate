@@ -36,7 +36,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#FFFFFF",
+        "usesCleartextTraffic": true
       },
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
