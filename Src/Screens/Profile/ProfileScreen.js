@@ -28,6 +28,9 @@ import ImageZoom from "react-native-image-pan-zoom";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const ICON_SIZE = SCREEN_WIDTH * 0.15; // 15% of screen width
+const GRID_PADDING = 16;
 
 export const ProfileScreen = () => {
   const route = useRoute();
@@ -391,41 +394,63 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalView: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
-    width: "90%",
-    alignItems: "center",
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-    color: "#0b34b0",
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#0b34b0',
+    textAlign: 'center',
+  },
+  iconGrid: {
+    justifyContent: 'space-around',
   },
   iconButton: {
-    margin: 8,
+    margin: GRID_PADDING / 2,
+    borderRadius: ICON_SIZE / 2,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
   iconImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    borderRadius: ICON_SIZE / 2,
+    borderWidth: 2,
+    borderColor: '#0b34b0',
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: "#0b34b0",
+    backgroundColor: '#0b34b0',
     borderRadius: 10,
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    elevation: 2,
   },
   closeButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
+    color: '#FFFFFF',
+    fontWeight: 'bold',
     fontSize: 16,
+    textAlign: 'center',
   },
   curriculumModalOverlay: {
     flex: 1,
