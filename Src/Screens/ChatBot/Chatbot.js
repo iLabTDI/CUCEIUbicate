@@ -238,9 +238,20 @@ export const Chatbot = () => {
     saveMessages([botMessage, ...messages]);
   };
 
+  const normalizeString = (str) => {
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+  
   const getResponseFromIntents = (message) => {
+    const normalizedMessage = normalizeString(message);
+  
     for (const intent of intents.intents) {
-      if (intent.patterns.some((pattern) => message.toLowerCase().includes(pattern))) {
+      const normalizedPatterns = intent.patterns.map(pattern => normalizeString(pattern));
+      
+      if (normalizedPatterns.some((pattern) => normalizedMessage.includes(pattern))) {
         return intent.responses[Math.floor(Math.random() * intent.responses.length)];
       }
     }
@@ -278,7 +289,7 @@ export const Chatbot = () => {
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}  // Cambia este val
       >
         <FlatList
           ref={flatListRef}
@@ -296,7 +307,7 @@ export const Chatbot = () => {
             onChangeText={setInputMessage}
             placeholder="Escribe tu mensaje aquí..."
             placeholderTextColor="#999"
-            multiline
+            autoFocus={true}
           />
           <TouchableOpacity 
             style={[styles.sendButton, !inputMessage.trim() && styles.sendButtonDisabled]} 

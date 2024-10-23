@@ -497,7 +497,7 @@
         "Qué pasa si no hago el pre-registro de materias?",
         "Agendar materias",
         "Cómo agendo materias?",
-        "Cómo puedo agendar materias?"
+        "Como puedo agendar materias?"
       ],
       "responses": [
         "Para agendar tus materias, debes hacer el pre-registro en LEO: https://leoalumnos.udg.mx. Selecciona el apartado 'Mis cursos' y luego 'Pre-registro a cursos'. Ahí podrás insertar las claves de las materias que quieres cursar.",
@@ -649,7 +649,7 @@
       ]
     },
     {
-      "tag": "Edificio X",
+      "tag": "Edificio_X",
       "patterns": [
         "A que huele el edificio X?",
         "A que huele el edificio x?",
