@@ -11,6 +11,7 @@ import {
   Platform,
   Dimensions,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
@@ -40,6 +41,7 @@ export const RegisterScreen = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [shakeAnimation] = useState(new Animated.Value(0));
+  const [Isloading, setIsLoading] = useState(false);
 
   // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
@@ -70,60 +72,67 @@ export const RegisterScreen = () => {
     setPasswordStrength(strength);
   }, [password]);
 
-  // Función para manejar el registro
-  const handleRegister = async () => {
+   // Función para manejar el registro
+   const handleRegister = async () => {
     // Reiniciamos los estados de error
     setEmailError(false);
     setPasswordError(false);
     setErrorMsg("");
+    setIsLoading(true);  // Iniciamos la carga
 
-    // Verificamos que todos los campos estén llenos
-    if (!email || !password || !confirmPassword) {
-      setErrorMsg("Por favor, completa todos los campos");
-      shakeForm();
-      return;
+    try {
+      // Verificamos que todos los campos estén llenos
+      if (!email || !password || !confirmPassword) {
+        setErrorMsg("Por favor, completa todos los campos");
+        shakeForm();
+        throw new Error("Campos incompletos");
+      }
+
+      // Validamos el formato del correo y el dominio
+      if (
+        !emailRegex.test(email) ||
+        !allowedDomains.includes(email.split("@")[1])
+      ) {
+        setEmailError(true);
+        setErrorMsg("Correo electrónico no válido");
+        shakeForm();
+        throw new Error("Correo no válido");
+      }
+
+      // Validamos el formato de la contraseña
+      if (!passwordRegex.test(password)) {
+        setPasswordError(true);
+        setErrorMsg(
+          "La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 letra y 1 número."
+        );
+        shakeForm();
+        throw new Error("Contraseña no válida");
+      }
+
+      // Verificamos que las contraseñas coincidan
+      if (password !== confirmPassword) {
+        setPasswordError(true);
+        setErrorMsg("Las contraseñas no coinciden");
+        shakeForm();
+        throw new Error("Las contraseñas no coinciden");
+      }
+
+      // Verificamos si el correo ya está registrado
+      const correoValido = await validar_correo(email);
+      if (!correoValido) {
+        setEmailError(true);
+        setErrorMsg("Este correo electrónico ya se ha registrado");
+        shakeForm();
+        throw new Error("Correo ya registrado");
+      }
+
+      // Si todas las validaciones pasan, navegamos a la siguiente pantalla
+      navigation.navigate("Completar Perfil", { mail: email, pass: password });
+    } catch (error) {
+      // console.error(error.message);
+    } finally {
+      setIsLoading(false);  // Detenemos la carga
     }
-
-    // Validamos el formato del correo y el dominio
-    if (
-      !emailRegex.test(email) ||
-      !allowedDomains.includes(email.split("@")[1])
-    ) {
-      setEmailError(true);
-      setErrorMsg("Correo electrónico no válido");
-      shakeForm();
-      return;
-    }
-
-    // Validamos el formato de la contraseña
-    if (!passwordRegex.test(password)) {
-      setPasswordError(true);
-      setErrorMsg(
-        "La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 letra y 1 número."
-      );
-      shakeForm();
-      return;
-    }
-
-    // Verificamos que las contraseñas coincidan
-    if (password !== confirmPassword) {
-      setPasswordError(true);
-      setErrorMsg("Las contraseñas no coinciden");
-      shakeForm();
-      return;
-    }
-
-    // Verificamos si el correo ya está registrado
-    const correoValido = await validar_correo(email);
-    if (!correoValido) {
-      setEmailError(true);
-      setErrorMsg("Este correo electrónico ya se ha registrado");
-      shakeForm();
-      return;
-    }
-
-    // Si todas las validaciones pasan, navegamos a la siguiente pantalla
-    navigation.navigate("Completar Perfil", { mail: email, pass: password });
   };
 
   // Función para animar el formulario cuando hay un error
@@ -239,9 +248,21 @@ export const RegisterScreen = () => {
             </View>
 
             {/* Botón de envío */}
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+
+            <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleRegister}
+                  disabled={Isloading}
+                >
+                  {Isloading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Continuar</Text>
+                  )}
+                </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.button} onPress={handleRegister}>
               <Text style={styles.buttonText}>Continuar</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Mostrar mensaje de error si existe */}
             {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
