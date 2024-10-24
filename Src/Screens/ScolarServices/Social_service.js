@@ -1,102 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, TouchableOpacity } from "react-native";
-import * as FileSystem from "expo-file-system";
-import { ScrollView } from "react-native-gesture-handler";
-import { ErrorComponent } from "../Components/ErrorComponent";
+import React, { useState, useCallback, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  SafeAreaView, 
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { 
   faHandshake, 
-  faGraduationCap, 
-  faClipboardList, 
   faChevronRight,
-  faSpinner
+  faUniversity,
+  faFileAlt,
+  faUsers,
+  faLink,
+  faExternalLinkAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-
-const jsonFilePath = `${FileSystem.documentDirectory}social_service.json`;
-const socialServiceUrl = "http://148.202.152.59:8001/json/social_service";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import staticJsonData from '../../../json/social_service.json';
 
 export const Social_service = () => {
   const [jsonData, setJsonData] = useState(null);
-  const [error, setError] = useState(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const loadJson = async () => {
-    try {
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
-        const json = await FileSystem.readAsStringAsync(jsonFilePath);
-        setJsonData(JSON.parse(json));
-        setError(null);
-      } else {
-        await downloadJson();
-      }
-    } catch (error) {
-      console.error("Error al cargar o descargar el archivo:", error);
-      setError("No se pudo cargar el Servicio Social. Por favor, verifica tu conexión a internet e intenta nuevamente.");
-    }
-  };
-
-  const downloadJson = async () => {
-    setIsRefreshing(true);
-    try {
-      console.log(`Descargando desde ${socialServiceUrl}...`);
-      const response = await fetch(socialServiceUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP status ${response.status}`);
-      }
-
-      const json = await response.json();
-
-      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-      setJsonData(json);
-      setError(null);
-    } catch (error) {
-      console.error("Error al descargar el archivo:", error);
-      setError("No se pudo descargar el Servicio Social. Por favor, verifica tu conexión a internet e intenta nuevamente.");
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadJson();
+    loadJsonFromStorage();
   }, []);
 
-  if (error) {
-    return (
-      <ErrorComponent
-        title="Error de carga"
-        message={error}
-        buttonText="Reintentar"
-        onRetry={downloadJson}
-      />
-    );
-  }
+  const loadJsonFromStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('socialServiceData');
+      if (storedData !== null) {
+        setJsonData(JSON.parse(storedData));
+      } else {
+        setJsonData(staticJsonData);
+        await AsyncStorage.setItem('socialServiceData', JSON.stringify(staticJsonData));
+      }
+    } catch (error) {
+      console.error('Error loading data from storage:', error);
+      setJsonData(staticJsonData);
+    }
+  };
 
-  if (!jsonData) {
-    return (
-      <View style={styles.loadingContainer}>
-        <FontAwesomeIcon icon={faSpinner} size={40} color="#0056b3" spin />
-        <Text style={styles.loadingText}>Cargando Servicio Social...</Text>
-      </View>
-    );
-  }
+  const loadJson = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Simulating an API call or data refresh
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await AsyncStorage.setItem('socialServiceData', JSON.stringify(staticJsonData));
+      setJsonData(staticJsonData);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  const deletJsData = async () => {
+    try {
+      await AsyncStorage.removeItem('socialServiceData');
+      setJsonData(null);
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+  };
 
   const getIcon = (sectionId) => {
     const icons = {
-      1: faHandshake,
-      2: faGraduationCap,
-      3: faClipboardList,
+      1: faUniversity,
+      2: faFileAlt,
+      3: faUsers,
       default: faHandshake
     };
     return icons[sectionId] || icons.default;
   };
 
+  const renderListItem = (text, index) => (
+    <View key={index} style={styles.listItem}>
+      <FontAwesomeIcon icon={faChevronRight} size={14} color="#0056b3" style={styles.listItemIcon} />
+      <Text style={styles.listItemText}>{text}</Text>
+    </View>
+  );
+
+  const renderLink = (url, text) => (
+    <TouchableOpacity 
+      style={styles.linkContainer} 
+      onPress={() => Linking.openURL(url)}
+    >
+      <FontAwesomeIcon icon={faLink} size={16} color="#0056b3" style={styles.linkIcon} />
+      <Text style={styles.linkText}>{text}</Text>
+      <FontAwesomeIcon icon={faExternalLinkAlt} size={12} color="#0056b3" style={styles.externalLinkIcon} />
+    </TouchableOpacity>
+  );
+
+  if (!jsonData) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <Text>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView 
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }
+      >
         <LinearGradient
           colors={['#0056b3', '#007bff']}
           style={styles.header}
@@ -104,45 +122,26 @@ export const Social_service = () => {
           <FontAwesomeIcon icon={faHandshake} size={24} color="#fff" />
           <Text style={styles.headerTitle}>Servicio Social</Text>
         </LinearGradient>
-        {Object.keys(jsonData.section_description["sub-sections"]).map((sectionId) => {
-          const section = jsonData.section_description["sub-sections"][sectionId];
-          return (
-            <View key={sectionId} style={styles.card}>
-              <View style={styles.sectionHeader}>
-                <FontAwesomeIcon icon={getIcon(sectionId)} size={24} color="#0056b3" />
-                <Text style={styles.sectionTitle}>{section.title}</Text>
-              </View>
-              {section.content && <Text style={styles.content}>{section.content}</Text>}
-              {section["listed-elements"] && Object.keys(section["listed-elements"]).map((elementId) => {
-                const element = section["listed-elements"][elementId];
-                return (
-                  <View key={elementId} style={styles.listItem}>
-                    <FontAwesomeIcon icon={faChevronRight} size={14} color="#0056b3" />
-                    <Text style={styles.listItemText}>{element}</Text>
-                  </View>
-                );
-              })}
-              {section["mini-subsections"] && Object.keys(section["mini-subsections"]).map((subsectionId) => {
-                const subsection = section["mini-subsections"][subsectionId];
-                return (
-                  <View key={subsectionId} style={styles.miniSubsection}>
-                    <Text style={styles.miniSubsectionTitle}>{subsection.title}</Text>
-                    {subsection.content && <Text style={styles.content}>{subsection.content}</Text>}
-                    {subsection["listed-elements"] && Object.keys(subsection["listed-elements"]).map((elementId) => {
-                      const element = subsection["listed-elements"][elementId];
-                      return (
-                        <View key={elementId} style={styles.listItem}>
-                          {/* <FontAwesomeIcon icon={faChevronRight} size={14} color="#0056b3" /> */}
-                          <Text style={styles.listItemText}>{element}</Text>
-                        </View>
-                      );
-                    })}
-                  </View>
-                );
-              })}
+        {Object.entries(jsonData.section_description["sub-sections"]).map(([sectionId, section]) => (
+          <View key={sectionId} style={styles.card}>
+            <View style={styles.sectionHeader}>
+              <FontAwesomeIcon icon={getIcon(sectionId)} size={24} color="#0056b3" />
+              <Text style={styles.sectionTitle}>{section.title}</Text>
             </View>
-          );
-        })}
+            {section.content && <Text style={styles.content}>{section.content}</Text>}
+            {section["listed-elements"] && Object.values(section["listed-elements"]).map((element, index) => renderListItem(element, index))}
+            {section["mini-subsections"] && Object.entries(section["mini-subsections"]).map(([subsectionId, subsection]) => (
+              <View key={subsectionId} style={styles.miniSubsection}>
+                <Text style={styles.miniSubsectionTitle}>{subsection.title}</Text>
+                {subsection.content && <Text style={styles.content}>{subsection.content}</Text>}
+                {subsection["listed-elements"] && Object.values(subsection["listed-elements"]).map((element, index) => renderListItem(element, index))}
+              </View>
+            ))}
+            {section.links && Object.entries(section.links).map(([linkId, linkData]) => (
+              renderLink(linkData.url, linkData.text)
+            ))}
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -156,6 +155,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -168,17 +172,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginLeft: 10,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f4f8',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#0056b3',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -210,13 +203,17 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 10,
+  },
+  listItemIcon: {
+    marginTop: 4,
+    marginRight: 10,
   },
   listItemText: {
     fontSize: 16,
     color: '#333',
-    marginLeft: 10,
+    flex: 1,
   },
   miniSubsection: {
     marginTop: 15,
@@ -227,6 +224,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0056b3',
     marginBottom: 10,
+  },
+  linkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e1e8ed',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  linkIcon: {
+    marginRight: 10,
+  },
+  linkText: {
+    fontSize: 16,
+    color: '#0056b3',
+    flex: 1,
+  },
+  externalLinkIcon: {
+    marginLeft: 5,
   },
 });
 

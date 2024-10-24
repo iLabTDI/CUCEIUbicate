@@ -1,91 +1,72 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
   ScrollView,
+  TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-import { ErrorComponent } from '../Components/ErrorComponent';
-
-const jsonFilePath = `${FileSystem.documentDirectory}face_access.json`;
-const faceAccessUrl = "http://148.202.152.59:8001/json/face_access"; // URL para descargar el archivo JSON
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { 
+  faChevronRight, 
+  faUserGraduate, 
+  faExclamationTriangle,
+  faCamera, 
+} from '@fortawesome/free-solid-svg-icons';
+import staticJsonData from '../../../json/face_access.json';
 
 export const Facial_recognition = () => {
-  const [jsonData, setJsonData] = useState(null);
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [jsonData, setJsonData] = useState(staticJsonData);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const loadJson = async () => {
-    try {
-      // Intentar cargar el archivo local si existe
-      const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      if (fileInfo.exists) {
-        console.log(`Cargando archivo existente en: ${jsonFilePath}`);
-        const json = await FileSystem.readAsStringAsync(jsonFilePath);
-        setJsonData(JSON.parse(json)); // Establece los datos JSON desde el archivo local
-        setError(null); // Reinicia el error si se pueden leer los datos locales
-      } else {
-        // Si el archivo no existe, intenta descargarlo
-        console.log(`Descargando desde ${faceAccessUrl}...`);
-        const response = await fetch(faceAccessUrl);
-        if (!response.ok) {
-          throw new Error(`Error al descargar desde ${faceAccessUrl}`);
-        }
-
-        const json = await response.json();
-
-        // Guardar el nuevo archivo JSON
-        await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-        console.log(`Archivo guardado en: ${jsonFilePath}`);
-        setJsonData(json); // Establece los datos JSON desde la descarga
-        setError(null); // Reinicia el error si la descarga es exitosa
-      }
-    } catch (error) {
-      console.error("Error al cargar o descargar el archivo:", error);
-      setError("No se pudo cargar el Reconocimiento Facial. Por favor, verifica tu conexión a internet e intenta nuevamente."); // Actualiza el mensaje de error
-    }
-  };
-
-  useEffect(() => {
-    loadJson(); // Inicia la carga del JSON al montar el componente
+  const loadJson = useCallback(async () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setJsonData(staticJsonData);
+      setRefreshing(false);
+    }, 1000);
   }, []);
 
-  // Renderiza un mensaje de error si no se pudieron obtener los datos
-  if (error) {
-    return (
-      <ErrorComponent
-        title="Error de carga"
-        message={error}
-        buttonText="Reintentar"
-        onRetry={loadJson} // Llamar a loadJson al presionar el botón
+  const renderListItem = (text, index) => (
+    <View key={index} style={styles.listItemContainer}>
+      <FontAwesomeIcon 
+        icon={faChevronRight} 
+        size={16} 
+        color="#0b34b0" 
+        style={styles.listItemIcon}
       />
-    );
-  }
-
-  if (!jsonData) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b34b0" />
-        <Text style={styles.loadingText}>Cargando reconocimiento facial...</Text>
-      </View>
-    );
-  }
+      <Text style={styles.listItem}>{text}</Text>
+    </View>
+  );
 
   return (
-    <ScrollView style={styles.scrollContainer}>
+    <ScrollView 
+      style={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+      }
+    >
       <View style={styles.content}>
         <View style={styles.card}>
-          <Text style={styles.title}>{jsonData["section-description"].name}</Text>
+          <View style={styles.titleContainer}>
+            <FontAwesomeIcon icon={faCamera} size={24} color="#0b34b0" />
+            <Text style={styles.title}>{jsonData["section-description"].name}</Text>
+          </View>
           <Text style={styles.descriptionText}>
             {jsonData["section-description"].description}
           </Text>
-          <Text style={styles.listTitle}>Pasos a seguir:</Text>
-          {jsonData["section-description"]["listed-elements"] && Object.keys(jsonData["section-description"]["listed-elements"]).map((key) => (
-            <Text key={key} style={styles.listItem}>
-              {jsonData["section-description"]["listed-elements"][key]}
+          <View style={styles.listTitleContainer}>
+            <FontAwesomeIcon icon={faUserGraduate} size={20} color="#0b34b0" />
+            <Text style={styles.listTitle}>{jsonData["section-description"].tittle}</Text>
+          </View>
+          {Object.values(jsonData["section-description"]["listed-elements"]).map((item, index) => renderListItem(item, index))}
+          <View style={styles.noteContainer}>
+            <FontAwesomeIcon icon={faExclamationTriangle} size={16} color="#f39c12" />
+            <Text style={styles.noteText}>
+              Si tienes problemas, acude a la Coordinación de Seguridad y Protección Universitaria.
             </Text>
-          ))}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -111,39 +92,62 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 5,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginBottom: 10,
+    marginLeft: 10,
   },
   descriptionText: {
     fontSize: 16,
     color: '#333333',
     lineHeight: 24,
+    marginBottom: 15,
+  },
+  listTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   listTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginTop: 15,
+    marginLeft: 10,
+  },
+  listItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  listItemIcon: {
+    marginTop: 4,
+    marginRight: 10,
   },
   listItem: {
     fontSize: 16,
     color: '#333333',
     lineHeight: 24,
-    marginTop: 5,
-  },
-  loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#0b34b0",
+  noteContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#fff9c4',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 15,
+  },
+  noteText: {
+    fontSize: 14,
+    color: '#333333',
+    marginLeft: 10,
+    flex: 1,
   },
 });
 
