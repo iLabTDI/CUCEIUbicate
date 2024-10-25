@@ -8,7 +8,15 @@
         "artículos importantes",
         "articulos importantes",
         "artículos que debería conocer",
-        "articulos que deberia conocer"
+        "articulos que deberia conocer",
+        "aetriculos CUCEI",
+        "articles cucei",
+        "que articulos son importnates?",
+        "que articulos son imporyamtes",
+        "que articulos son importantes",
+        "artivculos imporntanes",
+        "aeticulos importantes",
+        "articles importantes"
       ],
       "responses": [
         "A continuación nombraré algunos artículos relevantes para tu trayectoria como estudiante en esta casa de estudios: Artículo 25,27,33,34,35,36,49,90. Si deseas consultar más, puedes visitar el siguiente link para ver el Reglamento General de Evaluación y Promoción de alumnos:https://secgral.udg.mx/sites/default/files/Normatividad_general/rgepa-oct-2017.pdf",
@@ -31,7 +39,21 @@
         "cómo se califica el extraordinario según el artículo 25?",
         "que dice el articulo 25 sobre la calificación en el extraordinario",
         "artículo 25",
-        "articulo 25,"
+        "articulo 25,",
+        "Que articulo es donde se habla del extraordinario",
+        "¿Qué es el articulo 25?",
+        "De que va el articulo 25?",
+        "De q va el articulo 25",
+        "Q es el art 25",
+        "Q es el articulo 25",
+        "Art 25",
+        "Explica el articulo 25",
+        "Descripcion del articulo 25",
+        "Extraordinario art 25",
+        "Extraordinario articulo 25 que es",
+        "extraordinario articulo 25",
+        "adticulo 25",
+        "asticulo 25"
       ],
       "responses": [
         "El artículo 25 explica que la calificación del extraordinario tiene una ponderación del 80% y se suma con la obtenida en el periodo ordinario para obtener la calificación final.",
@@ -60,7 +82,16 @@
         "que necesito para tener derecho a extraordinario",
         "extraordinario",
         "cuales son los requisitos para el extraordinario según el artículo 27?",
-        "Que necesito para hacer un extraordinario según el articulo 27?"
+        "Que necesito para hacer un extraordinario según el articulo 27?",
+        "como presentar extraordinario",
+        "presentar extraordinario",
+        "como hacer extraodinario",
+        "requisiitos extraordinario",
+        "asticulo 27",
+        "extraorfinario",
+        "requisitos extraorfinario",
+        "adticulo 27",
+        "predntar extraordinario"
       ],
       "responses": [
         "El artículo 27 establece los requisitos para el registro de la calificación en el periodo extraordinario, como estar inscrito, haber pagado el arancel y tener un 65% de asistencia.",
@@ -649,16 +680,17 @@
       ]
     },
     {
-      "tag": "Edificio_X",
+      "tag": "Olor_X",
       "patterns": [
         "A que huele el edificio X?",
         "A que huele el edificio x?",
         "A que huele el Edificio X",
         "A que huele el Edificio x",
-        "Que hay en el edificio X"
+        "Que hay en el edificio X",
+        "edificio x"
       ],
       "responses": [
-        "El edificio X tiene un Olor bastante peculiar ya que se dice que la mayoria de estudiantes de la carrera de computación no se bañan, por lo que el olor a sobaco es bastante fuerte."
+        "El edificio X tiene un olor bastante peculiar ya que se dice que la mayoria de estudiantes de la carrera de computación no se bañan, por lo que el olor a sobaco es bastante fuerte."
       ]
     },
     {
