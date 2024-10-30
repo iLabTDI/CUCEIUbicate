@@ -118,7 +118,7 @@ export const Chatbot = () => {
 
   const checkFirstVisit = async () => {
     try {
-      const hasVisited = await AsyncStorage.getItem('hasVisitedChatBot');
+      const hasVisited = await AsyncStorage.getItem('hasVisitedChatBott');
       if (hasVisited === null) {
         setShowWelcome(true);
       } else {
