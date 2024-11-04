@@ -1,15 +1,22 @@
 {
-    "section-description":{
-        "name": "Radio CUCEI",
-        "description": [
-            "Es un sistema de radiodifusión experimental que transmite desde el laboratorio de audio y acústica del módulo N.  El alcance de transmisión de radio vía FM está limitado al área del Centro Universitario a una frecuencia de 96.7 Mhz; además se puede escuchar vía internet en la página http://radio.cucei.udg.mx",
-            "En este proyecto de estación de radio se realizan prácticas de las materias de comunicaciones. Además funge como un medio de difusión de actividades relevantes del centro universitario, como eventos, programación de exámenes, actividades culturales y de entretenimiento."
-        ],
-        "listed-elements": {
-            "1": "Ingresar al siguiente enlace: https://acceso.cucei.udg.mx",
-            "2": "En la sección “COMUNIDAD CUCEI”, haz clic en el botón “Subir Foto” y elige si eres Estudiante o trabajador académico/administrativo. Ingresa tu código y NIP de SIIAU.",
-            "3": "Da click en “Subir foto” y sigue las recomendaciones Tómate la foto y presiona “Guardar” Opcionalmente captura tu correo Para finalizar presiona “Guardar datos”.",
-            "4": "Si deseas cambiar tu foto debido a algún problema, puedes presentarte en la entrada de “Revolución” con los prestadores de servicio social, ellos podrán ayudarte en un horario de 7 am - 5 pm."
-        }
-    }
-}
+    "section-description": {
+      "name": "Radio CUCEI",
+      "description": "Es un sistema de radiodifusión experimental que transmite desde el laboratorio de audio y acústica del módulo N. El alcance de transmisión de radio vía FM está limitado al área del Centro Universitario a una frecuencia de 96.7 Mhz; además se puede escuchar vía internet en la página http://radio.cucei.udg.mx"
+    },
+    "additional-info": {
+      "purpose": "En este proyecto de estación de radio se realizan prácticas de las materias de comunicaciones. Además funge como un medio de difusión de actividades relevantes del centro universitario, como eventos, programación de exámenes, actividades culturales y de entretenimiento."
+    },
+    "technical-details": {
+      "frequency": "96.7 Mhz",
+      "transmission-range": "Área del Centro Universitario",
+      "online-streaming": "http://radio.cucei.udg.mx"
+    },
+    "genero": "Variado",
+    "idioma": "Español",
+    "url_radio": "http://radio.cucei.udg.mx",
+    "listed-elements": [
+      "Medio de difusión para actividades relevantes del centro universitario",
+      "Transmite eventos, programación de exámenes, actividades culturales y de entretenimiento",
+      "Sirve como plataforma para prácticas de las materias de comunicaciones"
+    ]
+  }
