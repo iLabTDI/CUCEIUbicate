@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Linking,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -19,31 +20,37 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import staticJsonData from "../../../json/contact_info.json";
-import {ContactImage} from "../../../json/contact_images";
-
-console.log("Contenido de ContactImage:", ContactImage);
+import { ContactImage } from "../../../json/contact_images";
 
 export const Directory = () => {
-  const [jsonData, setJsonData] = useState(staticJsonData);
+  const [jsonData, setJsonData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate fetching data
+    setTimeout(() => {
+      setJsonData(staticJsonData);
+      setLoading(false);
+    }, 2000);
+  }, []);
 
   const getImageSource = (imageName) => {
     if (ContactImage.hasOwnProperty(imageName)) {
       return ContactImage[imageName];
     } else {
-      // console.warn("Imagen no encontrada en ContactImage:", imageName);
       return require("../../../json/contact_info/noasignado.jpg");
     }
   };
-  
-  
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
+    setLoading(true);
     // Simulate fetching data
     setTimeout(() => {
       setJsonData(staticJsonData);
       setRefreshing(false);
+      setLoading(false);
     }, 2000);
   }, []);
 
@@ -55,13 +62,22 @@ export const Directory = () => {
     Linking.openURL(`tel:${phone}`);
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+        <Text style={styles.headerTitle}>Cargando...</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-      <LinearGradient colors={["#0b34b0", "#0056b3"]} style={styles.header}>
+      <LinearGradient colors={["#0056b3", "#007bff"]} style={styles.header}>
         <FontAwesomeIcon icon={faUser} size={24} color="#fff" />
         <Text style={styles.headerTitle}>Directorio</Text>
       </LinearGradient>
@@ -118,6 +134,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f2f5",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     flexDirection: "row",
