@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  KeyboardAvoidingView, 
-  Platform, 
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
   Modal,
   SafeAreaView,
   Dimensions,
@@ -14,18 +14,19 @@ import {
   FlatList,
   Image,
   Animated,
-  AppState
-} from 'react-native';
-import LottieView from 'lottie-react-native';
-import { BlurView } from 'expo-blur';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Animatable from 'react-native-animatable';
-import { FontAwesome } from '@expo/vector-icons';
+  AppState,
+  Linking
+} from "react-native";
+import LottieView from "lottie-react-native";
+import { BlurView } from "expo-blur";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Animatable from "react-native-animatable";
+import { FontAwesome } from "@expo/vector-icons";
 
-import handleGenericAPIRequest from '../ChatBot/api';
-import intents from '../ChatBot/intents.json';
+import handleGenericAPIRequest from "../ChatBot/api";
+import intents from "../ChatBot/intents.json";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const TypingAnimation = () => {
   const [animation] = useState(new Animated.Value(0));
@@ -45,14 +46,14 @@ const TypingAnimation = () => {
       opacity: animation.interpolate({
         inputRange: [0, 0.5, 1],
         outputRange: [0.3, 1, 0.3],
-        extrapolate: 'clamp',
+        extrapolate: "clamp",
       }),
       transform: [
         {
           scale: animation.interpolate({
             inputRange: [0, 0.5, 1],
             outputRange: [0.8, 1.2, 0.8],
-            extrapolate: 'clamp',
+            extrapolate: "clamp",
           }),
         },
       ],
@@ -73,7 +74,7 @@ const TypingAnimation = () => {
 
 export const Chatbot = () => {
   const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
+  const [inputMessage, setInputMessage] = useState("");
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const lottieRef = useRef(null);
@@ -85,15 +86,19 @@ export const Chatbot = () => {
     checkFirstVisit();
     loadMessages();
 
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
         checkSessionValidity();
       }
       appState.current = nextAppState;
     });
 
     const activityInterval = setInterval(() => {
-      if (Date.now() - lastActivityTime.current > 500000) { // 10 minutes
+      if (Date.now() - lastActivityTime.current > 500000) {
+        // 10 minutes
         clearMessages();
       }
     }, 60000); // Check every minute
@@ -105,7 +110,7 @@ export const Chatbot = () => {
   }, []);
 
   const checkSessionValidity = async () => {
-    const lastActiveTime = await AsyncStorage.getItem('lastActiveTime');
+    const lastActiveTime = await AsyncStorage.getItem("lastActiveTime");
     if (lastActiveTime && Date.now() - parseInt(lastActiveTime) > 500000) {
       clearMessages();
     }
@@ -113,32 +118,33 @@ export const Chatbot = () => {
 
   const updateLastActivityTime = () => {
     lastActivityTime.current = Date.now();
-    AsyncStorage.setItem('lastActiveTime', Date.now().toString());
+    AsyncStorage.setItem("lastActiveTime", Date.now().toString());
   };
 
   const checkFirstVisit = async () => {
     try {
-      const hasVisited = await AsyncStorage.getItem('hasVisitedChatBott');
+      const hasVisited = await AsyncStorage.getItem("hasVisitedChatBott");
       if (hasVisited === null) {
         setShowWelcome(true);
       } else {
         setShowWelcome(false);
       }
     } catch (error) {
-      console.error('Error checking first visit:', error);
+      console.error("Error checking first visit:", error);
     }
   };
 
   const loadMessages = async () => {
     try {
-      const savedMessages = await AsyncStorage.getItem('chatMessages');
-      const lastActiveTime = await AsyncStorage.getItem('lastActiveTime');
-      
+      const savedMessages = await AsyncStorage.getItem("chatMessages");
+      const lastActiveTime = await AsyncStorage.getItem("lastActiveTime");
+
       if (savedMessages && lastActiveTime) {
         const parsedMessages = JSON.parse(savedMessages);
         const lastActive = parseInt(lastActiveTime);
-        
-        if (Date.now() - lastActive < 500000) { // 10 minutes
+
+        if (Date.now() - lastActive < 500000) {
+          // 10 minutes
           setMessages(parsedMessages);
         } else {
           clearMessages();
@@ -147,7 +153,7 @@ export const Chatbot = () => {
         clearMessages();
       }
     } catch (error) {
-      console.error('Error loading messages:', error);
+      console.error("Error loading messages:", error);
       clearMessages();
     }
   };
@@ -155,39 +161,42 @@ export const Chatbot = () => {
   const clearMessages = () => {
     setMessages([
       {
-        _id: '1',
-        text: '¡Hola! Soy tu asistente virtual de CUCEI Ubicate. ¿En qué puedo ayudarte hoy?',
+        _id: "1",
+        text: "¡Hola! Soy tu asistente virtual de CUCEI Ubicate. ¿En qué puedo ayudarte hoy?",
         createdAt: new Date().toISOString(),
         user: {
           _id: 2,
-          name: 'Chatbot',
-          avatar: require('./images/bot.png'),
+          name: "Chatbot",
+          avatar: require("./images/bot.png"),
         },
       },
     ]);
-    AsyncStorage.removeItem('chatMessages');
+    AsyncStorage.removeItem("chatMessages");
   };
 
   const saveMessages = async (messagesToSave) => {
     try {
-      await AsyncStorage.setItem('chatMessages', JSON.stringify(messagesToSave));
+      await AsyncStorage.setItem(
+        "chatMessages",
+        JSON.stringify(messagesToSave)
+      );
       updateLastActivityTime();
     } catch (error) {
-      console.error('Error saving messages:', error);
+      console.error("Error saving messages:", error);
     }
   };
 
   const handleCloseWelcome = async () => {
     setShowWelcome(false);
     try {
-      await AsyncStorage.setItem('hasVisitedChatBot', 'true');
+      await AsyncStorage.setItem("hasVisitedChatBot", "true");
     } catch (error) {
-      console.error('Error saving visit status:', error);
+      console.error("Error saving visit status:", error);
     }
   };
 
   const onSend = useCallback(async () => {
-    if (inputMessage.trim() === '') return;
+    if (inputMessage.trim() === "") return;
 
     const newMessage = {
       _id: Date.now().toString(),
@@ -195,13 +204,13 @@ export const Chatbot = () => {
       createdAt: new Date().toISOString(),
       user: {
         _id: 1,
-        name: 'Usuario',
+        name: "Usuario",
       },
     };
 
-    setMessages(previousMessages => [newMessage, ...previousMessages]);
-    setInputMessage('');
-    
+    setMessages((previousMessages) => [newMessage, ...previousMessages]);
+    setInputMessage("");
+
     setIsTyping(true);
     const responseFromIntents = getResponseFromIntents(inputMessage);
 
@@ -213,10 +222,15 @@ export const Chatbot = () => {
     } else {
       try {
         const responseFromAPI = await handleGenericAPIRequest(inputMessage);
-        addBotMessage(responseFromAPI || 'Lo siento, no entendí eso. ¿Podrías reformular tu pregunta?');
+        addBotMessage(
+          responseFromAPI ||
+            "Lo siento, no entendí eso. ¿Podrías reformular tu pregunta?"
+        );
       } catch (error) {
-        console.error('Error getting response from API:', error);
-        addBotMessage('Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde.');
+        console.error("Error getting response from API:", error);
+        addBotMessage(
+          "Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde."
+        );
       } finally {
         setIsTyping(false);
       }
@@ -230,11 +244,11 @@ export const Chatbot = () => {
       createdAt: new Date().toISOString(),
       user: {
         _id: 2,
-        name: 'Chatbot',
-        avatar: require('./images/bot.png'),
+        name: "Chatbot",
+        avatar: require("./images/bot.png"),
       },
     };
-    setMessages(previousMessages => [botMessage, ...previousMessages]);
+    setMessages((previousMessages) => [botMessage, ...previousMessages]);
     saveMessages([botMessage, ...messages]);
   };
 
@@ -244,39 +258,65 @@ export const Chatbot = () => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
   };
-  
+
   const getResponseFromIntents = (message) => {
     const normalizedMessage = normalizeString(message);
-  
+
     for (const intent of intents.intents) {
-      const normalizedPatterns = intent.patterns.map(pattern => normalizeString(pattern));
-      
-      if (normalizedPatterns.some((pattern) => normalizedMessage.includes(pattern))) {
-        return intent.responses[Math.floor(Math.random() * intent.responses.length)];
+      const normalizedPatterns = intent.patterns.map((pattern) =>
+        normalizeString(pattern)
+      );
+
+      if (
+        normalizedPatterns.some((pattern) =>
+          normalizedMessage.includes(pattern)
+        )
+      ) {
+        if (intent.action === "redirect" && intent.url) {
+          // Redirige a la URL si es un Easter egg
+          Linking.openURL(intent.url).catch((err) =>
+            console.error("Error al abrir la URL:", err)
+          );
+          return intent.responses[0]; // Mensaje opcional antes de redirigir
+        } else {
+          return intent.responses[
+            Math.floor(Math.random() * intent.responses.length)
+          ];
+        }
       }
     }
     return null;
   };
 
   const renderMessage = ({ item }) => (
-    <Animatable.View 
-      animation="fadeIn" 
-      duration={500} 
+    <Animatable.View
+      animation="fadeIn"
+      duration={500}
       style={[
-        styles.messageBubble, 
+        styles.messageBubble,
         item.user._id === 1 ? styles.userBubble : styles.botBubble,
-        item.user._id === 1 && { maxWidth: Math.min(width * 0.8, item.text.length * 8 + 32) }
-      ]}
-    >
+        item.user._id === 1 && {
+          maxWidth: Math.min(width * 0.8, item.text.length * 8 + 32),
+        },
+      ]}>
       {item.user._id === 2 && (
         <Image source={item.user.avatar} style={styles.avatar} />
       )}
       <View style={styles.messageContent}>
-        <Text style={[styles.messageText, item.user._id === 1 ? styles.userMessageText : styles.botMessageText]}>
+        <Text
+          style={[
+            styles.messageText,
+            item.user._id === 1
+              ? styles.userMessageText
+              : styles.botMessageText,
+          ]}>
           {item.text}
         </Text>
         <Text style={styles.timestamp}>
-          {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {new Date(item.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </Text>
       </View>
     </Animatable.View>
@@ -285,11 +325,11 @@ export const Chatbot = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-     
-      <KeyboardAvoidingView 
+
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}  // Cambia este val
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100} // Cambia este val
       >
         <FlatList
           ref={flatListRef}
@@ -309,12 +349,18 @@ export const Chatbot = () => {
             placeholderTextColor="#999"
             autoFocus={true}
           />
-          <TouchableOpacity 
-            style={[styles.sendButton, !inputMessage.trim() && styles.sendButtonDisabled]} 
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              !inputMessage.trim() && styles.sendButtonDisabled,
+            ]}
             onPress={onSend}
-            disabled={!inputMessage.trim()}
-          >
-            <FontAwesome name="paper-plane" size={24} color={inputMessage.trim() ? "#4c669f" : "#999"} />
+            disabled={!inputMessage.trim()}>
+            <FontAwesome
+              name="paper-plane"
+              size={24}
+              color={inputMessage.trim() ? "#4c669f" : "#999"}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -323,30 +369,28 @@ export const Chatbot = () => {
         animationType="fade"
         transparent={true}
         visible={showWelcome}
-        onRequestClose={handleCloseWelcome}
-      >
+        onRequestClose={handleCloseWelcome}>
         <BlurView intensity={100} style={styles.modalContainer}>
-          <Animatable.View 
-            animation="zoomIn" 
-            duration={500} 
-            style={styles.modalContent}
-          >
+          <Animatable.View
+            animation="zoomIn"
+            duration={500}
+            style={styles.modalContent}>
             <Text style={styles.modalTitle}>Bienvenido a CUCEIUbicate!</Text>
             <LottieView
               ref={lottieRef}
-              source={require('./images/Bot_animation.json')}
+              source={require("./images/Bot_animation.json")}
               autoPlay
               loop
               style={styles.lottieAnimation}
             />
             <Text style={styles.modalText}>
-              Este chatbot está diseñado para ayudarte a navegar por el campus de CUCEI.
-              Puedes preguntar sobre ubicaciones, horarios, eventos y más.
+              Este chatbot está diseñado para ayudarte a navegar por el campus
+              de CUCEI. Puedes preguntar sobre ubicaciones, horarios, eventos y
+              más.
             </Text>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={handleCloseWelcome}
-            >
+              onPress={handleCloseWelcome}>
               <Text style={styles.modalButtonText}>Comenzar</Text>
             </TouchableOpacity>
           </Animatable.View>
@@ -359,16 +403,16 @@ export const Chatbot = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   headerTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   chatContainer: {
     flex: 1,
@@ -381,8 +425,8 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 20,
     marginVertical: 6,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -393,13 +437,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   userBubble: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#4c669f',
+    alignSelf: "flex-end",
+    backgroundColor: "#4c669f",
   },
   botBubble: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#f0f0f0',
-    maxWidth: '80%',
+    alignSelf: "flex-start",
+    backgroundColor: "#f0f0f0",
+    maxWidth: "80%",
   },
   avatar: {
     width: 30,
@@ -414,42 +458,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   userMessageText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   botMessageText: {
-    color: '#000000',
+    color: "#000000",
   },
   timestamp: {
     fontSize: 12,
-    color: '#999',
-    alignSelf: 'flex-end',
+    color: "#999",
+    alignSelf: "flex-end",
     marginTop: 5,
   },
   typingContainer: {
     padding: 10,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   typingBubble: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
     borderRadius: 20,
     padding: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   typingDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
     marginHorizontal: 2,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: '#e5e5e5',
+    borderTopColor: "#e5e5e5",
   },
   input: {
     flex: 1,
@@ -457,7 +501,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     borderRadius: 20,
   },
   sendButton: {
@@ -469,18 +513,18 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -490,9 +534,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#192f6a',
+    color: "#192f6a",
   },
   lottieAnimation: {
     width: 200,
@@ -500,20 +544,19 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
-    color: '#4c669f',
+    color: "#4c669f",
   },
   modalButton: {
-    backgroundColor: '#4c669f',
+    backgroundColor: "#4c669f",
     paddingHorizontal: 30,
     paddingVertical: 10,
     borderRadius: 20,
   },
   modalButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
-
