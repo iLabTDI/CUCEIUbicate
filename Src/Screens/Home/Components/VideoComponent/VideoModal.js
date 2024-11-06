@@ -55,7 +55,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
       setError(null);
     } else if (status.error) {
       setIsLoading(false);
-      setError('El video no está disponible en este momento');
+      setError("La ruta es muy corta para mostrar un video. Por favor, selecciona una ruta más larga.");
     }
   };
 
@@ -95,7 +95,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
           <View style={styles.errorContainer}>
             <FontAwesomeIcon icon={faVideoSlash} size={50} color="#FFFFFF" />
             <Text style={styles.errorText}>{error}</Text>
-            <Text style={styles.errorSubtext}>Por favor, inténtelo de nuevo más tarde.</Text>
+            {/* <Text style={styles.errorSubtext}>Por favor, inténtelo de nuevo más tarde.</Text> */}
           </View>
         )}
         {!error && videoUri && (
