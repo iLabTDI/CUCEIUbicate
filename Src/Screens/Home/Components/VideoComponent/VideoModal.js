@@ -2,9 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, Dimensions, Text, ActivityIndicator } from 'react-native';
 import { Video } from 'expo-av';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTimes, faPlay, faPause } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faPlay, faPause, faVideoSlash } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,7 +32,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
   useEffect(() => {
     if (isVisible) {
       if (!videoUri) {
-        setError('La fuente del video es inválida');
+        setError('El video no está disponible en este momento');
         setIsLoading(false);
       } else {
         setIsLoading(true);
@@ -42,7 +41,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
           videoRef.current.loadAsync(videoUri, {}, false)
             .catch(error => {
               console.error('Error al cargar el video:', error);
-              setError(`Error al cargar el video: ${error.message}`);
+              setError('El video no está disponible en este momento');
               setIsLoading(false);
             });
         }
@@ -56,7 +55,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
       setError(null);
     } else if (status.error) {
       setIsLoading(false);
-      setError(`Error al cargar el video: ${status.error}`);
+      setError('El video no está disponible en este momento');
     }
   };
 
@@ -75,7 +74,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <BlurView intensity={80} style={StyleSheet.absoluteFill} />
+      <View style={styles.backgroundOverlay} />
       <Animated.View style={[styles.modalContent, { transform: [{ scale: scaleAnim }] }]}>
         <LinearGradient
           colors={['rgba(0,0,0,0.4)', 'transparent']}
@@ -94,7 +93,9 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
         )}
         {error && (
           <View style={styles.errorContainer}>
+            <FontAwesomeIcon icon={faVideoSlash} size={50} color="#FFFFFF" />
             <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.errorSubtext}>Por favor, inténtelo de nuevo más tarde.</Text>
           </View>
         )}
         {!error && videoUri && (
@@ -127,6 +128,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
+  },
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   modalContent: {
     width: width * 0.8,
@@ -195,9 +200,15 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 20,
     textAlign: 'center',
     padding: 20,
     fontWeight: 'bold',
+  },
+  errorSubtext: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+    opacity: 0.8,
   },
 });
