@@ -240,9 +240,7 @@ export const HomePage = () => {
 
   // Función para alternar la visibilidad del modal de video
   const toggleVideoModal = () => {
-    if (currentVideoUri) {
-      setIsVideoModalVisible(!isVideoModalVisible);
-    }
+    setIsVideoModalVisible(!isVideoModalVisible);
   };
 
   // Función para manejar la vista de descarga
@@ -256,13 +254,9 @@ export const HomePage = () => {
   return (
     <View style={styles.container}>
       {/* Pantalla de carga animada */}
-      <Animated.View 
-        style={[
-          styles.loadingContainer, 
-          { opacity: loadingOpacity }
-        ]}
-        pointerEvents={isLoading ? "auto" : "none"}
-      >
+      <Animated.View
+        style={[styles.loadingContainer, { opacity: loadingOpacity }]}
+        pointerEvents={isLoading ? "auto" : "none"}>
         <LottieView
           source={require("../../assets/animations/Map_loading.json")}
           autoPlay
@@ -279,11 +273,7 @@ export const HomePage = () => {
         <TouchableOpacity
           style={styles.menu_icon}
           onPress={() => navigation.openDrawer()}>
-          <FontAwesomeIcon
-            icon={faBars}
-            size={width * 0.06}
-            color="#FFFFFF"
-          />
+          <FontAwesomeIcon icon={faBars} size={width * 0.06} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* Botón de perfil */}
@@ -302,14 +292,8 @@ export const HomePage = () => {
         </TouchableOpacity>
 
         {/* Botón de búsqueda */}
-        <TouchableOpacity
-          style={styles.search_icon}
-          onPress={toggleSearchBar}>
-          <FontAwesomeIcon
-            icon={faRoute}
-            size={width * 0.06}
-            color="#FFFFFF"
-          />
+        <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
+          <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* Componente de búsqueda de ruta */}
@@ -378,9 +362,7 @@ export const HomePage = () => {
 
         {/* Botón para finalizar ruta */}
         {isRouteActive && (
-          <TouchableOpacity
-            style={styles.finalizeButton}
-            onPress={clearRoute}>
+          <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
             <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
           </TouchableOpacity>
         )}
@@ -392,13 +374,12 @@ export const HomePage = () => {
         />
 
         {/* Botón para ver video */}
-        {isRouteActive && currentVideoUri && (
+        {isRouteActive && (
           <TouchableOpacity
             style={styles.videoButton}
             onPress={toggleVideoModal}>
             <FontAwesomeIcon icon={faPlay} size={24} color="#FFFFFF" />
             <Text style={styles.videoButtonText}>Ver Video</Text>
-          
           </TouchableOpacity>
         )}
 
@@ -427,8 +408,8 @@ export const HomePage = () => {
 
 // Estilos del componente
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1 
+  container: {
+    flex: 1,
   },
   content: {
     flex: 1,
@@ -440,9 +421,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     zIndex: 1000,
   },
-  lottieAnimation: { 
-    width: width * 0.5, 
-    height: width * 0.5 
+  lottieAnimation: {
+    width: width * 0.5,
+    height: width * 0.5,
   },
   loadingText: {
     marginTop: 20,
@@ -489,14 +470,14 @@ const styles = StyleSheet.create({
     height: width * 0.06,
     borderRadius: (width * 0.06) / 2,
   },
-  imageContainer: { 
-    flex: 1 
+  imageContainer: {
+    flex: 1,
   },
-  image: { 
-    flex: 1, 
-    width: undefined, 
-    height: undefined, 
-    alignSelf: "stretch" 
+  image: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    alignSelf: "stretch",
   },
   finalizeButton: {
     position: "absolute",
