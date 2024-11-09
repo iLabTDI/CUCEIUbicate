@@ -66,7 +66,7 @@ export const Directory = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#007bff" />
-        <Text style={styles.headerTitle}>Cargando...</Text>
+        <Text style={styles.Cargando}>Cargando...</Text>
       </View>
     );
   }
@@ -152,6 +152,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginLeft: 10,
+  },
+  Cargando: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#007bff",
+    marginTop: 10,
   },
   content: {
     padding: 16,

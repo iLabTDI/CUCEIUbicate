@@ -1,66 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import * as FileSystem from "expo-file-system";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, act } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ErrorComponent } from "../Components/ErrorComponent";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faInfoCircle, faListUl, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faListUl, faBook, faGraduationCap, faUniversity, faUsers, faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Static JSON data
 import staticCidData from '../../../json/cid.json';
 
-const jsonFilePath = `${FileSystem.documentDirectory}cid.json`;
-// const cidUrl = "http://148.202.152.59:8001/json/cid";
-// const cidUrl = "http://localhost:8001/json/cid";
-
 export const CID = () => {
   const [jsonData, setJsonData] = useState(null);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const loadJson = async () => {
+  const loadJson = useCallback(async () => {
     try {
-      // Use static JSON data
       setJsonData(staticCidData);
       setError(null);
-
-      // Commented out for future use:
-      // const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-      // if (fileInfo.exists) {
-      //   console.log(` Loading existing file from: ${jsonFilePath}`);
-      //   const json = await FileSystem.readAsStringAsync(jsonFilePath);
-      //   setJsonData(JSON.parse(json));
-      //   setError(null);
-      // } else {
-      //   await downloadJson();
-      // }
+      setLoading(false);
     } catch (error) {
-      console.error(" Error loading data:", error);
+      console.error("Error loading data:", error);
       setError("No se pudo cargar el CID. Por favor, inténtalo de nuevo más tarde.");
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const downloadJson = async () => {
-    // Commented out for future use:
-    // try {
-    //   console.log(` Downloading from ${cidUrl}...`);
-    //   const response = await fetch(cidUrl);
-    //   if (!response.ok) {
-    //     throw new Error(`Error downloading from ${cidUrl}`);
-    //   }
-    //   const json = await response.json();
-    //   await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-    //   console.log(` File saved to: ${jsonFilePath}`);
-    //   setJsonData(json);
-    //   setError(null);
-    // } catch (error) {
-    //   console.error(" Error downloading file:", error);
-    //   setError("No se pudo descargar el CID. Por favor, verifica tu conexión a internet e intenta nuevamente.");
-    // }
-  };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setLoading(true);
+    // Simulate fetching data
+    setTimeout(() => {
+      setJsonData(staticCidData);
+      setRefreshing(false);
+      setLoading(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     loadJson();
-  }, []);
+  }, [loadJson]);
 
   if (error) {
     return (
@@ -73,7 +53,7 @@ export const CID = () => {
     );
   }
 
-  if (!jsonData) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0b34b0" />
@@ -82,14 +62,37 @@ export const CID = () => {
     );
   }
 
+  const getIcon = (title) => {
+    switch (title.toLowerCase()) {
+      case 'misión':
+        return faGraduationCap;
+      case 'visión':
+        return faLightbulb;
+      case 'objetivos':
+        return faBook;
+      case 'funciones':
+        return faUniversity;
+      default:
+        return faUsers;
+    }
+  };
+
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView 
+      style={styles.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <LinearGradient
+        colors={['#0b34b0', '#4a90e2']}
+        style={styles.header}
+      >
+        <FontAwesomeIcon icon={faBook} size={40} color="#FFFFFF" />
+        <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+      </LinearGradient>
       <View style={styles.content}>
         <View style={styles.card}>
-          <View style={styles.titleContainer}>
-            <FontAwesomeIcon icon={faInfoCircle} size={24} color="#0b34b0" />
-            <Text style={styles.title}>{jsonData.section_description.name}</Text>
-          </View>
           {jsonData.section_description.description.map((desc, index) => (
             <Text key={index} style={styles.descriptionText}>
               {desc}
@@ -100,13 +103,14 @@ export const CID = () => {
           ([subsectionId, subsection]) => (
             <View key={subsectionId} style={styles.card}>
               <View style={styles.subsectionTitleContainer}>
-                <FontAwesomeIcon icon={faListUl} size={20} color="#0b34b0" />
+                <FontAwesomeIcon icon={getIcon(subsection.title)} size={24} color="#0b34b0" />
                 <Text style={styles.subsectionTitle}>{subsection.title}</Text>
               </View>
               {Object.values(subsection["listed-elements"]).map((element, index) => (
-                <Text key={index} style={styles.descriptionText}>
-                  • {element}
-                </Text>
+                <View key={index} style={styles.listItemContainer}>
+                  <FontAwesomeIcon icon={faListUl} size={16} color="#4a90e2" style={styles.listItemIcon} />
+                  <Text style={styles.listItemText}>{element}</Text>
+                </View>
               ))}
             </View>
           )
@@ -120,6 +124,21 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginTop: 10,
+    textAlign: 'center',
+    marginLeft: 10,
   },
   content: {
     padding: 20,
@@ -135,28 +154,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 5,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#0b34b0",
-    marginLeft: 10,
-  },
   subsectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 15,
-    marginBottom: 10,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    paddingBottom: 10,
   },
   subsectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#0b34b0",
     marginLeft: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
   loadingText: {
     marginTop: 10,
@@ -169,11 +185,20 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 8,
   },
-  loadingContainer: {
+  listItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  listItemIcon: {
+    marginTop: 4,
+    marginRight: 10,
+  },
+  listItemText: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    fontSize: 16,
+    color: "#333333",
+    lineHeight: 24,
   },
 });
 
