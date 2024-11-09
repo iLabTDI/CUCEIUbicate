@@ -5033,22 +5033,19 @@
     {
       "tag": "Easter_Egg_Creadores",
       "patterns": [
-        "¿Quiénes crearon este chatbot?",
-        "¿Quién está detrás de este bot?",
-        "¿Quiénes son los creadores?",
-        "¿Quién hizo este chatbot?",
-        "creadores"
+          "¿Quiénes crearon este chatbot?",
+          "¿Quién está detrás de este bot?",
+          "¿Quiénes son los creadores?",
+          "¿Quién hizo este chatbot?",
+          "creadores"
       ],
       "responses": [
-        "✨ Esta App fue creado con mucha dedicación y cariño por Yair, Natte y Montse. 💻💡",
-        "Detrás de este bot hay tres mentes brillantes y creativas: Yair, Natte y Montse, quienes dedicaron tiempo y pasión para hacerlo posible. 🌟",
-        "🤖 Este bot es el fruto del trabajo de Yair, Natte y Montse, ¡tres amigos con un gran amor por la tecnología! Gracias a ellos, el bot puede ayudarte en cada momento. 😊",
-        "¿Sabías que este bot tiene un corazón? 🫀 ¡Es el de sus creadores, Yair, Natte y Montse, quienes lo construyeron con mucho esfuerzo y dedicación! ❤️"
+          "✨ Esta App fue creada con mucha dedicación y cariño por Yair, Natte y Montse. 💻💡"
       ],
-      "action": "redirect",
-      "url": "https://faceauthenticator.netlify.app/"
-    },
-    {
+      "action": "navigateToScreen",
+      "screen": "EasterEgg"
+  },
+  {
       "tag": "Easter_Egg_Sorpresa",
       "patterns": [
           "easter egg",
@@ -5060,8 +5057,8 @@
       "responses": [
           "✨¡Has descubierto el Easter Egg!✨ ¡Prepárate para una sorpresa especial! 🎉"
       ],
-      "action": "redirect",
-      "url": "https://https://faceauthenticator.netlify.app/"
-  }  
+      "action": "navigateToScreen",
+      "screen": "EasterEgg"
+  }
   ]
 }

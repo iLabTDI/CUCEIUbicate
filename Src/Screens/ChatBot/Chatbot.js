@@ -22,6 +22,7 @@ import { BlurView } from "expo-blur";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 import handleGenericAPIRequest from "../ChatBot/api";
 import intents from "../ChatBot/intents.json";
@@ -81,6 +82,7 @@ export const Chatbot = () => {
   const flatListRef = useRef();
   const appState = useRef(AppState.currentState);
   const lastActivityTime = useRef(Date.now());
+  const navigation = useNavigation(); 
 
   useEffect(() => {
     checkFirstVisit();
@@ -259,6 +261,8 @@ export const Chatbot = () => {
       .replace(/[\u0300-\u036f]/g, "");
   };
 
+
+  // Función para obtener respuesta desde los intents y redirigir si es necesario
   const getResponseFromIntents = (message) => {
     const normalizedMessage = normalizeString(message);
 
@@ -272,12 +276,10 @@ export const Chatbot = () => {
           normalizedMessage.includes(pattern)
         )
       ) {
-        if (intent.action === "redirect" && intent.url) {
-          // Redirige a la URL si es un Easter egg
-          Linking.openURL(intent.url).catch((err) =>
-            console.error("Error al abrir la URL:", err)
-          );
-          return intent.responses[0]; // Mensaje opcional antes de redirigir
+        if (intent.action === "navigateToScreen") {
+          // Redirige a la pantalla especificada en intent.screen
+          navigation.navigate(intent.screen);
+          return intent.responses[0]; // Muestra un mensaje opcional antes de redirigir
         } else {
           return intent.responses[
             Math.floor(Math.random() * intent.responses.length)
@@ -287,6 +289,35 @@ export const Chatbot = () => {
     }
     return null;
   };
+
+  // const getResponseFromIntents = (message) => {
+  //   const normalizedMessage = normalizeString(message);
+
+  //   for (const intent of intents.intents) {
+  //     const normalizedPatterns = intent.patterns.map((pattern) =>
+  //       normalizeString(pattern)
+  //     );
+
+  //     if (
+  //       normalizedPatterns.some((pattern) =>
+  //         normalizedMessage.includes(pattern)
+  //       )
+  //     ) {
+  //       if (intent.action === "redirect" && intent.url) {
+  //         // Redirige a la URL si es un Easter egg
+  //         Linking.openURL(intent.url).catch((err) =>
+  //           console.error("Error al abrir la URL:", err)
+  //         );
+  //         return intent.responses[0]; // Mensaje opcional antes de redirigir
+  //       } else {
+  //         return intent.responses[
+  //           Math.floor(Math.random() * intent.responses.length)
+  //         ];
+  //       }
+  //     }
+  //   }
+  //   return null;
+  // };
 
   const renderMessage = ({ item }) => (
     <Animatable.View
