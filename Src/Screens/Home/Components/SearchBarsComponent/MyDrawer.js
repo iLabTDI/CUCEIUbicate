@@ -43,7 +43,8 @@ import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
 import { Chatbot } from "../../../ChatBot/Chatbot";
-import { FileManagement } from "../../../Archivos/FileManagement";
+import { FileManagement } from "../../Routes/FileManagement";
+import EasterEgg from "../../../EasterEgg";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
@@ -293,6 +294,7 @@ export const MyDrawer = () => {
       <Drawer.Screen
         name="FileManagementScreen"
         component={FileManagement}
+        initialParams={{ user }}
         options={{
           drawerLabel: "Manejo de Descargas",
           drawerIcon: ({ color, size }) => (
@@ -300,6 +302,18 @@ export const MyDrawer = () => {
           ),
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Manejo de Descargas" icon={faArchive} />,
+        }}
+      />
+      <Drawer.Screen
+        name="EasterEgg"
+        component={EasterEgg}
+        options={{
+          drawerLabel: "EasterEgg",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faArchive} size={size} color={color} />
+          ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="EasterEgg" icon={faArchive} />,
         }}
       />
     </Drawer.Navigator>
