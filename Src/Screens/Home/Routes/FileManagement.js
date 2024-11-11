@@ -1,33 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  SafeAreaView,
-  Alert,
-  Dimensions,
+  View, StyleSheet, Text, ScrollView, TouchableOpacity, 
+  ActivityIndicator, SafeAreaView, Alert, Dimensions,
 } from 'react-native';
 import { supabase } from '../../../Api/lib/supabase';
 import * as FileSystem from 'expo-file-system';
 import * as Network from 'expo-network';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
-  faCloudDownloadAlt,
-  faTrashAlt,
-  faPause,
-  faPlay,
-  faGraduationCap,
-  faCode,
-  faIndustry,
-  faFlask,
-  faCog,
-  faPencilRuler,
-  faChartLine,
-  faLandmark,
-  faUserTie,
+  faCloudDownloadAlt, faTrashAlt, faPause, faPlay,
+  faGraduationCap, faCode, faIndustry, faFlask, faCog,
+  faPencilRuler, faChartLine, faLandmark, faBuilding,
+  faMicroscope, faAtom, faDatabase, faNetworkWired,
+  faRobot, faCalculator, faLeaf, faDna, faVial, faBrain,
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -36,10 +21,36 @@ const BATCH_SIZE = 5;
 const CACHE_KEY = 'downloadedFiles';
 const { width } = Dimensions.get('window');
 
+const CAREER_INFO = {
+  ICIV: { name: 'Ingeniería Civil', icon: faBuilding, color: '#FF5722' },
+  IGFO: { name: 'Ingeniería en Fotónica', icon: faCalculator, color: '#9C27B0' },
+  INBI: { name: 'Ingeniería Biomédica', icon: faMicroscope, color: '#4CAF50' },
+  INCE: { name: 'Ingeniería en Comunicaciones y Electrónica', icon: faAtom, color: '#2196F3' },
+  INCO: { name: 'Ingeniería en Computación', icon: faCode, color: '#3F51B5' },
+  INDU: { name: 'Ingeniería Industrial', icon: faIndustry, color: '#FF9800' },
+  INFO: { name: 'Ingeniería en Informática', icon: faDatabase, color: '#009688' },
+  INME: { name: 'Ingeniería Mecánica Eléctrica', icon: faCog, color: '#607D8B' },
+  INQU: { name: 'Ingeniería Química', icon: faFlask, color: '#E91E63' },
+  INRO: { name: 'Ingeniería en Robótica', icon: faRobot, color: '#795548' },
+  ITOG: { name: 'Ingeniería en Topografía Geomática', icon: faNetworkWired, color: '#00BCD4' },
+  LCMA: { name: 'Licenciatura en Ciencia de Materiales', icon: faChartLine, color: '#CDDC39' },
+  'LIAB/LINA': { name: 'Ingeniería en Alimentos y Biotecnología', icon: faLeaf, color: '#8BC34A' },
+  LIFI: { name: 'Licenciatura en Física', icon: faBrain, color: '#673AB7' },
+  LIMA: { name: 'Licenciatura en Matemáticas', icon: faPencilRuler, color: '#FFC107' },
+  LCGT: { name: 'Ingeniería en Logística y Transporte', icon: faLandmark, color: '#03A9F4' },
+  LQFB: { name: 'Licenciatura en Químico Farmacéutico Biólogo', icon: faDna, color: '#F44336' },
+  LQUI: { name: 'Licenciatura en Química', icon: faVial, color: '#9C27B0' },
+};
+
+const isFileAlreadyDownloaded = async (fileName) => {
+  const cachedFiles = await AsyncStorage.getItem(CACHE_KEY);
+  const downloadedFiles = cachedFiles ? JSON.parse(cachedFiles) : {};
+  return !!downloadedFiles[fileName];
+};
+
 export const FileManagement = ({ route }) => {
   const [divisions, setDivisions] = useState([]);
   const [divisionData, setDivisionData] = useState({});
-  const [selectedDivision, setSelectedDivision] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState({});
   const [downloadStatus, setDownloadStatus] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +67,7 @@ export const FileManagement = ({ route }) => {
     try {
       const networkStatus = await Network.getNetworkStateAsync();
       setIsConnected(networkStatus.isConnected);
+      console.log('Network status:', networkStatus.isConnected ? 'Connected' : 'Disconnected');
       return networkStatus.isConnected;
     } catch (error) {
       console.error('Error al verificar la conexión de red:', error);
@@ -66,20 +78,26 @@ export const FileManagement = ({ route }) => {
 
   const fetchDivisions = useCallback(async () => {
     try {
+      console.log('Fetching divisions...');
       const { data, error } = await supabase.storage
         .from('route_images')
         .list('');
 
       if (error) throw error;
 
-      const divisionFolders = data
+      let divisionFolders = data
         .filter((item) => item.name.startsWith('Rutas_'))
         .map((folder) => folder.name.replace('Rutas_', ''));
-      setDivisions(divisionFolders);
 
       if (userDivision && divisionFolders.includes(userDivision)) {
-        setSelectedDivision(userDivision);
+        divisionFolders = [
+          userDivision,
+          ...divisionFolders.filter(div => div !== userDivision)
+        ];
       }
+
+      setDivisions(divisionFolders);
+      console.log('Divisions fetched:', divisionFolders);
 
       await Promise.all(divisionFolders.map(fetchDivisionData));
     } catch (error) {
@@ -92,10 +110,11 @@ export const FileManagement = ({ route }) => {
         },
       ]);
     }
-  }, [userDivision]);
+  }, [userDivision, fetchDivisionData]);
 
   const fetchDivisionData = useCallback(async (division) => {
     try {
+      console.log(`Fetching data for division: ${division}`);
       const { data, error } = await supabase.storage
         .from('route_images')
         .list(`Rutas_${division}`, {
@@ -109,27 +128,26 @@ export const FileManagement = ({ route }) => {
       const cachedFiles = await AsyncStorage.getItem(CACHE_KEY);
       const downloadedFiles = cachedFiles ? JSON.parse(cachedFiles) : {};
 
-      const fileInfos = data
-        .filter((file) => file.name.endsWith('.webp'))
-        .map((file) => ({
-          name: file.name,
-          size: file.metadata.size,
-          downloaded: !!downloadedFiles[`Rutas_${division}/${file.name}`],
-        }));
-
-      const totalSize = fileInfos.reduce((acc, file) => acc + file.size, 0);
-      const downloadedSize = fileInfos
-        .filter((file) => file.downloaded)
-        .reduce((acc, file) => acc + file.size, 0);
+      const { fileInfos, totalSize, downloadedSize, fileCount } = data.reduce((acc, file) => {
+        if (file.name.endsWith('.webp')) {
+          const fileInfo = {
+            name: file.name,
+            size: file.metadata.size,
+            downloaded: !!downloadedFiles[`Rutas_${division}/${file.name}`],
+          };
+          acc.fileInfos.push(fileInfo);
+          acc.totalSize += fileInfo.size;
+          if (fileInfo.downloaded) {
+            acc.downloadedSize += fileInfo.size;
+          }
+          acc.fileCount++;
+        }
+        return acc;
+      }, { fileInfos: [], totalSize: 0, downloadedSize: 0, fileCount: 0 });
 
       setDivisionData((prev) => ({
         ...prev,
-        [division]: {
-          files: fileInfos,
-          totalSize,
-          downloadedSize,
-          fileCount: fileInfos.length,
-        },
+        [division]: { files: fileInfos, totalSize, downloadedSize, fileCount },
       }));
 
       setDownloadProgress((prev) => ({
@@ -141,6 +159,8 @@ export const FileManagement = ({ route }) => {
         ...prev,
         [division]: downloadedSize === totalSize && totalSize > 0 ? 'completed' : 'idle',
       }));
+
+      console.log(`Data fetched for division ${division}:`, { fileCount, totalSize, downloadedSize });
     } catch (error) {
       console.error(
         `Error al obtener datos de la división ${division}:`,
@@ -166,6 +186,7 @@ export const FileManagement = ({ route }) => {
         return;
       }
 
+      console.log(`Starting download for division: ${division}`);
       setDownloadStatus((prev) => ({ ...prev, [division]: 'downloading' }));
       cancelDownloadRef.current[division] = false;
       const { files, totalSize } = divisionData[division];
@@ -173,16 +194,16 @@ export const FileManagement = ({ route }) => {
         .filter((file) => file.downloaded)
         .reduce((acc, file) => acc + file.size, 0);
       const filesToDownload = files.filter((file) => !file.downloaded);
-      const totalBatches = Math.ceil(filesToDownload.length / BATCH_SIZE);
+      const batches = [];
+
+      for (let i = 0; i < filesToDownload.length; i += BATCH_SIZE) {
+        batches.push(filesToDownload.slice(i, i + BATCH_SIZE));
+      }
 
       try {
-        for (let i = 0; i < totalBatches; i++) {
+        for (const batch of batches) {
           if (cancelDownloadRef.current[division]) break;
 
-          const batch = filesToDownload.slice(
-            i * BATCH_SIZE,
-            (i + 1) * BATCH_SIZE
-          );
           const downloadedFiles = await downloadBatch(batch, division);
 
           downloadedFiles.forEach((file) => {
@@ -204,6 +225,8 @@ export const FileManagement = ({ route }) => {
             CACHE_KEY,
             JSON.stringify(downloadedFilesCache)
           );
+
+          console.log(`Batch downloaded for ${division}. Progress: ${progress.toFixed(2)}%`);
         }
 
         if (!cancelDownloadRef.current[division]) {
@@ -213,9 +236,11 @@ export const FileManagement = ({ route }) => {
               'Éxito',
               `Todos los archivos de ${division} se han descargado correctamente.`
             );
+            console.log(`Download completed for division: ${division}`);
           }
         } else {
           setDownloadStatus((prev) => ({ ...prev, [division]: 'paused' }));
+          console.log(`Download paused for division: ${division}`);
         }
       } catch (error) {
         console.error(`Error al descargar archivos de ${division}:`, error);
@@ -237,6 +262,7 @@ export const FileManagement = ({ route }) => {
   );
 
   const downloadBatch = async (batch, division) => {
+    console.log(`Downloading batch for division: ${division}. Batch size: ${batch.length}`);
     const downloadPromises = batch.map((file) => downloadFile(file, division));
     const results = await Promise.allSettled(downloadPromises);
 
@@ -260,6 +286,7 @@ export const FileManagement = ({ route }) => {
       })),
     ]);
 
+    console.log(`Batch download complete. Successful: ${successfulDownloads.length}, Failed: ${failedDownloads.length}`);
     return successfulDownloads;
   };
 
@@ -268,7 +295,14 @@ export const FileManagement = ({ route }) => {
       throw new Error('Descarga cancelada');
     }
 
+    const fileName = `Rutas_${division}/${file.name}`;
+    if (await isFileAlreadyDownloaded(fileName)) {
+      console.log(`File ${file.name} is already downloaded. Skipping.`);
+      return { ...file, downloaded: true };
+    }
+
     try {
+      console.log(`Downloading file: ${file.name}`);
       const { data, error } = await supabase.storage
         .from('route_images')
         .download(`Rutas_${division}/${file.name}`);
@@ -295,10 +329,12 @@ export const FileManagement = ({ route }) => {
         encoding: FileSystem.EncodingType.Base64,
       });
 
+      console.log(`File ${file.name} downloaded successfully`);
       return { ...file, downloaded: true };
     } catch (error) {
       console.error(`Error al descargar ${file.name}:`, error);
       if (retryCount < 3) {
+        console.log(`Retrying download for ${file.name}. Attempt ${retryCount + 1}`);
         await new Promise((resolve) => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
         return downloadFile(file, division, retryCount + 1);
       } else {
@@ -309,6 +345,7 @@ export const FileManagement = ({ route }) => {
 
   const deleteFiles = async (division) => {
     try {
+      console.log(`Deleting files for division: ${division}`);
       const { files } = divisionData[division];
       for (const file of files) {
         const localUri = `${FileSystem.documentDirectory}${division}_${file.name}`;
@@ -334,6 +371,7 @@ export const FileManagement = ({ route }) => {
         'Éxito',
         `Todos los archivos de ${division} han sido eliminados.`
       );
+      console.log(`Files deleted successfully for division: ${division}`);
     } catch (error) {
       console.error(`Error al eliminar archivos de ${division}:`, error);
       setErrorLog((prev) => [
@@ -353,11 +391,13 @@ export const FileManagement = ({ route }) => {
   const pauseDownload = (division) => {
     cancelDownloadRef.current[division] = true;
     setDownloadStatus((prev) => ({ ...prev, [division]: 'paused' }));
+    console.log(`Download paused for division: ${division}`);
   };
 
   const resumeDownload = (division) => {
     cancelDownloadRef.current[division] = false;
     downloadFiles(division);
+    console.log(`Download resumed for division: ${division}`);
   };
 
   const formatSize = (bytes) => {
@@ -366,20 +406,6 @@ export const FileManagement = ({ route }) => {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
-
-  const getCareerIcon = (division) => {
-    const icons = {
-      INNI: faCode,
-      IIS: faIndustry,
-      IQ: faFlask,
-      IMT: faCog,
-      IC: faPencilRuler,
-      IMA: faChartLine,
-      LAE: faLandmark,
-      LCPF: faUserTie,
-    };
-    return icons[division] || faGraduationCap;
   };
 
   useEffect(() => {
@@ -401,125 +427,148 @@ export const FileManagement = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <LinearGradient colors={['#0033A0', '#00254D']} style={styles.gradient}> */}
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Gestión de Archivos</Text>
-            <Text style={styles.description}>
-              Descarga y elimina archivos de rutas por división
-            </Text>
-          </View>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Gestión de Archivos</Text>
+          <Text style={styles.description}>
+            Descarga y elimina archivos de rutas por división
+          </Text>
+        </View>
 
-          {isLoading ? (
-            <ActivityIndicator
-              size="large"
-              color="#FFFFFF"
-              style={styles.loader}
-            />
-          ) : (
-            <View style={styles.content}>
-              {divisions.map((division) => {
-                const icon = getCareerIcon(division);
-                return (
-                  <View key={division} style={styles.divisionCard}>
-                    <LinearGradient
-                      colors={['#FFFFFF', '#F0F0F0']}
-                      style={styles.cardGradient}>
-                      <View style={styles.divisionHeader}>
-                        <View style={styles.iconContainer}>
-                          <FontAwesomeIcon
-                            icon={icon}
-                            size={24}
-                            color="#0033A0"
-                          />
-                        </View>
-                        <Text style={styles.divisionTitle}>{division}</Text>
-                      </View>
-                      <View style={styles.divisionInfo}>
-                        <Text style={styles.infoText}>
-                          Archivos: {divisionData[division]?.fileCount || 0}
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#3F51B5" style={styles.loader} />
+        ) : (
+          <View style={styles.content}>
+            {divisions.map((division) => {
+              const careerInfo = CAREER_INFO[division] || { 
+                name: division, 
+                icon: faGraduationCap, 
+                color: '#757575' 
+              };
+              const isUserDivision = division === userDivision;
+              return (
+                <View 
+                  key={division} 
+                  style={[
+                    styles.divisionCard,
+                    isUserDivision && styles.userDivisionCard,
+                  ]}
+                >
+                  {isUserDivision && (
+                    <View style={styles.userIndicator}>
+                      <Text style={styles.userIndicatorText}>Tu carrera</Text>
+                    </View>
+                  )}
+                  <LinearGradient
+                    colors={[careerInfo.color, careerInfo.color + '80']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.cardHeader}
+                  >
+                    <View style={styles.iconContainer}>
+                      <FontAwesomeIcon icon={careerInfo.icon} size={28} color="#FFFFFF" />
+                    </View>
+                    <View style={styles.headerTextContainer}>
+                      <Text style={styles.divisionTitle}>{division}</Text>
+                      <Text style={styles.divisionSubtitle}>{careerInfo.name}</Text>
+                    </View>
+                  </LinearGradient>
+                  <View style={styles.cardContent}>
+                    <View style={styles.divisionInfo}>
+                      <View style={styles.infoItem}>
+                        <Text style={styles.infoLabel}>Archivos</Text>
+                        <Text style={styles.infoValue}>
+                          {divisionData[division]?.fileCount || 0}
                         </Text>
-                        <Text style={styles.infoText}>
-                          Tamaño: {formatSize(divisionData[division]?.totalSize || 0)}
+                      </View>
+                      <View style={styles.infoItem}>
+                        <Text style={styles.infoLabel}>Tamaño Total</Text>
+                        <Text style={styles.infoValue}>
+                          {formatSize(divisionData[division]?.totalSize || 0)}
                         </Text>
                       </View>
-                      <View style={styles.progressContainer}>
-                        <View style={styles.progressBarContainer}>
-                          <View
-                            style={[
-                              styles.progressBar,
-                              { width: `${downloadProgress[division] || 0}%` },
-                            ]}
-                          />
-                        </View>
-                        <Text style={styles.progressText}>
-                          {`${Math.round(downloadProgress[division] || 0)}%`}
-                        </Text>
+                    </View>
+                    <View style={styles.progressContainer}>
+                      <View style={styles.progressBarContainer}>
+                        <LinearGradient
+                          colors={[careerInfo.color, careerInfo.color + '80']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 0 }}
+                          style={[
+                            styles.progressBar,
+                            { width: `${downloadProgress[division] || 0}%` },
+                          ]}
+                        />
                       </View>
-                      <View style={styles.buttonContainer}>
-                        {downloadStatus[division] === 'downloading' ? (
-                          <TouchableOpacity
-                            style={[styles.button, styles.pauseButton]}
-                            onPress={() => pauseDownload(division)}>
-                            <FontAwesomeIcon
-                              icon={faPause}
-                              color="#FFFFFF"
-                              size={16}
-                              style={styles.buttonIcon}
-                            />
-                            <Text style={styles.buttonText}>Pausar</Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <TouchableOpacity
-                            style={[
-                              styles.button,
-                              styles.downloadButton,
-                              downloadStatus[division] === 'completed' &&
-                                styles.disabledButton,
-                            ]}
-                            onPress={() =>
-                              downloadStatus[division] === 'paused'
-                                ? resumeDownload(division)
-                                : downloadFiles(division)
-                            }
-                            disabled={downloadStatus[division] === 'completed'}>
-                            <FontAwesomeIcon
-                              icon={
-                                downloadStatus[division] === 'paused'
-                                  ? faPlay
-                                  : faCloudDownloadAlt
-                              }
-                              color="#FFFFFF"
-                              size={16}
-                              style={styles.buttonIcon}
-                            />
-                            <Text style={styles.buttonText}>
-                              {downloadStatus[division] === 'paused'
-                                ? 'Reanudar'
-                                : 'Descargar'}
-                            </Text>
-                          </TouchableOpacity>
-                        )}
+                      <Text style={styles.progressText}>
+                        {`${Math.round(downloadProgress[division] || 0)}%`}
+                      </Text>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                      {downloadStatus[division] === 'downloading' ? (
                         <TouchableOpacity
-                          style={[styles.button, styles.deleteButton]}
-                          onPress={() => deleteFiles(division)}>
+                          style={[styles.button, { backgroundColor: '#FFA000' }]}
+                          onPress={() => pauseDownload(division)}>
                           <FontAwesomeIcon
-                            icon={faTrashAlt}
+                            icon={faPause}
                             color="#FFFFFF"
                             size={16}
                             style={styles.buttonIcon}
                           />
-                          <Text style={styles.buttonText}>Eliminar</Text>
+                          <Text style={styles.buttonText}>Pausar</Text>
                         </TouchableOpacity>
-                      </View>
-                    </LinearGradient>
+                      ) : (
+                        <TouchableOpacity
+                          style={[
+                            styles.button,
+                            { backgroundColor: careerInfo.color },
+                            downloadStatus[division] === 'completed' && styles.disabledButton,
+                          ]}
+                          onPress={() =>
+                            downloadStatus[division] === 'paused'
+                              ? resumeDownload(division)
+                              : downloadFiles(division)
+                          }
+                          disabled={downloadStatus[division] === 'completed'}>
+                          <FontAwesomeIcon
+                            icon={
+                              downloadStatus[division] === 'paused'
+                                ? faPlay
+                                : faCloudDownloadAlt
+                            }
+                            color="#FFFFFF"
+                            size={16}
+                            style={styles.buttonIcon}
+                          />
+                          <Text style={styles.buttonText}>
+                            {downloadStatus[division] === 'paused'
+                              ? 'Reanudar'
+                              : 'Descargar'}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      <TouchableOpacity
+                        style={[styles.button, { backgroundColor: '#FF5252' }]}
+                        onPress={() => deleteFiles(division)}>
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          color="#FFFFFF"
+                          size={16}
+                          style={styles.buttonIcon}
+                        />
+                        <Text style={styles.buttonText}>Eliminar</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                );
-              })}
-            </View>
-          )}
-        </ScrollView>
-      {/* </LinearGradient> */}
+                </View>
+              );
+            })}
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -527,9 +576,7 @@ export const FileManagement = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  gradient: {
-    flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   scrollContent: {
     flexGrow: 1,
@@ -540,110 +587,158 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#0033A0',
+    color: '#333333',
     marginBottom: 8,
+    textAlign: 'center',
   },
   description: {
     fontSize: 16,
-    color: '#0033A0',
+    color: '#666666',
     textAlign: 'center',
+    marginTop: 8,
   },
   content: {
     flex: 1,
   },
   divisionCard: {
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 16,
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     overflow: 'hidden',
   },
-  cardGradient: {
-    padding: 16,
+  userDivisionCard: {
+    borderWidth: 2,
+    borderColor: '#3F51B5',
   },
-  divisionHeader: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    padding: 16,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  cardContent: {
+    padding: 16,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F0',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   divisionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#0033A0',
+    color: '#FFFFFF',
+  },
+  divisionSubtitle: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    opacity: 0.9,
+    marginTop: 4,
   },
   divisionInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  infoText: {
+  infoItem: {
+    alignItems: 'center',
+  },
+  infoLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#666666',
+    marginBottom: 4,
+  },
+  infoValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
   },
   progressContainer: {
     marginBottom: 16,
   },
   progressBarContainer: {
-    height: 8,
+    height: 10,
     backgroundColor: '#E0E0E0',
-    borderRadius: 4,
+    borderRadius: 5,
     overflow: 'hidden',
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 4,
+    borderRadius: 5,
   },
   progressText: {
     marginTop: 4,
-    fontSize: 12,
-    color: '#666',
+    fontSize: 14,
+    color: '#666666',
     textAlign: 'right',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
   button: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 12,
     borderRadius: 8,
-    flex: 1,
-    marginHorizontal: 4,
+    elevation: 2,
   },
   buttonIcon: {
     marginRight: 8,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
-  },
-  downloadButton: {
-    backgroundColor: '#0033A0',
-  },
-  pauseButton: {
-    backgroundColor: '#FFA000',
-  },
-  deleteButton: {
-    backgroundColor: '#FF5252',
   },
   disabledButton: {
     opacity: 0.5,
   },
   loader: {
     marginTop: 20,
+  },
+  userIndicator: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  userIndicatorText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  titleGradient: {
+    marginVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  titleText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
 });
 
