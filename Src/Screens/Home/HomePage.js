@@ -190,43 +190,47 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
-  // Función para manejar la búsqueda de rutas
-  const handleSearch = async ({ searchKey, reverseSearchKey }) => {
-    console.log("onSearch:", { searchKey, reverseSearchKey });
-    try {
-      const localUri = `${FileSystem.documentDirectory}${searchKey}.webp`;
-      const fileExists = await FileSystem.getInfoAsync(localUri);
+  // Función para encontrar un archivo coincidente sin importar el prefijo
+const getMatchingUri = async (searchKey) => {
+  try {
+    const directoryContent = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
 
-      if (fileExists.exists) {
-        setSelectedRouteImage(localUri);
-        setCurrentMapImage({ uri: localUri });
-        setIsRouteActive(true);
-        const videoUri =
-          routeVideos[searchKey] || routeVideos[reverseSearchKey];
-        setCurrentVideoUri(videoUri);
-        setShowSearchBar(false);
-        return;
-      }
+    // Crear una expresión regular para eliminar los prefijos
+    const prefixRegex = /^([A-Z]+)_/;
 
-      const reverseLocalUri = `${FileSystem.documentDirectory}${reverseSearchKey}.webp`;
-      const reverseFileExists = await FileSystem.getInfoAsync(reverseLocalUri);
+    // Buscar un archivo cuyo nombre contenga el searchKey después de quitar el prefijo
+    const matchingFile = directoryContent.find(fileName => fileName.replace(prefixRegex, '') === `${searchKey}.webp`);
 
-      if (reverseFileExists.exists) {
-        setSelectedRouteImage(reverseLocalUri);
-        setCurrentMapImage({ uri: reverseLocalUri });
-        setIsRouteActive(true);
-        const videoUri =
-          routeVideos[searchKey] || routeVideos[reverseSearchKey];
-        setCurrentVideoUri(videoUri);
-        setShowSearchBar(false);
-        return;
-      }
+    return matchingFile ? `${FileSystem.documentDirectory}${matchingFile}` : null;
+  } catch (error) {
+    console.error('Error al buscar archivos en el directorio:', error);
+    return null;
+  }
+};
 
-      Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
-    } catch (error) {
-      console.error("Error al buscar ruta:", error);
+// Modificación de la función handleSearch
+const handleSearch = async ({ searchKey, reverseSearchKey }) => {
+  console.log("onSearch:", { searchKey, reverseSearchKey });
+  try {
+    // Buscar la URI del archivo que coincida con searchKey o reverseSearchKey
+    const localUri = await getMatchingUri(searchKey) || await getMatchingUri(reverseSearchKey);
+
+    if (localUri) {
+      console.log("Archivo encontrado:", localUri);
+      setSelectedRouteImage(localUri);
+      setCurrentMapImage({ uri: localUri });
+      setIsRouteActive(true);
+      const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+      setCurrentVideoUri(videoUri);
+      setShowSearchBar(false);
+      return;
     }
-  };
+
+    Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
+  } catch (error) {
+    console.error("Error al buscar ruta:", error);
+  }
+};
 
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
