@@ -28,6 +28,7 @@ import {
   faHandsHelping,
   faRobot,
   faArchive,
+  faFileDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -44,7 +45,7 @@ import { CID } from "../../../ScolarServices/CID";
 import { LinearGradient } from "expo-linear-gradient";
 import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
-import EasterEgg from "../../../EasterEgg";
+import EasterEgg from "../../../EasterEgg/EasterEgg";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
@@ -296,12 +297,12 @@ export const MyDrawer = () => {
         component={FileManagement}
         initialParams={{ user }}
         options={{
-          drawerLabel: "Manejo de Descargas",
+          drawerLabel: "Gestion de Archivos",
           drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faArchive} size={size} color={color} />
+            <FontAwesomeIcon icon={faFileDownload} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="Manejo de Descargas" icon={faArchive} />,
+          headerTitle: () => <HeaderWithIcon title="Gestion de Archivos" icon={faFileDownload} />,
         }}
       />
       <Drawer.Screen
