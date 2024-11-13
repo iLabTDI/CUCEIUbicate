@@ -13,6 +13,8 @@ import {
   faPencilRuler, faChartLine, faLandmark, faBuilding,
   faMicroscope, faAtom, faDatabase, faNetworkWired,
   faRobot, faCalculator, faLeaf, faDna, faVial, faBrain,
+  faFileDownload,
+  faBus,
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,9 +28,9 @@ const CAREER_INFO = {
   IGFO: { name: 'Ingeniería en Fotónica', icon: faCalculator, color: '#9C27B0' },
   INBI: { name: 'Ingeniería Biomédica', icon: faMicroscope, color: '#4CAF50' },
   INCE: { name: 'Ingeniería en Comunicaciones y Electrónica', icon: faAtom, color: '#2196F3' },
-  INCO: { name: 'Ingeniería en Computación', icon: faCode, color: '#3F51B5' },
+  INCO: { name: 'Ingeniería en Computación', icon: faCode, color: '#009688' },
   INDU: { name: 'Ingeniería Industrial', icon: faIndustry, color: '#FF9800' },
-  INFO: { name: 'Ingeniería en Informática', icon: faDatabase, color: '#009688' },
+  INFO: { name: 'Ingeniería en Informática', icon: faCode, color: '#3F51B5' },
   INME: { name: 'Ingeniería Mecánica Eléctrica', icon: faCog, color: '#607D8B' },
   INQU: { name: 'Ingeniería Química', icon: faFlask, color: '#E91E63' },
   INRO: { name: 'Ingeniería en Robótica', icon: faRobot, color: '#795548' },
@@ -40,6 +42,7 @@ const CAREER_INFO = {
   LCGT: { name: 'Ingeniería en Logística y Transporte', icon: faLandmark, color: '#03A9F4' },
   LQFB: { name: 'Licenciatura en Químico Farmacéutico Biólogo', icon: faDna, color: '#F44336' },
   LQUI: { name: 'Licenciatura en Química', icon: faVial, color: '#9C27B0' },
+  LOGT: { name: 'Ingeniería en Logística y Transporte', icon: faBus, color: '#808080' },
 };
 
 const isFileAlreadyDownloaded = async (fileName) => {
@@ -431,15 +434,25 @@ export const FileManagement = ({ route }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Gestión de Archivos</Text>
-          <Text style={styles.description}>
-            Descarga y elimina archivos de rutas por división
-          </Text>
-        </View>
+        <LinearGradient
+          colors={['#0D47A1', '#1976D2']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <View style={styles.iconContainer}>
+            <FontAwesomeIcon icon={faFileDownload} size={36} color="#FFFFFF" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>Gestión de Archivos</Text>
+            <Text style={styles.description}>
+              Descarga y elimina archivos de rutas por división
+            </Text>
+          </View>
+        </LinearGradient>
 
         {isLoading ? (
-          <ActivityIndicator size="large" color="#3F51B5" style={styles.loader} />
+          <ActivityIndicator size="large" color="#1976D2" style={styles.loader} />
         ) : (
           <View style={styles.content}>
             {divisions.map((division) => {
@@ -458,7 +471,7 @@ export const FileManagement = ({ route }) => {
                   ]}
                 >
                   {isUserDivision && (
-                    <View style={styles.userIndicator}>
+                    <View  style={styles.userIndicator}>
                       <Text style={styles.userIndicatorText}>Tu carrera</Text>
                     </View>
                   )}
@@ -551,7 +564,7 @@ export const FileManagement = ({ route }) => {
                         </TouchableOpacity>
                       )}
                       <TouchableOpacity
-                        style={[styles.button, { backgroundColor: '#FF5252' }]}
+                        style={[styles.button, { backgroundColor: '#D32F2F' }]}
                         onPress={() => deleteFiles(division)}>
                         <FontAwesomeIcon
                           icon={faTrashAlt}
@@ -583,21 +596,39 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
+    padding: 24,
+    borderRadius: 15,
     marginBottom: 24,
     alignItems: 'center',
+    flexDirection: 'row',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5.84,
+    elevation: 8,
+  },
+  iconContainer: {
+    marginRight: 16,
+  },
+  textContainer: {
+    flex: 1,
   },
   title: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF',
     marginBottom: 8,
-    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   description: {
     fontSize: 16,
-    color: '#666666',
-    textAlign: 'center',
-    marginTop: 8,
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
   content: {
     flex: 1,
@@ -606,16 +637,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 20,
     backgroundColor: '#FFFFFF',
-    elevation: 8,
+    elevation: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   userDivisionCard: {
     borderWidth: 2,
-    borderColor: '#3F51B5',
+    borderColor: '#1976D2',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -641,6 +674,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   divisionSubtitle: {
     fontSize: 14,
@@ -697,7 +733,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 12,
     borderRadius: 8,
-    elevation: 2,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
   },
   buttonIcon: {
     marginRight: 8,
@@ -717,28 +760,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#4CAF50',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 60,
     zIndex: 1,
+    backgroundColor: '#4CAF50',
   },
   userIndicatorText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
-  },
-  titleGradient: {
-    marginVertical: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  titleText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
   },
 });
 
