@@ -204,7 +204,7 @@ export const LoginScreen = () => {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size={24} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>Iniciar Sesión</Text>
                   )}

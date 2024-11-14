@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
+  LogBox
 } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet"; // Componente BottomSheet
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos de FontAwesome
@@ -27,6 +28,12 @@ import { bottomSheetContents } from "./bottomSheetContents";
 
 // Obtenemos el ancho de la ventana actual
 const { width } = Dimensions.get("window");
+
+
+LogBox.ignoreLogs([
+  '[Reanimated] Reading from `value` during component render.',
+]);
+
 
 // Definimos el componente BottomSheetComponent utilizando forwardRef para poder manipular el BottomSheet desde el exterior
 export const BottomSheetComponent = React.forwardRef(
@@ -123,7 +130,7 @@ export const BottomSheetComponent = React.forwardRef(
                 <View key={index} style={styles.imageContainer}>
                   {!loadedImages.includes(index) && (
                     <View style={styles.loadingContainer}>
-                      <ActivityIndicator size="large" color="#0000ff" />
+                      <ActivityIndicator size={24} color="#0000ff" />
                       <Text style={styles.loadingText}>Cargando...</Text>
                     </View>
                   )}

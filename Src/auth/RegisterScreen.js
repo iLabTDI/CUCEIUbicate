@@ -255,7 +255,7 @@ export const RegisterScreen = () => {
                   disabled={Isloading}
                 >
                   {Isloading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size={24} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>Continuar</Text>
                   )}

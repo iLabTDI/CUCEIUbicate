@@ -115,7 +115,7 @@ export const School_services = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b34b0" />
+        <ActivityIndicator size={24} color="#0b34b0" />
         <Text style={styles.loadingText}>Cargando servicios escolares...</Text>
       </View>
     );

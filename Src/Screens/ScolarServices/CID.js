@@ -56,7 +56,7 @@ export const CID = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b34b0" />
+        <ActivityIndicator size={24} color="#0b34b0" />
         <Text style={styles.loadingText}>Cargando CID...</Text>
       </View>
     );
