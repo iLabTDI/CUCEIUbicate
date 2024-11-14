@@ -83,8 +83,8 @@ const styles = StyleSheet.create({
   },
   point: {
     position: "absolute",
-    opacity: 0,
-    // backgroundColor: '#FF0000',
+    opacity: 10,
+    backgroundColor: '#FF0000',
     borderRadius: 5,
   },
   markerContainer: {

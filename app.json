@@ -17,6 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "yairhdz24",
+      "newArchEnabled": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara para tomar fotos.",
         "NSPhotoLibraryUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para seleccionar imágenes.",
@@ -38,6 +39,7 @@
         "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "newArchEnabled": true,
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
         "INTERNET",
