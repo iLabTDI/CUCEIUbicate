@@ -399,12 +399,12 @@ const handleSearch = async ({ searchKey, reverseSearchKey }) => {
 
         {/* Componente BottomSheet */}
         <BottomSheetComponent
-          ref={bottomSheetRef}
-          snapPoints={["50%", "75%"]}
-          selectedPoint={selectedPoint}
-          isVisible={isBottomSheetVisible}
-          onClose={handleCloseBottomSheet}
-        />
+        ref={bottomSheetRef}
+        snapPoints={["50%", "75%"]}
+        selectedPoint={selectedPoint}
+        isVisible={isBottomSheetVisible}
+        onClose={handleCloseBottomSheet}
+      />
       </Animated.View>
     </View>
   );

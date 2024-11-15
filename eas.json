@@ -11,14 +11,14 @@
         "simulator": true
       },
       "android": {
-        "image": "ubuntu-22.04-android-33-ndk-r25c"
+        "image": "sdk-52"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "image": "ubuntu-22.04-android-33-ndk-r25c"
+        "image": "sdk-52"
       }
     },
     "production": {
@@ -27,7 +27,7 @@
         "simulator": false
       },
       "android": {
-        "image": "ubuntu-22.04-android-33-ndk-r25c"
+        "image": "sdk-52"
       }
     }
   }

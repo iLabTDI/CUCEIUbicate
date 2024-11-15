@@ -27,6 +27,7 @@ export const Directory = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     // Simulate fetching data
     setTimeout(() => {

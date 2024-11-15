@@ -11,10 +11,9 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
-  LogBox
 } from "react-native";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet"; // Componente BottomSheet
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"; // Iconos de FontAwesome
+import BottomSheet from "@gorhom/bottom-sheet";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faMapMarkerAlt,
   faInfoCircle,
@@ -23,17 +22,11 @@ import {
   faToilet,
   faChalkboardTeacher,
   faMapSigns,
-} from "@fortawesome/free-solid-svg-icons"; // Íconos específicos
+} from "@fortawesome/free-solid-svg-icons";
 import { bottomSheetContents } from "./bottomSheetContents";
 
 // Obtenemos el ancho de la ventana actual
 const { width } = Dimensions.get("window");
-
-
-LogBox.ignoreLogs([
-  '[Reanimated] Reading from `value` during component render.',
-]);
-
 
 // Definimos el componente BottomSheetComponent utilizando forwardRef para poder manipular el BottomSheet desde el exterior
 export const BottomSheetComponent = React.forwardRef(
@@ -74,20 +67,11 @@ export const BottomSheetComponent = React.forwardRef(
       [onClose]
     );
 
-
-    const fadeInImage = () => {
-      Animated.timing(imageOpacity, {
-        toValue: 1,
-        duration: 500, // Duración de la animación en milisegundos
-        useNativeDriver: true,
-      }).start();
-    };
-    
     // Callback que avanza a la siguiente imagen en el carrusel
     const goToNextImage = useCallback(
       (imagesLength) => {
         const nextIndex = (currentImageIndex + 1) % imagesLength; // Calcula el índice de la siguiente imagen
-        scrollRef.current.scrollTo({ x: nextIndex * width, animated: true }); // Desplaza el ScrollView a la siguiente imagen
+        scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true }); // Desplaza el ScrollView a la siguiente imagen
         setCurrentImageIndex(nextIndex); // Actualiza el estado del índice actual
       },
       [currentImageIndex]
@@ -98,7 +82,7 @@ export const BottomSheetComponent = React.forwardRef(
       (imagesLength) => {
         const prevIndex =
           currentImageIndex === 0 ? imagesLength - 1 : currentImageIndex - 1; // Calcula el índice de la imagen anterior
-        scrollRef.current.scrollTo({ x: prevIndex * width, animated: true }); // Desplaza el ScrollView a la imagen anterior
+        scrollRef.current?.scrollTo({ x: prevIndex * width, animated: true }); // Desplaza el ScrollView a la imagen anterior
         setCurrentImageIndex(prevIndex); // Actualiza el estado del índice actual
       },
       [currentImageIndex]
@@ -135,11 +119,11 @@ export const BottomSheetComponent = React.forwardRef(
                     </View>
                   )}
                   <Image
-                     key={index}
-                     source={image} // Fuente de la imagen
-                     style={styles.carouselImage} // Estilo de la imagen
-                     resizeMode="cover" // La imagen se ajusta para cubrir el área del contenedor
-                     onLoad={() => setLoadedImages(prev => [...prev, index])} // Actualiza el estado cuando la imagen se carga
+                    key={index}
+                    source={image} // Fuente de la imagen
+                    style={styles.carouselImage} // Estilo de la imagen
+                    resizeMode="cover" // La imagen se ajusta para cubrir el área del contenedor
+                    onLoad={() => setLoadedImages(prev => [...prev, index])} // Actualiza el estado cuando la imagen se carga
                   />
                 </View>
               ))}
@@ -187,7 +171,7 @@ export const BottomSheetComponent = React.forwardRef(
           </View>
         );
       },
-      [currentImageIndex, goToNextImage, goToPrevImage, handleMomentumScrollEnd, loadedImages, selectedPoint]
+      [currentImageIndex, goToNextImage, goToPrevImage, handleMomentumScrollEnd, loadedImages]
     );
 
     return (
@@ -205,7 +189,7 @@ export const BottomSheetComponent = React.forwardRef(
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardAvoidingView}>
-          <BottomSheetScrollView
+          <ScrollView
             contentContainerStyle={styles.bottomSheetContent}>
             {/* Solo muestra contenido si se ha seleccionado un punto y tiene datos asociados */}
             {selectedPoint && bottomSheetContents[selectedPoint] && (
@@ -295,7 +279,7 @@ export const BottomSheetComponent = React.forwardRef(
                 </View>
               </View>
             )}
-          </BottomSheetScrollView>
+          </ScrollView>
         </KeyboardAvoidingView>
       </BottomSheet>
     );

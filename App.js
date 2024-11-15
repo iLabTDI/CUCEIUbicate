@@ -18,13 +18,13 @@ LogBox.ignoreLogs([
   "Using Math.random is not cryptographically secure! Use bcrypt.setRandomFallback to set a PRNG."
 ]);
 
-const originalConsoleWarn = console.warn;
-console.warn = (message, ...args) => {
-  if (typeof message === 'string' && message.includes('[Reanimated]')) {
-    return;
-  }
-  originalConsoleWarn(message, ...args);
-};
+// const originalConsoleWarn = console.warn;
+// console.warn = (message, ...args) => {
+//   if (typeof message === 'string' && message.includes('[Reanimated]')) {
+//     return;
+//   }
+//   originalConsoleWarn(message, ...args);
+// };
 
 function App() {
   // Estado para determinar si es el primer lanzamiento de la aplicación
