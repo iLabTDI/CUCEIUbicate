@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,6 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,37 +21,24 @@ const onboardingData = [
     title: 'Bienvenido a CUCEI Ubícate!',
     description: 'Descubre cómo navegar por el campus universitario con facilidad.',
     animation: require('../assets/animations/Student.json'),
-    gradient: ['#4e54c8', '#8f94fb'],
   },
   {
     id: '2',
     title: 'Encuentra tu camino',
     description: 'Localiza aulas, módulos y servicios rápidamente.',
     animation: require('../assets/animations/Ubicacion.json'),
-    gradient: ['#11998e', '#38ef7d'],
   },
   {
     id: '3',
     title: 'Mantente informado',
     description: 'Recibe notificaciones importantes y accede a toda la información del campus.',
     animation: require('../assets/animations/Camino.json'),
-    gradient: ['#f953c6', '#b91d73'],
   },
 ];
 
-const OnboardingItem = ({ item, index, scrollX }) => {
-  const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-  const opacity = scrollX.interpolate({
-    inputRange,
-    outputRange: [0, 1, 0],
-  });
-
+const OnboardingItem = ({ item }) => {
   return (
-    <Animated.View style={[styles.itemContainer, { opacity }]}>
-      <LinearGradient
-        colors={item.gradient}
-        style={styles.gradientBackground}
-      />
+    <View style={styles.itemContainer}>
       <LottieView
         source={item.animation}
         autoPlay
@@ -61,14 +47,14 @@ const OnboardingItem = ({ item, index, scrollX }) => {
       />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.description}>{item.description}</Text>
-    </Animated.View>
+    </View>
   );
 };
 
 export const OnboardingScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef();
+  const flatListRef = useRef(null);
   const navigation = useNavigation();
 
   const viewableItemsChanged = useRef(({ viewableItems }) => {
@@ -79,7 +65,7 @@ export const OnboardingScreen = () => {
 
   const scrollTo = async () => {
     if (currentIndex < onboardingData.length - 1) {
-      flatListRef.current.scrollToIndex({ index: currentIndex + 1 });
+      flatListRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
       try {
         await AsyncStorage.setItem('@onboarding_complete', 'true');
@@ -103,9 +89,7 @@ export const OnboardingScreen = () => {
     <SafeAreaView style={styles.container}>
       <Animated.FlatList
         data={onboardingData}
-        renderItem={({ item, index }) => (
-          <OnboardingItem item={item} index={index} scrollX={scrollX} />
-        )}
+        renderItem={({ item }) => <OnboardingItem item={item} />}
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
@@ -123,20 +107,31 @@ export const OnboardingScreen = () => {
       <View style={styles.bottomContainer}>
         <View style={styles.pagination}>
           {onboardingData.map((_, index) => {
-            const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+            const inputRange = [
+              (index - 1) * width,
+              index * width,
+              (index + 1) * width,
+            ];
+            
             const dotWidth = scrollX.interpolate({
               inputRange,
               outputRange: [10, 20, 10],
               extrapolate: 'clamp',
             });
+            
             const opacity = scrollX.interpolate({
               inputRange,
               outputRange: [0.3, 1, 0.3],
               extrapolate: 'clamp',
             });
+            
             return (
               <Animated.View
-                style={[styles.dot, { width: dotWidth, opacity }]}
+                style={[
+                  styles.dot,
+                  { width: dotWidth, opacity },
+                  index === currentIndex && styles.dotActive,
+                ]}
                 key={index.toString()}
               />
             );
@@ -155,12 +150,12 @@ export const OnboardingScreen = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   itemContainer: {
     width,
@@ -169,39 +164,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  gradientBackground: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
   lottieAnimation: {
     width: width * 0.8,
     height: width * 0.8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 16,
     textAlign: 'center',
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
+    color: '#0b34b0',
   },
   description: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
-    paddingHorizontal: 20,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    paddingHorizontal: 24,
+    color: '#333333',
+    lineHeight: 24,
   },
   bottomContainer: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 50,
     left: 20,
     right: 20,
   },
@@ -209,13 +192,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   dot: {
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 5,
+    backgroundColor: '#0b34b0',
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    backgroundColor: '#0b34b0',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -223,29 +209,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nextButton: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    backgroundColor: '#0b34b0',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
   },
   nextButtonText: {
-    color: '#0b34b0',
-    fontSize: 18,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   skipButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
   },
   skipButtonText: {
-    color: '#FFFFFF',
+    color: '#0b34b0',
     fontSize: 16,
-    fontWeight: '600',
   },
 });
 
