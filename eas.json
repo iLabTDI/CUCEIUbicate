@@ -9,18 +9,25 @@
       "distribution": "internal",
       "ios": {
         "simulator": true
+      },
+      "android": {
+        "image": "ubuntu-22.04-android-33-ndk-r25c"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "ubuntu-22.04-android-33-ndk-r25c"
       }
     },
     "production": {
       "autoIncrement": true,
       "ios": {
         "simulator": false
+      },
+      "android": {
+        "image": "ubuntu-22.04-android-33-ndk-r25c"
       }
     }
   }

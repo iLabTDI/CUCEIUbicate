@@ -35,6 +35,10 @@
       }
     },
     "android": {
+      "buildProperties": {
+        "gradlePlugin": "com.android.tools.build:gradle:8.0.0",
+        "kotlinVersion": "1.8.0"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#FFFFFF"
