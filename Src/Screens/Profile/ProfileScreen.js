@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -23,7 +24,6 @@ import {
   faGraduationCap,
   faEnvelope,
   faTimes,
-  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
@@ -36,7 +36,6 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const ICON_SIZE = SCREEN_WIDTH * 0.15;
 const GRID_PADDING = 16;
 
-// Mapping of degree codes to full names
 const degreeNames = {
   ICIV: "Ingeniería Civil",
   IGFO: "Ingeniería en Fotónica",
@@ -86,10 +85,11 @@ export const ProfileScreen = ({ route }) => {
   const imageZoomRef = useRef(null);
 
   useEffect(() => {
-    loadSelectedIcon();
+    // loadSelectedIcon();
     const timerId = setInterval(() => setCurrentDate(new Date()), 60000);
     return () => clearInterval(timerId);
   }, []);
+
 
   const loadSelectedIcon = async () => {
     try {
@@ -132,6 +132,23 @@ export const ProfileScreen = ({ route }) => {
       routes: [{ name: "Login" }],
     });
   };
+
+  const renderIcon = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => handleAvatarChange(item.uri)}
+      style={[
+        styles.iconButton,
+        selectedIcon === item.uri && styles.selectedIconButton,
+      ]}>
+      <Image
+        source={item.uri}
+        style={[
+          styles.iconImage,
+          selectedIcon === item.uri && styles.selectedIconImage,
+        ]}
+      />
+    </TouchableOpacity>
+  );
 
   return (
     <ScrollView style={styles.container}>
@@ -250,26 +267,27 @@ export const ProfileScreen = ({ route }) => {
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
+          <Animatable.View
+            animation="zoomIn"
+            duration={300}
+            style={styles.modalView}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}>
+                <FontAwesomeIcon icon={faTimes} size={24} color="#0b34b0" />
+              </TouchableOpacity>
+            </View>
+
             <FlatList
               data={animalIcons}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleAvatarChange(item.uri)}
-                  style={styles.iconButton}>
-                  <Image source={item.uri} style={styles.iconImage} />
-                </TouchableOpacity>
-              )}
+              renderItem={renderIcon}
               keyExtractor={(item) => item.id}
               numColumns={4}
+              contentContainerStyle={styles.iconGrid}
             />
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-          </View>
+          </Animatable.View>
         </View>
       </Modal>
 
@@ -328,7 +346,6 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 4,
     borderColor: "#FFFFFF",
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
   },
   editButton: {
     position: "absolute",
@@ -464,7 +481,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -474,39 +491,51 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "90%",
     maxWidth: 400,
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 20,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
     color: "#0b34b0",
-    textAlign: "center",
+  },
+  closeButton: {
+    padding: 5,
+  },
+  modalSpinner: {
+    marginTop: 20,
+  },
+  iconGrid: {
+    alignItems: "center",
   },
   iconButton: {
     margin: GRID_PADDING / 2,
     borderRadius: ICON_SIZE / 2,
     overflow: "hidden",
-    elevation: 3,
-  },
-  iconImage: {
     width: ICON_SIZE,
     height: ICON_SIZE,
-    borderRadius: ICON_SIZE / 2,
-    borderColor: "#0b34b0", // Cambiado a azul
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+  },
+  selectedIconButton: {
+    backgroundColor: "#4CAF50",
+  },
+  iconImage: {
+    width: ICON_SIZE - 4,
+    height: ICON_SIZE - 4,
+    borderRadius: (ICON_SIZE - 4) / 2,
+    borderColor: "#0b34b0",
     borderWidth: 2,
   },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  closeButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 16,
+  selectedIconImage: {
+    borderColor: "#FFFFFF",
+    borderWidth: 2,
   },
   curriculumModalOverlay: {
     flex: 1,
