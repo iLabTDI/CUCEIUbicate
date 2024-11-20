@@ -70,7 +70,7 @@ export const points = [
     rotate: -1.8,
   },
   {
-    id: "JOBS 1",
+    id: "JOBS2",
     name: "JOBS 1",
     aliases: ["JOBS", "jobs", "salon jobs", "ingles"],
     left: 683,

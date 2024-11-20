@@ -17,12 +17,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "yairhdz24",
+      "newArchEnabled": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara para tomar fotos.",
         "NSPhotoLibraryUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para seleccionar imágenes.",
         "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes.",
         "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": false, 
+          "NSAllowsArbitraryLoads": false,
           "NSExceptionDomains": {
             "148.202.152.59": {
               "NSIncludesSubdomains": true,
@@ -34,10 +35,15 @@
       }
     },
     "android": {
+      "buildProperties": {
+        "gradlePlugin": "com.android.tools.build:gradle:8.0.0",
+        "kotlinVersion": "1.8.0"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "newArchEnabled": true,
       "package": "com.yair_hdz24.CUCEIUbicate",
       "permissions": [
         "INTERNET",
@@ -58,7 +64,8 @@
             }
           }
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "extra": {
       "eas": {

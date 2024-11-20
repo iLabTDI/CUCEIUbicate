@@ -9,18 +9,25 @@
       "distribution": "internal",
       "ios": {
         "simulator": true
+      },
+      "android": {
+        "image": "sdk-52"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "sdk-52"
       }
     },
     "production": {
       "autoIncrement": true,
       "ios": {
         "simulator": false
+      },
+      "android": {
+        "image": "sdk-52"
       }
     }
   }

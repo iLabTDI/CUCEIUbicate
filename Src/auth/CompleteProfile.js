@@ -284,7 +284,7 @@ export const CompleteProfile = () => {
                   onPress={handleCompleteProfile}
                   disabled={isLoading}>
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size={24} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>Terminar</Text>
                   )}

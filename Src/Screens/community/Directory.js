@@ -27,6 +27,7 @@ export const Directory = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  
   useEffect(() => {
     // Simulate fetching data
     setTimeout(() => {
@@ -65,7 +66,7 @@ export const Directory = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size={24} color="#007bff" />
         <Text style={styles.Cargando}>Cargando...</Text>
       </View>
     );

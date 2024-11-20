@@ -87,7 +87,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
         
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#FFFFFF" />
+            <ActivityIndicator size={24} color="#FFFFFF" />
             <Text style={styles.loadingText}>Cargando video...</Text>
           </View>
         )}
