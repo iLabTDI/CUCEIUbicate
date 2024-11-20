@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StatusBar, Platform, View, ActivityIndicator, Text} from "react-native";
+import { StatusBar, Platform, View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "./Src/auth/LoginScreen";
@@ -34,7 +34,7 @@ function App() {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const value = await AsyncStorage.getItem("@onboarding_completed");
+        const value = await AsyncStorage.getItem("@onboarding_completeed");
         setIsFirstLaunch(value == null); // Si el valor es null, es el primer lanzamiento
       } catch (error) {
         console.error("Error al verificar el estado de onboarding:", error);
@@ -48,11 +48,9 @@ function App() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size={24} color="#000000" />
-        <Text>Cargando estado inicial...</Text>
       </View>
     );
-  }
-  
+  } // Si es el primer lanzamiento, mostrar el onboarding
 
   return (
     <NavigationContainer>
