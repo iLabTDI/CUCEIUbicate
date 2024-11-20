@@ -28,7 +28,7 @@ export const animalIcons = [
     INCE: require("./Mallas_Curriculares/malla_INCE.png"),
     INCO: require("./Mallas_Curriculares/malla_INCO.png"),
     INDU: require("./Mallas_Curriculares/malla_INDU.png"),
-    INFO: require("./Mallas_Curriculares2/malla_INFO.png"), 
+    INFO: require("./Mallas_Curriculares/malla_INFO.png"), 
     INME: require("./Mallas_Curriculares/malla_INME.png"),
     INQU: require("./Mallas_Curriculares/malla_INQU.png"),
     ITOG: require("./Mallas_Curriculares/malla_ITOG.png"),
