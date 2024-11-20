@@ -1,121 +1,177 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Dimensions, Text, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+  Dimensions,
+  Animated,
+} from "react-native";
 import { Video } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTimes, faPlay, faPause, faVideoSlash } from "@fortawesome/free-solid-svg-icons";
-import { LinearGradient } from 'expo-linear-gradient';
+import { faTimes, faVideoSlash, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-export const VideoModal = ({ isVisible, onClose, videoUri }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const videoRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [cachedUri, setCachedUri] = useState(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     if (isVisible) {
+      setIsLoading(true);
+      setError(false);
+      setProgress(0);
+      setCachedUri(null);
+
       Animated.parallel([
-        Animated.spring(scaleAnim, { toValue: 1, friction: 5, tension: 40, useNativeDriver: true }),
-        Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
       ]).start();
+
+      if (videoUri) {
+        cacheVideo(videoUri);
+      } else {
+        setIsLoading(false);
+      }
     } else {
       Animated.parallel([
-        Animated.spring(scaleAnim, { toValue: 0, friction: 5, tension: 40, useNativeDriver: true }),
-        Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 0.9,
+          duration: 200,
+          useNativeDriver: true,
+        }),
       ]).start();
-    }
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (isVisible) {
-      if (!videoUri) {
-        setError('El video no está disponible en este momento');
-        setIsLoading(false);
-      } else {
-        setIsLoading(true);
-        setError(null);
-        if (videoRef.current) {
-          videoRef.current.loadAsync(videoUri, {}, false)
-            .catch(error => {
-              console.error('Error al cargar el video:', error);
-              setError('El video no está disponible en este momento');
-              setIsLoading(false);
-            });
-        }
-      }
     }
   }, [isVisible, videoUri]);
 
-  const handleVideoLoad = (status) => {
-    if (status.isLoaded) {
+  const cacheVideo = async (uri) => {
+    setIsLoading(true);
+    setError(false);
+    setProgress(0);
+
+    const fileUri = `${FileSystem.cacheDirectory}video_${routeId}.mp4`;
+    
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(fileUri);
+      
+      if (fileInfo.exists) {
+        setCachedUri(fileUri);
+        setIsLoading(false);
+        setProgress(100);
+      } else {
+        const downloadResumable = FileSystem.createDownloadResumable(
+          uri,
+          fileUri,
+          {},
+          (downloadProgress) => {
+            const progress = (downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite) * 100;
+            setProgress(progress);
+          }
+        );
+
+        const { uri: downloadedUri } = await downloadResumable.downloadAsync();
+        setCachedUri(downloadedUri);
+        setIsLoading(false);
+        setProgress(100);
+      }
+    } catch (e) {
+      console.error("Error caching video:", e);
+      setError(true);
       setIsLoading(false);
-      setError(null);
-    } else if (status.error) {
-      setIsLoading(false);
-      setError("La ruta es muy corta para mostrar un video. Por favor, selecciona una ruta más larga.");
     }
   };
 
-  const togglePlayPause = async () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        await videoRef.current.pauseAsync();
-      } else {
-        await videoRef.current.playAsync();
-      }
-      setIsPlaying(!isPlaying);
-    }
+  const handleVideoError = () => {
+    setIsLoading(false);
+    setError(true);
+  };
+
+  const handleVideoLoad = () => {
+    setIsLoading(false);
+    setError(false);
   };
 
   if (!isVisible) return null;
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <View style={styles.backgroundOverlay} />
-      <Animated.View style={[styles.modalContent, { transform: [{ scale: scaleAnim }] }]}>
-        <LinearGradient
-          colors={['rgba(0,0,0,0.4)', 'transparent']}
-          style={styles.gradientOverlay}
-        >
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        </LinearGradient>
+    <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
+      <TouchableOpacity style={styles.overlay} onPress={onClose} activeOpacity={1} />
+      <Animated.View style={[styles.modal, { transform: [{ scale: scaleAnim }] }]}>
+        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
+        </TouchableOpacity>
         
-        {isLoading && (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size={24} color="#FFFFFF" />
-            <Text style={styles.loadingText}>Cargando video...</Text>
+        {videoUri ? (
+          <>
+            {isLoading && !error && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+                <Text style={styles.loadingText}>Cargando video...</Text>
+                <View style={styles.progressBarContainer}>
+                  <Animated.View style={[styles.progressBar, { width: `${progress}%` }]} />
+                </View>
+                <Text style={styles.progressText}>{`${Math.round(progress)}%`}</Text>
+              </View>
+            )}
+            
+            {error && (
+              <View style={styles.errorContainer}>
+                <FontAwesomeIcon icon={faVideoSlash} size={50} color="#FFFFFF" />
+                <Text style={styles.errorText}>
+                  No se pudo cargar el video. Inténtalo más tarde.
+                </Text>
+                <TouchableOpacity style={styles.retryButton} onPress={() => cacheVideo(videoUri)}>
+                  <Text style={styles.retryButtonText}>Reintentar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {!error && cachedUri && (
+              <Video
+                source={{ uri: cachedUri }}
+                style={styles.video}
+                useNativeControls
+                resizeMode="contain"
+                onError={handleVideoError}
+                onLoad={handleVideoLoad}
+                shouldPlay
+              />
+            )}
+          </>
+        ) : (
+          <View style={styles.noVideoContainer}>
+            <FontAwesomeIcon icon={faExclamationTriangle} size={50} color="#FFFF00" />
+            <Text style={styles.noVideoText}>
+              Video no disponible para esta ruta
+            </Text>
+            {/* <Text style={styles.noVideoSubText}>
+              Lo sentimos, no hay un video disponible para esta ruta en este momento.
+            </Text> */}
+            <Text style={styles.noVideoSubText}>
+              Estamos trabajando para agregar más videos. ¡Vuelve a consultar en futuras actualizaciones!
+            </Text>
           </View>
-        )}
-        {error && (
-          <View style={styles.errorContainer}>
-            <FontAwesomeIcon icon={faVideoSlash} size={50} color="#FFFFFF" />
-            <Text style={styles.errorText}>{error}</Text>
-            {/* <Text style={styles.errorSubtext}>Por favor, inténtelo de nuevo más tarde.</Text> */}
-          </View>
-        )}
-        {!error && videoUri && (
-          <View style={styles.videoContainer}>
-            <Video
-              ref={videoRef}
-              source={videoUri}
-              rate={1.0}
-              volume={1.0}
-              isMuted={true}
-              resizeMode="contain"
-              shouldPlay
-              isLooping={true}
-              style={styles.video}
-              onPlaybackStatusUpdate={handleVideoLoad}
-            />
-            <TouchableOpacity style={styles.playPauseButton} onPress={togglePlayPause}>
-              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size={30} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+          
         )}
       </Animated.View>
     </Animated.View>
@@ -123,92 +179,113 @@ export const VideoModal = ({ isVisible, onClose, videoUri }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
-  backgroundOverlay: {
+  overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
-  modalContent: {
-    width: width * 0.8,
-    height: height * 0.6,
-    backgroundColor: '#0b34b0',
+  modal: {
+    width: width * 0.9,
+    height: height * 0.7,
+    backgroundColor: "#0b34b0",
     borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.34,
-    shadowRadius: 6.27,
-  },
-  gradientOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    zIndex: 2,
+    overflow: "hidden",
+    elevation: 5,
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
     zIndex: 3,
     padding: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 20,
+  },
+  video: {
+    width: "100%",
+    height: "100%",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  progressBarContainer: {
+    width: '80%',
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 3,
+    marginTop: 20,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+  },
+  progressText: {
+    color: "#FFFFFF",
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  errorText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    textAlign: "center",
+    fontWeight: "bold",
+    marginTop: 20,
+  },
+  retryButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 20,
   },
-  videoContainer: {
+  retryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  noVideoContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0b34b0',
-  },
-  video: {
-    width: '100%',
-    height: '90%',
-    borderRadius: 40,
-  },
-  playPauseButton: {
-    position: 'absolute',
-    alignSelf: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0b34b0',
+  noVideoText: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
   },
-  loadingText: {
-    color: '#FFFFFF',
-    marginTop: 10,
+  noVideoSubText: {
+    color: "#FFFFFF",
+    textAlign: "center",
+    marginTop: 20,
+    fontStyle: "italic",
+    opacity: 0.7,
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-  errorContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0b34b0',
-  },
-  errorText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    textAlign: 'center',
-    padding: 20,
-    fontWeight: 'bold',
-  },
-  errorSubtext: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    textAlign: 'center',
-    opacity: 0.8,
   },
 });
+
+export default VideoModal;
