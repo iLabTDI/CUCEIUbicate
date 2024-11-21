@@ -425,7 +425,7 @@ export const bottomSheetContents = {
     classrooms: "",
     "relevant-places": [
       "Primer piso: Áreas de coworking 1, 2 y 3.",
-      "Segundo piso: Programa de Intercambios y papelería."
+      "Segundo piso: Programa de Intercambios y papelería.",
     ],
     bathrooms: ["Primer piso  H & M"],
     "images-path": [
@@ -435,5 +435,65 @@ export const bottomSheetContents = {
     description:
       "La Biblioteca CUCEI ofrece espacios de estudio y coworking. En el segundo piso se encuentra el Programa de Intercambios y una papelería para apoyo estudiantil.",
   },
+    "Entrada Revolucion": {
+      name: "Entrada Revolucion",
+      classrooms: "",
+      "relevant-places": ["-"],
+      bathrooms:[ "-"],
+      "images-path": [require ("./Modulos/Entradas/Entrada-Revolucion.png")],
+      description:
+        "La entrada por Revolución es una de las más concurridas por los estudiantes, ya que es la entrada principal al campus.",
+    },
+  "Entrada Olimpica": {
+    name: "Entrada Olimpica",
+    classrooms: "",
+    "relevant-places":[ "-"],
+    bathrooms: ["-"],
+    "images-path": [
+      require("./Modulos/Entradas/Entrada-Olimpica.png"),
+    ],
+    description:
+      "La entrada por Olimpica es una de las menos concurridas por los estudiantes, ya que es la entrada tracera al campus.",
+  },
+  "Entrada Boulevard": {
+    name: "Entrada Boulevard",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: ["-"],
+    "images-path": [
+      require("./Modulos/Entradas/Entrada-Boulevard.png"),
+    ],
+    description:
+      "La entrada por Boulevard es una de las mas concurridas por los estudiantes, ya que es la entrada tracera al campus.",
+  },
+  JOBS: {
+    name: "JOBS",
+    classrooms: "JOBS 4-8",
+    "relevant-places": ["-"],
+    bathrooms: ["-"],
+    "images-path": [require("./Modulos/Jobs/Jobs.png")],
+    description:
+      "Los JOBS son aulas las cuales se imparte el programa de ingles para los estudiantes por la parte de proulex.",
+  },
+  "JOBS 2": {
+    name: "JOBS 2",
+    classrooms: "JOBS 1-4",
+    "relevant-places": ["-"],
+    bathrooms: ["-"],
+    "images-path": [require("./Modulos/Jobs/Jobs_1.png")],
+    description:
+      "Los JOBS son aulas las cuales se imparte el programa de ingles para los estudiantes por la parte de proulex.",
+  },
 
+  Titanic: {
+    name: "Laboratorio industrial",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Titanic/Titanic.png"),
+    ],
+    description:
+      "El edificio del Titanic es un edificio que cuenta con maquinaria industrial y un estacionamiento en la parte inferior del edificio.",
+  },
 };
