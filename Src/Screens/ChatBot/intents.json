@@ -4565,6 +4565,19 @@
             ],
             "action": "navigateToScreen",
             "screen": "EasterEgg"
+        },
+        {
+            "tag": "Saludo",
+            "patterns": [
+                "Hola",
+                "Ola",
+                "Que tal"
+            ],
+            "responses": [
+                "¡Hola! ¿En qué puedo ayudarte hoy? :D",
+                "Hola estoy a tus órdenes, ¿en qué puedo ayudarte? :D",
+                "Hey que tal estoy para resolver dudas y preguntas academicas :D"
+            ]
         }
     ]
 }
