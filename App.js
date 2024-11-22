@@ -34,7 +34,7 @@ function App() {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const value = await AsyncStorage.getItem("@onboarding_completeedsssssss");
+        const value = await AsyncStorage.getItem("@onboarding_completeed");
         setIsFirstLaunch(value == null); // Si el valor es null, es el primer lanzamiento
       } catch (error) {
         console.error("Error al verificar el estado de onboarding:", error);
@@ -50,7 +50,7 @@ function App() {
         <ActivityIndicator size={24} color="#000000" />
       </View>
     );
-  }
+  } // Si es el primer lanzamiento, mostrar el onboarding
 
   return (
     <NavigationContainer>

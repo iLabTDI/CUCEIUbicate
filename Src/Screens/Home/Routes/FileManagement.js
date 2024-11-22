@@ -41,6 +41,7 @@ import {
   faBus,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { deleteLocalFiles } from "./DeleteLocalFiles";
 import { LinearGradient } from "expo-linear-gradient";
 
 const BATCH_SIZE = 10;
@@ -107,12 +108,6 @@ const CAREER_INFO = {
     icon: faBus,
     color: "#808080",
   },
-};
-
-const isFileAlreadyDownloaded = async (fileName) => {
-  const cachedFiles = await AsyncStorage.getItem(CACHE_KEY);
-  const downloadedFiles = cachedFiles ? JSON.parse(cachedFiles) : {};
-  return !!downloadedFiles[fileName];
 };
 
 export const FileManagement = ({ route }) => {
@@ -184,10 +179,11 @@ export const FileManagement = ({ route }) => {
       const { fileInfos, totalSize, downloadedSize, fileCount } = data.reduce(
         (acc, file) => {
           if (file.name.endsWith(".webp")) {
+            const fileKey = `${division}_${file.name}`;
             const fileInfo = {
               name: file.name,
               size: file.metadata.size,
-              downloaded: !!downloadedFiles[`Rutas_${division}/${file.name}`],
+              downloaded: !!downloadedFiles[fileKey],
             };
             acc.fileInfos.push(fileInfo);
             acc.totalSize += fileInfo.size;
@@ -239,16 +235,35 @@ export const FileManagement = ({ route }) => {
 
   const downloadFiles = useCallback(
     async (division) => {
-      console.log(`Starting download for division: ${division}`);
+      console.log(`Iniciando la descarga para la división: ${division}`);
+      setDownloadProgress((prev) => ({ ...prev, [division]: 0 }));
       setDownloadStatus((prev) => ({ ...prev, [division]: "downloading" }));
       cancelDownloadRef.current[division] = false;
+
       const { files, totalSize } = divisionData[division];
       let downloadedSize = files
         .filter((file) => file.downloaded)
         .reduce((acc, file) => acc + file.size, 0);
-      const filesToDownload = files.filter((file) => !file.downloaded);
-      const batches = [];
+      const filesToDownload = [];
 
+      const cachedFiles = await AsyncStorage.getItem(CACHE_KEY);
+      const downloadedFilesCache = cachedFiles ? JSON.parse(cachedFiles) : {};
+
+      for (const file of files) {
+        // Eliminar el prefijo de la carrera (hasta el primer guion bajo)
+        const baseFileName = file.name.substring(file.name.indexOf("_") + 1);
+        const globalFileKey = `${baseFileName}`; // Clave única: Nombre base del archivo (sin el prefijo de la división)
+        const localUri = `${FileSystem.documentDirectory}${baseFileName}`; // Guardar sin el prefijo de la división
+        const fileInfo = await FileSystem.getInfoAsync(localUri);
+
+        if (!fileInfo.exists || !downloadedFilesCache[globalFileKey]) {
+          filesToDownload.push(file);
+        } else {
+          console.log(`El archivo ${file.name} ya está descargado. Se omite.`);
+        }
+      }
+
+      const batches = [];
       for (let i = 0; i < filesToDownload.length; i += BATCH_SIZE) {
         batches.push(filesToDownload.slice(i, i + BATCH_SIZE));
       }
@@ -261,6 +276,12 @@ export const FileManagement = ({ route }) => {
 
           downloadedFiles.forEach((file) => {
             downloadedSize += file.size;
+            // Eliminar el prefijo de la carrera para el caché
+            const baseFileName = file.name.substring(
+              file.name.indexOf("_") + 1
+            );
+            const globalFileKey = `${baseFileName}`;
+            downloadedFilesCache[globalFileKey] = true;
           });
 
           const progress =
@@ -269,21 +290,13 @@ export const FileManagement = ({ route }) => {
               : 0;
           setDownloadProgress((prev) => ({ ...prev, [division]: progress }));
 
-          // Actualizar caché
-          const cachedFiles = await AsyncStorage.getItem(CACHE_KEY);
-          const downloadedFilesCache = cachedFiles
-            ? JSON.parse(cachedFiles)
-            : {};
-          downloadedFiles.forEach((file) => {
-            downloadedFilesCache[`Rutas_${division}/${file.name}`] = true;
-          });
           await AsyncStorage.setItem(
             CACHE_KEY,
             JSON.stringify(downloadedFilesCache)
           );
 
           console.log(
-            `Batch downloaded for ${division}. Progress: ${progress.toFixed(
+            `Lote descargado para ${division}. Progreso: ${progress.toFixed(
               2
             )}%`
           );
@@ -296,14 +309,14 @@ export const FileManagement = ({ route }) => {
           }));
           if (downloadedSize === totalSize) {
             Alert.alert(
-              "Eéxito",
+              "Éxito",
               `Todos los archivos de ${division} se han descargado correctamente.`
             );
-            console.log(`Download completed for division: ${division}`);
+            console.log(`Descarga completada para la división: ${division}`);
           }
         } else {
           setDownloadStatus((prev) => ({ ...prev, [division]: "paused" }));
-          console.log(`Download paused for division: ${division}`);
+          console.log(`Descarga pausada para la división: ${division}`);
         }
       } catch (error) {
         console.error(`Error al descargar archivos de ${division}:`, error);
@@ -326,7 +339,7 @@ export const FileManagement = ({ route }) => {
 
   const downloadBatch = async (batch, division) => {
     console.log(
-      `Downloading batch for division: ${division}. Batch size: ${batch.length}`
+      `Descargando lote para la división: ${division}. Tamaño del lote: ${batch.length}`
     );
     const downloadPromises = batch.map((file) => downloadFile(file, division));
     const results = await Promise.allSettled(downloadPromises);
@@ -352,7 +365,7 @@ export const FileManagement = ({ route }) => {
     ]);
 
     console.log(
-      `Batch download complete. Successful: ${successfulDownloads.length}, Failed: ${failedDownloads.length}`
+      `Lote descargado. Exitosos: ${successfulDownloads.length}, Fallidos: ${failedDownloads.length}`
     );
     return successfulDownloads;
   };
@@ -363,13 +376,16 @@ export const FileManagement = ({ route }) => {
     }
 
     const fileName = `Rutas_${division}/${file.name}`;
-    if (await isFileAlreadyDownloaded(fileName)) {
-      console.log(`File ${file.name} is already downloaded. Skipping.`);
+    const localUri = `${FileSystem.documentDirectory}${division}_${file.name}`;
+
+    const fileInfo = await FileSystem.getInfoAsync(localUri);
+    if (fileInfo.exists) {
+      console.log(`El archivo ${file.name} ya está descargado. Se omite.`);
       return { ...file, downloaded: true };
     }
 
     try {
-      console.log(`Downloading file: ${file.name}`);
+      console.log(`Descargando archivo: ${file.name}`);
       const { data, error } = await supabase.storage
         .from("route_images")
         .download(`Rutas_${division}/${file.name}`);
@@ -391,18 +407,17 @@ export const FileManagement = ({ route }) => {
         throw new Error("Formato de datos no soportado");
       }
 
-      const localUri = `${FileSystem.documentDirectory}${division}_${file.name}`;
       await FileSystem.writeAsStringAsync(localUri, base64data, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      console.log(`File ${file.name} downloaded successfully`);
+      console.log(`Archivo ${file.name} descargado correctamente`);
       return { ...file, downloaded: true };
     } catch (error) {
       console.error(`Error al descargar ${file.name}:`, error);
       if (retryCount < 3) {
         console.log(
-          `Retrying download for ${file.name}. Attempt ${retryCount + 1}`
+          `Reintentando la descarga de ${file.name}. Intento ${retryCount + 1}`
         );
         await new Promise((resolve) =>
           setTimeout(resolve, 1000 * Math.pow(2, retryCount))
@@ -427,7 +442,7 @@ export const FileManagement = ({ route }) => {
       if (cachedFiles) {
         const downloadedFiles = JSON.parse(cachedFiles);
         const updatedCache = Object.keys(downloadedFiles).reduce((acc, key) => {
-          if (!key.startsWith(`Rutas_${division}/`)) {
+          if (!key.startsWith(`${division}_`)) {
             acc[key] = downloadedFiles[key];
           }
           return acc;
@@ -479,13 +494,102 @@ export const FileManagement = ({ route }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
+  const downloadAllFiles = async () => {
+    try {
+      console.log("Downloading all files for all divisions");
+      for (const division of divisions) {
+        await downloadFiles(division);
+      }
+      Alert.alert("Éxito", "Todos los archivos han sido descargados.");
+    } catch (error) {
+      console.error("Error al descargar todos los archivos:", error);
+      Alert.alert(
+        "Error",
+        "Ocurrió un error al descargar todos los archivos. Intenta nuevamente."
+      );
+    }
+  };
+
   useEffect(() => {
     const initializeComponent = async () => {
       await fetchDivisions();
+      const filesInfo = await FileSystem.readDirectoryAsync(
+        FileSystem.documentDirectory
+      );
+      // console.log("Archivos descargados actualmente:", filesInfo); // Mostrar todos los archivos actualmente descargados
       setIsLoading(false);
     };
     initializeComponent();
   }, [fetchDivisions]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
+
+  const removeDuplicateFiles = async () => {
+    try {
+      console.log("Buscando y eliminando archivos duplicados...");
+
+      // Leer todos los archivos del directorio local
+      const filesInfo = await FileSystem.readDirectoryAsync(
+        FileSystem.documentDirectory
+      );
+
+      if (!filesInfo || filesInfo.length === 0) {
+        console.log("No se encontraron archivos en el directorio.");
+        Alert.alert(
+          "No se encontraron archivos",
+          "No hay archivos para eliminar."
+        );
+        return;
+      }
+
+      console.log("filesInfo:", filesInfo);
+
+      // Mapa para almacenar archivos únicos por su nombre sin el prefijo de la carrera
+      const uniqueFiles = {};
+      const duplicates = [];
+
+      // Iterar sobre todos los archivos y detectar duplicados
+      for (const file of filesInfo) {
+        // Eliminar el prefijo (hasta el primer guion bajo)
+        const baseName = file.substring(file.indexOf("_") + 1);
+
+        if (uniqueFiles[baseName]) {
+          duplicates.push(file); // Si el archivo ya fue encontrado, es un duplicado
+        } else {
+          uniqueFiles[baseName] = true;
+        }
+      }
+
+      // Eliminar archivos duplicados
+      if (duplicates.length > 0) {
+        for (const duplicate of duplicates) {
+          const localUri = `${FileSystem.documentDirectory}${duplicate}`;
+          await FileSystem.deleteAsync(localUri, { idempotent: true });
+          console.log(`Archivo duplicado eliminado: ${duplicate}`);
+        }
+
+        Alert.alert(
+          "Éxito",
+          "Todos los archivos duplicados han sido eliminados."
+        );
+      } else {
+        console.log("No se encontraron archivos duplicados.");
+        Alert.alert("Sin duplicados", "No se encontraron archivos duplicados.");
+      }
+    } catch (error) {
+      console.error("Error al eliminar archivos duplicados:", error);
+      Alert.alert(
+        "Error",
+        "Ocurrió un error al eliminar los archivos duplicados."
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -644,6 +748,41 @@ export const FileManagement = ({ route }) => {
                 </View>
               );
             })}
+            <View style={styles.globalButtonContainer}>
+              <TouchableOpacity
+                style={[styles.globalButton, { backgroundColor: "#4CAF50" }]}
+                onPress={downloadAllFiles}>
+                <FontAwesomeIcon
+                  icon={faCloudDownloadAlt}
+                  color="#FFFFFF"
+                  size={16}
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.buttonText}>Descargar Todos</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.globalButton, { backgroundColor: "#D32F2F" }]}
+                onPress={deleteLocalFiles}>
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  color="#FFFFFF"
+                  size={16}
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.buttonText}>Eliminar Todos</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.globalButton, { backgroundColor: "#FF9800" }]}
+                onPress={removeDuplicateFiles}>
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  color="#FFFFFF"
+                  size={16}
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.buttonText}>Eliminar Duplicados</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </ScrollView>
@@ -835,6 +974,38 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "bold",
+  },
+  globalActionsTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333333",
+    marginBottom: 16,
+  },
+  globalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  globalButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 8,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

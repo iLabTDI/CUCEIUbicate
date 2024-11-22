@@ -30,7 +30,7 @@ export const points = [
     rotate: 5,
   },
   {
-    id: "Boulevard",
+    id: "Entrada Boulevard",
     name: "Entrada Boulevard",
     aliases: ["Entrada", "Boulevard", "Entrada Boulevard", "Entrada maestros", "Blvd"],
     left: 410,
@@ -39,16 +39,6 @@ export const points = [
     width: 35,
     rotate: -34,
   },
-  // {
-  //   id: "Canchas",
-  //   name: "Canchas",
-  //   aliases: ["Canchas", "canchas", "basketball", "baloncesto"],
-  //   left: 702,
-  //   top: 1148,
-  //   height: 42,
-  //   width: 48,
-  //   rotate: -22,
-  // },
   {
     id: "Coordinacion Tecnologias",
     name: "Coordinacion de Tecnologias",
@@ -70,8 +60,8 @@ export const points = [
     rotate: -1.8,
   },
   {
-    id: "JOBS2",
-    name: "JOBS 1",
+    id: "JOBS",
+    name: "JOBS",
     aliases: ["JOBS", "jobs", "salon jobs", "ingles"],
     left: 683,
     top: 652,
@@ -90,7 +80,7 @@ export const points = [
     rotate: -1,
   },
   {
-    id: "Lab Ing",
+    id: "Titanic",
     name: "Laboratorio de Ingenierias",
     aliases: ["Laboratorio de Ingenierias", "lab ingenierias", "laboratorio de ingenierias", "Lab ing"],
     left: 644,
@@ -410,7 +400,7 @@ export const points = [
     rotate: -24,
   },
   {
-    id: "Olimpica",
+    id: "Entrada Olimpica",
     name: "Entrada Olimpica",
     aliases: ["Entrada", "Olimpica", "Entrada Olimpica", "Entrada alumnos"],
     left: 685,
@@ -430,7 +420,7 @@ export const points = [
   //   rotate: -4,
   // },
   {
-    id: "Revolucion",
+    id: "Entrada Revolucion",
     name: "Entrada Revolucion",
     aliases: ["Revolucion", "Entrada", "Entrada Revolucion"],
     left: 700,

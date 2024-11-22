@@ -10,6 +10,7 @@ import {
   Alert,
   Modal,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -23,7 +24,6 @@ import {
   faGraduationCap,
   faEnvelope,
   faTimes,
-  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
@@ -36,7 +36,6 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const ICON_SIZE = SCREEN_WIDTH * 0.15;
 const GRID_PADDING = 16;
 
-// Mapping of degree codes to full names
 const degreeNames = {
   ICIV: "Ingeniería Civil",
   IGFO: "Ingeniería en Fotónica",
@@ -64,7 +63,8 @@ const InfoItem = ({ icon, title, value }) => (
       colors={["#0b34b0", "#267bee"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.infoIconContainer}>
+      style={styles.infoIconContainer}
+    >
       <FontAwesomeIcon icon={icon} size={20} color="#FFFFFF" />
     </LinearGradient>
     <View style={styles.infoContent}>
@@ -83,6 +83,8 @@ export const ProfileScreen = ({ route }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
+  const [loadingIcons, setLoadingIcons] = useState(true);
+  const [loadedIcons, setLoadedIcons] = useState({});
   const imageZoomRef = useRef(null);
 
   useEffect(() => {
@@ -91,6 +93,18 @@ export const ProfileScreen = ({ route }) => {
     return () => clearInterval(timerId);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const iconsWithDelay = animalIcons.reduce((acc, icon) => {
+        acc[icon.id] = true;
+        return acc;
+      }, {});
+      setLoadedIcons(iconsWithDelay);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+  
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -133,31 +147,44 @@ export const ProfileScreen = ({ route }) => {
     });
   };
 
+  const renderIcon = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => handleAvatarChange(item.uri)}
+      style={[
+        styles.iconButton,
+        selectedIcon === item.uri && styles.selectedIconButton,
+      ]}
+    >
+      {loadedIcons[item.id] ? (
+        <Image
+          source={item.uri}
+          style={[
+            styles.iconImage,
+            selectedIcon === item.uri && styles.selectedIconImage,
+          ]}
+        />
+      ) : (
+        <ActivityIndicator size={16} color="#0b34b0" />
+      )}
+    </TouchableOpacity>
+  );
+
   return (
     <ScrollView style={styles.container}>
       <LinearGradient
         colors={["#0b34b0", "#267bee"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.header}>
-        <Animatable.View
-          animation="fadeIn"
-          duration={1000}
-          style={styles.avatarContainer}>
+        style={styles.header}
+      >
+        <Animatable.View animation="fadeIn" duration={1000} style={styles.avatarContainer}>
           <Image source={selectedIcon} style={styles.avatar} />
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => setModalVisible(true)}>
+          <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
             <FontAwesomeIcon icon={faEdit} size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </Animatable.View>
-        <Animatable.View
-          animation="fadeInUp"
-          duration={1000}
-          style={styles.userInfo}>
-          <Text style={styles.name}>
-            {userData.name} {userData.lastnames}
-          </Text>
+        <Animatable.View animation="fadeInUp" duration={1000} style={styles.userInfo}>
+          <Text style={styles.name}>{userData.name} {userData.lastnames}</Text>
           <Text style={styles.username}>@{userData.username}</Text>
           <View style={styles.statusIndicator}>
             <FontAwesomeIcon icon={faCheckCircle} size={16} color="#4CAF50" />
@@ -166,35 +193,23 @@ export const ProfileScreen = ({ route }) => {
         </Animatable.View>
       </LinearGradient>
 
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={300}
-        style={styles.card}>
+      <Animatable.View animation="fadeInUp" duration={1000} delay={300} style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Información del Perfil</Text>
         </View>
         <View style={styles.cardContent}>
-          <InfoItem
-            icon={faUser}
-            title="Usuario"
-            value={`@${userData.username}`}
-          />
+          <InfoItem icon={faUser} title="Usuario" value={`@${userData.username}`} />
           <InfoItem icon={faIdCard} title="Código" value={userData.code} />
-          <InfoItem
-            icon={faGraduationCap}
-            title="Carrera"
-            value={degreeNames[userData.degree_code] || userData.degree_code}
+          <InfoItem 
+            icon={faGraduationCap} 
+            title="Carrera" 
+            value={degreeNames[userData.degree_code] || userData.degree_code} 
           />
           <InfoItem icon={faEnvelope} title="Correo" value={userData.email} />
         </View>
       </Animatable.View>
 
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={600}
-        style={styles.card}>
+      <Animatable.View animation="fadeInUp" duration={1000} delay={600} style={styles.card}>
         <View style={styles.cardHeader}>
           <FontAwesomeIcon icon={faCalendarDay} size={20} color="#0b34b0" />
           <Text style={styles.cardTitle}>Fecha Actual</Text>
@@ -211,19 +226,17 @@ export const ProfileScreen = ({ route }) => {
         </View>
       </Animatable.View>
 
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={800}
-        style={styles.card}>
-        <TouchableOpacity
+      <Animatable.View animation="fadeInUp" duration={1000} delay={800} style={styles.card}>
+        <TouchableOpacity 
           style={styles.curriculumButton}
-          onPress={() => setCurriculumModalVisible(true)}>
+          onPress={() => setCurriculumModalVisible(true)}
+        >
           <LinearGradient
             colors={["#0b34b0", "#267bee"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            style={styles.curriculumGradient}>
+            style={styles.curriculumGradient}
+          >
             <FontAwesomeIcon icon={faGraduationCap} size={20} color="#FFFFFF" />
             <Text style={styles.curriculumText}>Ver Malla Curricular</Text>
           </LinearGradient>
@@ -236,7 +249,8 @@ export const ProfileScreen = ({ route }) => {
             colors={["#fb0c06", "#fb0c06"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            style={styles.logoutGradient}>
+            style={styles.logoutGradient}
+          >
             <FontAwesomeIcon icon={faSignOutAlt} size={20} color="#FFFFFF" />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </LinearGradient>
@@ -248,28 +262,33 @@ export const ProfileScreen = ({ route }) => {
         animationType="fade"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
-            <FlatList
-              data={animalIcons}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleAvatarChange(item.uri)}
-                  style={styles.iconButton}>
-                  <Image source={item.uri} style={styles.iconImage} />
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.id}
-              numColumns={4}
-            />
+          <Animatable.View 
+            animation="zoomIn" 
+            duration={300} 
+            style={styles.modalView}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
+            </View>
+           
+              <FlatList
+                data={animalIcons}
+                renderItem={renderIcon}
+                keyExtractor={(item) => item.id}
+                numColumns={4}
+                contentContainerStyle={styles.iconGrid}
+              />
+     
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
+              onPress={() => setModalVisible(false)}
+            >
               <Text style={styles.closeButtonText}>Cerrar</Text>
             </TouchableOpacity>
-          </View>
+          </Animatable.View>
         </View>
       </Modal>
 
@@ -278,11 +297,13 @@ export const ProfileScreen = ({ route }) => {
         animationType="fade"
         transparent={true}
         visible={isCurriculumModalVisible}
-        onRequestClose={() => setCurriculumModalVisible(false)}>
+        onRequestClose={() => setCurriculumModalVisible(false)}
+      >
         <View style={styles.curriculumModalOverlay}>
           <TouchableOpacity
             style={styles.closeModalButton}
-            onPress={() => setCurriculumModalVisible(false)}>
+            onPress={() => setCurriculumModalVisible(false)}
+          >
             <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
           </TouchableOpacity>
           <ImageZoom
@@ -294,7 +315,8 @@ export const ProfileScreen = ({ route }) => {
             enableSwipeDown={true}
             onSwipeDown={() => setCurriculumModalVisible(false)}
             minScale={1}
-            maxScale={3}>
+            maxScale={3}
+          >
             <Image
               source={careerImages[userData.degree_code]}
               style={styles.modalImage}
@@ -328,7 +350,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 4,
     borderColor: "#FFFFFF",
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
   editButton: {
     position: "absolute",
@@ -464,49 +486,57 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalView: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
-    width: "90%",
+    width: '90%',
     maxWidth: 400,
+    maxHeight: '80%',
+  },
+  modalHeader: {
     alignItems: "center",
+    marginBottom: 20,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
     color: "#0b34b0",
     textAlign: "center",
+  },
+  modalSpinner: {
+    marginTop: 20,
+  },
+  iconGrid: {
+    alignItems: 'center',
   },
   iconButton: {
     margin: GRID_PADDING / 2,
     borderRadius: ICON_SIZE / 2,
-    overflow: "hidden",
-    elevation: 3,
-  },
-  iconImage: {
+    overflow: 'hidden',
     width: ICON_SIZE,
     height: ICON_SIZE,
-    borderRadius: ICON_SIZE / 2,
-    borderColor: "#0b34b0", // Cambiado a azul
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  selectedIconButton: {
+    backgroundColor: '#4CAF50',
+  },
+  iconImage: {
+    width: ICON_SIZE - 4,
+    height: ICON_SIZE - 4,
+    borderRadius: (ICON_SIZE - 4) / 2,
     borderWidth: 2,
+    borderColor: '#0b34b0',
   },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-  },
-  closeButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 16,
+  selectedIconImage: {
+    borderColor: '#FFFFFF',
+    borderWidth: 2, 
   },
   curriculumModalOverlay: {
     flex: 1,
@@ -529,6 +559,19 @@ const styles = StyleSheet.create({
   modalImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "#0b34b0",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignSelf: "center",
+  },
+  closeButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

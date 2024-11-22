@@ -164,7 +164,7 @@ export const Chatbot = () => {
     setMessages([
       {
         _id: "1",
-        text: "¡Hola! Soy tu asistente virtual de CUCEI Ubicate. ¿En qué puedo ayudarte hoy?",
+        text: "¡Hola! Soy tu asistente virtual de CUCEI Ubicate. ¿Cómo estás? Estoy aquí para asistirte con dudas académicas o cualquier consulta que tengas.",
         createdAt: new Date().toISOString(),
         user: {
           _id: 2,
@@ -225,7 +225,7 @@ export const Chatbot = () => {
       try {
         const responseFromAPI = await handleGenericAPIRequest(inputMessage);
         addBotMessage(
-          responseFromAPI ||
+          responseFromAPI + "\n\nEsta respuesta está fuera del alcance del área académica." ||
             "Lo siento, no entendí eso. ¿Podrías reformular tu pregunta?"
         );
       } catch (error) {
@@ -258,9 +258,8 @@ export const Chatbot = () => {
     return str
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[̀-ͯ]/g, "");
   };
-
 
   // Función para obtener respuesta desde los intents y redirigir si es necesario
   const getResponseFromIntents = (message) => {
@@ -281,43 +280,12 @@ export const Chatbot = () => {
           navigation.navigate(intent.screen);
           return intent.responses[0]; // Muestra un mensaje opcional antes de redirigir
         } else {
-          return intent.responses[
-            Math.floor(Math.random() * intent.responses.length)
-          ];
+          return intent.responses[0]; // Selecciona la primera respuesta relevante
         }
       }
     }
     return null;
   };
-
-  // const getResponseFromIntents = (message) => {
-  //   const normalizedMessage = normalizeString(message);
-
-  //   for (const intent of intents.intents) {
-  //     const normalizedPatterns = intent.patterns.map((pattern) =>
-  //       normalizeString(pattern)
-  //     );
-
-  //     if (
-  //       normalizedPatterns.some((pattern) =>
-  //         normalizedMessage.includes(pattern)
-  //       )
-  //     ) {
-  //       if (intent.action === "redirect" && intent.url) {
-  //         // Redirige a la URL si es un Easter egg
-  //         Linking.openURL(intent.url).catch((err) =>
-  //           console.error("Error al abrir la URL:", err)
-  //         );
-  //         return intent.responses[0]; // Mensaje opcional antes de redirigir
-  //       } else {
-  //         return intent.responses[
-  //           Math.floor(Math.random() * intent.responses.length)
-  //         ];
-  //       }
-  //     }
-  //   }
-  //   return null;
-  // };
 
   const renderMessage = ({ item }) => (
     <Animatable.View

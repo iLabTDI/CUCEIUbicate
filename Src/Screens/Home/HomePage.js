@@ -60,6 +60,7 @@ export const HomePage = () => {
   const [currentVideoUri, setCurrentVideoUri] = useState("");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+  const [selectedRouteId, setSelectedRouteId] = useState(null);
 
   // Valores animados
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -191,46 +192,57 @@ export const HomePage = () => {
   };
 
   // Función para encontrar un archivo coincidente sin importar el prefijo
-const getMatchingUri = async (searchKey) => {
-  try {
-    const directoryContent = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+  const getMatchingUri = async (searchKey) => {
+    try {
+      const directoryContent = await FileSystem.readDirectoryAsync(
+        FileSystem.documentDirectory
+      );
 
-    // Crear una expresión regular para eliminar los prefijos
-    const prefixRegex = /^([A-Z]+)_/;
+      // Crear una expresión regular para eliminar los prefijos
+      const prefixRegex = /^([A-Z]+)_/;
 
-    // Buscar un archivo cuyo nombre contenga el searchKey después de quitar el prefijo
-    const matchingFile = directoryContent.find(fileName => fileName.replace(prefixRegex, '') === `${searchKey}.webp`);
+      // Buscar un archivo cuyo nombre contenga el searchKey después de quitar el prefijo
+      const matchingFile = directoryContent.find(
+        (fileName) => fileName.replace(prefixRegex, "") === `${searchKey}.webp`
+      );
 
-    return matchingFile ? `${FileSystem.documentDirectory}${matchingFile}` : null;
-  } catch (error) {
-    console.error('Error al buscar archivos en el directorio:', error);
-    return null;
-  }
-};
-
-// Modificación de la función handleSearch
-const handleSearch = async ({ searchKey, reverseSearchKey }) => {
-  console.log("onSearch:", { searchKey, reverseSearchKey });
-  try {
-    // Buscar la URI del archivo que coincida con searchKey o reverseSearchKey
-    const localUri = await getMatchingUri(searchKey) || await getMatchingUri(reverseSearchKey);
-
-    if (localUri) {
-      console.log("Archivo encontrado:", localUri);
-      setSelectedRouteImage(localUri);
-      setCurrentMapImage({ uri: localUri });
-      setIsRouteActive(true);
-      const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
-      setCurrentVideoUri(videoUri);
-      setShowSearchBar(false);
-      return;
+      return matchingFile
+        ? `${FileSystem.documentDirectory}${matchingFile}`
+        : null;
+    } catch (error) {
+      console.error("Error al buscar archivos en el directorio:", error);
+      return null;
     }
+  };
 
-    Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
-  } catch (error) {
-    console.error("Error al buscar ruta:", error);
-  }
-};
+  const handleSearch = async ({ searchKey, reverseSearchKey }) => {
+    console.log("onSearch:", { searchKey, reverseSearchKey });
+    try {
+      const localUri = await getMatchingUri(searchKey) || await getMatchingUri(reverseSearchKey);
+  
+      if (localUri) {
+        console.log("Imagen encontrada:", localUri);
+        setSelectedRouteImage(localUri);
+        setCurrentMapImage({ uri: localUri });
+        setIsRouteActive(true);
+  
+        // Establece el ID de la ruta basado en la clave de búsqueda para que sea único
+        setSelectedRouteId(searchKey || reverseSearchKey);
+  
+        // Busca el video asociado a la ruta
+        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        setCurrentVideoUri(videoUri || null); // Si no hay video, establece null
+  
+        setShowSearchBar(false);
+        return;
+      }
+  
+      Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
+    } catch (error) {
+      console.error("Error al buscar ruta:", error);
+    }
+  };
+  
 
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
@@ -390,8 +402,9 @@ const handleSearch = async ({ searchKey, reverseSearchKey }) => {
         {/* Modal de video */}
         <VideoModal
           isVisible={isVideoModalVisible}
-          onClose={toggleVideoModal}
+          onClose={() => setIsVideoModalVisible(false)}
           videoUri={currentVideoUri}
+          routeId={selectedRouteId} 
         />
 
         {/* Botón del chatbot */}
@@ -399,12 +412,12 @@ const handleSearch = async ({ searchKey, reverseSearchKey }) => {
 
         {/* Componente BottomSheet */}
         <BottomSheetComponent
-        ref={bottomSheetRef}
-        snapPoints={["50%", "75%"]}
-        selectedPoint={selectedPoint}
-        isVisible={isBottomSheetVisible}
-        onClose={handleCloseBottomSheet}
-      />
+          ref={bottomSheetRef}
+          snapPoints={["50%", "75%"]}
+          selectedPoint={selectedPoint}
+          isVisible={isBottomSheetVisible}
+          onClose={handleCloseBottomSheet}
+        />
       </Animated.View>
     </View>
   );

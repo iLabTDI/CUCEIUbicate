@@ -305,7 +305,7 @@ export const MyDrawer = () => {
           headerTitle: () => <HeaderWithIcon title="Gestion de Archivos" icon={faFileDownload} />,
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="EasterEgg"
         component={EasterEgg}
         options={{
@@ -316,7 +316,7 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="EasterEgg" icon={faArchive} />,
         }}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 };
