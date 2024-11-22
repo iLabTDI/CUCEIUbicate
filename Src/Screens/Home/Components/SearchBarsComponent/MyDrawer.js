@@ -124,7 +124,7 @@ export const MyDrawer = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#0b34b0",
-          height: isTablet ? 70 : 60,
+          height: isTablet ? 90 : 60,
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
