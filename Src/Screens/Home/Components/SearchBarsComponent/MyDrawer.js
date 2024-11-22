@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerItem,
 } from "@react-navigation/drawer";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -29,6 +31,7 @@ import {
   faRobot,
   faArchive,
   faFileDownload,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { HomePage } from "../../HomePage";
@@ -46,24 +49,29 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
 import EasterEgg from "../../../EasterEgg/EasterEgg";
+
 const Drawer = createDrawerNavigator();
+const { width, height } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 const CustomDrawerContent = (props) => {
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
-  // const handleLogout = () => {
-  //   navigation.navigate("Inicio");
-  //   console.log("Cerrando sesión...");
-  // };
+  const handleLogout = () => {
+    navigation.navigate("Inicio");
+    console.log("Cerrando sesión...");
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={styles.drawerContent}>
+        contentContainerStyle={styles.drawerContent}
+      >
         <LinearGradient
           colors={["#4c669f", "#3b5998", "#192f6a"]}
-          style={styles.drawerHeader}>
+          style={styles.drawerHeader}
+        >
           <Image
             source={require("../../../../../assets/images/Logo_Cucei.png")}
             style={styles.logo}
@@ -92,15 +100,16 @@ const DrawerHeaderButton = () => {
   return (
     <TouchableOpacity
       onPress={() => navigation.openDrawer()}
-      style={styles.menuIcon}>
-      <FontAwesomeIcon icon={faBars} size={23} color="#FFFFFF" />
+      style={styles.menuIcon}
+    >
+      <FontAwesomeIcon icon={faBars} size={isTablet ? 26 : 23} color="#FFFFFF" />
     </TouchableOpacity>
   );
 };
 
 const HeaderWithIcon = ({ title, icon }) => (
   <View style={styles.header}>
-    <FontAwesomeIcon icon={icon} size={24} color="#FFFFFF" />
+    <FontAwesomeIcon icon={icon} size={isTablet ? 26 : 24} color="#FFFFFF" />
     <Text style={styles.headerText}>{title}</Text>
   </View>
 );
@@ -111,24 +120,31 @@ export const MyDrawer = () => {
 
   return (
     <Drawer.Navigator
-      initialRouteName="Mapa" // default route
+      initialRouteName="Mapa"
       screenOptions={{
         headerStyle: {
           backgroundColor: "#0b34b0",
+          height: isTablet ? 70 : 60,
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
           fontWeight: "bold",
+          fontSize: isTablet ? 20 : 18,
         },
         drawerStyle: {
           backgroundColor: "#f5f5f5",
-          width: 280,
+          width: isTablet ? 320 : 280,
         },
         drawerActiveBackgroundColor: "#e0e0e0",
         drawerActiveTintColor: "#4c669f",
         drawerInactiveTintColor: "#000000",
+        drawerLabelStyle: {
+          fontSize: isTablet ? 16 : 14,
+          fontWeight: "500",
+        },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
@@ -151,7 +167,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
           headerShown: true,
-          drawerItemStyle: { display: "none" }, //para ocultar la pantalla perfil
+          drawerItemStyle: { display: "none" },
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Perfil" icon={faUser} />,
         }}
@@ -181,7 +197,7 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => (
             <HeaderWithIcon title="Artículos" icon={faNewspaper} />
-          ), // Header personalizado
+          ),
         }}
       />
       <Drawer.Screen
@@ -297,65 +313,53 @@ export const MyDrawer = () => {
         component={FileManagement}
         initialParams={{ user }}
         options={{
-          drawerLabel: "Gestion de Archivos",
+          drawerLabel: "Gestión de Archivos",
           drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faFileDownload} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="Gestion de Archivos" icon={faFileDownload} />,
+          headerTitle: () => <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />,
         }}
       />
-      {/* <Drawer.Screen
-        name="EasterEgg"
-        component={EasterEgg}
-        options={{
-          drawerLabel: "EasterEgg",
-          drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faArchive} size={size} color={color} />
-          ),
-          headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="EasterEgg" icon={faArchive} />,
-        }}
-      /> */}
     </Drawer.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollview: {
+  scrollView: {
     flex: 1,
   },
   drawerContent: {
     flex: 1,
   },
   drawerHeader: {
-    height: 180,
+    height: isTablet ? 200 : 180,
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
+    padding: isTablet ? 20 : 16,
   },
   logo: {
-    width: 200,
-    height: 100,
-    marginBottom: 5,
+    width: isTablet ? 220 : 200,
+    height: isTablet ? 110 : 100,
+    marginBottom: isTablet ? 8 : 5,
   },
   drawerHeaderText: {
     color: "white",
-    fontSize: 22,
+    fontSize: isTablet ? 24 : 22,
     fontWeight: "bold",
     textAlign: "center",
   },
   drawerItemsContainer: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingTop: 10,
+    paddingTop: isTablet ? 12 : 10,
   },
   drawerItemLabel: {
-    fontSize: 16,
+    fontSize: isTablet ? 16 : 14,
     fontWeight: "500",
   },
   menuIcon: {
-    paddingLeft: 16,
+    paddingLeft: isTablet ? 20 : 16,
   },
   header: {
     flexDirection: "row",
@@ -363,8 +367,10 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: isTablet ? 20 : 18,
     fontWeight: "bold",
-    marginLeft: 8,
+    marginLeft: isTablet ? 10 : 8,
   },
 });
+
+export default MyDrawer;

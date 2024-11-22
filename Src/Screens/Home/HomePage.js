@@ -35,6 +35,7 @@ import { DeleteLocalFiles } from "./Routes/DeleteLocalFiles";
 import * as FileSystem from "expo-file-system";
 
 const { width, height } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 export const HomePage = () => {
   const navigation = useNavigation();
@@ -289,7 +290,7 @@ export const HomePage = () => {
         <TouchableOpacity
           style={styles.menu_icon}
           onPress={() => navigation.openDrawer()}>
-          <FontAwesomeIcon icon={faBars} size={width * 0.06} color="#FFFFFF" />
+          <FontAwesomeIcon icon={faBars} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* Botón de perfil */}
@@ -301,7 +302,7 @@ export const HomePage = () => {
           ) : (
             <FontAwesomeIcon
               icon={faUser}
-              size={width * 0.06}
+              size={isTablet ? width * 0.04 : width * 0.06}
               color="#FFFFFF"
             />
           )}
@@ -309,7 +310,7 @@ export const HomePage = () => {
 
         {/* Botón de búsqueda */}
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
-          <FontAwesomeIcon icon={faRoute} size={width * 0.06} color="#FFFFFF" />
+          <FontAwesomeIcon icon={faRoute} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* Componente de búsqueda de ruta */}
@@ -394,7 +395,7 @@ export const HomePage = () => {
           <TouchableOpacity
             style={styles.videoButton}
             onPress={toggleVideoModal}>
-            <FontAwesomeIcon icon={faPlay} size={24} color="#FFFFFF" />
+            <FontAwesomeIcon icon={faPlay} size={isTablet ? 28 : 24} color="#FFFFFF" />
             <Text style={styles.videoButtonText}>Ver Video</Text>
           </TouchableOpacity>
         )}
@@ -439,12 +440,12 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   lottieAnimation: {
-    width: width * 0.5,
-    height: width * 0.5,
+    width: isTablet ? width * 0.3 : width * 0.5,
+    height: isTablet ? width * 0.3 : width * 0.5,
   },
   loadingText: {
     marginTop: 20,
-    fontSize: 18,
+    fontSize: isTablet ? 24 : 18,
     fontWeight: "bold",
     color: "#333",
   },
@@ -455,37 +456,37 @@ const styles = StyleSheet.create({
   },
   menu_icon: {
     position: "absolute",
-    top: height * 0.05,
-    left: width * 0.03,
+    top: isTablet ? height * 0.03 : height * 0.05,
+    left: isTablet ? width * 0.02 : width * 0.03,
     backgroundColor: "#0000ff",
-    borderRadius: width * 0.1,
-    padding: width * 0.04,
+    borderRadius: isTablet ? width * 0.06 : width * 0.1,
+    padding: isTablet ? width * 0.03 : width * 0.04,
     zIndex: 2,
   },
   search_icon: {
     position: "absolute",
-    top: height * 0.05,
-    right: width * 0.2,
+    top: isTablet ? height * 0.03 : height * 0.05,
+    right: isTablet ? width * 0.13 : width * 0.2,
     backgroundColor: "#0000ff",
-    borderRadius: width * 0.1,
-    padding: width * 0.04,
+    borderRadius: isTablet ? width * 0.06 : width * 0.1,
+    padding: isTablet ? width * 0.03 : width * 0.04,
     zIndex: 2,
   },
   profile_icon: {
     position: "absolute",
-    top: height * 0.05,
-    left: width * 0.19,
+    top: isTablet ? height * 0.03 : height * 0.05,
+    left: isTablet ? width * 0.14 : width * 0.19,
     backgroundColor: "#0000ff",
-    borderRadius: width * 0.1,
-    padding: width * 0.04,
+    borderRadius: isTablet ? width * 0.06 : width * 0.1,
+    padding: isTablet ? width * 0.03 : width * 0.04,
     zIndex: 2,
     justifyContent: "center",
     alignItems: "center",
   },
   profileImage: {
-    width: width * 0.06,
-    height: width * 0.06,
-    borderRadius: (width * 0.06) / 2,
+    width: isTablet ? width * 0.04 : width * 0.06,
+    height: isTablet ? width * 0.04 : width * 0.06,
+    borderRadius: isTablet ? width * 0.02 : width * 0.03,
   },
   imageContainer: {
     flex: 1,
@@ -498,12 +499,12 @@ const styles = StyleSheet.create({
   },
   finalizeButton: {
     position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: isTablet ? 30 : 20,
+    left: isTablet ? 30 : 20,
+    right: isTablet ? 30 : 20,
     backgroundColor: "#FF0000",
-    padding: 15,
-    borderRadius: 10,
+    padding: isTablet ? 15 : 15,
+    borderRadius: isTablet ? 15 : 10,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -514,16 +515,16 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: isTablet ? 22 : 18,
   },
   videoButton: {
     position: "absolute",
-    bottom: 80,
-    right: 20,
+    bottom: isTablet ? 110 : 80,
+    right: isTablet ? 30 : 20,
     backgroundColor: "#0b34b0",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 30,
+    paddingVertical: isTablet ? 15 : 10,
+    paddingHorizontal: isTablet ? 20 : 15,
+    borderRadius: isTablet ? 40 : 30,
     flexDirection: "row",
     alignItems: "center",
     elevation: 5,
@@ -534,19 +535,19 @@ const styles = StyleSheet.create({
   },
   videoButtonText: {
     color: "#FFFFFF",
-    marginLeft: 8,
+    marginLeft: isTablet ? 12 : 8,
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
   },
   downloadButton: {
     position: "absolute",
-    bottom: 20,
-    left: 80,
+    bottom: isTablet ? 30 : 20,
+    left: isTablet ? 100 : 80,
     backgroundColor: "#007bff",
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    borderRadius: 20,
+    padding: isTablet ? 20 : 15,
+    borderRadius: isTablet ? 25 : 20,
   },
 });
 

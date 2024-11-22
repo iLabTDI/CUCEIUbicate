@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Dimensions,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { 
@@ -15,6 +16,9 @@ import {
   faCamera, 
 } from '@fortawesome/free-solid-svg-icons';
 import staticJsonData from '../../../json/face_access.json';
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 export const Facial_recognition = () => {
   const [jsonData, setJsonData] = useState(staticJsonData);
@@ -32,7 +36,7 @@ export const Facial_recognition = () => {
     <View key={index} style={styles.listItemContainer}>
       <FontAwesomeIcon 
         icon={faChevronRight} 
-        size={16} 
+        size={isTablet ? 18 : 16} 
         color="#0b34b0" 
         style={styles.listItemIcon}
       />
@@ -43,6 +47,7 @@ export const Facial_recognition = () => {
   return (
     <ScrollView 
       style={styles.scrollContainer}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
       }
@@ -50,19 +55,19 @@ export const Facial_recognition = () => {
       <View style={styles.content}>
         <View style={styles.card}>
           <View style={styles.titleContainer}>
-            <FontAwesomeIcon icon={faCamera} size={24} color="#0b34b0" />
+            <FontAwesomeIcon icon={faCamera} size={isTablet ? 28 : 24} color="#0b34b0" />
             <Text style={styles.title}>{jsonData["section-description"].name}</Text>
           </View>
           <Text style={styles.descriptionText}>
             {jsonData["section-description"].description}
           </Text>
           <View style={styles.listTitleContainer}>
-            <FontAwesomeIcon icon={faUserGraduate} size={20} color="#0b34b0" />
+            <FontAwesomeIcon icon={faUserGraduate} size={isTablet ? 24 : 20} color="#0b34b0" />
             <Text style={styles.listTitle}>{jsonData["section-description"].tittle}</Text>
           </View>
           {Object.values(jsonData["section-description"]["listed-elements"]).map((item, index) => renderListItem(item, index))}
           <View style={styles.noteContainer}>
-            <FontAwesomeIcon icon={faExclamationTriangle} size={16} color="#f39c12" />
+            <FontAwesomeIcon icon={faExclamationTriangle} size={isTablet ? 18 : 16} color="#f39c12" />
             <Text style={styles.noteText}>
               Si tienes problemas, acude a la Coordinación de Seguridad y Protección Universitaria.
             </Text>
@@ -78,14 +83,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  contentContainer: {
+    paddingHorizontal: isTablet ? 24 : 16,
+  },
   content: {
-    padding: 20,
+    paddingVertical: 20,
   },
   card: {
     backgroundColor: '#FFFFFF',
-    padding: 20,
+    padding: isTablet ? 24 : 20,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: isTablet ? 12 : 10,
     shadowColor: '#000000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -95,58 +103,58 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : 24,
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: '#333333',
-    lineHeight: 24,
-    marginBottom: 15,
+    lineHeight: isTablet ? 28 : 24,
+    marginBottom: isTablet ? 20 : 15,
   },
   listTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   listTitle: {
-    fontSize: 20,
+    fontSize: isTablet ? 24 : 20,
     fontWeight: 'bold',
     color: '#0b34b0',
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   listItemContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   listItemIcon: {
-    marginTop: 4,
-    marginRight: 10,
+    marginTop: isTablet ? 6 : 4,
+    marginRight: isTablet ? 15 : 10,
   },
   listItem: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: '#333333',
-    lineHeight: 24,
+    lineHeight: isTablet ? 28 : 24,
     flex: 1,
   },
   noteContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#fff9c4',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 15,
+    padding: isTablet ? 15 : 10,
+    borderRadius: isTablet ? 8 : 5,
+    marginTop: isTablet ? 20 : 15,
   },
   noteText: {
-    fontSize: 14,
+    fontSize: isTablet ? 16 : 14,
     color: '#333333',
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
     flex: 1,
   },
 });

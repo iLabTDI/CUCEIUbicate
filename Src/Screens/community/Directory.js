@@ -9,6 +9,7 @@ import {
   Linking,
   RefreshControl,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -22,12 +23,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import staticJsonData from "../../../json/contact_info.json";
 import { ContactImage } from "../../../json/contact_images";
 
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
+
 export const Directory = () => {
   const [jsonData, setJsonData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     // Simulate fetching data
     setTimeout(() => {
@@ -66,8 +69,8 @@ export const Directory = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size={24} color="#007bff" />
-        <Text style={styles.Cargando}>Cargando...</Text>
+        <ActivityIndicator size={isTablet ? 48 : 24} color="#0056b3" />
+        <Text style={styles.loadingText}>Cargando directorio...</Text>
       </View>
     );
   }
@@ -79,15 +82,16 @@ export const Directory = () => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
       <LinearGradient colors={["#0056b3", "#007bff"]} style={styles.header}>
-        <FontAwesomeIcon icon={faUser} size={24} color="#fff" />
-        <Text style={styles.headerTitle}>Directorio</Text>
+        <FontAwesomeIcon icon={faUser} size={isTablet ? 36 : 24} color="#fff" />
+        <Text style={styles.headerTitle}>Directorio CUCEI</Text>
       </LinearGradient>
       <View style={styles.content}>
         {jsonData.map((contact, index) => (
           <View key={index} style={styles.card}>
             <LinearGradient
-              colors={["#0b34b0", "#0056b3"]}
-              style={styles.cardHeader}>
+              colors={["#0056b3", "#267bee"]}
+              style={styles.cardHeader}
+            >
               <Image
                 source={getImageSource(contact.imagen)}
                 style={styles.image}
@@ -134,91 +138,101 @@ export const Directory = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f2f5",
+    backgroundColor: "#f8f9fa",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f8f9fa",
+  },
+  loadingText: {
+    fontSize: isTablet ? 24 : 18,
+    fontWeight: "600",
+    color: "#0056b3",
+    marginTop: isTablet ? 20 : 10,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    padding: isTablet ? 30 : 20,
+    borderBottomLeftRadius: isTablet ? 30 : 20,
+    borderBottomRightRadius: isTablet ? 30 : 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
-    marginLeft: 10,
-  },
-  Cargando: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#007bff",
-    marginTop: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   content: {
-    padding: 16,
+    padding: isTablet ? 24 : 16,
+    flexDirection: isTablet ? 'row' : 'column',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: "#000000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
+    borderRadius: isTablet ? 16 : 12,
+    marginBottom: isTablet ? 24 : 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
     overflow: "hidden",
+    width: isTablet ? '48%' : '100%',
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: isTablet ? 24 : 16,
+    paddingVertical: isTablet ? 16 : 12,
+    height: isTablet ? 170 : 100, // Altura fija para todos los headers de las tarjetas
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9ecef",
   },
   image: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
+    width: isTablet ? 80 : 60,
+    height: isTablet ? 80 : 60,
+    borderRadius: isTablet ? 40 : 30,
+    marginRight: isTablet ? 20 : 16,
   },
   headerText: {
     flex: 1,
+    justifyContent: "center",
   },
   name: {
-    fontSize: 18,
+    fontSize: isTablet ? 18 : 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "#ffffff",
+    marginBottom: isTablet ? 5 : 4,
   },
   position: {
-    fontSize: 14,
-    color: "#e0e0e0",
-    marginTop: 4,
+    fontSize: isTablet ? 16 : 14,
+    color: "#e9ecef",
   },
   cardBody: {
-    padding: 16,
+    padding: isTablet ? 24 : 16,
   },
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: isTablet ? 16 : 12,
   },
   icon: {
-    color: "#0b34b0",
-    marginRight: 12,
-    width: 20,
-    height: 20,
+    color: "#0056b3",
+    marginRight: isTablet ? 16 : 12,
+    width: isTablet ? 22 : 18,
+    height: isTablet ? 22 : 18,
   },
   infoText: {
-    fontSize: 16,
-    color: "#333333",
+    fontSize: isTablet ? 18 : 16,
+    color: "#495057",
     flex: 1,
   },
   linkText: {
-    color: "#0b34b0",
+    color: "#0056b3",
     textDecorationLine: "underline",
   },
 });

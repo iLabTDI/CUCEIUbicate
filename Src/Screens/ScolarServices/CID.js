@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, act } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { ErrorComponent } from "../Components/ErrorComponent";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -8,6 +8,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 // Static JSON data
 import staticCidData from '../../../json/cid.json';
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 export const CID = () => {
   const [jsonData, setJsonData] = useState(null);
@@ -56,7 +59,7 @@ export const CID = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size={24} color="#0b34b0" />
+        <ActivityIndicator size={isTablet ? 32 : 24} color="#0b34b0" />
         <Text style={styles.loadingText}>Cargando CID...</Text>
       </View>
     );
@@ -80,6 +83,7 @@ export const CID = () => {
   return (
     <ScrollView 
       style={styles.scrollView}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -88,7 +92,7 @@ export const CID = () => {
         colors={['#0b34b0', '#4a90e2']}
         style={styles.header}
       >
-        <FontAwesomeIcon icon={faBook} size={40} color="#FFFFFF" />
+        <FontAwesomeIcon icon={faBook} size={isTablet ? 48 : 40} color="#FFFFFF" />
         <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
       </LinearGradient>
       <View style={styles.content}>
@@ -103,12 +107,12 @@ export const CID = () => {
           ([subsectionId, subsection]) => (
             <View key={subsectionId} style={styles.card}>
               <View style={styles.subsectionTitleContainer}>
-                <FontAwesomeIcon icon={getIcon(subsection.title)} size={24} color="#0b34b0" />
+                <FontAwesomeIcon icon={getIcon(subsection.title)} size={isTablet ? 28 : 24} color="#0b34b0" />
                 <Text style={styles.subsectionTitle}>{subsection.title}</Text>
               </View>
               {Object.values(subsection["listed-elements"]).map((element, index) => (
                 <View key={index} style={styles.listItemContainer}>
-                  <FontAwesomeIcon icon={faListUl} size={16} color="#4a90e2" style={styles.listItemIcon} />
+                  <FontAwesomeIcon icon={faListUl} size={isTablet ? 18 : 16} color="#4a90e2" style={styles.listItemIcon} />
                   <Text style={styles.listItemText}>{element}</Text>
                 </View>
               ))}
@@ -125,7 +129,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  contentContainer: {
+    paddingHorizontal: isTablet ? 24 : 16,
+  },
   header: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     padding: 20,
@@ -133,21 +141,21 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : 24,
     fontWeight: "bold",
     color: "#FFFFFF",
     marginTop: 10,
     textAlign: 'center',
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   content: {
-    padding: 20,
+    paddingVertical: 20,
   },
   card: {
     backgroundColor: "#FFFFFF",
-    padding: 20,
+    padding: isTablet ? 24 : 20,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: isTablet ? 12 : 10,
     shadowColor: "#000000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -157,16 +165,16 @@ const styles = StyleSheet.create({
   subsectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: isTablet ? 20 : 15,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-    paddingBottom: 10,
+    paddingBottom: isTablet ? 15 : 10,
   },
   subsectionTitle: {
-    fontSize: 22,
+    fontSize: isTablet ? 26 : 22,
     fontWeight: "bold",
     color: "#0b34b0",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   loadingContainer: {
     flex: 1,
@@ -176,29 +184,29 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: '#0b34b0',
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#333333",
-    lineHeight: 24,
-    marginBottom: 8,
+    lineHeight: isTablet ? 28 : 24,
+    marginBottom: isTablet ? 12 : 8,
   },
   listItemContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   listItemIcon: {
-    marginTop: 4,
-    marginRight: 10,
+    marginTop: isTablet ? 6 : 4,
+    marginRight: isTablet ? 15 : 10,
   },
   listItemText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#333333",
-    lineHeight: 24,
+    lineHeight: isTablet ? 28 : 24,
   },
 });
 

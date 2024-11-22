@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Linking,
+  Dimensions,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -21,6 +22,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import * as FileSystem from "expo-file-system";
 import { ErrorComponent } from "../Components/ErrorComponent";
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`;
 
@@ -88,7 +92,7 @@ export const School_services = () => {
           onPress={() => Linking.openURL(item)}
           style={styles.linkContainer}
         >
-          <FontAwesomeIcon icon={faLink} size={16} color="#0b34b0" />
+          <FontAwesomeIcon icon={faLink} size={isTablet ? 20 : 16} color="#0b34b0" />
           <Text style={styles.link}>{item}</Text>
         </TouchableOpacity>
       );
@@ -115,7 +119,7 @@ export const School_services = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size={24} color="#0b34b0" />
+        <ActivityIndicator size={isTablet ? 32 : 24} color="#0b34b0" />
         <Text style={styles.loadingText}>Cargando servicios escolares...</Text>
       </View>
     );
@@ -124,24 +128,17 @@ export const School_services = () => {
   return (
     <ScrollView
       style={styles.container}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      {/* <TouchableOpacity style={styles.updateButton} onPress={downloadJson}>
-        <FontAwesomeIcon icon={faSync} size={16} color="#FFFFFF" />
-        <Text style={styles.updateButtonText}>Actualizar</Text>
-      </TouchableOpacity> */}
-
       {jsonData?.section_description && (
         <View style={styles.card}>
           <View style={styles.titleContainer}>
-            <FontAwesomeIcon icon={faGraduationCap} size={24} color="#0b34b0" />
+            <FontAwesomeIcon icon={faGraduationCap} size={isTablet ? 32 : 24} color="#0b34b0" />
             <Text style={styles.mainTitle}>{jsonData.section_description.name}</Text>
           </View>
-          {/* <Text style={styles.description}>
-            {jsonData.section_description.description}
-          </Text> */}
         </View>
       )}
 
@@ -152,7 +149,7 @@ export const School_services = () => {
               <View style={styles.sectionTitleContainer}>
                 <FontAwesomeIcon 
                   icon={sectionIcons[section.title] || faGraduationCap} 
-                  size={20} 
+                  size={isTablet ? 24 : 20} 
                   color="#0b34b0" 
                 />
                 <Text style={styles.sectionTitle}>{section.title}</Text>
@@ -179,6 +176,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+  contentContainer: {
+    paddingHorizontal: isTablet ? 24 : 16,
+    paddingBottom: 20,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -187,30 +188,14 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     color: "#0b34b0",
-  },
-  updateButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#0b34b0",
-    padding: 12,
-    margin: 10,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  updateButtonText: {
-    color: "#FFFFFF",
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: "bold",
   },
   card: {
     backgroundColor: "#FFFFFF",
-    margin: 10,
-    padding: 20,
-    borderRadius: 12,
+    marginVertical: isTablet ? 15 : 10,
+    padding: isTablet ? 24 : 20,
+    borderRadius: isTablet ? 16 : 12,
     shadowColor: "#000000",
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -220,45 +205,45 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#0b34b0",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   sectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: isTablet ? 20 : 15,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: isTablet ? 24 : 20,
     fontWeight: "bold",
     color: "#0b34b0",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   text: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#333333",
-    marginBottom: 8,
-    lineHeight: 24,
+    marginBottom: isTablet ? 12 : 8,
+    lineHeight: isTablet ? 28 : 24,
   },
   linkContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: isTablet ? 12 : 8,
     flexWrap: "wrap",
   },
   link: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     color: "#0b34b0",
     textDecorationLine: "underline",
-    marginLeft: 8,
+    marginLeft: isTablet ? 12 : 8,
   },
   listItem: {
-    marginBottom: 8,
+    marginBottom: isTablet ? 12 : 8,
   },
 });
 

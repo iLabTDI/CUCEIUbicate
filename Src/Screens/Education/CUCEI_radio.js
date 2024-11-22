@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
+  Dimensions
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -17,6 +18,9 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import staticJsonData from "../../../json/radio_cucei.json";
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 export const CUCEI_radio = () => {
   const openLink = (url) => {
@@ -109,7 +113,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   content: {
-    padding: 20,
+    paddingHorizontal: isTablet ? 24 : 16,
+    paddingBottom: 20,
   },
   card: {
     backgroundColor: "#FFFFFF",

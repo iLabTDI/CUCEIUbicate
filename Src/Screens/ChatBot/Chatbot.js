@@ -15,7 +15,6 @@ import {
   Image,
   Animated,
   AppState,
-  Linking
 } from "react-native";
 import LottieView from "lottie-react-native";
 import { BlurView } from "expo-blur";
@@ -28,6 +27,7 @@ import handleGenericAPIRequest from "../ChatBot/api";
 import intents from "../ChatBot/intents.json";
 
 const { width, height } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 const TypingAnimation = () => {
   const [animation] = useState(new Animated.Value(0));
@@ -82,7 +82,7 @@ export const Chatbot = () => {
   const flatListRef = useRef();
   const appState = useRef(AppState.currentState);
   const lastActivityTime = useRef(Date.now());
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   useEffect(() => {
     checkFirstVisit();
@@ -261,7 +261,6 @@ export const Chatbot = () => {
       .replace(/[̀-ͯ]/g, "");
   };
 
-  // Función para obtener respuesta desde los intents y redirigir si es necesario
   const getResponseFromIntents = (message) => {
     const normalizedMessage = normalizeString(message);
 
@@ -276,11 +275,10 @@ export const Chatbot = () => {
         )
       ) {
         if (intent.action === "navigateToScreen") {
-          // Redirige a la pantalla especificada en intent.screen
           navigation.navigate(intent.screen);
-          return intent.responses[0]; // Muestra un mensaje opcional antes de redirigir
+          return intent.responses[0];
         } else {
-          return intent.responses[0]; // Selecciona la primera respuesta relevante
+          return intent.responses[0];
         }
       }
     }
@@ -288,38 +286,37 @@ export const Chatbot = () => {
   };
 
   const renderMessage = ({ item }) => (
-    <Animatable.View
-      animation="fadeIn"
-      duration={500}
-      style={[
-        styles.messageBubble,
-        item.user._id === 1 ? styles.userBubble : styles.botBubble,
-        item.user._id === 1 && {
-          maxWidth: Math.min(width * 0.8, item.text.length * 8 + 32),
-        },
-      ]}>
-      {item.user._id === 2 && (
-        <Image source={item.user.avatar} style={styles.avatar} />
-      )}
-      <View style={styles.messageContent}>
-        <Text
-          style={[
-            styles.messageText,
-            item.user._id === 1
-              ? styles.userMessageText
-              : styles.botMessageText,
-          ]}>
-          {item.text}
-        </Text>
-        <Text style={styles.timestamp}>
-          {new Date(item.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
-      </View>
-    </Animatable.View>
-  );
+  <Animatable.View
+    animation="fadeIn"
+    duration={500}
+    style={[
+      styles.messageBubble,
+      item.user._id === 1 ? styles.userBubble : styles.botBubble,
+    ]}
+  >
+    {item.user._id === 2 && (
+      <Image source={item.user.avatar} style={styles.avatar} />
+    )}
+    <View style={styles.messageContent}>
+      <Text
+        style={[
+          styles.messageText,
+          item.user._id === 1
+            ? styles.userMessageText
+            : styles.botMessageText,
+        ]}
+      >
+        {item.text}
+      </Text>
+      <Text style={styles.timestamp}>
+        {new Date(item.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Text>
+    </View>
+  </Animatable.View>
+); 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -328,7 +325,7 @@ export const Chatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100} // Cambia este val
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 100}
       >
         <FlatList
           ref={flatListRef}
@@ -357,7 +354,7 @@ export const Chatbot = () => {
             disabled={!inputMessage.trim()}>
             <FontAwesome
               name="paper-plane"
-              size={24}
+              size={isTablet ? 30 : 24}
               color={inputMessage.trim() ? "#4c669f" : "#999"}
             />
           </TouchableOpacity>
@@ -404,26 +401,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  header: {
-    padding: 15,
-    alignItems: "center",
-  },
-  headerTitle: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
   chatContainer: {
     flex: 1,
   },
   messageList: {
-    paddingHorizontal: 10,
-    paddingBottom: 10,
+    paddingHorizontal: isTablet ? 25 : 10,
+    paddingBottom: isTablet ? 20 : 10,
   },
   messageBubble: {
-    padding: 12,
-    borderRadius: 20,
-    marginVertical: 6,
+    padding: isTablet ? 16 : 12,
+    borderRadius: isTablet ? 25 : 20,
+    marginVertical: isTablet ? 8 : 6,
     flexDirection: "row",
     alignItems: "flex-end",
     shadowColor: "#000",
@@ -438,23 +426,25 @@ const styles = StyleSheet.create({
   userBubble: {
     alignSelf: "flex-end",
     backgroundColor: "#4c669f",
+    maxWidth: isTablet ? "30%" : "40%",
   },
   botBubble: {
     alignSelf: "flex-start",
     backgroundColor: "#f0f0f0",
-    maxWidth: "80%",
+    maxWidth: isTablet ? "80%" : "80%",
   },
   avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 10,
+    width: isTablet ? 40 : 30,
+    height: isTablet ? 40 : 30,
+    borderRadius: isTablet ? 20 : 15,
+    marginRight: isTablet ? 15 : 10,
   },
   messageContent: {
     flex: 1,
+    marginLeft: isTablet ? 10 : 10,
   },
   messageText: {
-    fontSize: 16,
+    fontSize: isTablet ? 15 : 16,
   },
   userMessageText: {
     color: "#FFFFFF",
@@ -463,49 +453,49 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   timestamp: {
-    fontSize: 12,
+    fontSize: isTablet ? 14 : 12,
     color: "#999",
     alignSelf: "flex-end",
     marginTop: 5,
   },
   typingContainer: {
-    padding: 10,
+    padding: isTablet ? 15 : 10,
     alignItems: "flex-start",
   },
   typingBubble: {
     flexDirection: "row",
     backgroundColor: "#f0f0f0",
-    borderRadius: 20,
-    padding: 10,
+    borderRadius: isTablet ? 25 : 20,
+    padding: isTablet ? 15 : 10,
     alignItems: "center",
   },
   typingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: isTablet ? 8 : 6,
+    height: isTablet ? 8 : 6,
+    borderRadius: isTablet ? 4 : 3,
     backgroundColor: "#000000",
-    marginHorizontal: 2,
+    marginHorizontal: isTablet ? 3 : 2,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: isTablet ? 15 : 10,
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: "#e5e5e5",
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    maxHeight: 100,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    fontSize: isTablet ? 18 : 16,
+    maxHeight: isTablet ? 120 : 100,
+    paddingHorizontal: isTablet ? 20 : 15,
+    paddingVertical: isTablet ? 15 : 10,
     backgroundColor: "#f0f0f0",
-    borderRadius: 20,
+    borderRadius: isTablet ? 25 : 20,
   },
   sendButton: {
-    marginLeft: 10,
-    padding: 10,
+    marginLeft: isTablet ? 15 : 10,
+    padding: isTablet ? 15 : 10,
   },
   sendButtonDisabled: {
     opacity: 0.5,
@@ -517,8 +507,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: isTablet ? 30 : 20,
+    padding: isTablet ? 30 : 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -528,34 +518,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    width: width * 0.9,
-    maxHeight: height * 0.8,
+    width: isTablet ? width * 0.7 : width * 0.9,
+    maxHeight: isTablet ? height * 0.7 : height * 0.8,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
     color: "#192f6a",
   },
   lottieAnimation: {
-    width: 200,
-    height: 200,
+    width: isTablet ? 300 : 200,
+    height: isTablet ? 300 : 200,
   },
   modalText: {
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: isTablet ? 30 : 20,
     color: "#4c669f",
   },
   modalButton: {
     backgroundColor: "#4c669f",
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: isTablet ? 40 : 30,
+    paddingVertical: isTablet ? 15 : 10,
+    borderRadius: isTablet ? 25 : 20,
   },
   modalButtonText: {
     color: "white",
-    fontSize: 18,
+    fontSize: isTablet ? 22 : 18,
     fontWeight: "bold",
   },
 });
+
+export default Chatbot;

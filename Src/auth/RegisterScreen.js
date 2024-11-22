@@ -1,4 +1,3 @@
-// Importamos las dependencias necesarias
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -27,11 +26,10 @@ import {
   faTimesCircle 
 } from "@fortawesome/free-solid-svg-icons";
 
-// Obtenemos las dimensiones de la pantalla para un diseño responsivo
 const { width, height } = Dimensions.get('window');
+const isTablet = width >= 768; // Consideramos tablet si el ancho es 768 o mayor
 
 export const RegisterScreen = () => {
-  // Estados para manejar los inputs del formulario y el control de la UI
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,14 +39,12 @@ export const RegisterScreen = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [shakeAnimation] = useState(new Animated.Value(0));
-  const [Isloading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Dominios de correo permitidos y patrones regex para validación
   const allowedDomains = [
     "alumnos.udg.mx",
     "gmail.com",
@@ -58,37 +54,31 @@ export const RegisterScreen = () => {
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-  // Hook para la navegación
   const navigation = useNavigation();
 
-  // Efecto para calcular la fortaleza de la contraseña
   useEffect(() => {
     let strength = 0;
-    if (password.length >= 8) strength++; // Verifica la longitud
-    if (password.match(/[A-Z]/)) strength++; // Verifica mayúsculas
-    if (password.match(/[a-z]/)) strength++; // Verifica minúsculas
-    if (password.match(/[0-9]/)) strength++; // Verifica números
-    if (password.match(/[^A-Za-z0-9]/)) strength++; // Verifica caracteres especiales
+    if (password.length >= 8) strength++;
+    if (password.match(/[A-Z]/)) strength++;
+    if (password.match(/[a-z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[^A-Za-z0-9]/)) strength++;
     setPasswordStrength(strength);
   }, [password]);
 
-   // Función para manejar el registro
-   const handleRegister = async () => {
-    // Reiniciamos los estados de error
+  const handleRegister = async () => {
     setEmailError(false);
     setPasswordError(false);
     setErrorMsg("");
-    setIsLoading(true);  // Iniciamos la carga
+    setIsLoading(true);
 
     try {
-      // Verificamos que todos los campos estén llenos
       if (!email || !password || !confirmPassword) {
         setErrorMsg("Por favor, completa todos los campos");
         shakeForm();
         throw new Error("Campos incompletos");
       }
 
-      // Validamos el formato del correo y el dominio
       if (
         !emailRegex.test(email) ||
         !allowedDomains.includes(email.split("@")[1])
@@ -99,7 +89,6 @@ export const RegisterScreen = () => {
         throw new Error("Correo no válido");
       }
 
-      // Validamos el formato de la contraseña
       if (!passwordRegex.test(password)) {
         setPasswordError(true);
         setErrorMsg(
@@ -109,7 +98,6 @@ export const RegisterScreen = () => {
         throw new Error("Contraseña no válida");
       }
 
-      // Verificamos que las contraseñas coincidan
       if (password !== confirmPassword) {
         setPasswordError(true);
         setErrorMsg("Las contraseñas no coinciden");
@@ -117,7 +105,6 @@ export const RegisterScreen = () => {
         throw new Error("Las contraseñas no coinciden");
       }
 
-      // Verificamos si el correo ya está registrado
       const correoValido = await validar_correo(email);
       if (!correoValido) {
         setEmailError(true);
@@ -126,16 +113,14 @@ export const RegisterScreen = () => {
         throw new Error("Correo ya registrado");
       }
 
-      // Si todas las validaciones pasan, navegamos a la siguiente pantalla
       navigation.navigate("Completar Perfil", { mail: email, pass: password });
     } catch (error) {
       // console.error(error.message);
     } finally {
-      setIsLoading(false);  // Detenemos la carga
+      setIsLoading(false);
     }
   };
 
-  // Función para animar el formulario cuando hay un error
   const shakeForm = () => {
     Animated.sequence([
       Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
@@ -145,22 +130,20 @@ export const RegisterScreen = () => {
     ]).start();
   };
 
-  // Renderizamos el componente
   return (
-    // KeyboardAvoidingView para manejar la aparición del teclado
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.KeyboardAvoidingView}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      {/* ScrollView para permitir el desplazamiento si el contenido excede la altura de la pantalla */}
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollViewContent}>
-        {/* Contenedor animado para el efecto de sacudida */}
+      <ScrollView 
+        keyboardShouldPersistTaps="handled" 
+        contentContainerStyle={styles.scrollViewContent}
+        alwaysBounceVertical={false}
+      >
         <Animated.View style={[styles.container, { transform: [{ translateX: shakeAnimation }] }]}>
-          {/* Título de la pantalla de registro */}
           <Text style={styles.title}>Registra tu cuenta</Text>
           
-          {/* Animación Lottie para mejorar el atractivo visual */}
           <LottieView
             source={require("../assets/animations/register.json")}
             autoPlay
@@ -168,11 +151,9 @@ export const RegisterScreen = () => {
             style={styles.animation}
           />
           
-          {/* Contenedor del formulario */}
           <View style={styles.formContainer}>
-            {/* Campo de entrada para el correo electrónico */}
             <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} />
+              <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} size={isTablet ? 24 : 20} />
               <TextInput
                 style={[styles.input, emailError && styles.inputError]}
                 placeholder="Correo electrónico"
@@ -183,18 +164,17 @@ export const RegisterScreen = () => {
                 autoCompleteType="email"
                 keyboardType="email-address"
               />
-              {/* Mostramos un ícono de verificación o error basado en la validez del correo */}
               {email && (
                 <FontAwesomeIcon
                   icon={emailError ? faTimesCircle : faCheckCircle}
                   style={[styles.inputIcon, { color: emailError ? 'red' : 'green' }]}
+                  size={isTablet ? 24 : 20}
                 />
               )}
             </View>
 
-            {/* Campo de entrada para la contraseña */}
             <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} />
+              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
               <TextInput
                 style={[styles.input, passwordError && styles.inputError]}
                 placeholder="Contraseña"
@@ -203,17 +183,15 @@ export const RegisterScreen = () => {
                 secureTextEntry={!showPassword}
                 onChangeText={(text) => setPassword(text)}
               />
-              {/* Botón para alternar la visibilidad de la contraseña */}
               <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
                 <FontAwesomeIcon
                   icon={showPassword ? faEyeSlash : faEye}
-                  size={20}
+                  size={isTablet ? 24 : 20}
                   color="#999"
                 />
               </TouchableOpacity>
             </View>
 
-            {/* Indicador de fortaleza de la contraseña */}
             <View style={styles.passwordStrengthContainer}>
               {[...Array(5)].map((_, index) => (
                 <View
@@ -226,9 +204,8 @@ export const RegisterScreen = () => {
               ))}
             </View>
 
-            {/* Campo de entrada para confirmar la contraseña */}
             <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} />
+              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
               <TextInput
                 style={[styles.input, passwordError && styles.inputError]}
                 placeholder="Confirmar contraseña"
@@ -237,34 +214,27 @@ export const RegisterScreen = () => {
                 secureTextEntry={!showPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
               />
-              {/* Botón para alternar la visibilidad de la contraseña */}
               <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
                 <FontAwesomeIcon
                   icon={showPassword ? faEyeSlash : faEye}
-                  size={20}
+                  size={isTablet ? 24 : 20}
                   color="#999"
                 />
               </TouchableOpacity>
             </View>
 
-            {/* Botón de envío */}
-
             <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleRegister}
-                  disabled={Isloading}
-                >
-                  {Isloading ? (
-                    <ActivityIndicator size={24} color="#fff" />
-                  ) : (
-                    <Text style={styles.buttonText}>Continuar</Text>
-                  )}
-                </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Continuar</Text>
-            </TouchableOpacity> */}
+              style={styles.button}
+              onPress={handleRegister}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator size={isTablet ? 32 : 24} color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Continuar</Text>
+              )}
+            </TouchableOpacity>
 
-            {/* Mostrar mensaje de error si existe */}
             {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
           </View>
         </Animated.View>
@@ -273,46 +243,46 @@ export const RegisterScreen = () => {
   );
 };
 
-// Estilos para el componente
 const styles = StyleSheet.create({
   KeyboardAvoidingView: {
     flex: 1,
-    backgroundColor: "#f0f0f0", // Fondo gris claro para toda la pantalla
+    backgroundColor: "#f0f0f0",
   },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: height * 0.05, // Padding vertical basado en la altura de la pantalla
+    paddingVertical: height * 0.05,
   },
   container: {
     width: "100%",
     alignItems: "center",
-    paddingHorizontal: width * 0.05, // Padding horizontal basado en el ancho de la pantalla
+    paddingHorizontal: isTablet ? width * 0.1 : width * 0.05,
   },
   title: {
-    fontSize: width * 0.08, // Tamaño de fuente relativo al ancho de la pantalla
+    fontSize: isTablet ? width * 0.05 : width * 0.08,
     fontWeight: "bold",
-    color: "#0b34b0", // Color azul profundo para el título
+    color: "#0b34b0",
     marginBottom: height * 0.04,
     textAlign: "center",
-    marginTop: height * -0.07,  
+    marginTop: height * -0.08,  
   },
   animation: {
-    width: width * 0.5, // Tamaño de la animación relativo al ancho de la pantalla
-    height: width * 0.5,
+    width: isTablet ? width * 0.4 : width * 0.5,
+    height: isTablet ? width * 0.3 : width * 0.5,
     marginBottom: height * 0.02,
   },
   formContainer: {
     width: "100%",
+    maxWidth: isTablet ? 600 : 400,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: width * 0.05,
+    padding: isTablet ? width * 0.04 : width * 0.05,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 5, // Para sombra en Android
+    elevation: 5,
   },
   inputContainer: {
     flexDirection: "row",
@@ -321,41 +291,41 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 10,
-    paddingHorizontal: width * 0.03,
+    paddingHorizontal: isTablet ? width * 0.02 : width * 0.03,
   },
   inputIcon: {
-    marginRight: width * 0.02,
-    color: "#0b34b0", // Color azul profundo para los íconos
+    marginRight: isTablet ? width * 0.015 : width * 0.02,
+    color: "#0b34b0",
   },
   input: {
     flex: 1,
-    paddingVertical: height * 0.015,
-    fontSize: width * 0.04,
+    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
+    fontSize: isTablet ? width * 0.02 : width * 0.04,
     color: "#333",
   },
   inputError: {
-    borderColor: "red", // Borde rojo para inputs con error
+    borderColor: "red",
   },
   passwordToggle: {
-    padding: width * 0.02,
+    padding: isTablet ? width * 0.015 : width * 0.02,
   },
   button: {
-    backgroundColor: "#0b34b0", // Color azul profundo para el botón
+    backgroundColor: "#0b34b0",
     borderRadius: 10,
-    paddingVertical: height * 0.02,
+    paddingVertical: isTablet ? height * 0.025 : height * 0.02,
     alignItems: "center",
     marginTop: height * 0.02,
   },
   buttonText: {
     color: "white",
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     fontWeight: "bold",
   },
   errorText: {
     color: "red",
     textAlign: "center",
     marginTop: height * 0.02,
-    fontSize: width * 0.035,
+    fontSize: isTablet ? width * 0.02 : width * 0.035,
   },
   passwordStrengthContainer: {
     flexDirection: 'row',
@@ -364,13 +334,13 @@ const styles = StyleSheet.create({
   },
   passwordStrengthBar: {
     flex: 1,
-    height: 5,
-    backgroundColor: '#ddd', // Gris claro para barras de fortaleza no llenas
+    height: isTablet ? 8 : 5,
+    backgroundColor: '#ddd',
     marginHorizontal: 2,
     borderRadius: 2,
   },
   passwordStrengthBarFilled: {
-    backgroundColor: '#0b34b0', // Azul profundo para barras de fortaleza llenas
+    backgroundColor: '#0b34b0',
   },
 });
 

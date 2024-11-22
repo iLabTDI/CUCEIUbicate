@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTimes, faVideoSlash, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -118,14 +119,14 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
       <TouchableOpacity style={styles.overlay} onPress={onClose} activeOpacity={1} />
       <Animated.View style={[styles.modal, { transform: [{ scale: scaleAnim }] }]}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
+          <FontAwesomeIcon icon={faTimes} size={isTablet ? 32 : 24} color="#FFFFFF" />
         </TouchableOpacity>
         
         {videoUri ? (
           <>
             {isLoading && !error && (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#FFFFFF" />
+                <ActivityIndicator size={isTablet ? "large" : "small"} color="#FFFFFF" />
                 <Text style={styles.loadingText}>Cargando video...</Text>
                 <View style={styles.progressBarContainer}>
                   <Animated.View style={[styles.progressBar, { width: `${progress}%` }]} />
@@ -136,7 +137,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
             
             {error && (
               <View style={styles.errorContainer}>
-                <FontAwesomeIcon icon={faVideoSlash} size={50} color="#FFFFFF" />
+                <FontAwesomeIcon icon={faVideoSlash} size={isTablet ? 70 : 50} color="#FFFFFF" />
                 <Text style={styles.errorText}>
                   No se pudo cargar el video. Inténtalo más tarde.
                 </Text>
@@ -160,18 +161,14 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
           </>
         ) : (
           <View style={styles.noVideoContainer}>
-            <FontAwesomeIcon icon={faExclamationTriangle} size={50} color="#FFFF00" />
+            <FontAwesomeIcon icon={faExclamationTriangle} size={isTablet ? 70 : 50} color="#FFFF00" />
             <Text style={styles.noVideoText}>
               Video no disponible para esta ruta
             </Text>
-            {/* <Text style={styles.noVideoSubText}>
-              Lo sentimos, no hay un video disponible para esta ruta en este momento.
-            </Text> */}
             <Text style={styles.noVideoSubText}>
               Estamos trabajando para agregar más videos. ¡Vuelve a consultar en futuras actualizaciones!
             </Text>
           </View>
-          
         )}
       </Animated.View>
     </Animated.View>
@@ -190,21 +187,21 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modal: {
-    width: width * 0.9,
-    height: height * 0.7,
+    width: isTablet ? width * 0.7 : width * 0.9,
+    height: isTablet ? height * 0.7 : height * 0.7,
     backgroundColor: "#0b34b0",
-    borderRadius: 20,
+    borderRadius: isTablet ? 30 : 20,
     overflow: "hidden",
     elevation: 5,
   },
   closeButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: isTablet ? 20 : 10,
+    right: isTablet ? 20 : 10,
     zIndex: 3,
-    padding: 10,
+    padding: isTablet ? 15 : 10,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 20,
+    borderRadius: isTablet ? 30 : 20,
   },
   video: {
     width: "100%",
@@ -214,20 +211,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: isTablet ? 30 : 20,
   },
   loadingText: {
     color: "#FFFFFF",
-    marginTop: 20,
-    fontSize: 18,
+    marginTop: isTablet ? 30 : 20,
+    fontSize: isTablet ? 24 : 18,
     fontWeight: "bold",
   },
   progressBarContainer: {
-    width: '80%',
-    height: 6,
+    width: isTablet ? '70%' : '80%',
+    height: isTablet ? 8 : 6,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 3,
-    marginTop: 20,
+    borderRadius: isTablet ? 4 : 3,
+    marginTop: isTablet ? 30 : 20,
     overflow: 'hidden',
   },
   progressBar: {
@@ -236,55 +233,55 @@ const styles = StyleSheet.create({
   },
   progressText: {
     color: "#FFFFFF",
-    marginTop: 10,
-    fontSize: 16,
+    marginTop: isTablet ? 15 : 10,
+    fontSize: isTablet ? 20 : 16,
     fontWeight: "bold",
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: isTablet ? 30 : 20,
   },
   errorText: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: isTablet ? 24 : 18,
     textAlign: "center",
     fontWeight: "bold",
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
   },
   retryButton: {
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    marginTop: isTablet ? 30 : 20,
+    paddingVertical: isTablet ? 15 : 10,
+    paddingHorizontal: isTablet ? 30 : 20,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 20,
+    borderRadius: isTablet ? 30 : 20,
   },
   retryButtonText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     fontWeight: "bold",
   },
   noVideoContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: isTablet ? 20 : 20,
   },
   noVideoText: {
     color: "#FFFFFF",
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
   },
   noVideoSubText: {
     color: "#FFFFFF",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
     fontStyle: "italic",
     opacity: 0.7,
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
   },
 });
 

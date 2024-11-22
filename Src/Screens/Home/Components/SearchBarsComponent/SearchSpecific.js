@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get('window');
+const isTablet = width >= 768;
 
 export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   const [showSpecificSearch, setShowSpecificSearchState] = useState(false);
@@ -118,7 +119,6 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 
   const handleSelectResult = async (item) => {
     onSearch(item.id);
-    // setMarkedObject(item);
     await updateSearchHistory(item.name);
     closeSearch();
   };
@@ -134,7 +134,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
       style={styles.resultItem}
       onPress={() => handleSelectResult(item)}
     >
-      <FontAwesomeIcon icon={faSearch} size={16} color="#666666" style={styles.resultIcon} />
+      <FontAwesomeIcon icon={faSearch} size={isTablet ? 20 : 16} color="#666666" style={styles.resultIcon} />
       <Text style={styles.resultText}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -147,7 +147,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         handleSpecificSearch(item);
       }}
     >
-      <FontAwesomeIcon icon={faHistory} size={16} color="#666666" style={styles.resultIcon} />
+      <FontAwesomeIcon icon={faHistory} size={isTablet ? 20 : 16} color="#666666" style={styles.resultIcon} />
       <Text style={styles.resultText}>{item}</Text>
     </TouchableOpacity>
   );
@@ -158,7 +158,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         style={styles.search_icon}
         onPress={toggleSpecificSearch}
       >
-        <FontAwesomeIcon icon={faSearch} size={width * 0.06} color="#FFFFFF" />
+        <FontAwesomeIcon icon={faSearch} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
       </TouchableOpacity>
 
       {showSpecificSearch && (
@@ -178,12 +178,12 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
               transform: [{
                 translateX: animatedWidth.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [150, 10],
+                  outputRange: [isTablet ? 200 : 150, isTablet ? 20 : 10],
                 }),
               }],
               width: animatedWidth.interpolate({
                 inputRange: [0, 1],
-                outputRange: ["0%", "83%"],
+                outputRange: ["0%", isTablet ? "88%" : "83%"],
               }),
             },
           ]}
@@ -201,10 +201,10 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
             setError("");
             setSearchResults([]);
           }}>
-            <FontAwesomeIcon icon={faHistory} size={20} color="#666666" />
+            <FontAwesomeIcon icon={faHistory} size={isTablet ? 24 : 20} color="#666666" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
-            <FontAwesomeIcon icon={faTimes} size={20} color="#666666" />
+            <FontAwesomeIcon icon={faTimes} size={isTablet ? 24 : 20} color="#666666" />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -213,7 +213,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         <View style={styles.resultsContainer}>
           {error ? (
             <View style={styles.errorContainer}>
-              <FontAwesomeIcon icon={faExclamationCircle} size={20} color="#ff6b6b" />
+              <FontAwesomeIcon icon={faExclamationCircle} size={isTablet ? 24 : 20} color="#ff6b6b" />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : (
@@ -236,26 +236,26 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: height * 0.05,
-    right: width * 0.03,
+    top: isTablet ? height * 0.03 : height * 0.05,
+    right: isTablet ? width * 0.02 : width * 0.03,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 10,
   },
   search_icon: {
-    top: Platform.OS === 'ios' ? height * 0.001 : -height * 0.002,
-    right: Platform.OS === 'ios' ? -5 : 0,
+    top: Platform.OS === 'ios' ? (isTablet ? height * 0.0005 : height * 0.001) : (isTablet ? -height * 0.001 : -height * 0.002),
+    right: Platform.OS === 'ios' ? (isTablet ? -8 : -5) : 0,
     backgroundColor: "#0000ff",
-    borderRadius: width * 0.1,
-    padding: width * 0.04,
+    borderRadius: isTablet ? width * 0.06 : width * 0.1,
+    padding: isTablet ? width * 0.03 : width * 0.04,
     zIndex: 2,
     elevation: 5,
   },
   overlay: {
     position: 'absolute',
-    top: -height * 0.05,
+    top: isTablet ? -height * 0.03 : -height * 0.05,
     left: -width,
-    right: -width * 0.03,
+    right: isTablet ? -width * 0.02 : -width * 0.03,
     bottom: -height,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     zIndex: 1,
@@ -264,9 +264,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    height: 48,
+    borderRadius: isTablet ? 30 : 25,
+    paddingHorizontal: isTablet ? 24 : 20,
+    height: isTablet ? 56 : 48,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -276,24 +276,24 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     color: "#333333",
   },
   historyIcon: {
-    padding: width * 0.015,
-    marginRight: width * 0.015,
+    padding: isTablet ? width * 0.01 : width * 0.015,
+    marginRight: isTablet ? width * 0.01 : width * 0.015,
   },
   closeIcon: {
-    padding: width * 0.015,
+    padding: isTablet ? width * 0.01 : width * 0.015,
   },
   resultsContainer: {
     position: "absolute",
-    top: height * 0.07,
-    right: width * 0.03,
-    width: width * 0.8,
+    top: isTablet ? height * 0.09 : height * 0.07,
+    right: isTablet ? width * 0.02 : width * 0.03,
+    width: isTablet ? width * 0.85 : width * 0.8,
     backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    maxHeight: height * 0.4,
+    borderRadius: isTablet ? 12 : 8,
+    maxHeight: isTablet ? height * 0.5 : height * 0.4,
     shadowColor: "#000000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -302,32 +302,32 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   resultsList: {
-    maxHeight: height * 0.4,
+    maxHeight: isTablet ? height * 0.5 : height * 0.4,
   },
   resultItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: height * 0.015,
+    padding: isTablet ? height * 0.02 : height * 0.015,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
   resultIcon: {
-    marginRight: 12,
+    marginRight: isTablet ? 16 : 12,
   },
   resultText: {
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     color: "#333333",
   },
   errorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: height * 0.02,
+    padding: isTablet ? height * 0.025 : height * 0.02,
     justifyContent: "center",
   },
   errorText: {
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     color: "#ff6b6b",
-    marginLeft: 10,
+    marginLeft: isTablet ? 14 : 10,
   },
 });
 

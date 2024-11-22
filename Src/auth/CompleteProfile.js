@@ -1,4 +1,3 @@
-// Importamos las dependencias necesarias
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -30,18 +29,16 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-// Obtenemos las dimensiones de la pantalla para un diseño responsivo
 const { width, height } = Dimensions.get("window");
+const isTablet = width >= 768; // Consideramos tablet si el ancho es 768 o mayor
 
 export const CompleteProfile = () => {
-  // Estados para manejar los inputs del formulario
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [Codigo, setCodigo] = useState("");
   const [selectedCareer, setSelectedCareer] = useState("");
   
-  // Estados para manejar la lógica de la UI
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [nameError, setNameError] = useState(false);
@@ -51,18 +48,15 @@ export const CompleteProfile = () => {
   const [careerOptions, setCareerOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Animaciones
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const shakeAnimation = useRef(new Animated.Value(0)).current;
 
-  // Hooks de navegación y ruta
   const navigation = useNavigation();
   const route = useRoute();
   const { mail, pass } = route.params;
   const correo = mail;
   const contraseña = pass;
 
-  // Efecto para cargar las opciones de carrera al montar el componente
   useEffect(() => {
     const fetchDegrees = async () => {
       const degrees = await get_degrees();
@@ -71,41 +65,36 @@ export const CompleteProfile = () => {
     fetchDegrees();
   }, []);
 
-  // Función para manejar la finalización del perfil
   const handleCompleteProfile = async () => {
     setIsLoading(true);
 
-    // Validación de campos vacíos
     if (!name || !lastName || !username || !Codigo || !selectedCareer) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       setCodigoError(!Codigo);
       setIsLoading(false);
-      shakeForm(); // Animación de sacudida si hay campos vacíos
+      shakeForm();
       return;
     }
 
     try {
-      // Validación de usuario
       const usuarioValido = await validar_usuario(username);
       if (!usuarioValido) {
         setUsernameError(true);
         setIsLoading(false);
-        shakeForm(); // Animación de sacudida si el usuario no es válido
+        shakeForm();
         return;
       }
 
-      // Validación de código
       const codigoValido = await validar_codigo(Codigo);
       if (!codigoValido) {
         setCodigoError(true);
         setIsLoading(false);
-        shakeForm(); // Animación de sacudida si el código no es válido
+        shakeForm();
         return;
       }
 
-      // Registro de usuario
       await alta_usuario(
         Codigo,
         correo,
@@ -116,7 +105,6 @@ export const CompleteProfile = () => {
         username
       );
 
-      // Animación de finalización del perfil
       setIsProfileComplete(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -130,12 +118,10 @@ export const CompleteProfile = () => {
     }
   };
 
-  // Función para alternar la visibilidad del modal
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  // Efecto para navegar a la pantalla de login después de completar el perfil
   useEffect(() => {
     if (isProfileComplete) {
       const timer = setTimeout(() => {
@@ -145,7 +131,6 @@ export const CompleteProfile = () => {
     }
   }, [isProfileComplete, navigation]);
 
-  // Función para animar la sacudida del formulario en caso de error
   const shakeForm = () => {
     Animated.sequence([
       Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
@@ -178,9 +163,8 @@ export const CompleteProfile = () => {
                 style={styles.animation}
               />
               <View style={styles.formContainer}>
-                {/* Campo de nombre */}
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, nameError && styles.errorInput]}
                     placeholder="Nombre"
@@ -196,9 +180,8 @@ export const CompleteProfile = () => {
                   <Text style={styles.errorText}>Campo requerido</Text>
                 )}
 
-                {/* Campo de apellidos */}
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} />
+                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, lastNameError && styles.errorInput]}
                     placeholder="Apellidos"
@@ -214,11 +197,11 @@ export const CompleteProfile = () => {
                   <Text style={styles.errorText}>Campo requerido</Text>
                 )}
 
-                {/* Campo de nombre de usuario */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon
                     icon={faEnvelope}
                     style={styles.inputIcon}
+                    size={isTablet ? 24 : 20}
                   />
                   <TextInput
                     style={[styles.input, usernameError && styles.errorInput]}
@@ -238,9 +221,8 @@ export const CompleteProfile = () => {
                   </Text>
                 )}
 
-                {/* Campo de código de estudiante */}
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} />
+                  <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, CodigoError && styles.errorInput]}
                     placeholder="Código de estudiante"
@@ -261,13 +243,13 @@ export const CompleteProfile = () => {
                   </Text>
                 )}
 
-                {/* Selector de carrera */}
                 <TouchableOpacity
                   style={styles.pickerContainer}
                   onPress={toggleModal}>
                   <FontAwesomeIcon
                     icon={faGraduationCap}
                     style={styles.inputIcon}
+                    size={isTablet ? 24 : 20}
                   />
                   <Text style={styles.pickerText}>
                     {selectedCareer || "Seleccione una carrera"}
@@ -275,16 +257,16 @@ export const CompleteProfile = () => {
                   <FontAwesomeIcon
                     icon={faChevronDown}
                     style={styles.pickerIcon}
+                    size={isTablet ? 24 : 20}
                   />
                 </TouchableOpacity>
 
-                {/* Botón para completar el perfil */}
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleCompleteProfile}
                   disabled={isLoading}>
                   {isLoading ? (
-                    <ActivityIndicator size={24} color="#fff" />
+                    <ActivityIndicator size={isTablet ? 32 : 24} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>Terminar</Text>
                   )}
@@ -294,7 +276,6 @@ export const CompleteProfile = () => {
           </ScrollView>
         </KeyboardAvoidingView>
       ) : (
-        // Vista de perfil completado
         <Animated.View style={[styles.completedContainer, { opacity: fadeAnim }]}>
           <LottieView
             source={require("../assets/animations/Confetti-2.json")}
@@ -315,7 +296,6 @@ export const CompleteProfile = () => {
         </Animated.View>
       )}
 
-      {/* Modal para seleccionar carrera */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -347,11 +327,10 @@ export const CompleteProfile = () => {
   );
 };
 
-// Estilos para el componente
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f0f0f0", // Fondo gris claro para toda la pantalla
+    backgroundColor: "#f0f0f0",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -359,32 +338,33 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: width * 0.05, // Padding basado en el ancho de la pantalla
+    padding: isTablet ? width * 0.1 : width * 0.05,
   },
   container: {
     alignItems: "center",
   },
   title: {
-    fontSize: width * 0.08, // Tamaño de fuente relativo al ancho de la pantalla
+    fontSize: isTablet ? width * 0.05 : width * 0.08,
     fontWeight: "bold",
-    marginBottom: height * 0.02, // Margen inferior basado en la altura de la pantalla
-    color: "#0b34b0", // Color azul profundo para el título
+    marginBottom: height * 0.02,
+    color: "#0b34b0",
   },
   animation: {
-    width: width * 0.6, // 60% del ancho de la pantalla
-    height: width * 0.4, // 40% del ancho de la pantalla
+    width: isTablet ? width * 0.4 : width * 0.6,
+    height: isTablet ? width * 0.3 : width * 0.4,
     marginBottom: height * 0.02,
   },
   formContainer: {
     width: "100%",
+    maxWidth: isTablet ? 600 : 400,
     backgroundColor: "white",
     borderRadius: 15,
-    padding: width * 0.05,
+    padding: isTablet ? width * 0.04 : width * 0.05,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 5, // Para sombra en Android
+    elevation: 5,
   },
   inputContainer: {
     flexDirection: "row",
@@ -393,23 +373,23 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 10,
     marginBottom: height * 0.015,
-    paddingHorizontal: width * 0.03,
+    paddingHorizontal: isTablet ? width * 0.02 : width * 0.03,
   },
   inputIcon: {
-    marginRight: width * 0.02,
-    color: "#0b34b0", // Color azul profundo para los íconos
+    marginRight: isTablet ? width * 0.015 : width * 0.02,
+    color: "#0b34b0",
   },
   input: {
     flex: 1,
-    paddingVertical: height * 0.015,
-    fontSize: width * 0.04,
+    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
+    fontSize: isTablet ? width * 0.02 : width * 0.04,
   },
   errorInput: {
-    borderColor: "red", // Borde rojo para inputs con error
+    borderColor: "red",
   },
   errorText: {
     color: "red",
-    fontSize: width * 0.035,
+    fontSize: isTablet ? width * 0.02 : width * 0.035,
     marginBottom: height * 0.01,
   },
   pickerContainer: {
@@ -419,12 +399,12 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 10,
     marginBottom: height * 0.015,
-    paddingHorizontal: width * 0.03,
-    paddingVertical: height * 0.015,
+    paddingHorizontal: isTablet ? width * 0.02 : width * 0.03,
+    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
   },
   pickerText: {
     flex: 1,
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.02 : width * 0.04,
     color: "#333",
   },
   pickerIcon: {
@@ -433,13 +413,13 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#0b34b0",
     borderRadius: 10,
-    paddingVertical: height * 0.02,
+    paddingVertical: isTablet ? height * 0.025 : height * 0.02,
     alignItems: "center",
     marginTop: height * 0.02,
   },
   buttonText: {
     color: "white",
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     fontWeight: "bold",
   },
   completedContainer: {
@@ -454,22 +434,22 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   profileCompleteText: {
-    fontSize: width * 0.08,
+    fontSize: isTablet ? width * 0.05 : width * 0.08,
     fontWeight: "bold",
     textAlign: "center",
     color: "#0b34b0",
     marginBottom: height * 0.02,
   },
   welcomeText: {
-    fontSize: width * 0.06,
+    fontSize: isTablet ? width * 0.04 : width * 0.06,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: height * 0.04,
     color: "#333",
   },
   logo: {
-    width: width * 0.6,
-    height: width * 0.6,
+    width: isTablet ? width * 0.4 : width * 0.6,
+    height: isTablet ? width * 0.4 : width * 0.6,
     resizeMode: "contain",
   },
   confetti: {
@@ -487,12 +467,12 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "white",
     borderRadius: 15,
-    padding: width * 0.05,
-    width: width * 0.9,
+    padding: isTablet ? width * 0.04 : width * 0.05,
+    width: isTablet ? width * 0.7 : width * 0.9,
     maxHeight: height * 0.8,
   },
   modalTitle: {
-    fontSize: width * 0.06,
+    fontSize: isTablet ? width * 0.04 : width * 0.06,
     fontWeight: "bold",
     marginBottom: height * 0.02,
     textAlign: "center",
@@ -504,21 +484,21 @@ const styles = StyleSheet.create({
   careerOption: {
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
-    paddingVertical: height * 0.02,
+    paddingVertical: isTablet ? height * 0.025 : height * 0.02,
   },
   careerOptionText: {
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
   },
   closeButton: {
     backgroundColor: "#0b34b0",
     borderRadius: 10,
-    paddingVertical: height * 0.015,
+    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
     alignItems: "center",
     marginTop: height * 0.02,
   },
   closeButtonText: {
     color: "white",
-    fontSize: width * 0.04,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     fontWeight: "bold",
   },
 });
