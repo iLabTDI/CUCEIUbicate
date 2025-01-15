@@ -47,7 +47,7 @@ import { LinearGradient } from "expo-linear-gradient";
 const BATCH_SIZE = 10;
 const CACHE_KEY = "downloadedFiles";
 const { width } = Dimensions.get('window');
-const isTablet = width >= 768;
+// const isTablet = width >= 768;
 
 const CAREER_INFO = {
   ICIV: { name: "Ingeniería Civil", icon: faBuilding, color: "#FF5722" },
@@ -837,7 +837,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: isTablet ? 24 : 16,
+    // paddingHorizontal: isTablet ? 24 : 16,
     paddingBottom: 20
   },
   divisionCard: {
