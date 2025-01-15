@@ -34,6 +34,9 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+
+// Import all the screen components
 import { HomePage } from "../../HomePage";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
@@ -45,15 +48,13 @@ import { School_services } from "../../../ScolarServices/School_services";
 import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
-import { LinearGradient } from "expo-linear-gradient";
 import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
-import EasterEgg from "../../../EasterEgg/EasterEgg";
 
 const Drawer = createDrawerNavigator();
-const { width, height } = Dimensions.get('window');
-const isTablet = width >= 768;
+const { width } = Dimensions.get('window');
 
+// Custom drawer content component
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
 
@@ -80,20 +81,23 @@ const CustomDrawerContent = (props) => {
         </LinearGradient>
         <View style={styles.drawerItemsContainer}>
           <DrawerItemList {...props} />
-          {/* <DrawerItem
+          {/* Uncomment the following DrawerItem to add a logout option
+          <DrawerItem
             label="Cerrar Sesión"
             onPress={handleLogout}
             icon={({ color, size }) => (
               <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
             )}
             labelStyle={styles.drawerItemLabel}
-          /> */}
+          />
+          */}
         </View>
       </DrawerContentScrollView>
     </ScrollView>
   );
 };
 
+// Custom header button component
 const DrawerHeaderButton = () => {
   const navigation = useNavigation();
 
@@ -102,18 +106,20 @@ const DrawerHeaderButton = () => {
       onPress={() => navigation.openDrawer()}
       style={styles.menuIcon}
     >
-      <FontAwesomeIcon icon={faBars} size={isTablet ? 26 : 23} color="#FFFFFF" />
+      <FontAwesomeIcon icon={faBars} size={23} color="#FFFFFF" />
     </TouchableOpacity>
   );
 };
 
+// Custom header component with icon
 const HeaderWithIcon = ({ title, icon }) => (
   <View style={styles.header}>
-    <FontAwesomeIcon icon={icon} size={isTablet ? 26 : 24} color="#FFFFFF" />
+    <FontAwesomeIcon icon={icon} size={24} color="#FFFFFF" />
     <Text style={styles.headerText}>{title}</Text>
   </View>
 );
 
+// Main drawer navigator component
 export const MyDrawer = () => {
   const route = useRoute();
   const { user } = route.params;
@@ -124,27 +130,28 @@ export const MyDrawer = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#0b34b0",
-          height: isTablet ? 90 : 60,
+          height: 100,
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
           fontWeight: "bold",
-          fontSize: isTablet ? 20 : 18,
+          fontSize: 18,
         },
         drawerStyle: {
           backgroundColor: "#f5f5f5",
-          width: isTablet ? 320 : 280,
+          width: 280,
         },
         drawerActiveBackgroundColor: "#e0e0e0",
         drawerActiveTintColor: "#4c669f",
         drawerInactiveTintColor: "#000000",
         drawerLabelStyle: {
-          fontSize: isTablet ? 16 : 14,
+          fontSize: 14,
           fontWeight: "500",
         },
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
+      {/* Define all the drawer screens */}
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
@@ -325,6 +332,7 @@ export const MyDrawer = () => {
   );
 };
 
+// Styles for the component
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
@@ -333,44 +341,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drawerHeader: {
-    height: isTablet ? 200 : 180,
+    height: 180,
     alignItems: "center",
     justifyContent: "center",
-    padding: isTablet ? 20 : 16,
+    padding: 16,
   },
   logo: {
-    width: isTablet ? 220 : 200,
-    height: isTablet ? 110 : 100,
-    marginBottom: isTablet ? 8 : 5,
+    width: 200,
+    height: 100,
+    marginBottom: 5,
   },
   drawerHeaderText: {
     color: "white",
-    fontSize: isTablet ? 24 : 22,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
   },
   drawerItemsContainer: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingTop: isTablet ? 12 : 10,
+    paddingTop: 10,
   },
   drawerItemLabel: {
-    fontSize: isTablet ? 16 : 14,
+    fontSize: 14,
     fontWeight: "500",
   },
   menuIcon: {
-    paddingLeft: isTablet ? 20 : 16,
+    paddingLeft: 16,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    
   },
   headerText: {
     color: "#FFFFFF",
-    fontSize: isTablet ? 20 : 18,
+    fontSize: 18,
     fontWeight: "bold",
-    marginLeft: isTablet ? 10 : 8,
+    marginLeft: 8,
   },
+
 });
 
 export default MyDrawer;
+
