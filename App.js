@@ -62,13 +62,13 @@ function App() {
       />
       <View style={[styles.container, { width: width, alignSelf: 'center' }]}>
         <Stack.Navigator>
-          {/* {isFirstLaunch && (
+          {isFirstLaunch && (
             <Stack.Screen
               name="Onboarding"
               component={OnboardingScreen}
               options={{ headerShown: false }}
             />
-          )} */}
+          )}
           <Stack.Screen
             name="Login"
             component={LoginScreen}
