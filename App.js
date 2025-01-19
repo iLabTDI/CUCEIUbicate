@@ -6,7 +6,7 @@ import { LoginScreen } from "./Src/auth/LoginScreen";
 import { CompleteProfile } from "./Src/auth/CompleteProfile";
 import { RegisterScreen } from "./Src/auth/RegisterScreen";
 import { MyDrawer } from "./Src/Screens/Home/Components/SearchBarsComponent/MyDrawer";
-// import { OnboardingScreen } from "./Src/auth/OnboardingScreen";
+import { OnboardingScreen } from "./Src/auth/OnboardingScreen";
 import "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LogBox } from 'react-native';
@@ -32,27 +32,27 @@ LogBox.ignoreLogs(["Reanimated"]);
 
 
 function App() {
-  // const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(null);
 
-  // useEffect(() => {
-  //   const checkFirstLaunch = async () => {
-  //     try {
-  //       const value = await AsyncStorage.getItem("@onboarding_completeed");
-  //       setIsFirstLaunch(value == null);
-  //     } catch (error) {
-  //       console.error("Error al verificar el estado de onboarding:", error);
-  //     }
-  //   };
-  //   checkFirstLaunch();
-  // }, []);
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const value = await AsyncStorage.getItem("@onboarding_completeed");
+        setIsFirstLaunch(value == null);
+      } catch (error) {
+        console.error("Error al verificar el estado de onboarding:", error);
+      }
+    };
+    checkFirstLaunch();
+  }, []);
 
-  // if (isFirstLaunch === null) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //       <ActivityIndicator size={24} color="#000000" />
-  //     </View>
-  //   );
-  // }
+  if (isFirstLaunch === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size={24} color="#000000" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
