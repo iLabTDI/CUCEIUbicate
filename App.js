@@ -7,6 +7,7 @@ import { CompleteProfile } from "./Src/auth/CompleteProfile";
 import { RegisterScreen } from "./Src/auth/RegisterScreen";
 import { MyDrawer } from "./Src/Screens/Home/Components/SearchBarsComponent/MyDrawer";
 // import { OnboardingScreen } from "./Src/auth/OnboardingScreen";
+import "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LogBox } from 'react-native';
 
@@ -14,18 +15,21 @@ const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
   // const MAX_WIDTH = 950; // Define el ancho máximo para limitar el tamaño de la aplicación
 
-// LogBox.ignoreLogs([
-//   "[Reanimated] Reading from `value` during component render. Please ensure that you do not access the `value` property or use `get` method of a shared value while React is rendering a component.",
-//   "Using Math.random is not cryptographically secure! Use bcrypt.setRandomFallback to set a PRNG."
-// ]);
+LogBox.ignoreLogs([
+  "[Reanimated] Reading from `value` during component render. Please ensure that you do not access the `value` property or use `get` method of a shared value while React is rendering a component.",
+  "Using Math.random is not cryptographically secure! Use bcrypt.setRandomFallback to set a PRNG."
+]);
 
-// const originalConsoleWarn = console.warn;
-// console.warn = (message, ...args) => {
-//   if (typeof message === 'string' && message.includes('[Reanimated]')) {
-//     return;
-//   }
-//   originalConsoleWarn(message, ...args);
-// };
+const originalConsoleWarn = console.warn;
+console.warn = (message, ...args) => {
+  if (typeof message === 'string' && message.includes('[Reanimated]')) {
+    return;
+  }
+  originalConsoleWarn(message, ...args);
+};
+
+LogBox.ignoreLogs(["Reanimated"]);
+
 
 function App() {
   // const [isFirstLaunch, setIsFirstLaunch] = useState(null);
