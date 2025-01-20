@@ -50,6 +50,7 @@ import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
+import { New_Chatbot } from "../../../new_chatbot/Chatbot";
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get('window');
@@ -313,6 +314,18 @@ export const MyDrawer = () => {
           ),
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
+        }}
+      />
+      <Drawer.Screen
+        name="ChatbotPROO77"
+        component={New_Chatbot}
+        options={{
+          drawerLabel: "New Chatbot",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faRobot} size={size} color={color} />
+          ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => <HeaderWithIcon title="New Chatbot" icon={faRobot} />,
         }}
       />
       <Drawer.Screen
