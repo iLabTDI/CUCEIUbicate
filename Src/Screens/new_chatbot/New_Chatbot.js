@@ -24,10 +24,9 @@ import LottieView from "lottie-react-native"
 // --------------------------------------------------------------------------------
 // Configuración de la API
 // --------------------------------------------------------------------------------
-const API_URL =
-  "https://api.stack-ai.com/inference/v0/run/aaed654c-4c8c-4da5-a8c5-654a66f205d6/678e9ce9a552023b10e3cbca"
+const API_URL ="https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f"
 const HEADERS = {
-  Authorization: "Bearer 30f80baa-f708-456f-a3af-08f7041d1600",
+  Authorization: "Bearer ae8b0a56-1901-4909-8994-1def1cadc51b",
   "Content-Type": "application/json",
 }
 
@@ -291,7 +290,7 @@ export const NewChatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 120}
       >
         <FlatList
           ref={flatListRef}
