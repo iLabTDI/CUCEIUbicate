@@ -155,11 +155,11 @@ export const HomePage = () => {
     });
   };
 
-  // Función para manejar la eliminación de archivos
-  const handleFilesDeleted = async () => {
-    await AsyncStorage.removeItem("hasLaunchedd");
-    setShowDownloadModal(true);
-  };
+  // // Función para manejar la eliminación de archivos
+  // const handleFilesDeleted = async () => {
+  //   await AsyncStorage.removeItem("hasLaunchedd");
+  //   setShowDownloadModal(true);
+  // };
 
   // Función para manejar la pulsación de un punto en el mapa
   const handlePointPress = (pointId) => {
@@ -375,7 +375,7 @@ export const HomePage = () => {
         )}
 
         {/* Componente para eliminar archivos locales */}
-        <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
+        {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
 
         {/* Botón para finalizar ruta */}
         {isRouteActive && (
