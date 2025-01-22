@@ -48,12 +48,12 @@ import { School_services } from "../../../ScolarServices/School_services";
 import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
-import { Chatbot } from "../../../ChatBot/Chatbot";
+// import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
-import { New_Chatbot } from "../../../new_chatbot/Chatbot";
+import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
 
 const Drawer = createDrawerNavigator();
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 // Custom drawer content component
 const CustomDrawerContent = (props) => {
@@ -68,12 +68,10 @@ const CustomDrawerContent = (props) => {
     <ScrollView style={styles.scrollView}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={styles.drawerContent}
-      >
+        contentContainerStyle={styles.drawerContent}>
         <LinearGradient
           colors={["#4c669f", "#3b5998", "#192f6a"]}
-          style={styles.drawerHeader}
-        >
+          style={styles.drawerHeader}>
           <Image
             source={require("../../../../../assets/images/Logo_Cucei.png")}
             style={styles.logo}
@@ -105,8 +103,7 @@ const DrawerHeaderButton = () => {
   return (
     <TouchableOpacity
       onPress={() => navigation.openDrawer()}
-      style={styles.menuIcon}
-    >
+      style={styles.menuIcon}>
       <FontAwesomeIcon icon={faBars} size={23} color="#FFFFFF" />
     </TouchableOpacity>
   );
@@ -150,8 +147,7 @@ export const MyDrawer = () => {
           fontWeight: "500",
         },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
+      drawerContent={(props) => <CustomDrawerContent {...props} />}>
       {/* Define all the drawer screens */}
       <Drawer.Screen
         name="Mapa"
@@ -304,7 +300,7 @@ export const MyDrawer = () => {
           ),
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="ChatbotScreen"
         component={Chatbot}
         options={{
@@ -315,17 +311,19 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
         }}
-      />
+      /> */}
       <Drawer.Screen
-        name="ChatbotPROO77"
-        component={New_Chatbot}
+        name="Chatbot"
+        component={NewChatbot}
         options={{
-          drawerLabel: "New Chatbot",
+          drawerLabel: "Chatbot",
           drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faRobot} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="New Chatbot" icon={faRobot} />,
+          headerTitle: () => (
+            <HeaderWithIcon title="Chatbot" icon={faRobot} />
+          ),
         }}
       />
       <Drawer.Screen
@@ -338,7 +336,9 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faFileDownload} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />,
+          headerTitle: () => (
+            <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />
+          ),
         }}
       />
     </Drawer.Navigator>
@@ -385,7 +385,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    
   },
   headerText: {
     color: "#FFFFFF",
@@ -393,8 +392,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 8,
   },
-
 });
 
 export default MyDrawer;
-
