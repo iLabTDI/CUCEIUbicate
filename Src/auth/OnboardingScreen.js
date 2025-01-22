@@ -78,7 +78,7 @@ export const OnboardingScreen = () => {
 
   const skip = async () => {
     try {
-      await AsyncStorage.setItem('@onboarding_complete', 'true');
+      await AsyncStorage.setItem('@onboarding_completed', 'true');
       navigation.replace('Login');
     } catch (err) {
       console.log('Error al guardar el estado de onboarding', err);
