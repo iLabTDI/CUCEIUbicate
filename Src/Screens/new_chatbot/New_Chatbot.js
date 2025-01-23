@@ -14,17 +14,21 @@ import {
   Image,
   Animated,
   Modal,
+  Linking,
+  Alert,
 } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Animatable from "react-native-animatable"
 import { FontAwesome } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
 import LottieView from "lottie-react-native"
+import * as Clipboard from "expo-clipboard"
 
 // --------------------------------------------------------------------------------
 // Configuración de la API
 // --------------------------------------------------------------------------------
-const API_URL ="https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f"
+const API_URL =
+  "https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f"
 const HEADERS = {
   Authorization: "Bearer ae8b0a56-1901-4909-8994-1def1cadc51b",
   "Content-Type": "application/json",
@@ -121,6 +125,28 @@ function processResponse(response) {
 }
 
 // --------------------------------------------------------------------------------
+// Función para detectar saludos
+// --------------------------------------------------------------------------------
+const isGreeting = (message) => {
+  const greetings = ["hola", "hello", "hi", "hey", "buenos días", "buenas tardes", "buenas noches"]
+  return greetings.some((greeting) => message.toLowerCase().includes(greeting))
+}
+
+// --------------------------------------------------------------------------------
+// Función para generar respuestas a saludos
+// --------------------------------------------------------------------------------
+const getGreetingResponse = () => {
+  const responses = [
+    "¡Hola! ¿Cómo estás? ¿En qué puedo ayudarte hoy?",
+    "¡Bienvenido! ¿Qué puedo hacer por ti?",
+    "¡Hola! Estoy aquí para ayudarte. ¿Qué necesitas?",
+    "¡Saludos! ¿Tienes alguna pregunta sobre CUCEI?",
+    "¡Hola! ¿En qué puedo asistirte hoy?",
+  ]
+  return responses[Math.floor(Math.random() * responses.length)]
+}
+
+// --------------------------------------------------------------------------------
 // Componente principal: NewChatbot
 // --------------------------------------------------------------------------------
 export const NewChatbot = () => {
@@ -128,13 +154,24 @@ export const NewChatbot = () => {
   const [inputMessage, setInputMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [showWelcome, setShowWelcome] = useState(true)
+  const [showInactivityModal, setShowInactivityModal] = useState(false)
   const flatListRef = useRef()
   const lottieRef = useRef(null)
+  const inactivityTimerRef = useRef(null)
+  const deleteTimerRef = useRef(null)
 
   useEffect(() => {
     loadMessages()
     checkFirstVisit()
+    return () => {
+      clearTimeout(inactivityTimerRef.current)
+      clearTimeout(deleteTimerRef.current)
+    }
   }, [])
+
+  useEffect(() => {
+    resetInactivityTimer()
+  }, [messages])
 
   // --------------------------------------------------------------------------------
   // Verificar primera visita
@@ -164,7 +201,7 @@ export const NewChatbot = () => {
         // Agregar mensaje de bienvenida por defecto
         const welcomeMessage = {
           _id: Date.now().toString(),
-          text: "¡Hola! Soy tu asistente virtual de CUCEI Ubicate. ¿Cómo puedo ayudarte hoy?",
+          text: "¡Hola! Soy el bot asistente de CUCEI. Estoy aquí para ayudarte con cualquier duda que tengas sobre el campus, horarios, eventos y más. ¿En qué puedo asistirte hoy?",
           createdAt: new Date().toISOString(),
           user: {
             _id: 2,
@@ -212,9 +249,13 @@ export const NewChatbot = () => {
     setIsTyping(true)
 
     try {
-      const responseFromAPI = await query(inputMessage)
-      const processedResponse = processResponse(responseFromAPI)
-      addBotMessage(processedResponse)
+      if (isGreeting(inputMessage)) {
+        addBotMessage(getGreetingResponse())
+      } else {
+        const responseFromAPI = await query(inputMessage)
+        const processedResponse = processResponse(responseFromAPI)
+        addBotMessage(processedResponse)
+      }
     } catch (error) {
       console.error("Error al obtener respuesta de la API:", error)
       addBotMessage("Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
@@ -256,7 +297,7 @@ export const NewChatbot = () => {
       {item.user._id === 2 && <Image source={item.user.avatar} style={styles.avatar} />}
       <View style={styles.messageContent}>
         <Text style={[styles.messageText, item.user._id === 1 ? styles.userMessageText : styles.botMessageText]}>
-          {item.text}
+          {renderTextWithLinks(item.text)}
         </Text>
         <Text style={styles.timestamp}>
           {new Date(item.createdAt).toLocaleTimeString([], {
@@ -265,8 +306,40 @@ export const NewChatbot = () => {
           })}
         </Text>
       </View>
+      {item.user._id === 2 && (
+        <TouchableOpacity style={styles.copyButton} onPress={() => copyToClipboard(item.text)}>
+          <FontAwesome name="copy" size={16} color="#4c669f" />
+        </TouchableOpacity>
+      )}
     </Animatable.View>
   )
+
+  // --------------------------------------------------------------------------------
+  // Renderizar texto con enlaces clicables
+  // --------------------------------------------------------------------------------
+  const renderTextWithLinks = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    const parts = text.split(urlRegex)
+
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <Text key={index} style={styles.link} onPress={() => Linking.openURL(part)}>
+            {part}
+          </Text>
+        )
+      }
+      return <Text key={index}>{part}</Text>
+    })
+  }
+
+  // --------------------------------------------------------------------------------
+  // Copiar texto al portapapeles
+  // --------------------------------------------------------------------------------
+  const copyToClipboard = async (text) => {
+    await Clipboard.setStringAsync(text)
+    Alert.alert("Copiado", "El mensaje ha sido copiado al portapapeles")
+  }
 
   // --------------------------------------------------------------------------------
   // Manejar cierre de bienvenida
@@ -278,6 +351,37 @@ export const NewChatbot = () => {
     } catch (error) {
       console.error("Error saving visit status:", error)
     }
+  }
+
+  // --------------------------------------------------------------------------------
+  // Reiniciar temporizador de inactividad
+  // --------------------------------------------------------------------------------
+  const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimerRef.current)
+    clearTimeout(deleteTimerRef.current)
+
+    inactivityTimerRef.current = setTimeout(
+      () => {
+        setShowInactivityModal(true)
+      },
+      5 * 60 * 1000,
+    ) // 5 minutos
+
+    deleteTimerRef.current = setTimeout(
+      () => {
+        deleteConversation()
+      },
+      7 * 60 * 1000,
+    ) // 7 minutos
+  }
+
+  // --------------------------------------------------------------------------------
+  // Eliminar conversación
+  // --------------------------------------------------------------------------------
+  const deleteConversation = async () => {
+    setMessages([])
+    await AsyncStorage.removeItem("chatMessages")
+    setShowInactivityModal(false)
   }
 
   // --------------------------------------------------------------------------------
@@ -339,6 +443,36 @@ export const NewChatbot = () => {
               <Text style={styles.modalButtonText}>Comenzar</Text>
             </TouchableOpacity>
           </Animatable.View>
+        </BlurView>
+      </Modal>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showInactivityModal}
+        onRequestClose={() => setShowInactivityModal(false)}
+      >
+        <BlurView intensity={100} style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>¿Deseas eliminar la conversación?</Text>
+            <Text style={styles.modalText}>
+              Has estado inactivo por 5 minutos. La conversación se eliminará automáticamente en 2 minutos.
+            </Text>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => {
+                  setShowInactivityModal(false)
+                  resetInactivityTimer()
+                }}
+              >
+                <Text style={styles.modalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalButton, styles.deleteButton]} onPress={deleteConversation}>
+                <Text style={styles.modalButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </BlurView>
       </Modal>
     </SafeAreaView>
@@ -486,16 +620,35 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#4c669f",
   },
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
   modalButton: {
-    backgroundColor: "#4c669f",
     paddingHorizontal: 30,
     paddingVertical: 10,
     borderRadius: 20,
+    minWidth: 120,
+    alignItems: "center",
+  },
+  cancelButton: {
+    backgroundColor: "#f0f0f0",
+  },
+  deleteButton: {
+    backgroundColor: "#4c669f",
   },
   modalButtonText: {
-    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  copyButton: {
+    padding: 5,
+    marginLeft: 5,
+  },
+  link: {
+    color: "#1e90ff",
+    textDecorationLine: "underline",
   },
 })
 
