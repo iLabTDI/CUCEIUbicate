@@ -27,7 +27,7 @@ import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSession } from "../../auth/SessionManager";
-import { ChatbotButton } from "../ChatBot/Chatboot_Button";
+import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 import { DownloadAssets } from "./Routes/DownloadAssets";

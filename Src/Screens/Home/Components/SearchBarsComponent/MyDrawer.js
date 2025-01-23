@@ -313,7 +313,7 @@ export const MyDrawer = () => {
         }}
       /> */}
       <Drawer.Screen
-        name="Chatbot"
+        name="ChatbotScreen"
         component={NewChatbot}
         options={{
           drawerLabel: "Chatbot",
