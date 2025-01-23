@@ -5,7 +5,7 @@
         "nombre": "Dr. Marco Antonio Pérez Cisneros",
         "puesto": "Rector",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27402, 27405 y 27429",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "rector@cucei.udg.mx"
     },
     {
@@ -14,7 +14,7 @@
         "nombre": "Dra. Karla Avila Cárdenas",
         "puesto": "Secretario Técnico",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27466",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "secretaria.tecnica@cucei.udg.mx"
     },
     {
@@ -23,7 +23,7 @@
         "nombre": "Lic. Jorge Silva Landeros",
         "puesto": "Secretario Particular",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5903  Ext: 27403",
+        "conmutador": "33 1378 5903",
         "correo_electronico": "secpart@cucei.udg.mx"
     },
     {
@@ -32,7 +32,7 @@
         "nombre": "Lic. María Alexa Ruíz Madero",
         "puesto": "Asistente",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27402",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "asistente.rectoria@cucei.udg.mx"
     },
     {
@@ -41,7 +41,7 @@
         "nombre": "Verónica Zujey Echeverría Macías",
         "puesto": "Asistente",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27429",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "protocolo@cucei.udg.mx"
     },
     {
@@ -59,7 +59,7 @@
         "nombre": "Mtra. Jeannette García Cázares",
         "puesto": "Responsable",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27459",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "comisiones.consejo@cucei.udg.mx"
     },
     {
@@ -68,7 +68,7 @@
         "nombre": "Mtra. María Guadalupe Morelos Velázquez",
         "puesto": "Jefe del Área",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27604",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "convenios@cucei.udg.mx"
     },
     {
@@ -77,7 +77,7 @@
         "nombre": "Dra.  Patricia Sánchez Rosario",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27431",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cplan@cucei.udg.mx"
     },
     {
@@ -86,7 +86,7 @@
         "nombre": "Dra. Sabrina Lizbeth Vega Maldonado",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27456",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cpdoc@cucei.udg.mx"
     },
     {
@@ -95,7 +95,7 @@
         "nombre": "Dra. Rosaura Hernández Montelongo",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27458",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cinv@cucei.udg.mx"
     },
     {
@@ -104,7 +104,7 @@
         "nombre": "Dra. María Teresa Romero Gutierrez",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27564",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "uposg@cucei.udg.mx"
     },
     {
@@ -113,7 +113,7 @@
         "nombre": "Mtro. Omar Israel Patiño Hernandez",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27422",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cext@cucei.udg.mx"
     },
     {
@@ -122,7 +122,7 @@
         "nombre": "Lic. Y. Elizabeth Ramírez Rosales",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27423, 27575",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "uvinc@cucei.udg.mx"
     },
     {
@@ -131,7 +131,7 @@
         "nombre": "Lic. Lucero Araceli Rios Espinoza",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27427",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "ussocial@cucei.udg.mx"
     },
     {
@@ -140,7 +140,7 @@
         "nombre": "Lic. José Orlando Salas Contreras",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27557",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "udifus@cucei.udg.mx"
     },
     {
@@ -149,7 +149,7 @@
         "nombre": "Mtra. Cecilia Garibay López",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27418",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "csa@cucei.udg.mx"
     },
     {
@@ -158,7 +158,7 @@
         "nombre": "Mtra. Norma Estela Sandoval Alvarez",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27420",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "ubecas@cucei.udg.mx"
     },
     {
@@ -167,7 +167,7 @@
         "nombre": "Lic. Indira Myriam Palomino Núñez",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27486",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "ubiblio@cucei.udg.mx"
     },
     {
@@ -176,7 +176,7 @@
         "nombre": "Lic. María De Los Angeles Moreno Ceja",
         "puesto": "Responsable",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27489",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cid@cucei.udg.mx"
     },
     {
@@ -185,7 +185,7 @@
         "nombre": "Mtro. José Omar Saavedra Fajardo",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27412",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cta@cucei.udg.mx"
     },
     {
@@ -194,7 +194,7 @@
         "nombre": "Mtro. Ricardo Acosta Velázquez",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27495",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "ucta@cucei.udg.mx"
     },
     {
@@ -203,7 +203,7 @@
         "nombre": "Mtro. Rafael Alejandro Ramírez Gómez",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27451",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "umi@cucei.udg.mx"
     },
     {
@@ -221,7 +221,7 @@
         "nombre": "Dra. Gloria Arlette Méndez Maldonado",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27677",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdfis@cucei.udg.mx"
     },
     {
@@ -230,7 +230,7 @@
         "nombre": "Mtra. María Elena Olivares Pérez",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27755",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdmat@cucei.udg.mx"
     },
     {
@@ -239,7 +239,7 @@
         "nombre": "Mtro. Bernardo Gudiño Guzmán",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27532",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdquim@cucei.udg.mx"
     },
     {
@@ -248,7 +248,7 @@
         "nombre": "Mtra. Susana Olivia Guerra Martínez",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27527",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdfarm@cucei.udg.mx"
     },
     {
@@ -266,7 +266,7 @@
         "nombre": "Dr. Enrique Michel Valdivia",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27536",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdiq@cucei.udg.mx"
     },
     {
@@ -284,7 +284,7 @@
         "nombre": "Ing. Eduardo Corona López",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27788",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdtop@cucei.udg.mx"
     },
     {
@@ -293,7 +293,7 @@
         "nombre": "Mtra. Cristina Martínez Cárdenas",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27742",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdiab@cucei.udg.mx"
     },
     {
@@ -302,7 +302,7 @@
         "nombre": "Dra. Marlene Alejandra Pérez Villalpando",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27704",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdind@cucei.udg.mx"
     },
     {
@@ -311,7 +311,7 @@
         "nombre": "Dr.  Carlos Alberto López de Alba",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27709",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdime@cucei.udg.mx"
     },
     {
@@ -329,7 +329,7 @@
         "nombre": "Mtra. Sara Esquivel Torres",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27736",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdinf@cucei.udg.mx"
     },
     {
@@ -338,7 +338,7 @@
         "nombre": "Mtro. Victor Ernesto Moreno González",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27730",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdibio@cucei.udg.mx"
     },
     {
@@ -347,7 +347,7 @@
         "nombre": "Dr. José Luis David Bonilla Carranza",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27734",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdcomp@cucei.udg.mx"
     },
     {
@@ -356,7 +356,7 @@
         "nombre": "Mtro. Moisés Gilberto Pérez Martínez",
         "puesto": "Coordinador de Carrera",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27728",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdcelc@cucei.udg.mx"
     },
     {
@@ -383,7 +383,7 @@
         "nombre": "Dr. Francisco Javier Álvarez Padilla",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext:27659",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "coordinacion.mcbci@cucei.udg.mx"
     },
     {
@@ -392,7 +392,7 @@
         "nombre": "Dr. Arturo Chávez Chávez",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27691",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdmcf@cucei.udg.mx"
     },
     {
@@ -401,7 +401,7 @@
         "nombre": "Dra. Maite Renteria Urquiza",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27772 y 27540",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdmcq@cucei.udg.mx"
     },
     {
@@ -410,7 +410,7 @@
         "nombre": "Dra. María Esther Macías Rodríguez",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27649",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "maestria.inocuidad@cucei.udg.mx"
     },
     {
@@ -419,7 +419,7 @@
         "nombre": "Dra. Verónica Vargas Alejo",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27759",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "maestria.matematicas@cucei.udg.mx"
     },
     {
@@ -437,7 +437,7 @@
         "nombre": "Dr. Eduardo Castañeda Paredes",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27773",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "maestria.materiales@cucei.udg.mx"
     },
     {
@@ -446,7 +446,7 @@
         "nombre": "Dr. David Ávalos Cueva",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27762",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdmrch@cucei.udg.mx"
     },
     {
@@ -455,7 +455,7 @@
         "nombre": "Dr. Carlos Federico Jasso Gastinel",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27506",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdmciq@cucei.udg.mx"
     },
     {
@@ -464,7 +464,7 @@
         "nombre": "Dr. Hugo Oscar Méndez Acosta",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27551",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "mpb@cucei.udg.mx"
     },
     {
@@ -473,7 +473,7 @@
         "nombre": "Dra. Verónica Adriana Galván Sanchez",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27739",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cdmcie@cucei.udg.mx"
     },
     {
@@ -491,7 +491,7 @@
         "nombre": "Dr. José Octavio Camarena Méndez",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27650",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdmcec@cucei.udg.mx"
     },
     {
@@ -509,7 +509,7 @@
         "nombre": "Dr. Arturo Valdivia González",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27769",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cdmroi@cucei.udg.mx"
     },
     {
@@ -518,7 +518,7 @@
         "nombre": "Dr. Jorge de Jesús Gálvez Rodríguez",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27781",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "coord.computoaplicado@cucei.udg.mx"
     },
     {
@@ -527,7 +527,7 @@
         "nombre": "Dr. Primitivo Emanuel Díaz Guerrero",
         "puesto": "Coordinador de Maestría",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27484",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "micid@cucei.udg.mx"
     },
     {
@@ -545,7 +545,7 @@
         "nombre": "Dr. Luis Guillermo Guerrero Ramírez",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27518 y 27570",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cddcq@cucei.udg.mx"
     },
     {
@@ -554,7 +554,7 @@
         "nombre": "Dr. Ricardo Manríquez González",
         "puesto": "Coordinador",
         "direccion": "Camino Ing, Ramón Padilla Sánchez #2100, C.P. 45510, Predio Las Agujas, Nextipac, Zapopan, Jalisco, México.",
-        "conmutador": "3313785900 Ext. 27857 y  33 36 82 01 10 ext. 106",
+        "conmutador": "3313785900 Ext. 27857 y 33 36 82 01 10 ext. 106",
         "correo_electronico": "doctorado.cbs@cucei.udg.mx"
     },
     {
@@ -563,7 +563,7 @@
         "nombre": "Dra. Verónica María Rodríguez Betancourtt",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27773",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "doctorado.materiales@cucei.udg.mx"
     },
     {
@@ -572,7 +572,7 @@
         "nombre": "Dr. Isidro Humberto Munive Lima",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27753 y 27754",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "doctorado.ciencia-mate@cucei.udg.mx"
     },
     {
@@ -581,7 +581,7 @@
         "nombre": "Dr. Eduardo Mendizábal Mijares",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27541",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cddciq@cucei.udg.mx"
     },
     {
@@ -599,7 +599,7 @@
         "nombre": "Dr. Orfil González Reynoso",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27508, 27568 y 27569",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "dpb@cucei.udg.mx"
     },
     {
@@ -608,7 +608,7 @@
         "nombre": "Dra. Alma Hortensia Martínez Preciado",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27510, 27568 y 27569",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "dcpbt@cucei.udg.mx"
     },
     {
@@ -617,7 +617,7 @@
         "nombre": "Dr. Omar Avalos Alvarez",
         "puesto": "Coordinador de Doctorado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27786",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cddcec@cucei.udg.mx"
     },
     {
@@ -635,7 +635,7 @@
         "nombre": "Mtra. Dulce Angélica Valdivia Chávez",
         "puesto": "Secretario Administrativo",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27434 y 27433",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "secadm@cucei.udg.mx"
     },
     {
@@ -644,7 +644,7 @@
         "nombre": "Dra. Beatriz Venegas Ruiz",
         "puesto": "Responsable",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27800",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "primercontacto.bvr@cucei.udg.mx"
     },
     {
@@ -653,7 +653,7 @@
         "nombre": "Lic. Isael Pérez González",
         "puesto": "Responsable",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext:27800",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "primercontacto@cucei.udg.mx"
     },
     {
@@ -662,7 +662,7 @@
         "nombre": "Mtro. Sergio Miguel Trinidad Haro",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27440",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "sesc@cucei.udg.mx"
     },
     {
@@ -671,7 +671,7 @@
         "nombre": "Mtra. Linka Vanessa Figueroa Vega",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27345",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "uatencion@cucei.udg.mx"
     },
     {
@@ -680,7 +680,7 @@
         "nombre": "Lic. Noemi Pérez López",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27442",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "uingreso@cucei.udg.mx"
     },
     {
@@ -689,7 +689,7 @@
         "nombre": "Mtra. Dulce María Carreón Carvajal",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27443",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "uegreso@cucei.udg.mx"
     },
     {
@@ -698,7 +698,7 @@
         "nombre": "Arq. Luis Alberto Razo García",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27446",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "csg@cucei.udg.mx"
     },
     {
@@ -707,7 +707,7 @@
         "nombre": ".",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27448",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "umanten@cucei.udg.mx"
     },
     {
@@ -716,7 +716,7 @@
         "nombre": "Lic. Veronica Marisela Frías Peralta",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27581",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "ucompras@cucei.udg.mx"
     },
     {
@@ -725,7 +725,7 @@
         "nombre": "Lic. Martha Alejandra Romo Lizaola",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27461 y 27627",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "cfin@cucei.udg.mx"
     },
     {
@@ -734,7 +734,7 @@
         "nombre": "Lic. María Cristina Ponce Ruiz",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27628",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "ufinan@cucei.udg.mx"
     },
     {
@@ -743,7 +743,7 @@
         "nombre": "Lic. Carlos Alberto Romo Lizaola",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27480",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "upresu@cucei.udg.mx"
     },
     {
@@ -752,7 +752,7 @@
         "nombre": "Lic. María Guadalupe Quiñones Pantoja",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27467",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "unomina@cucei.udg.mx"
     },
     {
@@ -761,7 +761,7 @@
         "nombre": "Lic. Alan Gustavo Sanchez Pantaleón",
         "puesto": "Encargado",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27436",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "unidadfondos.externos@cucei.udg.mx"
     },
     {
@@ -770,7 +770,7 @@
         "nombre": "Mtro. Guillermo Cerpa Ceja",
         "puesto": "Coordinador",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27562",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "cper@cucei.udg.mx"
     },
     {
@@ -779,7 +779,7 @@
         "nombre": "Lic. Sergio Andres Torres Molina",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27471",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "upacad@cucei.udg.mx"
     },
     {
@@ -788,7 +788,7 @@
         "nombre": "Lic. Edgar Manuel Ortíz Martínez",
         "puesto": "Jefe de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27472",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "upadm@cucei.udg.mx"
     },
     {
@@ -797,7 +797,7 @@
         "nombre": "Dra.  Blanca Lorena Reynoso Gómez",
         "puesto": "Jefa de Unidad",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27491",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "uei@cucei.udg.mx"
     },
     {
@@ -806,7 +806,7 @@
         "nombre": "Dr. Oscar Blanco Alonso",
         "puesto": "Director de División",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27663",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "divcb@cucei.udg.mx"
     },
     {
@@ -815,7 +815,7 @@
         "nombre": "Mtra. Patricia del Rosario Retamoza Vega",
         "puesto": "Secretario",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27665",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "sdivcb@cucei.udg.mx"
     },
     {
@@ -824,7 +824,7 @@
         "nombre": "Dra. Rocío Ivette López Roa",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27526",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depfarm@cucei.udg.mx"
     },
     {
@@ -833,7 +833,7 @@
         "nombre": "Dra. Irma Idalia Rangel Salas",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27530",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depquim@cucei.udg.mx"
     },
     {
@@ -842,7 +842,7 @@
         "nombre": "Dra. Emilia Fregoso Becerra",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27753 y 27754",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "depmat@cucei.udg.mx"
     },
     {
@@ -851,7 +851,7 @@
         "nombre": "Dr. Gilberto Gómez Rosas",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27668",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depfis@cucei.udg.mx"
     },
     {
@@ -869,7 +869,7 @@
         "nombre": "Dr. Cesar Octavio Monzón",
         "puesto": "Director de División",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5911 Ext: 27694",
+        "conmutador": "33 1378 5911",
         "correo_electronico": "diving@cucei.udg.mx"
     },
     {
@@ -878,7 +878,7 @@
         "nombre": "Mtro. Sergio Fernando Limones Pimentel",
         "puesto": "Secretario",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5911 Ext: 27696",
+        "conmutador": "33 1378 5911",
         "correo_electronico": "sdiving@cucei.udg.mx"
     },
     {
@@ -887,7 +887,7 @@
         "nombre": "Dr. Martín Rigoberto Arellano Martínez",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27534",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depiq@cucei.udg.mx"
     },
     {
@@ -896,7 +896,7 @@
         "nombre": "Dr. José Roberto Galaviz González",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27699",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depciv@cucei.udg.mx"
     },
     {
@@ -905,7 +905,7 @@
         "nombre": "Dra. Alejandra Gómez Padilla",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27703",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depind@cucei.udg.mx"
     },
     {
@@ -914,7 +914,7 @@
         "nombre": "Mtro. Sergio Corona Cárdenas",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27707",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depmec@cucei.udg.mx"
     },
     {
@@ -941,7 +941,7 @@
         "nombre": "Dra. Alma Yolanda Alanís García",
         "puesto": "Directora de División",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27720",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "divtic@cucei.udg.mx"
     },
     {
@@ -950,7 +950,7 @@
         "nombre": "Mtro. Eduardo Mendez Palos",
         "puesto": "Secretario",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27720",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "sdivtic@cucei.udg.mx"
     },
     {
@@ -968,7 +968,7 @@
         "nombre": "Mtra. María Elena Romero Gastelú",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900, Ext: 27732",
+        "conmutador": "33 1378 5900,",
         "correo_electronico": "depcc@cucei.udg.mx"
     },
     {
@@ -977,7 +977,7 @@
         "nombre": "Mtro. José Vladimir Quiroga Rojas",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27737",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "depief@cucei.udg.mx"
     },
     {
@@ -986,7 +986,7 @@
         "nombre": "Dra. Adriana Peña Pérez Negrón",
         "puesto": "Jefe de Departamento",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 13785900  ext 27727",
+        "conmutador": "33 13785900 ext 27727",
         "correo_electronico": "dibic@cucei.udg.mx"
     },
     {
@@ -1013,7 +1013,7 @@
         "nombre": "Lic. Braulio Vicente Ruiz Arrez",
         "puesto": "Contralor del Centro",
         "direccion": "Blvd. Marcelino García Barragán #1421, esq Calzada Olímpica",
-        "conmutador": "33 1378 5900 Ext: 27449",
+        "conmutador": "33 1378 5900",
         "correo_electronico": "contraloria.cucei@udg.mx"
     }
 ]
