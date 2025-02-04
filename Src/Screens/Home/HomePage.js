@@ -49,6 +49,7 @@ export const HomePage = () => {
   const [selectedRouteImage, setSelectedRouteImage] = useState(null);
   const [currentMapImage, setCurrentMapImage] = useState(
     require("./assets/images/mapa.webp")
+    //  require("./assets/images/mpa3.webp")
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
@@ -89,7 +90,7 @@ export const HomePage = () => {
   // Efecto para verificar si es la primera vez que se lanza la aplicación
   useEffect(() => {
     const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem("hasLaunchedd");
+      const hasLaunched = await AsyncStorage.getItem("hasLaunchedddd");
       if (hasLaunched === null) {
         setIsFirstLaunch(true);
         await AsyncStorage.setItem("hasLaunchedd", "true");
