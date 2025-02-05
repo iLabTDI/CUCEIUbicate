@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Alert,
   Dimensions,
+  Modal,
 } from "react-native";
 import { supabase } from "../../../Api/lib/supabase";
 import * as FileSystem from "expo-file-system";
@@ -39,6 +40,8 @@ import {
   faBrain,
   faFileDownload,
   faBus,
+  faTimes,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { deleteLocalFiles } from "./DeleteLocalFiles";
@@ -46,7 +49,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const BATCH_SIZE = 10;
 const CACHE_KEY = "downloadedFiles";
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 // const isTablet = width >= 768;
 
 const CAREER_INFO = {
@@ -119,6 +122,7 @@ export const FileManagement = ({ route }) => {
   const [downloadStatus, setDownloadStatus] = useState({}); // Estado general de la descarga (idle, downloading, completed, etc.)
   const [isLoading, setIsLoading] = useState(true); // Indicador de si los datos están cargando
   const [errorLog, setErrorLog] = useState([]); // Registro de errores ocurridos durante las operaciones
+  const [showOverlay, setShowOverlay] = useState(true); // Indicador de si se muestra el overlay de ayuda
 
   // Datos del usuario obtenidos de las props
   const { user } = route.params;
@@ -131,7 +135,7 @@ export const FileManagement = ({ route }) => {
   const fetchDivisions = useCallback(async () => {
     try {
       console.log("Fetching divisions...");
-      const { data, error } = await supabase.storage 
+      const { data, error } = await supabase.storage
         .from("route_images") // Especifica el bucket
         .list(""); // Llama a la raíz del bucket para obtener las carpetas
 
@@ -385,7 +389,6 @@ export const FileManagement = ({ route }) => {
     return successfulDownloads;
   };
 
-
   const downloadFile = async (file, division, retryCount = 0) => {
     if (cancelDownloadRef.current[division]) {
       throw new Error("Descarga cancelada");
@@ -541,7 +544,8 @@ export const FileManagement = ({ route }) => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Cargando...</Text>
+        <ActivityIndicator size={24} color="#1976D2" style={styles.loader} />
+        <Text style={styles.loadingText}>Cargando...</Text>
       </View>
     );
   }
@@ -802,6 +806,45 @@ export const FileManagement = ({ route }) => {
           </View>
         )}
       </ScrollView>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showOverlay}
+        onRequestClose={() => setShowOverlay(false)}>
+        <View style={styles.overlayContainer}>
+          <View style={styles.overlayContent}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowOverlay(false)}>
+              <FontAwesomeIcon icon={faTimes} size={24} color="#fff" />
+            </TouchableOpacity>
+            <LinearGradient
+              colors={["#0b34b0", "#0056b3"]}
+              style={styles.header}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                size={32}
+                color="#fff"
+                style={styles.headerWarning}
+              />
+              <Text style={styles.overlayTitle}>Aviso Importante</Text>
+            </LinearGradient>
+            <View style={styles.separator} />
+            <Text style={styles.overlayText}>
+              Estamos trabajando en mejorar la gestión de la aplicación para que
+              ya no sea necesario descargar archivos. Pronto tendrás una
+              experiencia más fluida y eficiente.
+            </Text>
+            <TouchableOpacity
+              style={styles.overlayButton}
+              onPress={() => setShowOverlay(false)}>
+              <Text style={styles.overlayButtonText}>Entendido</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -852,8 +895,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    // paddingHorizontal: isTablet ? 24 : 16,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   divisionCard: {
     borderRadius: 16,
@@ -993,12 +1035,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
-  globalActionsTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 16,
-  },
   globalButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -1024,6 +1060,129 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  overlayContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    width: "85%",
+    paddingBottom: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 5,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  overlayTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    marginRight: 10,
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e8ed",
+    marginHorizontal: 15,
+  },
+  overlayText: {
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 22,
+    textAlign: "justify",
+    paddingHorizontal: 20,
+    marginVertical: 20,
+  },
+  overlayContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayContent: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    width: "85%",
+    paddingBottom: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 5,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+
+  headerWarning: {
+    position: "absolute",
+    left: 20,
+    // transform: [{ translateY: -16 }],
+  },
+  overlayTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+    flex: 1,
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e8ed",
+    marginHorizontal: 15,
+  },
+  overlayText: {
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 22,
+    textAlign: "justify",
+    paddingHorizontal: 20,
+    marginVertical: 20,
+  },
+  overlayButton: {
+    backgroundColor: "#0b34b0",
+    paddingVertical: 12,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  overlayButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  overlayButton: {
+    backgroundColor: "#0b34b0",
+    paddingVertical: 12,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  overlayButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  loadingText: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
 

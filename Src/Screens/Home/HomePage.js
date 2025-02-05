@@ -376,7 +376,7 @@ export const HomePage = () => {
         )}
 
         {/* Componente para eliminar archivos locales */}
-        <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
+        {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
 
         {/* Botón para finalizar ruta */}
         {isRouteActive && (

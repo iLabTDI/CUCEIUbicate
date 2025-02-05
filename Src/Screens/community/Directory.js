@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
@@ -156,6 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   content: {
     padding: isTablet ? 24 : 16,
@@ -169,9 +171,9 @@ const styles = StyleSheet.create({
     marginBottom: isTablet ? 24 : 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
     overflow: "hidden",
     width: isTablet ? "48%" : "100%",
   },
