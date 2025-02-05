@@ -183,13 +183,19 @@ export const BottomSheetComponent = React.forwardRef(
         backgroundStyle={styles.bottomSheetBackground} // Estilo de fondo del BottomSheet
         handleIndicatorStyle={styles.bottomSheetIndicator} // Estilo del indicador de arrastre del BottomSheet
         enablePanDownToClose={true} // Permite cerrar el BottomSheet arrastrando hacia abajo
+        enableContentPanningGesture={false} // Evita conflicto con el ScrollView
       >
         {/* El KeyboardAvoidingView permite que el contenido del BottomSheet evite el teclado en iOS */}
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingView}>
+          style={styles.keyboardAvoidingView}
+          >
           <ScrollView
-            contentContainerStyle={styles.bottomSheetContent}>
+            contentContainerStyle={styles.bottomSheetContent}
+            keyboardShouldPersistTaps="handled" // Asegura que los gestos de toque y scroll funcionen correctamente
+            showsVerticalScrollIndicator={false} // Opcional: Mostrar el indicador de scroll
+            nestedScrollEnabled={true} // Permite que el ScrollView maneje gestos anidados en Android
+            >
             {/* Solo muestra contenido si se ha seleccionado un punto y tiene datos asociados */}
             {selectedPoint && bottomSheetContents[selectedPoint] && (
               <View style={styles.contentContainer}>
@@ -206,6 +212,9 @@ export const BottomSheetComponent = React.forwardRef(
                   </Text>
                 </View>
                 {/* Carrusel de imágenes del lugar seleccionado */}
+                {/* {renderImageCarousel(
+                  bottomSheetContents[selectedPoint]["photo-path"]
+                )} */}
                 {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["images-path"]
                 )}

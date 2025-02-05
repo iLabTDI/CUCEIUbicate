@@ -171,10 +171,12 @@ export const HomePage = () => {
 
   // Funciones para manejar la barra de búsqueda
   const toggleSearchBar = () => {
+    console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
   };
 
   const closeSearchBar = () => {
+    console.log("Cerrando barra de búsqueda...");
     setShowSearchBar(false);
   };
 
