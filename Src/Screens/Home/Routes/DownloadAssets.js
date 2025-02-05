@@ -1,14 +1,24 @@
-import React from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, Platform } from "react-native"
-import LottieView from "lottie-react-native"
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faCloudDownloadAlt, faArrowRight } from "@fortawesome/free-solid-svg-icons"
+import React from "react";
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Dimensions, 
+  Platform 
+} from "react-native";
+import LottieView from "lottie-react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCloudDownloadAlt, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-const { width, height } = Dimensions.get("window")
+const { width, height } = Dimensions.get("window");
 
 export const DownloadAssets = ({ onClose, onViewDownload, visible }) => {
+  // Si visible es false, no renderizamos nada
+  if (!visible) return null;
+
   return (
-    <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
+    <View style={styles.modalWrapper}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -23,9 +33,19 @@ export const DownloadAssets = ({ onClose, onViewDownload, visible }) => {
               Para usar la aplicación sin conexión, es necesario descargar algunos archivos.
             </Text>
             <TouchableOpacity style={styles.downloadButton} onPress={onViewDownload}>
-              <FontAwesomeIcon icon={faCloudDownloadAlt} size={24} color="#FFFFFF" style={styles.buttonIcon} />
+              <FontAwesomeIcon 
+                icon={faCloudDownloadAlt} 
+                size={24} 
+                color="#FFFFFF" 
+                style={styles.buttonIcon} 
+              />
               <Text style={styles.buttonText}>Ver Descarga</Text>
-              <FontAwesomeIcon icon={faArrowRight} size={24} color="#FFFFFF" style={styles.buttonIcon} />
+              <FontAwesomeIcon 
+                icon={faArrowRight} 
+                size={24} 
+                color="#FFFFFF" 
+                style={styles.buttonIcon} 
+              />
             </TouchableOpacity>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <Text style={styles.closeButtonText}>Cerrar</Text>
@@ -33,20 +53,32 @@ export const DownloadAssets = ({ onClose, onViewDownload, visible }) => {
           </View>
         </View>
       </View>
-    </Modal>
-  )
-}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
+  // Este wrapper se posiciona de forma absoluta sobre toda la pantalla
+  modalWrapper: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: width,
+    height: height,
+    zIndex: 9999, // Asegura que se muestre sobre otros elementos
+  },
+  // Fondo semitransparente
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
+  // Contenedor del modal
   modalContainer: {
-    width: "90%",
+    width: "80%",
     maxWidth: 400,
+    height: "50%",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -55,10 +87,11 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
       },
       android: {
-        elevation: 24,
+        elevation: 20,
       },
     }),
   },
+  // Contenido interno del modal
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
@@ -109,5 +142,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-})
-
+});

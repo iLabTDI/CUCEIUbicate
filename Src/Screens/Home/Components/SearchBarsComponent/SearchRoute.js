@@ -200,7 +200,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
           <View style={styles.searchBar}>
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Buscar Ruta</Text>
-              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                 <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
@@ -303,23 +303,21 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000, // Asegura que esté sobre todos los elementos
     elevation: 10, // Necesario en Android para sobreponer vistas
   },
   container: {
-    width: "90%",
-    maxWidth: 400,
-    backgroundColor: "#fff",
+    width: "100%",
+    maxWidth: 500,
+    // backgroundColor: "#fff",
     borderRadius: 15,
-    padding: 20,
+    padding: 10,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
     elevation: 5,
   },
   header: {
