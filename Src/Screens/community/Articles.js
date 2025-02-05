@@ -21,7 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import staticJsonData from '../../../json/articles.json';
 
 const { width } = Dimensions.get('window');
-const isTablet = width >= 768;
+export const isTablet = width >= 768;
 
 export const Articles = () => {
   const [jsonData, setJsonData] = useState(staticJsonData);
@@ -92,7 +92,7 @@ export const Articles = () => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f2f5',

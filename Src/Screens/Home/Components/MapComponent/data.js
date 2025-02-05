@@ -40,9 +40,9 @@ export const points = [
     rotate: -34,
   },
   {
-    id: "Coordinacion Tecnologias",
-    name: "Coordinacion de Tecnologias",
-    aliases: ["Coordinacion de tecnologias", "coordinacion tecnologias", "tecnologias"],
+    id: "CTA",
+    name: "CTA",
+    aliases: ["Coordinacion de tecnologias", "coordinacion tecnologias", "tecnologias, CTA"],
     left: 647.5,
     top: 768.5,
     height: 51,
