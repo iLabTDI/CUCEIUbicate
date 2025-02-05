@@ -48,7 +48,7 @@ export const HomePage = () => {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [selectedRouteImage, setSelectedRouteImage] = useState(null);
   const [currentMapImage, setCurrentMapImage] = useState(
-    require("./assets/images/mapa.webp")
+    require("./assets/images/mapa2.webp")
     //  require("./assets/images/mpa3.webp")
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
@@ -157,10 +157,10 @@ export const HomePage = () => {
   };
 
   // // Función para manejar la eliminación de archivos
-  // const handleFilesDeleted = async () => {
-  //   await AsyncStorage.removeItem("hasLaunchedd");
-  //   setShowDownloadModal(true);
-  // };
+  const handleFilesDeleted = async () => {
+    await AsyncStorage.removeItem("hasLaunchedd");
+    setShowDownloadModal(true);
+  };
 
   // Función para manejar la pulsación de un punto en el mapa
   const handlePointPress = (pointId) => {
@@ -249,7 +249,7 @@ export const HomePage = () => {
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
     setSelectedRouteImage(null);
-    setCurrentMapImage(require("./assets/images/mapa.webp"));
+    setCurrentMapImage(require("./assets/images/mapa2.webp"));
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
@@ -376,7 +376,7 @@ export const HomePage = () => {
         )}
 
         {/* Componente para eliminar archivos locales */}
-        {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
+        <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} />
 
         {/* Botón para finalizar ruta */}
         {isRouteActive && (
