@@ -222,31 +222,33 @@ export const HomePage = () => {
   const handleSearch = async ({ searchKey, reverseSearchKey }) => {
     console.log("onSearch:", { searchKey, reverseSearchKey });
     try {
-      const localUri = await getMatchingUri(searchKey) || await getMatchingUri(reverseSearchKey);
-  
+      const localUri =
+        (await getMatchingUri(searchKey)) ||
+        (await getMatchingUri(reverseSearchKey));
+
       if (localUri) {
         console.log("Imagen encontrada:", localUri);
         setSelectedRouteImage(localUri);
         setCurrentMapImage({ uri: localUri });
         setIsRouteActive(true);
-  
+
         // Establece el ID de la ruta basado en la clave de búsqueda para que sea único
         setSelectedRouteId(searchKey || reverseSearchKey);
-  
+
         // Busca el video asociado a la ruta
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
+        const videoUri =
+          routeVideos[searchKey] || routeVideos[reverseSearchKey];
         setCurrentVideoUri(videoUri || null); // Si no hay video, establece null
-  
+
         setShowSearchBar(false);
         return;
       }
-  
+
       Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
     } catch (error) {
       console.error("Error al buscar ruta:", error);
     }
   };
-  
 
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
@@ -293,12 +295,18 @@ export const HomePage = () => {
         <TouchableOpacity
           style={styles.menu_icon}
           onPress={() => navigation.openDrawer()}>
-          <FontAwesomeIcon icon={faBars} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
+          <FontAwesomeIcon
+            icon={faBars}
+            size={isTablet ? width * 0.04 : width * 0.06}
+            color="#FFFFFF"
+          />
         </TouchableOpacity>
 
-        {/* Botón de perfil */}
         <TouchableOpacity
-          style={styles.profile_icon}
+          style={[
+            styles.profile_icon,
+            selectedIcon && styles.profile_icon_selected,
+          ]}
           onPress={() => navigation.navigate("Perfil")}>
           {selectedIcon ? (
             <Image source={selectedIcon} style={styles.profileImage} />
@@ -311,9 +319,12 @@ export const HomePage = () => {
           )}
         </TouchableOpacity>
 
-        {/* Botón de búsqueda */}
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
-          <FontAwesomeIcon icon={faRoute} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
+          <FontAwesomeIcon
+            icon={faRoute}
+            size={isTablet ? width * 0.04 : width * 0.06}
+            color="#FFFFFF"
+          />
         </TouchableOpacity>
 
         {/* Componente de búsqueda de ruta */}
@@ -398,7 +409,11 @@ export const HomePage = () => {
           <TouchableOpacity
             style={styles.videoButton}
             onPress={toggleVideoModal}>
-            <FontAwesomeIcon icon={faPlay} size={isTablet ? 28 : 24} color="#FFFFFF" />
+            <FontAwesomeIcon
+              icon={faPlay}
+              size={isTablet ? 28 : 24}
+              color="#FFFFFF"
+            />
             <Text style={styles.videoButtonText}>Ver Video</Text>
           </TouchableOpacity>
         )}
@@ -408,7 +423,7 @@ export const HomePage = () => {
           isVisible={isVideoModalVisible}
           onClose={() => setIsVideoModalVisible(false)}
           videoUri={currentVideoUri}
-          routeId={selectedRouteId} 
+          routeId={selectedRouteId}
         />
 
         {/* Botón del chatbot */}
@@ -486,10 +501,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  profile_icon_selected: {
+    padding: 0,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#0000ff",
+  },
   profileImage: {
-    width: isTablet ? width * 0.04 : width * 0.06,
-    height: isTablet ? width * 0.04 : width * 0.06,
-    borderRadius: isTablet ? width * 0.02 : width * 0.03,
+    width: isTablet ? width * 0.04 : width * 0.13,
+    height: isTablet ? width * 0.04 : width * 0.13,
+    borderRadius: (isTablet ? width * 0.04 : width * 0.2) / 2,
   },
   imageContainer: {
     flex: 1,
