@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
+import FastImage from "react-native-fast-image";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faMapMarkerAlt,
@@ -213,9 +214,9 @@ export const BottomSheetComponent = React.forwardRef(
                   </Text>
                 </View>
                 {/* Carrusel de imágenes del lugar seleccionado */}
-                {/* {renderImageCarousel(
+                {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["photo-path"]
-                )} */}
+                )}
                 {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["images-path"]
                 )}
