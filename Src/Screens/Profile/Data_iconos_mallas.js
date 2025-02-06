@@ -1,23 +1,41 @@
 
 //imagenes de iconos para seleccionar ene le perfil
 export const animalIcons = [
-    { id: "1", uri: require("./Iconos_animales/abeja.png") },
-    { id: "2", uri: require("./Iconos_animales/ajolote.png") },
-    { id: "3", uri: require("./Iconos_animales/aguila.png") },
-    { id: "4", uri: require("./Iconos_animales/cangrejo.png") },
-    { id: "5", uri: require("./Iconos_animales/conejo.png") },
-    { id: "6", uri: require("./Iconos_animales/coolcat.png") },
-    { id: "7", uri: require("./Iconos_animales/cucaracha.png") },
-    { id: "8", uri: require("./Iconos_animales/elefante.png") },
-    { id: "9", uri: require("./Iconos_animales/leon.png") },
-    { id: "10", uri: require("./Iconos_animales/mono.png") },
-    { id: "11", uri: require("./Iconos_animales/oveja.png") },
-    { id: "12", uri: require("./Iconos_animales/perro.png") },
+    { id: "1", uri: require("./Iconos_perzonalizados/leon_udg.webp") },
+    { id: "2", uri: require("./Iconos_perzonalizados/leona_g.webp") },
+    { id: "3", uri: require("./Iconos_perzonalizados/leon_b.webp") },
+    { id: "4", uri: require("./Iconos_perzonalizados/girl.webp") },
+    // { id: "5", uri: require("./Iconos_animales/conejo.png") },
+    // { id: "6", uri: require("./Iconos_animales/coolcat.png") },
+    // { id: "7", uri: require("./Iconos_animales/cucaracha.png") },
+    // { id: "8", uri: require("./Iconos_animales/elefante.png") },
+    // { id: "9", uri: require("./Iconos_animales/leon.png") },
+    // { id: "10", uri: require("./Iconos_animales/mono.png") },
+    // { id: "11", uri: require("./Iconos_animales/oveja.png") },
+    // { id: "12", uri: require("./Iconos_animales/perro.png") },
     { id: "13", uri: require("./Iconos_animales/tigre.png") },
     { id: "14", uri: require("./Iconos_animales/tortuga.png") },
     { id: "15", uri: require("./Iconos_animales/vaca.png") },
     { id: "16", uri: require("./Iconos_animales/anaconda.png") },
   ];
+// export const animalIcons = [
+//     { id: "1", uri: require("./Iconos_animales/abeja.png") },
+//     { id: "2", uri: require("./Iconos_animales/ajolote.png") },
+//     { id: "3", uri: require("./Iconos_animales/aguila.png") },
+//     { id: "4", uri: require("./Iconos_animales/cangrejo.png") },
+//     { id: "5", uri: require("./Iconos_animales/conejo.png") },
+//     { id: "6", uri: require("./Iconos_animales/coolcat.png") },
+//     { id: "7", uri: require("./Iconos_animales/cucaracha.png") },
+//     { id: "8", uri: require("./Iconos_animales/elefante.png") },
+//     { id: "9", uri: require("./Iconos_animales/leon.png") },
+//     { id: "10", uri: require("./Iconos_animales/mono.png") },
+//     { id: "11", uri: require("./Iconos_animales/oveja.png") },
+//     { id: "12", uri: require("./Iconos_animales/perro.png") },
+//     { id: "13", uri: require("./Iconos_animales/tigre.png") },
+//     { id: "14", uri: require("./Iconos_animales/tortuga.png") },
+//     { id: "15", uri: require("./Iconos_animales/vaca.png") },
+//     { id: "16", uri: require("./Iconos_animales/anaconda.png") },
+//   ];
   
 
   //Images de las mallas curriculares correspondientes con su nombre

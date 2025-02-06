@@ -1,4 +1,3 @@
-// Importamos las dependencias necesarias
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -30,36 +29,29 @@ import { login } from '../Api/login';
 import { LinearGradient } from 'expo-linear-gradient';
 import { setSession, getSession } from './SessionManager';
 
-// Obtenemos las dimensiones de la pantalla para un diseño responsivo
 const { width, height } = Dimensions.get('window');
+const isTablet = width >= 768; // Consideramos tablet si el ancho es 768 o mayor
 
 export const LoginScreen = () => {
-  // Hook de navegación para manejar la navegación entre pantallas
   const navigation = useNavigation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [showIncorrectMessage, setShowIncorrectMessage] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Estados para manejar los inputs y la lógica de la pantalla
-  const [username, setUsername] = useState(''); // Estado para el correo electrónico
-  const [password, setPassword] = useState(''); // Estado para la contraseña
-  const [showError, setShowError] = useState(false); // Estado para mostrar error general
-  const [showIncorrectMessage, setShowIncorrectMessage] = useState(false); // Estado para mostrar mensaje de credenciales incorrectas
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false); // Estado para mostrar animación de éxito
-  const [modalVisible, setModalVisible] = useState(false); // Estado para controlar la visibilidad del modal
-  const [showPassword, setShowPassword] = useState(false); // Estado para mostrar/ocultar la contraseña
-  const [isLoading, setIsLoading] = useState(false); // Estado para mostrar el indicador de carga
+  const shakeAnimation = useRef(new Animated.Value(0)).current;
 
-  // Referencias para las animaciones
-  const shakeAnimation = useRef(new Animated.Value(0)).current; // Animación de sacudida para errores
-
-  // Efecto para verificar si existe una sesión activa al cargar la pantalla
   useEffect(() => {
     checkExistingSession();
   }, []);
 
-  // Función para verificar si existe una sesión activa
   const checkExistingSession = async () => {
     const session = await getSession();
     if (session) {
-      // Si existe una sesión, navegamos directamente a la pantalla principal
       navigation.reset({
         index: 0,
         routes: [{ name: 'Principal Home', params: { user: session } }],
@@ -67,36 +59,29 @@ export const LoginScreen = () => {
     }
   };
 
-  // Función para manejar el proceso de inicio de sesión
   const handleLoginTest = async () => {
     setShowError(false);
     setShowIncorrectMessage(false);
   
-    // Validación de campos vacíos
     if (!username || !password) {
       setShowError(true);
-      shakeForm(); // Animación de sacudida si hay error
+      shakeForm();
       return;
     }
   
-    setIsLoading(true); // Iniciamos el indicador de carga
+    setIsLoading(true);
   
-    // Llamada a la API de login
     const result = await login(username, password);
-    setIsLoading(false); // Detenemos el indicador de carga
+    setIsLoading(false);
   
     if (result && result.isMatch && result.userData) {
       const userData = result.userData;
   
       try {
-        // Guardamos la sesión del usuario
         await setSession(userData);
-  
-        // Mostramos la animación de éxito
         setShowSuccessAnimation(true);
         setModalVisible(true);
   
-        // Después de 2 segundos, cerramos el modal y navegamos a la pantalla principal
         setTimeout(() => {
           setModalVisible(false);
           setShowSuccessAnimation(false);
@@ -109,23 +94,19 @@ export const LoginScreen = () => {
         console.error('Error al serializar los datos:', error);
       }
     } else {
-      // Si las credenciales son incorrectas, mostramos el mensaje de error
       setShowIncorrectMessage(true);
-      shakeForm(); // Animación de sacudida si las credenciales son incorrectas
+      shakeForm();
     }
   };
   
-  // Función para navegar a la pantalla de registro
   const handleRegister = () => {
     navigation.navigate('Registro');
   };
 
-  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Función para animar la sacudida del formulario en caso de error
   const shakeForm = () => {
     Animated.sequence([
       Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
@@ -143,8 +124,12 @@ export const LoginScreen = () => {
           style={styles.container}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
         >
-          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollViewContent}>
-            <Animated.View style={[styles.container, { transform: [{ translateX: shakeAnimation }] }]}>
+          <ScrollView 
+            keyboardShouldPersistTaps="handled" 
+            contentContainerStyle={styles.scrollViewContent}
+            alwaysBounceVertical={false}
+          >
+            <Animated.View style={[styles.formContainer, { transform: [{ translateX: shakeAnimation }] }]}>
               <Image
                 source={require('../../assets/images/Logo_Cucei.png')}
                 style={styles.logo}
@@ -159,7 +144,7 @@ export const LoginScreen = () => {
                 </View>
                 <Text style={styles.title}>Iniciar Sesión</Text>
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} />
+                  <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={styles.input}
                     placeholder="Correo electrónico"
@@ -171,7 +156,7 @@ export const LoginScreen = () => {
                   />
                 </View>
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faLock} style={styles.inputIcon} />
+                  <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={styles.input}
                     placeholder="Contraseña"
@@ -183,7 +168,7 @@ export const LoginScreen = () => {
                   <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
                     <FontAwesomeIcon
                       icon={showPassword ? faEyeSlash : faEye}
-                      size={20}
+                      size={isTablet ? 24 : 20}
                       color="#999"
                     />
                   </TouchableOpacity>
@@ -204,7 +189,7 @@ export const LoginScreen = () => {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator size={24} color="#fff" />
+                    <ActivityIndicator size={isTablet ? 32 : 24} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>Iniciar Sesión</Text>
                   )}
@@ -241,29 +226,32 @@ export const LoginScreen = () => {
   );
 };
 
-// Estilos para el componente
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1, // Ocupa todo el espacio disponible
+    flex: 1,
   },
   container: {
-    flex: 1, // Ocupa todo el espacio disponible
+    flex: 1,
   },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: height * 0.05, // Padding vertical basado en la altura de la pantalla
+    paddingVertical: height * 0.05,
+  },
+  formContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   logo: {
-    width: width * 0.8, // 80% del ancho de la pantalla
-    height: height * 0.2, // 20% de la altura de la pantalla
-    marginBottom: height * 0.03, // 3% de la altura de la pantalla
+    width: isTablet ? width * 0.8 : width * 0.8,
+    height: isTablet ? height * 0.21 : height * 0.2,
+    marginBottom: height * 0.03,
   },
   loginBox: {
-    padding: width * 0.06, // 6% del ancho de la pantalla
-    width: width * 0.85, // 85% del ancho de la pantalla
-    maxWidth: 400, // Máximo ancho de 400px
+    padding: isTablet ? width * 0.04 : width * 0.06,
+    width: isTablet ? width * 0.6 : width * 0.85,
+    maxWidth: isTablet ? 600 : 400,
     borderRadius: 20,
     backgroundColor: 'white',
     alignItems: 'center',
@@ -276,14 +264,14 @@ const styles = StyleSheet.create({
   iconCircle: {
     backgroundColor: '#f0f0f0',
     borderRadius: 50,
-    width: width * 0.2, // 20% del ancho de la pantalla
-    height: width * 0.2, // 20% del ancho de la pantalla
-    maxWidth: 100,
-    maxHeight: 100,
+    width: isTablet ? width * 0.12 : width * 0.2,
+    height: isTablet ? width * 0.12 : width * 0.2,
+    maxWidth: isTablet ? 120 : 100,
+    maxHeight: isTablet ? 120 : 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -width * 0.1, // -10% del ancho de la pantalla
-    marginBottom: height * 0.02, // 2% de la altura de la pantalla
+    marginTop: isTablet ? -width * 0.06 : -width * 0.1,
+    marginBottom: height * 0.02,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -296,7 +284,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    fontSize: width * 0.06, 
+    fontSize: isTablet ? width * 0.04 : width * 0.06,
     fontWeight: 'bold',
     color: '#0b34b0',
     marginBottom: height * 0.02,
@@ -304,48 +292,49 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: height * 0.02, 
+    marginBottom: height * 0.02,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 10,
-    paddingHorizontal: width * 0.03, 
+    paddingHorizontal: width * 0.03,
+    width: '100%',
   },
   inputIcon: {
-    marginRight: width * 0.02, 
+    marginRight: width * 0.02,
     color: '#0b34b0',
   },
   input: {
     flex: 1,
-    paddingVertical: height * 0.015, 
-    fontSize: width * 0.04, 
+    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     color: '#333',
   },
   passwordToggle: {
-    padding: width * 0.02, 
+    padding: width * 0.02,
   },
   button: {
     backgroundColor: '#0b34b0',
     borderRadius: 10,
-    paddingVertical: height * 0.02, 
+    paddingVertical: isTablet ? height * 0.025 : height * 0.02,
     alignItems: 'center',
-    marginTop: height * 0.02, 
+    marginTop: height * 0.02,
     width: '100%',
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.04, 
+    fontSize: isTablet ? width * 0.025 : width * 0.04,
     fontWeight: 'bold',
   },
   registerText: {
-    marginTop: height * 0.02, 
-    fontSize: width * 0.035, 
+    marginTop: height * 0.02,
+    fontSize: isTablet ? width * 0.02 : width * 0.035,
     color: '#0b34b0',
   },
   errorText: {
     color: 'red',
     textAlign: 'center',
-    marginTop: height * 0.02, 
-    fontSize: width * 0.035, 
+    marginTop: height * 0.02,
+    fontSize: isTablet ? width * 0.02 : width * 0.035,
   },
   modalContainer: {
     flex: 1,
@@ -354,8 +343,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   animation: {
-    width: width * 0.6, 
-    height: width * 0.6, 
+    width: isTablet ? width * 0.3 : width * 0.6,
+    height: isTablet ? width * 0.3 : width * 0.6,
   },
 });
 

@@ -176,7 +176,6 @@ export const BottomSheetComponent = React.forwardRef(
     );
 
     return (
-      // Componente BottomSheet de @gorhom/bottom-sheet
       <BottomSheet
         ref={bottomSheetRef}
         index={-1} // El índice -1 indica que el BottomSheet comienza cerrado

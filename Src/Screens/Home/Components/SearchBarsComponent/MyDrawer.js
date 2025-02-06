@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
+  DrawerItem,
 } from "@react-navigation/drawer";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -29,8 +31,12 @@ import {
   faRobot,
   faArchive,
   faFileDownload,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+
+// Import all the screen components
 import { HomePage } from "../../HomePage";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
@@ -42,19 +48,21 @@ import { School_services } from "../../../ScolarServices/School_services";
 import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
-import { LinearGradient } from "expo-linear-gradient";
-import { Chatbot } from "../../../ChatBot/Chatbot";
+// import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
-import EasterEgg from "../../../EasterEgg/EasterEgg";
+import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
+
 const Drawer = createDrawerNavigator();
+const { width } = Dimensions.get("window");
 
+// Custom drawer content component
 const CustomDrawerContent = (props) => {
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
-  // const handleLogout = () => {
-  //   navigation.navigate("Inicio");
-  //   console.log("Cerrando sesión...");
-  // };
+  const handleLogout = () => {
+    navigation.navigate("Inicio");
+    console.log("Cerrando sesión...");
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -72,20 +80,23 @@ const CustomDrawerContent = (props) => {
         </LinearGradient>
         <View style={styles.drawerItemsContainer}>
           <DrawerItemList {...props} />
-          {/* <DrawerItem
+          {/* Uncomment the following DrawerItem to add a logout option
+          <DrawerItem
             label="Cerrar Sesión"
             onPress={handleLogout}
             icon={({ color, size }) => (
               <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
             )}
             labelStyle={styles.drawerItemLabel}
-          /> */}
+          />
+          */}
         </View>
       </DrawerContentScrollView>
     </ScrollView>
   );
 };
 
+// Custom header button component
 const DrawerHeaderButton = () => {
   const navigation = useNavigation();
 
@@ -98,6 +109,7 @@ const DrawerHeaderButton = () => {
   );
 };
 
+// Custom header component with icon
 const HeaderWithIcon = ({ title, icon }) => (
   <View style={styles.header}>
     <FontAwesomeIcon icon={icon} size={24} color="#FFFFFF" />
@@ -105,20 +117,23 @@ const HeaderWithIcon = ({ title, icon }) => (
   </View>
 );
 
+// Main drawer navigator component
 export const MyDrawer = () => {
   const route = useRoute();
   const { user } = route.params;
 
   return (
     <Drawer.Navigator
-      initialRouteName="Mapa" // default route
+      initialRouteName="Mapa"
       screenOptions={{
         headerStyle: {
           backgroundColor: "#0b34b0",
+          height: 100,
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
           fontWeight: "bold",
+          fontSize: 18,
         },
         drawerStyle: {
           backgroundColor: "#f5f5f5",
@@ -127,8 +142,13 @@ export const MyDrawer = () => {
         drawerActiveBackgroundColor: "#e0e0e0",
         drawerActiveTintColor: "#4c669f",
         drawerInactiveTintColor: "#000000",
+        drawerLabelStyle: {
+          fontSize: 14,
+          fontWeight: "500",
+        },
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      {/* Define all the drawer screens */}
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
@@ -151,7 +171,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUser} size={size} color={color} />
           ),
           headerShown: true,
-          drawerItemStyle: { display: "none" }, //para ocultar la pantalla perfil
+          drawerItemStyle: { display: "none" },
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Perfil" icon={faUser} />,
         }}
@@ -181,7 +201,7 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => (
             <HeaderWithIcon title="Artículos" icon={faNewspaper} />
-          ), // Header personalizado
+          ),
         }}
       />
       <Drawer.Screen
@@ -280,7 +300,7 @@ export const MyDrawer = () => {
           ),
         }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="ChatbotScreen"
         component={Chatbot}
         options={{
@@ -291,38 +311,43 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
         }}
+      /> */}
+      <Drawer.Screen
+        name="ChatbotScreen"
+        component={NewChatbot}
+        options={{
+          drawerLabel: "Chatbot",
+          drawerIcon: ({ color, size }) => (
+            <FontAwesomeIcon icon={faRobot} size={size} color={color} />
+          ),
+          headerLeft: () => <DrawerHeaderButton />,
+          headerTitle: () => (
+            <HeaderWithIcon title="Chatbot" icon={faRobot} />
+          ),
+        }}
       />
       <Drawer.Screen
         name="FileManagementScreen"
         component={FileManagement}
         initialParams={{ user }}
         options={{
-          drawerLabel: "Gestion de Archivos",
+          drawerLabel: "Gestión de Archivos",
           drawerIcon: ({ color, size }) => (
             <FontAwesomeIcon icon={faFileDownload} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="Gestion de Archivos" icon={faFileDownload} />,
+          headerTitle: () => (
+            <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />
+          ),
         }}
       />
-      {/* <Drawer.Screen
-        name="EasterEgg"
-        component={EasterEgg}
-        options={{
-          drawerLabel: "EasterEgg",
-          drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faArchive} size={size} color={color} />
-          ),
-          headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => <HeaderWithIcon title="EasterEgg" icon={faArchive} />,
-        }}
-      /> */}
     </Drawer.Navigator>
   );
 };
 
+// Styles for the component
 const styles = StyleSheet.create({
-  scrollview: {
+  scrollView: {
     flex: 1,
   },
   drawerContent: {
@@ -351,7 +376,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   drawerItemLabel: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
   },
   menuIcon: {
@@ -368,3 +393,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
+
+export default MyDrawer;

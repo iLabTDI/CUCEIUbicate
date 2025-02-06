@@ -1,15 +1,14 @@
 {
     "section-description": {
       "name": "Radio CUCEI",
-      "description": "Es un sistema de radiodifusión experimental que transmite desde el laboratorio de audio y acústica del módulo N. El alcance de transmisión de radio vía FM está limitado al área del Centro Universitario a una frecuencia de 96.7 Mhz; además se puede escuchar vía internet en la página http://radio.cucei.udg.mx"
+      "description": "Es un sistema de radiodifusión experimental que transmite desde el laboratorio de audio y acústica del módulo N. El alcance de transmisión de radio vía FM está limitado al área del Centro Universitario a una frecuencia de 96.7 Mhz; además se puede escuchar vía internet en la página web del centro universitario."
     },
     "additional-info": {
       "purpose": "En este proyecto de estación de radio se realizan prácticas de las materias de comunicaciones. Además funge como un medio de difusión de actividades relevantes del centro universitario, como eventos, programación de exámenes, actividades culturales y de entretenimiento."
     },
     "technical-details": {
       "frequency": "96.7 Mhz",
-      "transmission-range": "Área del Centro Universitario",
-      "online-streaming": "http://radio.cucei.udg.mx"
+      "transmission-range": "Área del Centro Universitario"
     },
     "genero": "Variado",
     "idioma": "Español",

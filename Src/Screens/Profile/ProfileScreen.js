@@ -33,8 +33,9 @@ import { animalIcons, careerImages } from "./Data_iconos_mallas";
 import { clearSession } from "../../auth/SessionManager";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const ICON_SIZE = SCREEN_WIDTH * 0.15;
-const GRID_PADDING = 16;
+const isTablet = SCREEN_WIDTH >= 768;
+const ICON_SIZE = isTablet ? SCREEN_WIDTH * 0.1 : SCREEN_WIDTH * 0.15;
+const GRID_PADDING = isTablet ? 24 : 16;
 
 const degreeNames = {
   ICIV: "Ingeniería Civil",
@@ -65,7 +66,7 @@ const InfoItem = ({ icon, title, value }) => (
       end={{ x: 1, y: 1 }}
       style={styles.infoIconContainer}
     >
-      <FontAwesomeIcon icon={icon} size={20} color="#FFFFFF" />
+      <FontAwesomeIcon icon={icon} size={isTablet ? 24 : 20} color="#FFFFFF" />
     </LinearGradient>
     <View style={styles.infoContent}>
       <Text style={styles.infoTitle}>{title}</Text>
@@ -100,6 +101,7 @@ export const ProfileScreen = ({ route }) => {
         return acc;
       }, {});
       setLoadedIcons(iconsWithDelay);
+      setLoadingIcons(false);
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -164,7 +166,7 @@ export const ProfileScreen = ({ route }) => {
           ]}
         />
       ) : (
-        <ActivityIndicator size={16} color="#0b34b0" />
+        <ActivityIndicator size={isTablet ? 24 : 16} color="#0b34b0" />
       )}
     </TouchableOpacity>
   );
@@ -180,14 +182,14 @@ export const ProfileScreen = ({ route }) => {
         <Animatable.View animation="fadeIn" duration={1000} style={styles.avatarContainer}>
           <Image source={selectedIcon} style={styles.avatar} />
           <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
-            <FontAwesomeIcon icon={faEdit} size={20} color="#FFFFFF" />
+            <FontAwesomeIcon icon={faEdit} size={isTablet ? 24 : 20} color="#FFFFFF" />
           </TouchableOpacity>
         </Animatable.View>
         <Animatable.View animation="fadeInUp" duration={1000} style={styles.userInfo}>
           <Text style={styles.name}>{userData.name} {userData.lastnames}</Text>
           <Text style={styles.username}>@{userData.username}</Text>
           <View style={styles.statusIndicator}>
-            <FontAwesomeIcon icon={faCheckCircle} size={16} color="#4CAF50" />
+            <FontAwesomeIcon icon={faCheckCircle} size={isTablet ? 20 : 16} color="#4CAF50" />
             <Text style={styles.statusText}>Activo</Text>
           </View>
         </Animatable.View>
@@ -211,7 +213,7 @@ export const ProfileScreen = ({ route }) => {
 
       <Animatable.View animation="fadeInUp" duration={1000} delay={600} style={styles.card}>
         <View style={styles.cardHeader}>
-          <FontAwesomeIcon icon={faCalendarDay} size={20} color="#0b34b0" />
+          <FontAwesomeIcon icon={faCalendarDay} size={isTablet ? 24 : 20} color="#0b34b0" />
           <Text style={styles.cardTitle}>Fecha Actual</Text>
         </View>
         <View style={styles.cardContent}>
@@ -237,7 +239,7 @@ export const ProfileScreen = ({ route }) => {
             end={{ x: 1, y: 0 }}
             style={styles.curriculumGradient}
           >
-            <FontAwesomeIcon icon={faGraduationCap} size={20} color="#FFFFFF" />
+            <FontAwesomeIcon icon={faGraduationCap} size={isTablet ? 24 : 20} color="#FFFFFF" />
             <Text style={styles.curriculumText}>Ver Malla Curricular</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -251,7 +253,7 @@ export const ProfileScreen = ({ route }) => {
             end={{ x: 1, y: 0 }}
             style={styles.logoutGradient}
           >
-            <FontAwesomeIcon icon={faSignOutAlt} size={20} color="#FFFFFF" />
+            <FontAwesomeIcon icon={faSignOutAlt} size={isTablet ? 24 : 20} color="#FFFFFF" />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -274,13 +276,17 @@ export const ProfileScreen = ({ route }) => {
               <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
             </View>
            
+            {loadingIcons ? (
+              <ActivityIndicator size="large" color="#0b34b0" style={styles.modalSpinner} />
+            ) : (
               <FlatList
                 data={animalIcons}
                 renderItem={renderIcon}
                 keyExtractor={(item) => item.id}
-                numColumns={4}
+                numColumns={isTablet ? 5 : 4}
                 contentContainerStyle={styles.iconGrid}
               />
+            )}
      
             <TouchableOpacity
               style={styles.closeButton}
@@ -304,7 +310,7 @@ export const ProfileScreen = ({ route }) => {
             style={styles.closeModalButton}
             onPress={() => setCurriculumModalVisible(false)}
           >
-            <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
+            <FontAwesomeIcon icon={faTimes} size={isTablet ? 30 : 24} color="#FFFFFF" />
           </TouchableOpacity>
           <ImageZoom
             ref={imageZoomRef}
@@ -335,19 +341,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4f4f4",
   },
   header: {
-    padding: 20,
+    padding: isTablet ? 30 : 20,
     alignItems: "center",
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: isTablet ? 40 : 30,
+    borderBottomRightRadius: isTablet ? 40 : 30,
   },
   avatarContainer: {
     position: "relative",
-    marginBottom: 10,
+    marginBottom: isTablet ? 20 : 10,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: isTablet ? 180 : 120,
+    height: isTablet ? 180 : 120,
+    borderRadius: isTablet ? 90 : 60,
     borderWidth: 4,
     borderColor: "#FFFFFF",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
@@ -357,21 +363,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 20,
-    padding: 8,
+    borderRadius: isTablet ? 30 : 20,
+    padding: isTablet ? 12 : 8,
   },
   userInfo: {
     alignItems: "center",
   },
   name: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#FFFFFF",
-    marginTop: 10,
+    marginTop: isTablet ? 15 : 10,
     textAlign: "center",
   },
   username: {
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     color: "#FFFFFF",
     opacity: 0.8,
   },
@@ -379,20 +385,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
-    marginTop: 10,
+    paddingHorizontal: isTablet ? 15 : 10,
+    paddingVertical: isTablet ? 8 : 5,
+    borderRadius: isTablet ? 20 : 15,
+    marginTop: isTablet ? 15 : 10,
   },
   statusText: {
-    marginLeft: 5,
+    marginLeft: isTablet ? 8 : 5,
     color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: isTablet ? 18 : 14,
   },
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    margin: 15,
+    borderRadius: isTablet ? 20 : 15,
+    margin: isTablet ? 20 : 15,
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -402,87 +409,87 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    padding: isTablet ? 20 : 15,
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: isTablet ? 24 : 18,
     fontWeight: "bold",
     color: "#0b34b0",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   cardContent: {
-    padding: 15,
+    padding: isTablet ? 20 : 15,
   },
   infoItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: isTablet ? 20 : 15,
   },
   infoIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: isTablet ? 50 : 40,
+    height: isTablet ? 50 : 40,
+    borderRadius: isTablet ? 25 : 20,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 15,
+    marginRight: isTablet ? 20 : 15,
   },
   infoContent: {
     flex: 1,
   },
   infoTitle: {
-    fontSize: 14,
+    fontSize: isTablet ? 18 : 14,
     color: "#666666",
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: isTablet ? 6 : 4,
   },
   infoValue: {
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     fontWeight: "bold",
     color: "#333333",
   },
   dateText: {
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     color: "#333333",
     textAlign: "center",
     fontWeight: "500",
     textTransform: "capitalize",
   },
   curriculumButton: {
-    margin: 15,
-    borderRadius: 10,
+    margin: isTablet ? 20 : 15,
+    borderRadius: isTablet ? 15 : 10,
     overflow: "hidden",
   },
   curriculumGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: isTablet ? 16 : 12,
   },
   curriculumText: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
     fontWeight: "bold",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   logoutButton: {
-    margin: 15,
-    borderRadius: 10,
+    margin: isTablet ? 20 : 15,
+    borderRadius: isTablet ? 15 : 10,
     overflow: "hidden",
-    marginBottom: 30,
+    marginBottom: isTablet ? 40 : 30,
   },
   logoutGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: isTablet ? 16 : 12,
   },
   logoutText: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: isTablet ? 22 : 18,
     fontWeight: "bold",
-    marginLeft: 10,
+    marginLeft: isTablet ? 15 : 10,
   },
   modalOverlay: {
     flex: 1,
@@ -492,24 +499,24 @@ const styles = StyleSheet.create({
   },
   modalView: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    width: '90%',
-    maxWidth: 400,
+    borderRadius: isTablet ? 30 : 20,
+    padding: isTablet ? 30 : 20,
+    width: isTablet ? '80%' : '90%',
+    maxWidth: isTablet ? 600 : 400,
     maxHeight: '80%',
   },
   modalHeader: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: isTablet ? 30 : 20,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#0b34b0",
     textAlign: "center",
   },
   modalSpinner: {
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
   },
   iconGrid: {
     alignItems: 'center',
@@ -546,12 +553,12 @@ const styles = StyleSheet.create({
   },
   closeModalButton: {
     position: "absolute",
-    top: 40,
-    right: 20,
+    top: isTablet ? 60 : 40,
+    right: isTablet ? 30 : 20,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
+    borderRadius: isTablet ? 30 : 20,
+    width: isTablet ? 60 : 40,
+    height: isTablet ? 60 : 40,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
@@ -561,17 +568,17 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
   },
   closeButton: {
-    marginTop: 20,
+    marginTop: isTablet ? 30 : 20,
     backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    borderRadius: isTablet ? 15 : 10,
+    paddingVertical: isTablet ? 16 : 12,
+    paddingHorizontal: isTablet ? 32 : 24,
     alignSelf: "center",
   },
   closeButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: isTablet ? 20 : 16,
   },
 });
 

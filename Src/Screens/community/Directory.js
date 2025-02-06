@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react"
 import {
   View,
   Text,
@@ -9,90 +9,90 @@ import {
   Linking,
   RefreshControl,
   ActivityIndicator,
-} from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faBuilding,
-  faMapMarkerAlt,
-  faPhone,
-  faEnvelope,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import staticJsonData from "../../../json/contact_info.json";
-import { ContactImage } from "../../../json/contact_images";
+  Dimensions,
+} from "react-native"
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
+import { faBuilding, faMapMarkerAlt, faPhone, faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons"
+import { LinearGradient } from "expo-linear-gradient"
+import staticJsonData from "../../../json/contact_info.json"
+import { ContactImage } from "../../../json/contact_images"
+
+const { width } = Dimensions.get("window")
+const isTablet = width >= 768
 
 export const Directory = () => {
-  const [jsonData, setJsonData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // Estado para almacenar los datos del directorio
+  const [jsonData, setJsonData] = useState([])
+  // Estado para controlar la actualización de la lista
+  const [refreshing, setRefreshing] = useState(false)
+  // Estado para mostrar el indicador de carga
+  const [loading, setLoading] = useState(true)
 
-  
   useEffect(() => {
-    // Simulate fetching data
+    // Simulación de carga de datos
     setTimeout(() => {
-      setJsonData(staticJsonData);
-      setLoading(false);
-    }, 2000);
-  }, []);
+      setJsonData(staticJsonData)
+      setLoading(false)
+    }, 2000)
+  }, [])
 
+  // Función para obtener la imagen del contacto
   const getImageSource = (imageName) => {
     if (ContactImage.hasOwnProperty(imageName)) {
-      return ContactImage[imageName];
+      return ContactImage[imageName]
     } else {
-      return require("../../../json/contact_info/noasignado.jpg");
+      return require("../../../json/contact_info/noasignado.jpg")
     }
-  };
+  }
 
+  // Función para actualizar la lista (pull-to-refresh)
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setLoading(true);
-    // Simulate fetching data
+    setRefreshing(true)
+    setLoading(true)
+    // Simulación de recarga de datos
     setTimeout(() => {
-      setJsonData(staticJsonData);
-      setRefreshing(false);
-      setLoading(false);
-    }, 2000);
-  }, []);
+      setJsonData(staticJsonData)
+      setRefreshing(false)
+      setLoading(false)
+    }, 2000)
+  }, [])
 
+  // Función para abrir el cliente de correo electrónico
   const openEmail = (email) => {
-    Linking.openURL(`mailto:${email}`);
-  };
+    Linking.openURL(`mailto:${email}`)
+  }
 
+  // Función para abrir el marcador telefónico
   const openPhone = (phone) => {
-    Linking.openURL(`tel:${phone}`);
-  };
+    // Extraer solo el número de teléfono principal
+    const mainPhone = phone.split(",")[0].trim()
+    Linking.openURL(`tel:${mainPhone}`)
+  }
 
+  // Mostrar indicador de carga mientras se obtienen los datos
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size={24} color="#007bff" />
-        <Text style={styles.Cargando}>Cargando...</Text>
+        <ActivityIndicator size={isTablet ? 48 : 24} color="#0056b3" />
+        <Text style={styles.loadingText}>Cargando directorio...</Text>
       </View>
-    );
+    )
   }
 
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       <LinearGradient colors={["#0056b3", "#007bff"]} style={styles.header}>
-        <FontAwesomeIcon icon={faUser} size={24} color="#fff" />
-        <Text style={styles.headerTitle}>Directorio</Text>
+        <FontAwesomeIcon icon={faUser} size={isTablet ? 36 : 24} color="#fff" />
+        <Text style={styles.headerTitle}>Directorio CUCEI</Text>
       </LinearGradient>
       <View style={styles.content}>
         {jsonData.map((contact, index) => (
           <View key={index} style={styles.card}>
-            <LinearGradient
-              colors={["#0b34b0", "#0056b3"]}
-              style={styles.cardHeader}>
-              <Image
-                source={getImageSource(contact.imagen)}
-                style={styles.image}
-                resizeMode="cover"
-              />
+            <LinearGradient colors={["#0056b3", "#267bee"]} style={styles.cardHeader}>
+              <Image source={getImageSource(contact.imagen)} style={styles.image} resizeMode="cover" />
               <View style={styles.headerText}>
                 <Text style={styles.name}>{contact.nombre}</Text>
                 <Text style={styles.position}>{contact.puesto}</Text>
@@ -107,120 +107,129 @@ export const Directory = () => {
                 <FontAwesomeIcon icon={faMapMarkerAlt} style={styles.icon} />
                 <Text style={styles.infoText}>{contact.direccion}</Text>
               </View>
-              <TouchableOpacity
-                style={styles.infoRow}
-                onPress={() => openPhone(contact.conmutador)}>
+              <View style={styles.infoRow}>
                 <FontAwesomeIcon icon={faPhone} style={styles.icon} />
-                <Text style={[styles.infoText, styles.linkText]}>
-                  {contact.conmutador}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.infoRow}
-                onPress={() => openEmail(contact.correo_electronico)}>
+                <TouchableOpacity onPress={() => openPhone(contact.conmutador)}>
+                  <Text style={[styles.infoText, styles.linkText]}>{contact.conmutador.split(",")[0].trim()}</Text>
+                </TouchableOpacity>
+                <Text style={styles.infoText}>{contact.conmutador.split(",").slice(1).join(",")}</Text>
+              </View>
+              <TouchableOpacity style={styles.infoRow} onPress={() => openEmail(contact.correo_electronico)}>
                 <FontAwesomeIcon icon={faEnvelope} style={styles.icon} />
-                <Text style={[styles.infoText, styles.linkText]}>
-                  {contact.correo_electronico}
-                </Text>
+                <Text style={[styles.infoText, styles.linkText]}>{contact.correo_electronico}</Text>
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </View>
     </ScrollView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f2f5",
+    backgroundColor: "#f8f9fa",
   },
+  
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f8f9fa",
+  },
+  loadingText: {
+    fontSize: isTablet ? 24 : 18,
+    fontWeight: "600",
+    color: "#0056b3",
+    marginTop: isTablet ? 20 : 10,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    justifyContent: "center",
+    padding: isTablet ? 30 : 20,
+    borderBottomLeftRadius: isTablet ? 30 : 20,
+    borderBottomRightRadius: isTablet ? 30 : 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
-    marginLeft: 10,
-  },
-  Cargando: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#007bff",
-    marginTop: 10,
+    marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   content: {
-    padding: 16,
+    padding: isTablet ? 24 : 16,
+    flexDirection: isTablet ? "row" : "column",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: "#000000",
+    borderRadius: isTablet ? 16 : 12,
+    marginBottom: isTablet ? 24 : 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
     elevation: 5,
     overflow: "hidden",
+    width: isTablet ? "48%" : "100%",
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: isTablet ? 24 : 16,
+    paddingVertical: isTablet ? 16 : 12,
+    height: isTablet ? 170 : 100,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9ecef",
   },
   image: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
+    width: isTablet ? 80 : 60,
+    height: isTablet ? 80 : 60,
+    borderRadius: isTablet ? 40 : 30,
+    marginRight: isTablet ? 20 : 16,
   },
   headerText: {
     flex: 1,
+    justifyContent: "center",
   },
   name: {
-    fontSize: 18,
+    fontSize: isTablet ? 18 : 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "#ffffff",
+    marginBottom: isTablet ? 5 : 4,
   },
   position: {
-    fontSize: 14,
-    color: "#e0e0e0",
-    marginTop: 4,
+    fontSize: isTablet ? 16 : 14,
+    color: "#e9ecef",
   },
   cardBody: {
-    padding: 16,
+    padding: isTablet ? 24 : 16,
   },
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: isTablet ? 16 : 12,
+    flexWrap: "wrap",
   },
   icon: {
-    color: "#0b34b0",
-    marginRight: 12,
-    width: 20,
-    height: 20,
+    color: "#0056b3",
+    marginRight: isTablet ? 16 : 12,
+    width: isTablet ? 22 : 18,
+    height: isTablet ? 22 : 18,
   },
   infoText: {
-    fontSize: 16,
-    color: "#333333",
+    fontSize: isTablet ? 18 : 16,
+    color: "#495057",
     flex: 1,
   },
   linkText: {
-    color: "#0b34b0",
+    color: "#0056b3",
     textDecorationLine: "underline",
   },
-});
+})
 
-export default Directory;
+export default Directory

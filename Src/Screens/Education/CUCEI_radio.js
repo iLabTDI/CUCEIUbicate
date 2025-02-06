@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react"
 import {
   View,
   Text,
@@ -6,139 +6,261 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+  Dimensions,
+  SafeAreaView,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import {
   faRadio,
   faMusic,
   faPlayCircle,
   faGlobe,
   faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import staticJsonData from "../../../json/radio_cucei.json";
+  faChevronRight,
+  faLink,
+  faExternalLinkAlt,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+
+const { width } = Dimensions.get("window")
+const isTablet = width >= 768
 
 export const CUCEI_radio = () => {
+  const [jsonData, setJsonData] = useState(null)
+  const [refreshing, setRefreshing] = useState(false)
+
+  useEffect(() => {
+    loadJsonFromStorage()
+  }, [])
+
+  const loadJsonFromStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("radioCuceiData")
+      if (storedData !== null) {
+        setJsonData(JSON.parse(storedData))
+      } else {
+        const json = require("../../../json/radio_cucei.json")
+        setJsonData(json)
+        await AsyncStorage.setItem("radioCuceiData", JSON.stringify(json))
+      }
+    } catch (error) {
+      console.error("Error loading data from storage:", error)
+      const json = require("../../../json/radio_cucei.json")
+      setJsonData(json)
+    }
+  }
+
+  const loadJson = async () => {
+    setRefreshing(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const json = require("../../../json/radio_cucei.json")
+      await AsyncStorage.setItem("radioCuceiData", JSON.stringify(json))
+      setJsonData(json)
+    } catch (error) {
+      console.error("Error refreshing data:", error)
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
   const openLink = (url) => {
-    Linking.openURL(url).catch((err) =>
-      console.error("An error occurred", err)
-    );
-  };
+    Linking.openURL(url).catch((err) => console.error("An error occurred", err))
+  }
+
+  const RenderTextPart = ({ text }) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
+    const parts = text.split(new RegExp(`(${urlRegex.source}|${emailRegex.source})`, "gi"))
+
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (urlRegex.test(part)) {
+            return (
+              <TouchableOpacity key={index} onPress={() => openLink(part)} style={styles.linkContainer}>
+                <FontAwesomeIcon icon={faLink} size={isTablet ? 16 : 14} color="#0056b3" style={styles.linkIcon} />
+                <Text style={styles.linkText}>{part}</Text>
+                <FontAwesomeIcon
+                  icon={faExternalLinkAlt}
+                  size={isTablet ? 12 : 10}
+                  color="#0056b3"
+                  style={styles.externalLinkIcon}
+                />
+              </TouchableOpacity>
+            )
+          } else if (emailRegex.test(part)) {
+            return (
+              <TouchableOpacity key={index} onPress={() => openLink(`mailto:${part}`)} style={styles.linkContainer}>
+                <FontAwesomeIcon icon={faEnvelope} size={isTablet ? 16 : 14} color="#0056b3" style={styles.linkIcon} />
+                <Text style={styles.linkText}>{part}</Text>
+              </TouchableOpacity>
+            )
+          }
+          return (
+            <Text key={index} style={styles.normalText}>
+              {part}
+            </Text>
+          )
+        })}
+      </>
+    )
+  }
+
+  if (!jsonData) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0056b3" />
+          <Text style={styles.loadingText}>Cargando información de Radio CUCEI...</Text>
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <LinearGradient colors={["#0056b3", "#007bff"]} style={styles.header}>
-        <FontAwesomeIcon icon={faRadio} size={40} color="white" />
-        <Text style={styles.headerTitle}>
-          {staticJsonData["section-description"].name}
-        </Text>
-      </LinearGradient>
-      <View style={styles.content}>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
+      >
+        <LinearGradient
+          colors={["#0056b3", "#007bff"]}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <FontAwesomeIcon icon={faRadio} size={isTablet ? 32 : 24} color="#fff" />
+          <Text style={styles.headerTitle}>{jsonData["section-description"].name}</Text>
+        </LinearGradient>
+
         <View style={styles.card}>
-          <Text style={styles.descriptionText}>
-            {staticJsonData["section-description"].description}
-          </Text>
+          <RenderTextPart text={jsonData["section-description"].description} />
         </View>
+
         <View style={styles.card}>
           <View style={styles.infoRow}>
-            <FontAwesomeIcon icon={faMusic} size={20} color="#0b34b0" style={styles.icon} />
+            <FontAwesomeIcon icon={faMusic} size={isTablet ? 20 : 16} color="#0056b3" style={styles.icon} />
             <Text style={styles.infoText}>
-              <Text style={styles.bold}>Género:</Text> {staticJsonData.genero}
+              <Text style={styles.bold}>Género:</Text> {jsonData.genero}
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <FontAwesomeIcon icon={faGlobe} size={20} color="#0b34b0" style={styles.icon} />
+            <FontAwesomeIcon icon={faGlobe} size={isTablet ? 20 : 16} color="#0056b3" style={styles.icon} />
             <Text style={styles.infoText}>
-              <Text style={styles.bold}>Idioma:</Text> {staticJsonData.idioma}
-            </Text> 
+              <Text style={styles.bold}>Idioma:</Text> {jsonData.idioma}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              openLink("http://radio.cucei.udg.mx/reproductor.html")
-            }>
-            <FontAwesomeIcon
-              icon={faPlayCircle}
-              size={20}
-              color="white"
-              style={styles.buttonIcon}
-            />
+            onPress={() => openLink("http://radio.cucei.udg.mx/reproductor.html")}
+          >
+            <FontAwesomeIcon icon={faPlayCircle} size={isTablet ? 20 : 16} color="white" style={styles.buttonIcon} />
             <Text style={styles.buttonText}>Escuchar Radio CUCEI</Text>
           </TouchableOpacity>
         </View>
-        {staticJsonData["listed-elements"] && (
+
+        {jsonData["listed-elements"] && (
           <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Información Adicional</Text>
-            {Object.entries(staticJsonData["listed-elements"]).map(
-              ([key, value]) => (
-                <View key={key} style={styles.infoRow}>
+            <View style={styles.sectionHeader}>
+              <FontAwesomeIcon
+                icon={faInfoCircle}
+                size={isTablet ? 24 : 20}
+                color="#0056b3"
+                style={styles.sectionIcon}
+              />
+              <Text style={styles.sectionTitle}>Información Adicional</Text>
+            </View>
+            <View style={styles.sectionContent}>
+              {Object.entries(jsonData["listed-elements"]).map(([key, value]) => (
+                <View key={key} style={styles.listItem}>
                   <FontAwesomeIcon
-                    icon={faInfoCircle}
-                    size={20}
-                    color="#0b34b0"
-                    style={styles.icon}
+                    icon={faChevronRight}
+                    size={isTablet ? 16 : 14}
+                    color="#0056b3"
+                    style={styles.listItemIcon}
                   />
-                  <Text style={styles.infoText}>{value}</Text>
+                  <View style={styles.listItemTextContainer}>
+                    <RenderTextPart text={value} />
+                  </View>
                 </View>
-              )
-            )}
+              ))}
+            </View>
           </View>
         )}
-      </View>
-    </ScrollView>
-  );
-};
+      </ScrollView>
+    </SafeAreaView>
+  )
+}
 
 const styles = StyleSheet.create({
-  scrollContainer: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f0f4f8",
+  },
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: isTablet ? 20 : 16,
+    color: "#0056b3",
+    marginTop: 10,
+    textAlign: "center",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginBottom: 10,
+    justifyContent: "center",
+    padding: isTablet ? 30 : 20,
+    borderBottomLeftRadius: isTablet ? 30 : 20,
+    borderBottomRightRadius: isTablet ? 30 : 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
-    color: "white",
-    marginLeft: 10,
-  },
-  content: {
-    padding: 20,
+    color: "#fff",
+    marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    padding: 20,
-    marginBottom: 20,
-    borderRadius: 10,
-    shadowColor: "#000000",
+    backgroundColor: "#fff",
+    marginHorizontal: isTablet ? 24 : 16,
+    marginVertical: isTablet ? 15 : 10,
+    borderRadius: isTablet ? 16 : 12,
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 5,
-  },
-  descriptionText: {
-    fontSize: 16,
-    color: "#333333",
-    lineHeight: 24,
+    overflow: "hidden",
+    padding: isTablet ? 24 : 20,
   },
   infoRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginBottom: isTablet ? 15 : 10,
   },
   icon: {
-    marginRight: 10,
-    marginTop: 3,
+    marginRight: isTablet ? 15 : 10,
+    width: 20,
   },
   infoText: {
-    fontSize: 16,
-    color: "#333333",
+    fontSize: isTablet ? 18 : 16,
+    color: "#333",
     flex: 1,
   },
   bold: {
@@ -148,25 +270,81 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0b34b0",
-    padding: 15,
+    backgroundColor: "#0056b3",
+    padding: isTablet ? 15 : 12,
     borderRadius: 8,
-    marginTop: 15,
+    marginTop: isTablet ? 20 : 15,
   },
   buttonIcon: {
-    marginRight: 10,
+    marginRight: isTablet ? 15 : 10,
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e8ed",
+    paddingBottom: isTablet ? 15 : 10,
+    marginBottom: isTablet ? 20 : 15,
+  },
+  sectionIcon: {
+    marginRight: isTablet ? 15 : 10,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: isTablet ? 24 : 20,
     fontWeight: "bold",
-    color: "#0b34b0",
-    marginBottom: 15,
+    color: "#0056b3",
+    flex: 1,
   },
-});
+  sectionContent: {
+    paddingTop: isTablet ? 10 : 5,
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: isTablet ? 15 : 10,
+  },
+  listItemIcon: {
+    marginTop: isTablet ? 6 : 4,
+    marginRight: isTablet ? 15 : 10,
+  },
+  listItemTextContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  linkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    backgroundColor: "#e1e8ed",
+    padding: isTablet ? 10 : 8,
+    borderRadius: isTablet ? 8 : 6,
+    marginVertical: isTablet ? 5 : 3,
+  },
+  linkIcon: {
+    marginRight: 5,
+  },
+  linkText: {
+    color: "#0056b3",
+    textDecorationLine: "underline",
+    fontSize: isTablet ? 18 : 16,
+    flex: 1,
+  },
+  externalLinkIcon: {
+    marginLeft: 5,
+  },
+  normalText: {
+    fontSize: isTablet ? 18 : 16,
+    color: "#333",
+    lineHeight: isTablet ? 28 : 24,
+  },
+})
 
-export default CUCEI_radio;
+export default CUCEI_radio
+

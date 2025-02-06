@@ -151,7 +151,7 @@
                 "articulos que debo conocer cucei",
                 "articulos de suma importancia cucei",
                 "articulos en cucei"
-            ],
+            ], 
             "responses": [
                 "A continuación nombraré algunos artículos relevantes para tu trayectoria como estudiante en esta casa de estudios: Artículo 25, 27, 33, 34, 35, 36, 49, 90. Si deseas consultar más, puedes visitar el siguiente link para ver el Reglamento General de Evaluación y Promoción de alumnos: https://secgral.udg.mx/sites/default/files/Normatividad_general/rgepa-oct-2017.pdf",
                 "Los artículos más importantes que debes conocer para poder sobrellevar tu trayectoria como estudiante son: Artículo 25, 27, 33, 34, 35, 36, 49, 90. Estos abordan aspectos importantes sobre la evaluación en tus materias, qué hacer en caso de reprobar algunas, periodos ordinarios y extraordinarios, etcétera. Si deseas saber más sobre alguno de ellos, pregúntame, solo debes escribir: Articulo (número del artículo a conocer)",
@@ -2401,7 +2401,9 @@
         "patterns": [
           "Servicios laboratorio de análisis clínicos",
           "servicios del laboratorio de analisis clinicos", 
-          "que servicios ofrece el laboratorio de analsis clinicos?"
+          "que servicios ofrece el laboratorio de analsis clinicos?",
+          "a donde ir si me siento mal",
+            "que servicios ofrece el laboratorio de analisis clinicos?"
         ],
         "responses": [
 

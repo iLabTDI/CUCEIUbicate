@@ -11,23 +11,35 @@
         "simulator": true
       },
       "android": {
-        "image": "sdk-52"
+        "image": "sdk-52",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "image": "sdk-52"
+        "image": "sdk-52",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     },
     "production": {
       "autoIncrement": true,
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       },
       "android": {
-        "image": "sdk-52"
+        "image": "sdk-52",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     }
   }

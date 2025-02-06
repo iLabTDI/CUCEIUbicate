@@ -40,10 +40,10 @@
         "listed-elements": {
           "1": "Para consultar tu orden de pago debes de ingresar a la plataforma LEO:",
           "2": "https://leoalumnos.udg.mx",
-          "3": "Deslizate hasta abajo y da click en el apartado “orden de pago”.",
+          "3": "Deslízate hasta abajo y da click en el apartado “orden de pago”.",
           "4": "Descarga el formato, ve al banco y paga en ventanilla o cajero automático insertando el número de convenio.",
           "5": "Una vez que realices el pago, tardará alrededor de 3 días en reflejarse, entonces en el sistema aparecerá en $0.",
-          "6": "Para condonar el pago en dado caso que presentes una situación que te impida hacerlo por completo, puedes solicitar una condonación. Tienes que estar al pendiente de las páginas oficiales de tu coordinación de carrera, ya que a inicios de semestre liberan un formulario en el que podrás registrarte para solicitar dicho trámite."
+          "6": "Para condonar el pago, en caso de presentar una situación que te impida hacerlo por completo, puedes solicitar una condonación. Mantente al pendiente de las páginas oficiales de tu coordinación de carrera, ya que a inicios de semestre liberan un formulario para solicitar dicho trámite."
         }
       },
       "4": {
@@ -52,20 +52,20 @@
           "1": [
             "Para poder agendar tus materias es importante que realices el pre-registro en LEO:",
             "https://leoalumnos.udg.mx",
-            "Tu periodo de pre-registro lo anunciará tu coordinación, debes de estar atento a sus medios de comunicación oficiales. En dichas fechas, ingresarás a la plataforma y seleccionarás el apartado “Mis cursos” y después “Pre-registro a cursos”, ahí insertarás las claves de materias correspondientes a aquellas que desees agendar.",
-            "Recuerda que de no hacer el pre-registro, no podrás agendar conforme al orden dictaminado por tu coordinación y serás mandado a Agenda General, después de que todas las carreras hayan agendado en su respectivo periodo."
+            "Tu periodo de pre-registro lo anunciará tu coordinación. Debes estar atento a sus medios oficiales. En dichas fechas, ingresarás a la plataforma y seleccionarás el apartado “Mis cursos” y después “Pre-registro a cursos”, donde insertarás las claves de las materias que deseas agendar.",
+            "Recuerda que de no hacer el pre-registro, no podrás agendar conforme al orden dictaminado por tu coordinación y serás asignado a Agenda General, luego de que todas las carreras hayan agendado en su respectivo periodo."
           ],
           "2": [
-            "Para agendar, deberás consultar la oferta académica del semestre, donde obtendrás los NRC respectivos a las secciones de la materia que quieres cursar.",
-            "Para consultar la oferta academica, deberás ingresar a LEO y seleccionar el apartado “Malla curricular” y después dar click en “Oferta académica”. ahí deberás seleccionar las siguientes opciones: ",
+            "Para agendar, deberás consultar la oferta académica del semestre, donde obtendrás los NRC respectivos a las secciones de la materia que deseas cursar.",
+            "Ingresa a LEO y selecciona el apartado “Malla curricular” y después da click en “Oferta académica”. Sigue estas indicaciones:",
             "Centro Universitario de Ciencias Exactas e Ingenierías",
             "Selecciona tu carrera",
-            "Selecciona el ciclo que estás próximo a cursar ",
-            "Inserta la clave de la materia de la que quieres ver la oferta.",
+            "Selecciona el ciclo que estás próximo a cursar",
+            "Inserta la clave de la materia de la que deseas ver la oferta.",
             "Guarda los NRC de las clases que te interesan.",
-            "El dia de la agenda será notificado en coordinación.",
-            "En el apartado de “Mis cursos” -> “Registro a cursos” podrás ver un día o dos antes el horario de tu agenda.",
-            "Cuando te toque agendar, deberás insertar los NRC de las materias que te interesan, en dado caso que alguno marque error, deberás eliminarlo y seleccionar otro disponible"
+            "El día de la agenda se notificará en coordinación.",
+            "En el apartado “Mis cursos” -> “Registro a cursos” podrás ver el horario de tu agenda uno o dos días antes.",
+            "Cuando te toque agendar, deberás insertar los NRC de las materias que te interesan. Si alguno marca error, elimínalo y selecciona otro disponible."
           ]
         }
       }

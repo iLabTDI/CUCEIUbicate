@@ -44,7 +44,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "newArchEnabled": true,
-      "package": "com.yair_hdz24.CUCEIUbicate",
+      "package": "com.CUCEIUbicate.CUCEIUbicate",
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE",
