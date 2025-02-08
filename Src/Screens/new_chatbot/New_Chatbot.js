@@ -364,14 +364,14 @@ export const NewChatbot = () => {
       () => {
         setShowInactivityModal(true)
       },
-      5 * 60 * 1000,
+      2 * 60 * 1000,
     ) // 5 minutos
 
     deleteTimerRef.current = setTimeout(
       () => {
         deleteConversation()
       },
-      7 * 60 * 1000,
+      3 * 60 * 1000,
     ) // 7 minutos
   }
 
