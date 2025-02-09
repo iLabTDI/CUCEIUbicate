@@ -57,6 +57,9 @@ export const CompleteProfile = () => {
   const correo = mail;
   const contraseña = pass;
 
+  // Se define la longitud mínima para el código de estudiante
+  const MIN_CODE_LENGTH = 9;
+
   useEffect(() => {
     const fetchDegrees = async () => {
       const degrees = await get_degrees();
@@ -68,11 +71,34 @@ export const CompleteProfile = () => {
   const handleCompleteProfile = async () => {
     setIsLoading(true);
 
+    // Verificar campos vacíos
     if (!name || !lastName || !username || !Codigo || !selectedCareer) {
       setNameError(!name);
       setLastNameError(!lastName);
       setUsernameError(!username);
       setCodigoError(!Codigo);
+      setIsLoading(false);
+      shakeForm();
+      return;
+    }
+
+    // Validar que "Nombre" y "Apellidos" no contengan números
+    if (/\d/.test(name)) {
+      setNameError(true);
+      setIsLoading(false);
+      shakeForm();
+      return;
+    }
+    if (/\d/.test(lastName)) {
+      setLastNameError(true);
+      setIsLoading(false);
+      shakeForm();
+      return;
+    }
+
+    // Validar la longitud del código de estudiante
+    if (Codigo.length < MIN_CODE_LENGTH) {
+      setCodigoError(true);
       setIsLoading(false);
       shakeForm();
       return;
@@ -153,8 +179,7 @@ export const CompleteProfile = () => {
               style={[
                 styles.container, 
                 { transform: [{ translateX: shakeAnimation }] }
-              ]}
-            >
+              ]}>
               <Text style={styles.title}>Completa tu Perfil</Text>
               <LottieView
                 source={require("../assets/animations/completeProfile.json")}
@@ -163,6 +188,7 @@ export const CompleteProfile = () => {
                 style={styles.animation}
               />
               <View style={styles.formContainer}>
+                {/* Campo Nombre */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
@@ -172,14 +198,23 @@ export const CompleteProfile = () => {
                     value={name}
                     onChangeText={(text) => {
                       setName(text);
-                      setNameError(false);
+                      if (!text) {
+                        setNameError(true);
+                      } else if (/\d/.test(text)) {
+                        setNameError(true);
+                      } else {
+                        setNameError(false);
+                      }
                     }}
                   />
                 </View>
                 {nameError && (
-                  <Text style={styles.errorText}>Campo requerido</Text>
+                  <Text style={styles.errorText}>
+                    {!name ? "Campo requerido" : "No se permiten números"}
+                  </Text>
                 )}
 
+                {/* Campo Apellidos */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
@@ -189,20 +224,26 @@ export const CompleteProfile = () => {
                     value={lastName}
                     onChangeText={(text) => {
                       setLastName(text);
-                      setLastNameError(false);
+                      if (!text) {
+                        setLastNameError(true);
+                      } else if (/\d/.test(text)) {
+                        setLastNameError(true);
+                      } else {
+                        setLastNameError(false);
+                      }
                     }}
                   />
                 </View>
                 {lastNameError && (
-                  <Text style={styles.errorText}>Campo requerido</Text>
+                  <Text style={styles.errorText}>
+                    {!lastName ? "Campo requerido" : "No se permiten números"}
+                  </Text>
                 )}
 
+                {/* Campo Nombre de Usuario */}
                 <View style={styles.inputContainer}>
-                  <FontAwesomeIcon
-                    icon={faEnvelope}
-                    style={styles.inputIcon}
-                    size={isTablet ? 24 : 20}
-                  />
+                  {/* Se cambia el icono de faEnvelope a faUser para mayor coherencia */}
+                  <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, usernameError && styles.errorInput]}
                     placeholder="Nombre de Usuario"
@@ -217,10 +258,11 @@ export const CompleteProfile = () => {
                 </View>
                 {usernameError && (
                   <Text style={styles.errorText}>
-                    Este usuario ya ha sido registrado
+                    { !username ? "Campo requerido" : "Este usuario ya ha sido registrado" }
                   </Text>
                 )}
 
+                {/* Campo Código de Estudiante */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
@@ -229,6 +271,7 @@ export const CompleteProfile = () => {
                     placeholderTextColor="#999"
                     value={Codigo}
                     maxLength={10}
+                    minLength={MIN_CODE_LENGTH}
                     keyboardType="numeric"
                     onChangeText={(text) => {
                       const numericText = text.replace(/[^0-9]/g, '');
@@ -239,10 +282,11 @@ export const CompleteProfile = () => {
                 </View>
                 {CodigoError && (
                   <Text style={styles.errorText}>
-                    Este código ya ha sido registrado
+                    { !Codigo ? "Campo requerido" : "Este código ya ha sido registrado" }
                   </Text>
                 )}
 
+                {/* Selector de Carrera */}
                 <TouchableOpacity
                   style={styles.pickerContainer}
                   onPress={toggleModal}>
@@ -296,6 +340,7 @@ export const CompleteProfile = () => {
         </Animated.View>
       )}
 
+      {/* Modal para seleccionar carrera */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -310,7 +355,8 @@ export const CompleteProfile = () => {
                   key={index}
                   style={styles.careerOption}
                   onPress={() => {
-                    setSelectedCareer(option.slice(-4));
+                    // Se guarda la carrera completa sin recortar la cadena
+                    setSelectedCareer(option);
                     toggleModal();
                   }}>
                   <Text style={styles.careerOptionText}>{option}</Text>
