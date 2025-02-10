@@ -369,13 +369,13 @@ export const HomePage = () => {
         </GestureHandlerRootView>
 
         {/* Modal de descarga de assets */}
-        {showDownloadModal && (
+        {/* {showDownloadModal && (
           <DownloadAssets
             onClose={handleCloseDownloadModal}
             onViewDownload={handleViewDownload}
             visible={showDownloadModal}
           />
-        )}
+        )} */}
 
         {/* Componente para eliminar archivos locales */}
         {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
