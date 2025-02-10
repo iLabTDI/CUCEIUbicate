@@ -1,3 +1,4 @@
+// HomePage2.js
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -23,17 +24,14 @@ import LottieView from "lottie-react-native";
 import { SearchRoute2 } from "./Components/SearchBarsComponent/SearchRoute2";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
-import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
-import { MapWithPointsAndRoutes2 } from "./Components/MapComponent/MapPoints2";
 import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSession } from "../../auth/SessionManager";
 import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
-import { DownloadAssets } from "./Routes/DownloadAssets";
-import { DeleteLocalFiles } from "./Routes/DeleteLocalFiles";
-import * as FileSystem from "expo-file-system";
+// Asegúrate de tener instalados react-native-image-pan-zoom y react-native-svg
+import MapSVG from "./Components/MapComponent/MapSVG";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -41,7 +39,6 @@ const isTablet = width >= 768;
 export const HomePage2 = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const imageZoomRef = useRef(null);
   const bottomSheetRef = useRef(null);
 
   // Estados del componente
@@ -68,7 +65,6 @@ export const HomePage2 = () => {
   const loadingOpacity = useRef(new Animated.Value(1)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  // Efecto para manejar la sesión y cargar el icono seleccionado
   useEffect(() => {
     if (isFocused) {
       checkSession().then(() => {
@@ -77,7 +73,6 @@ export const HomePage2 = () => {
     }
   }, [isFocused]);
 
-  // Efecto para manejar la animación del BottomSheet
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0,
@@ -86,7 +81,6 @@ export const HomePage2 = () => {
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
 
-  // Efecto para verificar si es la primera vez que se lanza la aplicación
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasLaunched = await AsyncStorage.getItem("hasLaunchedddd");
@@ -97,18 +91,15 @@ export const HomePage2 = () => {
         setIsFirstLaunch(false);
       }
     };
-
     checkFirstLaunch();
   }, []);
 
-  // Efecto para mostrar el modal de descarga en el primer lanzamiento
   useEffect(() => {
     if (!isLoading && isFirstLaunch) {
       setShowDownloadModal(true);
     }
   }, [isLoading, isFirstLaunch]);
 
-  // Función para verificar la sesión del usuario
   const checkSession = async () => {
     const session = await getSession();
     if (!session) {
@@ -119,12 +110,10 @@ export const HomePage2 = () => {
     }
   };
 
-  // Función para cerrar el modal de descarga
   const handleCloseDownloadModal = () => {
     setShowDownloadModal(false);
   };
 
-  // Función para cargar el icono seleccionado
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -136,7 +125,6 @@ export const HomePage2 = () => {
     }
   };
 
-  // Función para manejar la carga de la imagen y finalizar la animación de carga
   const handleImageLoad = () => {
     Animated.parallel([
       Animated.timing(loadingOpacity, {
@@ -154,20 +142,17 @@ export const HomePage2 = () => {
     });
   };
 
-  // Función para manejar la eliminación de archivos
   const handleFilesDeleted = async () => {
     await AsyncStorage.removeItem("hasLaunchedd");
     setShowDownloadModal(true);
   };
 
-  // Función para manejar la pulsación de un punto en el mapa
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
   };
 
-  // Funciones para manejar la barra de búsqueda
   const toggleSearchBar = () => {
     console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
@@ -178,13 +163,11 @@ export const HomePage2 = () => {
     setShowSearchBar(false);
   };
 
-  // Función para cerrar el BottomSheet
   const handleCloseBottomSheet = () => {
     setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
   };
 
-  // Función para manejar la búsqueda específica
   const handleSpecificSearch = (pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
@@ -193,41 +176,33 @@ export const HomePage2 = () => {
     setShowSpecificSearch(false);
   };
 
-  // NUEVA función de búsqueda: se recibe el objeto de ruta completo (del JSON)
+  // Función de búsqueda: recibe el objeto de ruta completo (del JSON)
   const handleSearch = async (routeObject) => {
     console.log("onSearch:", routeObject);
     if (routeObject) {
-      // Se asignan las coordenadas del JSON a la ruta activa
       setActiveRoutePoints(routeObject.coordinates);
       setIsRouteActive(true);
-      // Se utiliza el nombre de la ruta como identificador único
       setSelectedRouteId(routeObject.name);
-      // Se busca el video asociado (si lo hubiera)
       const videoUri = routeVideos[routeObject.name] || null;
       setCurrentVideoUri(videoUri);
-      // Se cierra la barra de búsqueda
       setShowSearchBar(false);
     } else {
       Alert.alert("Error", "No se encontró la ruta en el JSON.");
     }
   };
 
-  // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
-    // Opcional: restaurar la imagen del mapa a la predeterminada
     setCurrentMapImage(require("./assets/images/mapa2.webp"));
   };
 
-  // Función para alternar la visibilidad del modal de video
   const toggleVideoModal = () => {
     setIsVideoModalVisible(!isVideoModalVisible);
   };
 
-  // Función para manejar la vista de descarga
   const handleViewDownload = () => {
     setShowDownloadModal(false);
     navigation.navigate("FileManagementScreen", {
@@ -254,7 +229,7 @@ export const HomePage2 = () => {
 
       {/* Contenido principal */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
-        {/* Botón del menú */}
+        {/* Header */}
         <TouchableOpacity
           style={styles.menu_icon}
           onPress={() => navigation.openDrawer()}
@@ -292,12 +267,10 @@ export const HomePage2 = () => {
           />
         </TouchableOpacity>
 
-        {/* Componente de búsqueda de ruta (ya sin enviar "points") */}
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
 
-        {/* Componente de búsqueda específica */}
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -305,10 +278,9 @@ export const HomePage2 = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con zoom */}
-        <GestureHandlerRootView style={styles.imageContainer}>
+        {/* Contenedor del mapa con pan/zoom usando ImageZoom */}
+        <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
-            ref={imageZoomRef}
             cropWidth={Dimensions.get("window").width}
             cropHeight={Dimensions.get("window").height}
             imageWidth={1600}
@@ -320,38 +292,24 @@ export const HomePage2 = () => {
             maxScale={2}
             enableCenterFocus={false}
             useNativeDriver={true}
-            centerOn={{ x: 250, y: -20, scale: 0.9 }}
+            // Es mejor omitir centerOn para evitar offset extra
           >
-            <Image
-              source={currentMapImage}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <MapWithPointsAndRoutes2
-              onPointPress={handlePointPress}
-              selectedRoute={null}
-              selectedPoint={selectedPoint}
-              points={points}
-              clearRoute={clearRoute}
-              markedObject={markedObject}
-              setMarkedObject={setMarkedObject}
-              isRouteActive={isRouteActive}
-              activeRoutePoints={activeRoutePoints}
-            />
+            {/* Contenedor con dimensiones fijas (1600x1400) y posición relativa */}
+            <View style={styles.zoomContainer}>
+              <Image
+                source={currentMapImage}
+                style={styles.mapImage}
+                resizeMode="stretch" // IMPORTANTE: usa "stretch" para que la imagen ocupe 1600x1400 exactamente
+              />
+              {/* Overlay SVG para dibujar la ruta y los pines */}
+              <MapSVG
+                isRouteActive={isRouteActive}
+                activeRoutePoints={activeRoutePoints}
+                points={points}
+              />
+            </View>
           </ImageZoom>
         </GestureHandlerRootView>
-
-        {/* Modal de descarga de assets */}
-        {/* {showDownloadModal && (
-          <DownloadAssets
-            onClose={handleCloseDownloadModal}
-            onViewDownload={handleViewDownload}
-            visible={showDownloadModal}
-          />
-        )} */}
-
-        {/* Componente para eliminar archivos locales */}
-        {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
 
         {/* Botón para finalizar ruta */}
         {isRouteActive && (
@@ -360,13 +318,11 @@ export const HomePage2 = () => {
           </TouchableOpacity>
         )}
 
-        {/* Overlay para el BottomSheet */}
         <Animated.View
           style={[styles.overlay, { opacity: fadeAnim }]}
           pointerEvents="none"
         />
 
-        {/* Botón para ver video */}
         {isRouteActive && (
           <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
             <FontAwesomeIcon
@@ -378,7 +334,6 @@ export const HomePage2 = () => {
           </TouchableOpacity>
         )}
 
-        {/* Modal de video */}
         <VideoModal
           isVisible={isVideoModalVisible}
           onClose={() => setIsVideoModalVisible(false)}
@@ -386,10 +341,8 @@ export const HomePage2 = () => {
           routeId={selectedRouteId}
         />
 
-        {/* Botón del chatbot */}
         {!isRouteActive && !showSearchBar && <ChatbotButton />}
 
-        {/* Componente BottomSheet */}
         <BottomSheetComponent
           ref={bottomSheetRef}
           snapPoints={["50%", "75%"]}
@@ -403,12 +356,8 @@ export const HomePage2 = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  content: { flex: 1 },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
@@ -471,15 +420,10 @@ const styles = StyleSheet.create({
     height: isTablet ? width * 0.04 : width * 0.13,
     borderRadius: (isTablet ? width * 0.04 : width * 0.2) / 2,
   },
-  imageContainer: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    width: undefined,
-    height: undefined,
-    alignSelf: "stretch",
-  },
+  mapContainer: { flex: 1 },
+  // Contenedor fijo de 1600x1400 y posición relativa
+  zoomContainer: { width: 1600, height: 1400, position: "relative" },
+  mapImage: { width: 1600, height: 1400 },
   finalizeButton: {
     position: "absolute",
     bottom: isTablet ? 30 : 20,
@@ -521,16 +465,6 @@ const styles = StyleSheet.create({
     marginLeft: isTablet ? 12 : 8,
     fontWeight: "bold",
     fontSize: isTablet ? 20 : 16,
-  },
-  downloadButton: {
-    position: "absolute",
-    bottom: isTablet ? 30 : 20,
-    left: isTablet ? 100 : 80,
-    backgroundColor: "#007bff",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: isTablet ? 20 : 15,
-    borderRadius: isTablet ? 25 : 20,
   },
 });
 
