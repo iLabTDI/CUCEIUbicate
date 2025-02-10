@@ -12,15 +12,52 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
-import { faSearch, faTimes, faHistory, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+  faTimes,
+  faHistory,
+  faExclamationCircle,
+  faBuilding,
+  faBook,
+  faUtensils,
+  faFootballBall,
+  faGraduationCap,
+  faTicketAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
+/**
+ * Función auxiliar que determina el ícono según el texto recibido.
+ * - "Modulo" o "Edificio": faBuilding
+ * - "Biblioteca": faBook
+ * - "Entrada": faTicketAlt
+ * - "Comida", "Restaurante" o "Globo": faUtensils
+ * - En otro caso: faSearch
+ */
+const getIconForCategoryFromText = (text) => {
+  const lower = text.toLowerCase();
+  if (lower.includes("modulo") || lower.includes("edificio")) {
+    return faBuilding;
+  } else if (lower.includes("biblioteca")) {
+    return faBook;
+  } else if (lower.includes("entrada")) {
+    return faTicketAlt;
+  } else if (
+    lower.includes("comida") ||
+    lower.includes("restaurante") ||
+    lower.includes("globo")
+  ) {
+    return faUtensils;
+  }
+  return faSearch;
+};
+
 export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
-  const [showSpecificSearch, setShowSpecificSearchState] = useState(false);
+  const [showSpecificSearchState, setShowSpecificSearchState] = useState(false);
   const [specificSearchText, setSpecificSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchHistory, setSearchHistory] = useState([]);
@@ -32,11 +69,12 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 
   useEffect(() => {
     loadSearchHistory();
-    if (showSpecificSearch) {
+    if (showSpecificSearchState) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
-    setShowSpecificSearch(showSpecificSearch);
-  }, [showSpecificSearch]);
+    // Se notifica al componente padre el estado del search
+    setShowSpecificSearch(showSpecificSearchState);
+  }, [showSpecificSearchState]);
 
   const loadSearchHistory = async () => {
     try {
@@ -50,7 +88,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   };
 
   const toggleSpecificSearch = () => {
-    if (showSpecificSearch) {
+    if (showSpecificSearchState) {
       closeSearch();
     } else {
       openSearch();
@@ -102,10 +140,14 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     setSpecificSearchText(text);
     setError("");
     if (text.length > 0) {
-      const filteredResults = points.filter((point) =>
-        point.name.toLowerCase().includes(text.toLowerCase()) ||
-        point.id.toLowerCase().includes(text.toLowerCase()) ||
-        (point.aliases && point.aliases.some(alias => alias.toLowerCase().includes(text.toLowerCase())))
+      const filteredResults = points.filter(
+        (point) =>
+          point.name.toLowerCase().includes(text.toLowerCase()) ||
+          point.id.toLowerCase().includes(text.toLowerCase()) ||
+          (point.aliases &&
+            point.aliases.some((alias) =>
+              alias.toLowerCase().includes(text.toLowerCase())
+            ))
       );
       setSearchResults(filteredResults);
       if (filteredResults.length === 0) {
@@ -124,21 +166,34 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   };
 
   const updateSearchHistory = async (searchTerm) => {
-    const newHistory = [searchTerm, ...searchHistory.filter(term => term !== searchTerm)].slice(0, 5);
+    const newHistory = [
+      searchTerm,
+      ...searchHistory.filter((term) => term !== searchTerm),
+    ].slice(0, 5);
     setSearchHistory(newHistory);
-    await AsyncStorage.setItem("specificSearchHistory", JSON.stringify(newHistory));
+    await AsyncStorage.setItem(
+      "specificSearchHistory",
+      JSON.stringify(newHistory)
+    );
   };
 
+  // Renderiza cada resultado de búsqueda con el ícono según la categoría (color azul)
   const renderSearchResult = ({ item }) => (
     <TouchableOpacity
       style={styles.resultItem}
       onPress={() => handleSelectResult(item)}
     >
-      <FontAwesomeIcon icon={faSearch} size={isTablet ? 20 : 16} color="#666666" style={styles.resultIcon} />
+      <FontAwesomeIcon
+        icon={getIconForCategoryFromText(item.name)}
+        size={isTablet ? 20 : 16}
+        color="#0000ff"
+        style={styles.resultIcon}
+      />
       <Text style={styles.resultText}>{item.name}</Text>
     </TouchableOpacity>
   );
 
+  // Renderiza cada elemento del historial de búsqueda con su ícono (color azul)
   const renderHistoryItem = ({ item }) => (
     <TouchableOpacity
       style={styles.resultItem}
@@ -147,40 +202,50 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         handleSpecificSearch(item);
       }}
     >
-      <FontAwesomeIcon icon={faHistory} size={isTablet ? 20 : 16} color="#666666" style={styles.resultIcon} />
+      <FontAwesomeIcon
+        icon={getIconForCategoryFromText(item)}
+        size={isTablet ? 20 : 16}
+        color="#0000ff"
+        style={styles.resultIcon}
+      />
       <Text style={styles.resultText}>{item}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.search_icon}
-        onPress={toggleSpecificSearch}
-      >
-        <FontAwesomeIcon icon={faSearch} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
+      <TouchableOpacity style={styles.search_icon} onPress={toggleSpecificSearch}>
+        <FontAwesomeIcon
+          icon={faSearch}
+          size={isTablet ? width * 0.04 : width * 0.06}
+          color="#FFFFFF"
+        />
       </TouchableOpacity>
 
-      {showSpecificSearch && (
-        <Animated.View style={[
-          styles.overlay,
-          {
-            opacity: animatedOpacity,
-          }
-        ]} />
+      {showSpecificSearchState && (
+        <Animated.View
+          style={[
+            styles.overlay,
+            {
+              opacity: animatedOpacity,
+            },
+          ]}
+        />
       )}
 
-      {showSpecificSearch && (
+      {showSpecificSearchState && (
         <Animated.View
           style={[
             styles.searchBarContainer,
             {
-              transform: [{
-                translateX: animatedWidth.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [isTablet ? 200 : 150, isTablet ? 20 : 10],
-                }),
-              }],
+              transform: [
+                {
+                  translateX: animatedWidth.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [isTablet ? 200 : 150, isTablet ? 20 : 10],
+                  }),
+                },
+              ],
               width: animatedWidth.interpolate({
                 inputRange: [0, 1],
                 outputRange: ["0%", isTablet ? "88%" : "83%"],
@@ -196,15 +261,26 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
             value={specificSearchText}
             onChangeText={handleSpecificSearch}
           />
-          <TouchableOpacity style={styles.historyIcon} onPress={() => {
-            setShowHistory(!showHistory);
-            setError("");
-            setSearchResults([]);
-          }}>
-            <FontAwesomeIcon icon={faHistory} size={isTablet ? 24 : 20} color="#666666" />
+          <TouchableOpacity
+            style={styles.historyIcon}
+            onPress={() => {
+              setShowHistory(!showHistory);
+              setError("");
+              setSearchResults([]);
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faHistory}
+              size={isTablet ? 24 : 20}
+              color="#0000ff"
+            />
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
-            <FontAwesomeIcon icon={faTimes} size={isTablet ? 24 : 20} color="#666666" />
+            <FontAwesomeIcon
+              icon={faTimes}
+              size={isTablet ? 24 : 20}
+              color="#0000ff"
+            />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -213,7 +289,11 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
         <View style={styles.resultsContainer}>
           {error ? (
             <View style={styles.errorContainer}>
-              <FontAwesomeIcon icon={faExclamationCircle} size={isTablet ? 24 : 20} color="#ff6b6b" />
+              <FontAwesomeIcon
+                icon={faExclamationCircle}
+                size={isTablet ? 24 : 20}
+                color="#ff6b6b"
+              />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : (
@@ -222,8 +302,8 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
               renderItem={showHistory ? renderHistoryItem : renderSearchResult}
               keyExtractor={(item, index) => index.toString()}
               keyboardShouldPersistTaps="always"
-              maxToRenderPerBatch={5}
-              initialNumToRender={5}
+              maxToRenderPerBatch={10}
+              initialNumToRender={10}
               style={styles.resultsList}
             />
           )}
@@ -243,8 +323,15 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   search_icon: {
-    top: Platform.OS === 'ios' ? (isTablet ? height * 0.0005 : height * 0.001) : (isTablet ? -height * 0.001 : -height * 0.002),
-    right: Platform.OS === 'ios' ? (isTablet ? -8 : -5) : 0,
+    top:
+      Platform.OS === "ios"
+        ? isTablet
+          ? height * 0.0005
+          : height * 0.001
+        : isTablet
+        ? -height * 0.001
+        : -height * 0.002,
+    right: Platform.OS === "ios" ? (isTablet ? -8 : -5) : 0,
     backgroundColor: "#0000ff",
     borderRadius: isTablet ? width * 0.06 : width * 0.1,
     padding: isTablet ? width * 0.03 : width * 0.04,
@@ -252,12 +339,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: isTablet ? -height * 0.03 : -height * 0.05,
     left: -width,
     right: isTablet ? -width * 0.02 : -width * 0.03,
     bottom: -height,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     zIndex: 1,
   },
   searchBarContainer: {
@@ -302,30 +389,38 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   resultsList: {
-    maxHeight: isTablet ? height * 0.5 : height * 0.4,
+    maxHeight: isTablet ? height * 0.6 : height * 0.5,
   },
   resultItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: isTablet ? height * 0.02 : height * 0.015,
+    padding: isTablet ? 16 : 12,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
   resultIcon: {
     marginRight: isTablet ? 16 : 12,
   },
+  resultTextContainer: {
+    flex: 1,
+  },
   resultText: {
-    fontSize: isTablet ? width * 0.025 : width * 0.04,
+    fontSize: isTablet ? 18 : 16,
     color: "#333333",
+  },
+  resultSubtext: {
+    fontSize: isTablet ? 14 : 12,
+    color: "#666666",
+    marginTop: 2,
   },
   errorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: isTablet ? height * 0.025 : height * 0.02,
+    padding: isTablet ? 20 : 16,
     justifyContent: "center",
   },
   errorText: {
-    fontSize: isTablet ? width * 0.025 : width * 0.04,
+    fontSize: isTablet ? 18 : 16,
     color: "#ff6b6b",
     marginLeft: isTablet ? 14 : 10,
   },

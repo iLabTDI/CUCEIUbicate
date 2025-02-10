@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react"
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -16,32 +16,32 @@ import {
   Modal,
   Linking,
   Alert,
-} from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import * as Animatable from "react-native-animatable"
-import { FontAwesome } from "@expo/vector-icons"
-import { BlurView } from "expo-blur"
-import LottieView from "lottie-react-native"
-import * as Clipboard from "expo-clipboard"
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Animatable from "react-native-animatable";
+import { FontAwesome } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import LottieView from "lottie-react-native";
+import * as Clipboard from "expo-clipboard";
 
 // --------------------------------------------------------------------------------
 // Configuración de la API
 // --------------------------------------------------------------------------------
 const API_URL =
-  "https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f"
+  "https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f";
 const HEADERS = {
   Authorization: "Bearer ae8b0a56-1901-4909-8994-1def1cadc51b",
   "Content-Type": "application/json",
-}
+};
 
-const { width, height } = Dimensions.get("window")
-const isAndroid = Platform.OS === "android"
+const { width, height } = Dimensions.get("window");
+const isAndroid = Platform.OS === "android";
 
 // --------------------------------------------------------------------------------
 // Componente para la animación de escritura
 // --------------------------------------------------------------------------------
 const TypingAnimation = () => {
-  const [animation] = useState(new Animated.Value(0))
+  const [animation] = useState(new Animated.Value(0));
 
   useEffect(() => {
     Animated.loop(
@@ -49,9 +49,9 @@ const TypingAnimation = () => {
         toValue: 1,
         duration: 1500,
         useNativeDriver: true,
-      }),
-    ).start()
-  }, [])
+      })
+    ).start();
+  }, []);
 
   const dotStyle = (delay) => {
     return {
@@ -70,8 +70,8 @@ const TypingAnimation = () => {
         },
       ],
       marginLeft: 4,
-    }
-  }
+    };
+  };
 
   return (
     <View style={styles.typingContainer}>
@@ -81,8 +81,8 @@ const TypingAnimation = () => {
         <Animated.View style={[styles.typingDot, dotStyle(0.4)]} />
       </View>
     </View>
-  )
-}
+  );
+};
 
 // --------------------------------------------------------------------------------
 // Función para consultar la API
@@ -91,26 +91,28 @@ async function query(user_input) {
   const payload = {
     user_id: "1234", // ID de usuario hardcodeado
     "in-0": user_input,
-  }
+  };
 
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: HEADERS,
       body: JSON.stringify(payload),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error("Error al comunicarse con la API")
+      throw new Error("Error al comunicarse con la API");
     }
 
-    const responseData = await response.json()
-    const rawResponse = responseData.outputs?.["out-0"] || "No se recibió una respuesta válida en el campo 'out-0'."
+    const responseData = await response.json();
+    const rawResponse =
+      responseData.outputs?.["out-0"] ||
+      "No se recibió una respuesta válida en el campo 'out-0'.";
 
     // Recortar la respuesta a 5000 caracteres si excede
-    return rawResponse.slice(0, 5000)
+    return rawResponse.slice(0, 5000);
   } catch (e) {
-    return `Error al comunicarse con la API: ${e.message}`
+    return `Error al comunicarse con la API: ${e.message}`;
   }
 }
 
@@ -118,19 +120,27 @@ async function query(user_input) {
 // Función para procesar la respuesta (eliminar contenido no deseado)
 // --------------------------------------------------------------------------------
 function processResponse(response) {
-  response = response.replace(/\[\^.*?\]/g, "")
-  response = response.replace(/<citations>.*?<\/citations>/gs, "")
-  response = response.replace(/\n\s*\n/g, "\n")
-  return response.trim()
+  response = response.replace(/\[\^.*?\]/g, "");
+  response = response.replace(/<citations>.*?<\/citations>/gs, "");
+  response = response.replace(/\n\s*\n/g, "\n");
+  return response.trim();
 }
 
 // --------------------------------------------------------------------------------
 // Función para detectar saludos
 // --------------------------------------------------------------------------------
 const isGreeting = (message) => {
-  const greetings = ["hola", "hello", "hi", "hey", "buenos días", "buenas tardes", "buenas noches"]
-  return greetings.some((greeting) => message.toLowerCase().includes(greeting))
-}
+  const greetings = [
+    "hola",
+    "hello",
+    "hi",
+    "hey",
+    "buenos días",
+    "buenas tardes",
+    "buenas noches",
+  ];
+  return greetings.some((greeting) => message.toLowerCase().includes(greeting));
+};
 
 // --------------------------------------------------------------------------------
 // Función para generar respuestas a saludos
@@ -142,61 +152,61 @@ const getGreetingResponse = () => {
     "¡Hola! Estoy aquí para ayudarte. ¿Qué necesitas?",
     "¡Saludos! ¿Tienes alguna pregunta sobre CUCEI?",
     "¡Hola! ¿En qué puedo asistirte hoy?",
-  ]
-  return responses[Math.floor(Math.random() * responses.length)]
-}
+  ];
+  return responses[Math.floor(Math.random() * responses.length)];
+};
 
 // --------------------------------------------------------------------------------
 // Componente principal: NewChatbot
 // --------------------------------------------------------------------------------
 export const NewChatbot = () => {
-  const [messages, setMessages] = useState([])
-  const [inputMessage, setInputMessage] = useState("")
-  const [isTyping, setIsTyping] = useState(false)
-  const [showWelcome, setShowWelcome] = useState(true)
-  const [showInactivityModal, setShowInactivityModal] = useState(false)
-  const flatListRef = useRef()
-  const lottieRef = useRef(null)
-  const inactivityTimerRef = useRef(null)
-  const deleteTimerRef = useRef(null)
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [showInactivityModal, setShowInactivityModal] = useState(false);
+  const flatListRef = useRef();
+  const lottieRef = useRef(null);
+  const inactivityTimerRef = useRef(null);
+  const deleteTimerRef = useRef(null);
 
   useEffect(() => {
-    loadMessages()
-    checkFirstVisit()
+    loadMessages();
+    checkFirstVisit();
     return () => {
-      clearTimeout(inactivityTimerRef.current)
-      clearTimeout(deleteTimerRef.current)
-    }
-  }, [])
+      clearTimeout(inactivityTimerRef.current);
+      clearTimeout(deleteTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
-    resetInactivityTimer()
-  }, [messages])
+    resetInactivityTimer();
+  }, [messages]);
 
   // --------------------------------------------------------------------------------
   // Verificar primera visita
   // --------------------------------------------------------------------------------
   const checkFirstVisit = async () => {
     try {
-      const hasVisited = await AsyncStorage.getItem("hasVisitedNewChatbot")
+      const hasVisited = await AsyncStorage.getItem("hasVisitedNewChatbot");
       if (hasVisited === null) {
-        setShowWelcome(true)
+        setShowWelcome(true);
       } else {
-        setShowWelcome(false)
+        setShowWelcome(false);
       }
     } catch (error) {
-      console.error("Error checking first visit:", error)
+      console.error("Error checking first visit:", error);
     }
-  }
+  };
 
   // --------------------------------------------------------------------------------
   // Cargar mensajes guardados
   // --------------------------------------------------------------------------------
   const loadMessages = async () => {
     try {
-      const savedMessages = await AsyncStorage.getItem("chatMessages")
+      const savedMessages = await AsyncStorage.getItem("chatMessages");
       if (savedMessages) {
-        setMessages(JSON.parse(savedMessages))
+        setMessages(JSON.parse(savedMessages));
       } else {
         // Agregar mensaje de bienvenida por defecto
         const welcomeMessage = {
@@ -208,68 +218,73 @@ export const NewChatbot = () => {
             name: "Chatbot",
             avatar: require("../ChatBot/images/bot.png"),
           },
-        }
-        setMessages([welcomeMessage])
-        saveMessages([welcomeMessage])
+        };
+        setMessages([welcomeMessage]);
+        saveMessages([welcomeMessage]);
       }
     } catch (error) {
-      console.error("Error al cargar mensajes:", error)
+      console.error("Error al cargar mensajes:", error);
     }
-  }
+  };
 
   // --------------------------------------------------------------------------------
   // Guardar mensajes
   // --------------------------------------------------------------------------------
   const saveMessages = async (messagesToSave) => {
     try {
-      await AsyncStorage.setItem("chatMessages", JSON.stringify(messagesToSave))
+      await AsyncStorage.setItem(
+        "chatMessages",
+        JSON.stringify(messagesToSave)
+      );
     } catch (error) {
-      console.error("Error al guardar mensajes:", error)
+      console.error("Error al guardar mensajes:", error);
     }
-  }
+  };
 
   // --------------------------------------------------------------------------------
   // Manejar el envío de mensajes
   // --------------------------------------------------------------------------------
   const onSend = useCallback(async () => {
-    if (inputMessage.trim() === "") return
+    if (inputMessage.trim() === "") return;
 
     const newMessage = {
-      _id: Date.now().toString(),
+      _id: `${Date.now()}-${Math.random()}`,
       text: inputMessage,
       createdAt: new Date().toISOString(),
       user: {
         _id: 1,
         name: "Usuario",
       },
-    }
+    };
 
-    setMessages((previousMessages) => [newMessage, ...previousMessages])
-    setInputMessage("")
-    setIsTyping(true)
+    setMessages((previousMessages) => [newMessage, ...previousMessages]);
+    setInputMessage("");
+    setIsTyping(true);
 
     try {
       if (isGreeting(inputMessage)) {
-        addBotMessage(getGreetingResponse())
+        addBotMessage(getGreetingResponse());
       } else {
-        const responseFromAPI = await query(inputMessage)
-        const processedResponse = processResponse(responseFromAPI)
-        addBotMessage(processedResponse)
+        const responseFromAPI = await query(inputMessage);
+        const processedResponse = processResponse(responseFromAPI);
+        addBotMessage(processedResponse);
       }
     } catch (error) {
-      console.error("Error al obtener respuesta de la API:", error)
-      addBotMessage("Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+      console.error("Error al obtener respuesta de la API:", error);
+      addBotMessage(
+        "Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde."
+      );
     } finally {
-      setIsTyping(false)
+      setIsTyping(false);
     }
-  }, [inputMessage])
+  }, [inputMessage]);
 
   // --------------------------------------------------------------------------------
   // Agregar mensaje del bot
   // --------------------------------------------------------------------------------
   const addBotMessage = (text) => {
     const botMessage = {
-      _id: Date.now().toString(),
+      _id: `${Date.now()}-${Math.random()}`,  // Menos seguro pero reduce colisiones
       text,
       createdAt: new Date().toISOString(),
       user: {
@@ -277,13 +292,13 @@ export const NewChatbot = () => {
         name: "Chatbot",
         avatar: require("../ChatBot/images/bot.png"),
       },
-    }
+    };
     setMessages((previousMessages) => {
-      const updatedMessages = [botMessage, ...previousMessages]
-      saveMessages(updatedMessages)
-      return updatedMessages
-    })
-  }
+      const updatedMessages = [botMessage, ...previousMessages];
+      saveMessages(updatedMessages);
+      return updatedMessages;
+    });
+  };
 
   // --------------------------------------------------------------------------------
   // Renderizar un mensaje individual
@@ -292,11 +307,21 @@ export const NewChatbot = () => {
     <Animatable.View
       animation="fadeIn"
       duration={500}
-      style={[styles.messageBubble, item.user._id === 1 ? styles.userBubble : styles.botBubble]}
-    >
-      {item.user._id === 2 && <Image source={item.user.avatar} style={styles.avatar} />}
+      style={[
+        styles.messageBubble,
+        item.user._id === 1 ? styles.userBubble : styles.botBubble,
+      ]}>
+      {item.user._id === 2 && (
+        <Image source={item.user.avatar} style={styles.avatar} />
+      )}
       <View style={styles.messageContent}>
-        <Text style={[styles.messageText, item.user._id === 1 ? styles.userMessageText : styles.botMessageText]}>
+        <Text
+          style={[
+            styles.messageText,
+            item.user._id === 1
+              ? styles.userMessageText
+              : styles.botMessageText,
+          ]}>
           {renderTextWithLinks(item.text)}
         </Text>
         <Text style={styles.timestamp}>
@@ -307,82 +332,81 @@ export const NewChatbot = () => {
         </Text>
       </View>
       {item.user._id === 2 && (
-        <TouchableOpacity style={styles.copyButton} onPress={() => copyToClipboard(item.text)}>
+        <TouchableOpacity
+          style={styles.copyButton}
+          onPress={() => copyToClipboard(item.text)}>
           <FontAwesome name="copy" size={16} color="#4c669f" />
         </TouchableOpacity>
       )}
     </Animatable.View>
-  )
+  );
 
   // --------------------------------------------------------------------------------
   // Renderizar texto con enlaces clicables
   // --------------------------------------------------------------------------------
   const renderTextWithLinks = (text) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g
-    const parts = text.split(urlRegex)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
 
     return parts.map((part, index) => {
       if (part.match(urlRegex)) {
         return (
-          <Text key={index} style={styles.link} onPress={() => Linking.openURL(part)}>
+          <Text
+            key={index}
+            style={styles.link}
+            onPress={() => Linking.openURL(part)}>
             {part}
           </Text>
-        )
+        );
       }
-      return <Text key={index}>{part}</Text>
-    })
-  }
+      return <Text key={index}>{part}</Text>;
+    });
+  };
 
   // --------------------------------------------------------------------------------
   // Copiar texto al portapapeles
   // --------------------------------------------------------------------------------
   const copyToClipboard = async (text) => {
-    await Clipboard.setStringAsync(text)
-    Alert.alert("Copiado", "El mensaje ha sido copiado al portapapeles")
-  }
+    await Clipboard.setStringAsync(text);
+    Alert.alert("Copiado", "El mensaje ha sido copiado al portapapeles");
+  };
 
   // --------------------------------------------------------------------------------
   // Manejar cierre de bienvenida
   // --------------------------------------------------------------------------------
   const handleCloseWelcome = async () => {
-    setShowWelcome(false)
+    setShowWelcome(false);
     try {
-      await AsyncStorage.setItem("hasVisitedNewChatbot", "true")
+      await AsyncStorage.setItem("hasVisitedNewChatbot", "true");
     } catch (error) {
-      console.error("Error saving visit status:", error)
+      console.error("Error saving visit status:", error);
     }
-  }
+  };
 
   // --------------------------------------------------------------------------------
   // Reiniciar temporizador de inactividad
   // --------------------------------------------------------------------------------
   const resetInactivityTimer = () => {
-    clearTimeout(inactivityTimerRef.current)
-    clearTimeout(deleteTimerRef.current)
+    clearTimeout(inactivityTimerRef.current);
+    clearTimeout(deleteTimerRef.current);
 
-    inactivityTimerRef.current = setTimeout(
-      () => {
-        setShowInactivityModal(true)
-      },
-      5 * 60 * 1000,
-    ) // 5 minutos
+    inactivityTimerRef.current = setTimeout(() => {
+      setShowInactivityModal(true);
+    }, 2 * 60 * 1000); // 5 minutos
 
-    deleteTimerRef.current = setTimeout(
-      () => {
-        deleteConversation()
-      },
-      7 * 60 * 1000,
-    ) // 7 minutos
-  }
+    deleteTimerRef.current = setTimeout(() => {
+      deleteConversation();
+    }, 3 * 60 * 1000); // 7 minutos
+  };
 
   // --------------------------------------------------------------------------------
   // Eliminar conversación
   // --------------------------------------------------------------------------------
   const deleteConversation = async () => {
-    setMessages([])
-    await AsyncStorage.removeItem("chatMessages")
-    setShowInactivityModal(false)
-  }
+    setMessages([]);
+    await AsyncStorage.removeItem("chatMessages");
+    setShowInactivityModal(false);
+  };
 
   // --------------------------------------------------------------------------------
   // Interfaz
@@ -394,8 +418,7 @@ export const NewChatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 120}
-      >
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 120}>
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -415,18 +438,31 @@ export const NewChatbot = () => {
             multiline
           />
           <TouchableOpacity
-            style={[styles.sendButton, !inputMessage.trim() && styles.sendButtonDisabled]}
+            style={[
+              styles.sendButton,
+              !inputMessage.trim() && styles.sendButtonDisabled,
+            ]}
             onPress={onSend}
-            disabled={!inputMessage.trim()}
-          >
-            <FontAwesome name="paper-plane" size={24} color={inputMessage.trim() ? "#4c669f" : "#999"} />
+            disabled={!inputMessage.trim()}>
+            <FontAwesome
+              name="paper-plane"
+              size={24}
+              color={inputMessage.trim() ? "#4c669f" : "#999"}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
 
-      <Modal animationType="fade" transparent={true} visible={showWelcome} onRequestClose={handleCloseWelcome}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showWelcome}
+        onRequestClose={handleCloseWelcome}>
         <BlurView intensity={100} style={styles.modalContainer}>
-          <Animatable.View animation="zoomIn" duration={500} style={styles.modalContent}>
+          <Animatable.View
+            animation="zoomIn"
+            duration={500}
+            style={styles.modalContent}>
             <Text style={styles.modalTitle}>¡Bienvenido a CUCEI Ubicate!</Text>
             <LottieView
               ref={lottieRef}
@@ -436,10 +472,13 @@ export const NewChatbot = () => {
               style={styles.lottieAnimation}
             />
             <Text style={styles.modalText}>
-              Este chatbot está diseñado para ayudarte a navegar por el campus de CUCEI. Puedes preguntar sobre
-              ubicaciones, horarios, eventos y más.
+              Este chatbot está diseñado para ayudarte a navegar por el campus
+              de CUCEI. Puedes preguntar sobre ubicaciones, horarios, eventos y
+              más.
             </Text>
-            <TouchableOpacity style={styles.modalButton} onPress={handleCloseWelcome}>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={handleCloseWelcome}>
               <Text style={styles.modalButtonText}>Comenzar</Text>
             </TouchableOpacity>
           </Animatable.View>
@@ -450,25 +489,28 @@ export const NewChatbot = () => {
         animationType="fade"
         transparent={true}
         visible={showInactivityModal}
-        onRequestClose={() => setShowInactivityModal(false)}
-      >
+        onRequestClose={() => setShowInactivityModal(false)}>
         <BlurView intensity={100} style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>¿Deseas eliminar la conversación?</Text>
+            <Text style={styles.modalTitle}>
+              ¿Deseas eliminar la conversación?
+            </Text>
             <Text style={styles.modalText}>
-              Has estado inactivo por 5 minutos. La conversación se eliminará automáticamente en 2 minutos.
+              Has estado inactivo por 5 minutos. La conversación se eliminará
+              automáticamente en 2 minutos.
             </Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
                 onPress={() => {
-                  setShowInactivityModal(false)
-                  resetInactivityTimer()
-                }}
-              >
+                  setShowInactivityModal(false);
+                  resetInactivityTimer();
+                }}>
                 <Text style={styles.modalButtonText}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.modalButton, styles.deleteButton]} onPress={deleteConversation}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.deleteButton]}
+                onPress={deleteConversation}>
                 <Text style={styles.modalButtonText}>Eliminar</Text>
               </TouchableOpacity>
             </View>
@@ -476,8 +518,8 @@ export const NewChatbot = () => {
         </BlurView>
       </Modal>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -650,7 +692,6 @@ const styles = StyleSheet.create({
     color: "#1e90ff",
     textDecorationLine: "underline",
   },
-})
+});
 
-export default NewChatbot
-
+export default NewChatbot;

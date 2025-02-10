@@ -51,6 +51,7 @@ import { CID } from "../../../ScolarServices/CID";
 // import { Chatbot } from "../../../ChatBot/Chatbot";
 import { FileManagement } from "../../Routes/FileManagement";
 import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
+import HomePage2 from "../../HomePage2";
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get("window");
@@ -151,7 +152,7 @@ export const MyDrawer = () => {
       {/* Define all the drawer screens */}
       <Drawer.Screen
         name="Mapa"
-        component={HomePage}
+        component={HomePage2}
         initialParams={{ user }}
         options={{
           drawerLabel: "Inicio",
