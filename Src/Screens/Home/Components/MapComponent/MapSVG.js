@@ -18,7 +18,7 @@ const MapSVG = ({
     .map(([x, y]) => `${x},${y}`)
     .join(" ");
 
-  // Renderiza los puntos clicables (por ejemplo, edificios u otros puntos)
+  // Renderiza los puntos clicables (por ejemplo, edificios u otros elementos)
   const renderPoints = () => {
     return points.map((point) => (
       <TouchableOpacity
@@ -70,8 +70,8 @@ const MapSVG = ({
         <Polyline
           points={pointsString}
           fill="none"
-          stroke="#FF0000"
-          strokeWidth={4}
+          stroke="#FFFF00"
+          strokeWidth={6}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -79,24 +79,17 @@ const MapSVG = ({
     );
   };
 
-  // Renderiza los pines de origen y destino usando iconos de mapa
+  // Renderiza los pines de origen y destino usando íconos de mapa
   const renderRoutePins = () => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     const origin = activeRoutePoints[0];
     const destination = activeRoutePoints[activeRoutePoints.length - 1];
     return (
       <>
-        <View
-          style={[styles.routePin, { left: origin[0] - 12, top: origin[1] - 24 }]}
-        >
+        <View style={[styles.routePin, { left: origin[0] - 12, top: origin[1] - 24 }]}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#0000FF" />
         </View>
-        <View
-          style={[
-            styles.routePin,
-            { left: destination[0] - 12, top: destination[1] - 24 },
-          ]}
-        >
+        <View style={[styles.routePin, { left: destination[0] - 12, top: destination[1] - 24 }]}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#00FF00" />
         </View>
       </>
@@ -104,7 +97,8 @@ const MapSVG = ({
   };
 
   return (
-    <View style={StyleSheet.absoluteFill}>
+    // Se añade pointerEvents="box-none" para que el contenedor no bloquee toques de elementos superpuestos (como el BottomSheet)
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
       {renderRouteLine()}
       {renderPoints()}
       {renderMarker()}
@@ -118,8 +112,8 @@ export default MapSVG;
 const styles = StyleSheet.create({
   point: {
     position: "absolute",
-    // Puedes agregar un fondo semitransparente para ver el área clicable (opcional)
-    backgroundColor: "transparent",
+    // Puedes cambiar el fondo para visualizar el área clicable, aquí se deja semitransparente
+    backgroundColor: "rgba(255, 0, 0, 0.4)",
     borderRadius: 5,
   },
   markerContainer: {
