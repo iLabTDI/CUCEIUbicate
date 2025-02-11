@@ -18,6 +18,12 @@ const MapSVG = ({
     .map(([x, y]) => `${x},${y}`)
     .join(" ");
 
+    const handlePointPress = (point) => {
+      onPointPress(point.id); // Llama a la función onPointPress con el ID del punto presionado
+      // setMarkedObject(point); // Marca el punto como seleccionado
+    };
+  
+
   // Renderiza los puntos clicables (por ejemplo, edificios u otros elementos)
   const renderPoints = () => {
     return points.map((point) => (
@@ -34,7 +40,8 @@ const MapSVG = ({
           },
         ]}
         onPress={() => {
-          if (onPointPress) onPointPress(point.id);
+          handlePointPress(point);
+          // if (onPointPress) onPointPress(point.id);
           console.log("Punto presionado:", point.id);
         }}
       />

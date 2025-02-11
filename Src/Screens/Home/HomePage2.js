@@ -30,7 +30,8 @@ import { getSession } from "../../auth/SessionManager";
 import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
-// Asegúrate de tener instalados react-native-image-pan-zoom y react-native-svg
+// Importa el componente que renderiza los puntos (funciona como lo que tenías)
+import MapWithPointsAndRoutes from "./Components/MapComponent/MapPoints";
 import MapSVG from "./Components/MapComponent/MapSVG";
 
 const { width, height } = Dimensions.get("window");
@@ -240,7 +241,6 @@ export const HomePage2 = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[
             styles.profile_icon,
@@ -258,7 +258,6 @@ export const HomePage2 = () => {
             />
           )}
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
           <FontAwesomeIcon
             icon={faRoute}
@@ -266,11 +265,9 @@ export const HomePage2 = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
-
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -278,7 +275,7 @@ export const HomePage2 = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con pan/zoom usando ImageZoom */}
+        {/* Contenedor del mapa con pan/zoom */}
         <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
             cropWidth={Dimensions.get("window").width}
@@ -292,20 +289,23 @@ export const HomePage2 = () => {
             maxScale={2}
             enableCenterFocus={false}
             useNativeDriver={true}
-            // Es mejor omitir centerOn para evitar offset extra
           >
-            {/* Contenedor con dimensiones fijas (1600x1400) y posición relativa */}
+            {/* Contenedor con dimensiones fijas y posición relativa */}
             <View style={styles.zoomContainer}>
               <Image
                 source={currentMapImage}
                 style={styles.mapImage}
-                resizeMode="stretch" // IMPORTANTE: usa "stretch" para que la imagen ocupe 1600x1400 exactamente
+                resizeMode="stretch"
               />
-              {/* Overlay SVG para dibujar la ruta y los pines */}
+              {/* Se usa MapWithPointsAndRoutes para renderizar los puntos */}
               <MapSVG
                 isRouteActive={isRouteActive}
                 activeRoutePoints={activeRoutePoints}
+                
+                onPointPress={handlePointPress}
                 points={points}
+                markedObject={markedObject}
+                setMarkedObject={setMarkedObject}
               />
             </View>
           </ImageZoom>
@@ -324,7 +324,10 @@ export const HomePage2 = () => {
         />
 
         {isRouteActive && (
-          <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
+          <TouchableOpacity
+            style={styles.videoButton}
+            onPress={toggleVideoModal}
+          >
             <FontAwesomeIcon
               icon={faPlay}
               size={isTablet ? 28 : 24}
@@ -421,7 +424,6 @@ const styles = StyleSheet.create({
     borderRadius: (isTablet ? width * 0.04 : width * 0.2) / 2,
   },
   mapContainer: { flex: 1 },
-  // Contenedor fijo de 1600x1400 y posición relativa
   zoomContainer: { width: 1600, height: 1400, position: "relative" },
   mapImage: { width: 1600, height: 1400 },
   finalizeButton: {

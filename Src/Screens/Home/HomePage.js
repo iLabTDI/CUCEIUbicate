@@ -48,7 +48,7 @@ export const HomePage = () => {
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [selectedRouteImage, setSelectedRouteImage] = useState(null);
   const [currentMapImage, setCurrentMapImage] = useState(
-    require("./assets/images/mapa2.webp")
+    require("./assets/images/mapa3.webp")
     //  require("./assets/images/mpa3.webp")
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
@@ -253,7 +253,7 @@ export const HomePage = () => {
   // Función para limpiar la ruta seleccionada
   const clearRoute = () => {
     setSelectedRouteImage(null);
-    setCurrentMapImage(require("./assets/images/mapa2.webp"));
+    setCurrentMapImage(require("./assets/images/mapa3.webp"));
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
