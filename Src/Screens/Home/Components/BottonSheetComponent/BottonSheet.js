@@ -187,9 +187,9 @@ export const BottomSheetComponent = React.forwardRef(
                     {bottomSheetContents[selectedPoint].name}
                   </Text>
                 </View>
-                {renderImageCarousel(
+                {/* {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["photo-path"]
-                )}
+                )} */}
                 {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["images-path"]
                 )}

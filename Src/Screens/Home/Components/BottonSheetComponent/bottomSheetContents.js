@@ -465,10 +465,10 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_Y/Y_SEGUNDO_PISO.png"),
       require("./Modulos/Modulo_Y/Y_TERCER_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo Y/1.jpg"),
-      require("./Modulos_Fotos/Modulo Y/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo Y/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo Y/2.jpg"),
+    // ],
     description:
       "El Módulo Y es un edificio que tiene el auditorio Nikola V. Mitskievich, aparte, está diseñado para albergar aulas y laboratorios relacionados mayormente a las carreras de química, física y farmacobiología.",
   },
