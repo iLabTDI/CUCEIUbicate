@@ -51,10 +51,10 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Primer piso: W.C Hombres", "Segundo piso: W.C Mujeres"],
     "images-path": [require("./Modulos/Modulo_C/C_CUCS.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo C/1.png"),
-      require("./Modulos_Fotos/Modulo C/2.png"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo C/1.png"),
+    //   require("./Modulos_Fotos/Modulo C/2.png"),
+    // ],
     description:
       "El Módulo C es conocido por albergar laboratorios de ciencia y tecnología.",
   },
@@ -288,10 +288,10 @@ export const bottomSheetContents = {
       "Tercer piso: W.C Hombres.",
     ],
     "images-path": [require("./Modulos/Modulo_R/R.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo R/1.jpg"),
-      require("./Modulos_Fotos/Modulo R/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo R/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo R/2.jpg"),
+    // ],
     description: "El Módulo R es conocido por sus laboratorios de robótica.",
   },
   "Modulo S": {
@@ -300,9 +300,9 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: [""],
     "images-path": [require("./Modulos/Modulo_S/S.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo S/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo S/1.jpg"),
+    // ],
     description:
       "El Módulo S alberga cuatro áreas (S01-S04) que conforman el laboratorio de Ing. Industrial.",
   },
@@ -312,9 +312,9 @@ export const bottomSheetContents = {
     "relevant-places": ["Oficinas del S.T.A de UdeG."],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_S2/S2.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo S2/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo S2/1.jpg"),
+    // ],
     description:
       "El Módulo S2 es una extensión del Módulo S, con las oficinas del S.T.A de UdeG y una sala de maestros.",
   },
@@ -324,9 +324,9 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: ["Primer piso: W.C Mujeres."],
     "images-path": [require("./Modulos/Modulo_T/T.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo T/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo T/1.jpg"),
+    // ],
     description: "El Módulo T contiene aulas de aprendizaje para estudiantes.",
   },
   "Modulo U": {
@@ -337,11 +337,11 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Primer piso: W.C Hombres."],
     "images-path": [require("./Modulos/Modulo_U/U.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo U/1.jpg"),
-      require("./Modulos_Fotos/Modulo U/2.jpg"),
-      require("./Modulos_Fotos/Modulo U/3.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo U/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo U/2.jpg"),
+    //   require("./Modulos_Fotos/Modulo U/3.jpg"),
+    // ],
     description:
       "El Módulo U es conocido por una papelería y una cooperativa en el primer piso.",
   },
@@ -351,9 +351,9 @@ export const bottomSheetContents = {
     "relevant-places": ["Primer piso: Espacios tecnológicos de apoyo"],
     bathrooms: ["Primer piso: W.C Mujeres y W.C Hombres."],
     "images-path": [require("./Modulos/Modulo_UCT1/UCT1.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/DUCT1 y DUCT2/A1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/DUCT1 y DUCT2/A1.jpg"),
+    // ],
     description:
       "El Módulo Alfa es parte de las Unidades de Cómputo y Telecomunicaciones, enfocado en tecnologías de vanguardia.",
   },
@@ -363,9 +363,9 @@ export const bottomSheetContents = {
     "relevant-places": ["Primer piso: Espacios tecnológicos."],
     bathrooms: ["Primer piso: W.C Hombres y W.C Mujeres."],
     "images-path": [require("./Modulos/Modulo_UCT2/UCT2.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/DUCT1 y DUCT2/B1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/DUCT1 y DUCT2/B1.jpg"),
+    // ],
     description:
       "El Módulo Beta complementa al Módulo Alfa en las Unidades de Cómputo y Telecomunicaciones, con énfasis en infraestructura de TI.",
   },
@@ -383,9 +383,9 @@ export const bottomSheetContents = {
       "Tercer piso: W.C Hombres.",
     ],
     "images-path": [require("./Modulos/Modulo_V/V.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo V/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo V/1.jpg"),
+    // ],
     description:
       "El Módulo V cuenta con laboratorios y aulas mayormente enfocadas al departamento de matemáticas.",
   },
@@ -398,10 +398,10 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Primer piso: W.C Mujeres, W.C Hombres."],
     "images-path": [require("./Modulos/Modulo_V2/V2.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo V2/1.jpg"),
-      require("./Modulos_Fotos/Modulo V2/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo V2/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo V2/2.jpg"),
+    // ],
     description: "El Módulo V2 es una extensión del Módulo V.",
   },
   "Modulo W": {
@@ -418,10 +418,10 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_W/W_SEGUNDO_PISO.png"),
       require("./Modulos/Modulo_W/W_TERCER_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo W/1.jpg"),
-      require("./Modulos_Fotos/Modulo W/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo W/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo W/2.jpg"),
+    // ],
     description:
       "El Módulo W es un edificio versátil que alberga múltiples aulas, un hospital para computadoras y áreas que pertenecen a la preparatoria 12. Tiene una conexión con el módulo X.",
   },
@@ -438,9 +438,9 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_X/X.png"),
       require("./Modulos/Modulo_X/CONEXION_W-X.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo X/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo X/1.jpg"),
+    // ],
     description:
       "El módulo X es un edificio moderno diseñado para albergar aulas relacionadas a la tecnología.",
   },
