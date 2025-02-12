@@ -94,7 +94,7 @@ export const ChatbotButton = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handlePress}>
           <Image
-            source={require('./images/bot.png')}
+            source={require('../ChatBot/images/bot.png')}
             style={styles.chatbotIcon}
           />
         </TouchableOpacity>

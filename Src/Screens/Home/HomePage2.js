@@ -10,7 +10,7 @@ import {
   Animated,
   Alert,
   PermissionsAndroid, // Se importa para solicitar permisos en Android
-  Platform,          // Se utiliza para identificar la plataforma (Android o iOS)
+  Platform, // Se utiliza para identificar la plataforma (Android o iOS)
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -29,7 +29,7 @@ import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSh
 import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSession } from "../../auth/SessionManager";
-import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
+import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 // Componente para renderizar puntos y rutas en el mapa
@@ -99,7 +99,9 @@ export const HomePage2 = () => {
       }
     } else {
       // En iOS no se solicitan estos permisos de esta manera
-      console.log("No se requiere solicitud de permisos en iOS para almacenamiento local.");
+      console.log(
+        "No se requiere solicitud de permisos en iOS para almacenamiento local."
+      );
     }
   };
 
@@ -297,8 +299,7 @@ export const HomePage2 = () => {
       {/* Pantalla de carga animada */}
       <Animated.View
         style={[styles.loadingContainer, { opacity: loadingOpacity }]}
-        pointerEvents={isLoading ? "auto" : "none"}
-      >
+        pointerEvents={isLoading ? "auto" : "none"}>
         <LottieView
           source={require("../../assets/animations/Map_loading.json")}
           autoPlay
@@ -314,8 +315,7 @@ export const HomePage2 = () => {
         {/* Botón de menú */}
         <TouchableOpacity
           style={styles.menu_icon}
-          onPress={() => navigation.openDrawer()}
-        >
+          onPress={() => navigation.openDrawer()}>
           <FontAwesomeIcon
             icon={faBars}
             size={isTablet ? width * 0.04 : width * 0.06}
@@ -328,8 +328,7 @@ export const HomePage2 = () => {
             styles.profile_icon,
             selectedIcon && styles.profile_icon_selected,
           ]}
-          onPress={() => navigation.navigate("Perfil")}
-        >
+          onPress={() => navigation.navigate("Perfil")}>
           {selectedIcon ? (
             <Image source={selectedIcon} style={styles.profileImage} />
           ) : (
@@ -373,8 +372,7 @@ export const HomePage2 = () => {
             minScale={0.5}
             maxScale={2}
             enableCenterFocus={false}
-            useNativeDriver={true}
-          >
+            useNativeDriver={true}>
             {/* Contenedor con dimensiones fijas y posición relativa */}
             <View style={styles.zoomContainer}>
               <Image
@@ -411,8 +409,7 @@ export const HomePage2 = () => {
         {isRouteActive && (
           <TouchableOpacity
             style={styles.videoButton}
-            onPress={toggleVideoModal}
-          >
+            onPress={toggleVideoModal}>
             <FontAwesomeIcon
               icon={faPlay}
               size={isTablet ? 28 : 24}

@@ -37,7 +37,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 // Import all the screen components
-import { HomePage } from "../../HomePage";
+import { HomePage2 } from "../../HomePage2";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
 import { CUCEI_radio } from "../../../Education/CUCEI_radio";
@@ -49,9 +49,9 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 // import { Chatbot } from "../../../ChatBot/Chatbot";
-import { FileManagement } from "../../Routes/FileManagement";
-import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
-import HomePage2 from "../../HomePage2";
+// import { FileManagement } from "../../Routes/FileManagement";
+// import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
+import { Chatbot } from "../../../ChatBot/Chatbot";
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get("window");
@@ -301,7 +301,7 @@ export const MyDrawer = () => {
           ),
         }}
       />
-      {/* <Drawer.Screen
+      <Drawer.Screen
         name="ChatbotScreen"
         component={Chatbot}
         options={{
@@ -312,22 +312,8 @@ export const MyDrawer = () => {
           headerLeft: () => <DrawerHeaderButton />,
           headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
         }}
-      /> */}
-      <Drawer.Screen
-        name="ChatbotScreen"
-        component={NewChatbot}
-        options={{
-          drawerLabel: "Chatbot",
-          drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faRobot} size={size} color={color} />
-          ),
-          headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Chatbot" icon={faRobot} />
-          ),
-        }}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="FileManagementScreen"
         component={FileManagement}
         initialParams={{ user }}
@@ -341,7 +327,7 @@ export const MyDrawer = () => {
             <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />
           ),
         }}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 };
