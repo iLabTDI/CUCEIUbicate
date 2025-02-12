@@ -16,11 +16,11 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_A/PRIMER_PISO.png"),
       require("./Modulos/Modulo_A/SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo A/IMG_5.webp"),
-      require("./Modulos_Fotos/Modulo A/IMG_6.webp"),
-      require("./Modulos_Fotos/Modulo A/IMG_9775.webp"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo A/IMG_5.webp"),
+    //   require("./Modulos_Fotos/Modulo A/IMG_6.webp"),
+    //   require("./Modulos_Fotos/Modulo A/IMG_9775.webp"),
+    // ],
     description:
       "El Módulo A conocido anteriormente como Rectoria, contiene gran variedad de salas de coordinación y el Auditorio Enrique Díaz de León. Asimismo, tiene aulas que pertenecen al Proulex donde los alumnos pueden aprender idiomas.",
   },
@@ -35,9 +35,9 @@ export const bottomSheetContents = {
     "images-path": [
       require("./Modulos/Modulo_B/B_CUCS.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo B/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo B/1.jpg"),
+    // ],
     description:
       "El Módulo B se destaca por impartir clases de carreras relacionadas al CUCS.",
   },
@@ -68,9 +68,9 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_D/D.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo D/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo D/1.jpg"),
+    // ],
     description:
       "El Módulo D ofrece laboratorios para distintas carreras relacionadas a las ciencias y tencologías, cubículos para académicos y demás.",
   },
@@ -86,11 +86,11 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_E/E_PRIMER_PISO.png"),
       require("./Modulos/Modulo_E/E_SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo E/1.jpg"),
-      require("./Modulos_Fotos/Modulo E/2.png"),
-      require("./Modulos_Fotos/Modulo E/3.png"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo E/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo E/2.png"),
+    //   require("./Modulos_Fotos/Modulo E/3.png"),
+    // ],
     description:
       "El Módulo E alberga una variedad de aulas y oficinas orientadas principalmente a las carreras de Química, Farmacobiología y Biotecnología de los alimentos. También tiene el Auditorio Antonio Rodríguez Sánchez.",
   },
@@ -106,9 +106,9 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_F/F.png"),
       require("./Modulos/Modulo_F/F_SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo F/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo F/1.jpg"),
+    // ],
     description:
       "El Módulo F es conocido por sus laboratorios y salones orientados a las carreras relacionadas a las ciencias.",
   },
@@ -133,11 +133,11 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_H/H_PRIMER_PISO.png"),
       require("./Modulos/Modulo_H/H_SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo H/1.jpg"),
-      require("./Modulos_Fotos/Modulo H/2.jpg"),
-      require("./Modulos_Fotos/Modulo H/3.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo H/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo H/2.jpg"),
+    //   require("./Modulos_Fotos/Modulo H/3.jpg"),
+    // ],
     description:
       "El Módulo H destaca por ser un módulo lleno de amplios laboratorios.",
   },
@@ -162,9 +162,9 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_J/J_PRIMER_PISO.png"),
       require("./Modulos/Modulo_J/J_SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo J/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo J/1.jpg"),
+    // ],
     description:
       "El Módulo J colinda con los módulos K e I. Tiene laboratorios y la coordinación de maestría en sistemas de calidad.",
   },
@@ -174,11 +174,11 @@ export const bottomSheetContents = {
     "relevant-places": ["Salones."],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_K/K.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo K/1.jpg"),
-      require("./Modulos_Fotos/Modulo K/2.jpg"),
-      require("./Modulos_Fotos/Modulo K/3.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo K/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo K/2.jpg"),
+    //   require("./Modulos_Fotos/Modulo K/3.jpg"),
+    // ],
     description:
       "El Módulo K cuenta con diversas aulas de clase y unas representativas escaleras rojas a sus costados.",
   },
@@ -190,10 +190,10 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_L/L.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo L/1.jpg"),
-      require("./Modulos_Fotos/Modulo L/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo L/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo L/2.jpg"),
+    // ],
     description:
       "El Módulo L ofrece servicios médicos y contiene la división de ciencias básicas. Así mismo, tiene el laboratorio para los estudiantes de Ingeniería mecánica.",
   },
@@ -224,10 +224,10 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_N/N_PRIMER_PISO.png"),
       require("./Modulos/Modulo_N/N_SEGUNDO_PISO.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo N/1.jpg"),
-      require("./Modulos_Fotos/Modulo N/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo N/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo N/2.jpg"),
+    // ],
     description:
       "El Módulo N cuenta con espacios para que los alumnos puedan desarrollar sus proyectos modulares, como laboratorios, aulas y papeleria.",
   },
@@ -255,10 +255,10 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Primer piso: W.C Hombres.", "Segundo piso: W.C Mujeres."],
     "images-path": [require("./Modulos/Modulo_P/P.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo P/1.jpg"),
-      require("./Modulos_Fotos/Modulo P/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo P/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo P/2.jpg"),
+    // ],
     description:
       "El Módulo P ofrece diversas aulas de aprendizaje, un laboratorio para los estudiantes de topografía y un área para los objetos perdidos.",
   },
@@ -268,9 +268,9 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_Q/Q.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo Q/1.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo Q/1.jpg"),
+    // ],
     description:
       "El Módulo Q es un edificio lleno de aulas para que los estudiantes puedan tomar sus clases.",
   },
@@ -481,10 +481,10 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_Z/Z.png"),
       require("./Modulos/Modulo_Z/Z_CHEDRAUI.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo Z/1.jpg"),
-      require("./Modulos_Fotos/Modulo Z/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo Z/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo Z/2.jpg"),
+    // ],
     description:
       "El Módulo Z es uno de los edificios más modernos en el campus, destacando el auditorio y el salón dedicado a la maestría en física.",
   },
@@ -507,10 +507,10 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["-"],
     "images-path": [require("./Modulos/Modulo_Z2/Z2.png")],
-    "photo-path": [
-      require("./Modulos_Fotos/Modulo Z/1.jpg"),
-      require("./Modulos_Fotos/Modulo Z/2.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Modulo Z/1.jpg"),
+    //   require("./Modulos_Fotos/Modulo Z/2.jpg"),
+    // ],
     description:
       "El Módulo Z2 es una extensión del Módulo Z, diseñado para coworking y demás.",
   },
@@ -535,12 +535,12 @@ export const bottomSheetContents = {
       require("./Modulos/Biblioteca/biblioteca.png"),
       require("./Modulos/Biblioteca/biblioteca1.png"),
     ],
-    "photo-path": [
-      require("./Modulos_Fotos/Biblioteca/1.jpg"),
-      require("./Modulos_Fotos/Biblioteca/2.jpg"),
-      require("./Modulos_Fotos/Biblioteca/3.jpg"),
-      require("./Modulos_Fotos/Biblioteca/4.jpg"),
-    ],
+    // "photo-path": [
+    //   require("./Modulos_Fotos/Biblioteca/1.jpg"),
+    //   require("./Modulos_Fotos/Biblioteca/2.jpg"),
+    //   require("./Modulos_Fotos/Biblioteca/3.jpg"),
+    //   require("./Modulos_Fotos/Biblioteca/4.jpg"),
+    // ],
     description:
       "La Biblioteca CUCEI ofrece espacios de estudio y coworking. En el segundo piso se encuentra el Programa de Intercambios y una papelería para apoyo estudiantil.",
   },
