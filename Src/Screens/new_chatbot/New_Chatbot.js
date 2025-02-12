@@ -284,7 +284,7 @@ export const NewChatbot = () => {
   // --------------------------------------------------------------------------------
   const addBotMessage = (text) => {
     const botMessage = {
-      _id: `${Date.now()}-${Math.random()}`,  // Menos seguro pero reduce colisiones
+      _id: `${Date.now()}-${Math.random()}`,
       text,
       createdAt: new Date().toISOString(),
       user: {
@@ -310,7 +310,8 @@ export const NewChatbot = () => {
       style={[
         styles.messageBubble,
         item.user._id === 1 ? styles.userBubble : styles.botBubble,
-      ]}>
+      ]}
+    >
       {item.user._id === 2 && (
         <Image source={item.user.avatar} style={styles.avatar} />
       )}
@@ -321,7 +322,8 @@ export const NewChatbot = () => {
             item.user._id === 1
               ? styles.userMessageText
               : styles.botMessageText,
-          ]}>
+          ]}
+        >
           {renderTextWithLinks(item.text)}
         </Text>
         <Text style={styles.timestamp}>
@@ -334,7 +336,8 @@ export const NewChatbot = () => {
       {item.user._id === 2 && (
         <TouchableOpacity
           style={styles.copyButton}
-          onPress={() => copyToClipboard(item.text)}>
+          onPress={() => copyToClipboard(item.text)}
+        >
           <FontAwesome name="copy" size={16} color="#4c669f" />
         </TouchableOpacity>
       )}
@@ -354,7 +357,8 @@ export const NewChatbot = () => {
           <Text
             key={index}
             style={styles.link}
-            onPress={() => Linking.openURL(part)}>
+            onPress={() => Linking.openURL(part)}
+          >
             {part}
           </Text>
         );
@@ -392,11 +396,11 @@ export const NewChatbot = () => {
 
     inactivityTimerRef.current = setTimeout(() => {
       setShowInactivityModal(true);
-    }, 2 * 60 * 1000); // 5 minutos
+    }, 2 * 60 * 1000); // 2 minutos
 
     deleteTimerRef.current = setTimeout(() => {
       deleteConversation();
-    }, 3 * 60 * 1000); // 7 minutos
+    }, 3 * 60 * 1000); // 3 minutos
   };
 
   // --------------------------------------------------------------------------------
@@ -418,7 +422,9 @@ export const NewChatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 120}>
+        // Aumentamos el keyboardVerticalOffset en Android para que el input se muestre más arriba
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 150}
+      >
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -443,7 +449,8 @@ export const NewChatbot = () => {
               !inputMessage.trim() && styles.sendButtonDisabled,
             ]}
             onPress={onSend}
-            disabled={!inputMessage.trim()}>
+            disabled={!inputMessage.trim()}
+          >
             <FontAwesome
               name="paper-plane"
               size={24}
@@ -457,12 +464,14 @@ export const NewChatbot = () => {
         animationType="fade"
         transparent={true}
         visible={showWelcome}
-        onRequestClose={handleCloseWelcome}>
+        onRequestClose={handleCloseWelcome}
+      >
         <BlurView intensity={100} style={styles.modalContainer}>
           <Animatable.View
             animation="zoomIn"
             duration={500}
-            style={styles.modalContent}>
+            style={styles.modalContent}
+          >
             <Text style={styles.modalTitle}>¡Bienvenido a CUCEI Ubicate!</Text>
             <LottieView
               ref={lottieRef}
@@ -472,13 +481,13 @@ export const NewChatbot = () => {
               style={styles.lottieAnimation}
             />
             <Text style={styles.modalText}>
-              Este chatbot está diseñado para ayudarte a navegar por el campus
-              de CUCEI. Puedes preguntar sobre ubicaciones, horarios, eventos y
-              más.
+              Este chatbot está diseñado para ayudarte a navegar por el campus de
+              CUCEI. Puedes preguntar sobre ubicaciones, horarios, eventos y más.
             </Text>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={handleCloseWelcome}>
+              onPress={handleCloseWelcome}
+            >
               <Text style={styles.modalButtonText}>Comenzar</Text>
             </TouchableOpacity>
           </Animatable.View>
@@ -489,7 +498,8 @@ export const NewChatbot = () => {
         animationType="fade"
         transparent={true}
         visible={showInactivityModal}
-        onRequestClose={() => setShowInactivityModal(false)}>
+        onRequestClose={() => setShowInactivityModal(false)}
+      >
         <BlurView intensity={100} style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
@@ -505,12 +515,14 @@ export const NewChatbot = () => {
                 onPress={() => {
                   setShowInactivityModal(false);
                   resetInactivityTimer();
-                }}>
+                }}
+              >
                 <Text style={styles.modalButtonText}>Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.deleteButton]}
-                onPress={deleteConversation}>
+                onPress={deleteConversation}
+              >
                 <Text style={styles.modalButtonText}>Eliminar</Text>
               </TouchableOpacity>
             </View>

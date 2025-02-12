@@ -9,6 +9,8 @@ import {
   Text,
   Animated,
   Alert,
+  PermissionsAndroid, // Se importa para solicitar permisos en Android
+  Platform,          // Se utiliza para identificar la plataforma (Android o iOS)
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -30,8 +32,8 @@ import { getSession } from "../../auth/SessionManager";
 import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
-// Importa el componente que renderiza los puntos (funciona como lo que tenías)
-import MapWithPointsAndRoutes from "./Components/MapComponent/MapPoints";
+// Componente para renderizar puntos y rutas en el mapa
+// import MapWithPointsAndRoutes from "./Components/MapComponent/MapPoints";
 import MapSVG from "./Components/MapComponent/MapSVG";
 
 const { width, height } = Dimensions.get("window");
@@ -46,7 +48,7 @@ export const HomePage2 = () => {
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [currentMapImage, setCurrentMapImage] = useState(
-    require("./assets/images/mapa2.webp")
+    require("./assets/images/mapa3.webp")
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
@@ -61,11 +63,49 @@ export const HomePage2 = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
 
-  // Valores animados
+  // Valores animados para la transición entre la pantalla de carga y el contenido principal
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const loadingOpacity = useRef(new Animated.Value(1)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
+  /**
+   * Función para solicitar permisos de almacenamiento en Android.
+   * Se solicita tanto READ como WRITE, y se muestra un mensaje en caso de denegación.
+   */
+  const requestStoragePermissions = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        ]);
+        if (
+          granted["android.permission.READ_EXTERNAL_STORAGE"] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
+            PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          console.log("Permisos de almacenamiento concedidos.");
+          // Aquí podrías agregar lógica adicional si es necesario
+        } else {
+          console.log("Permisos de almacenamiento denegados.");
+          Alert.alert(
+            "Permisos denegados",
+            "No se han concedido los permisos de almacenamiento. Algunas funciones pueden no funcionar correctamente."
+          );
+        }
+      } catch (error) {
+        console.warn("Error al solicitar permisos:", error);
+      }
+    } else {
+      // En iOS no se solicitan estos permisos de esta manera
+      console.log("No se requiere solicitud de permisos en iOS para almacenamiento local.");
+    }
+  };
+
+  /**
+   * useEffect para verificar la sesión del usuario y cargar datos cuando la pantalla se encuentra en foco.
+   */
   useEffect(() => {
     if (isFocused) {
       checkSession().then(() => {
@@ -74,6 +114,9 @@ export const HomePage2 = () => {
     }
   }, [isFocused]);
 
+  /**
+   * useEffect para manejar la animación del BottomSheet.
+   */
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0,
@@ -82,6 +125,10 @@ export const HomePage2 = () => {
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
 
+  /**
+   * useEffect para comprobar si es el primer lanzamiento de la aplicación.
+   * Si es el primer lanzamiento, se muestra el modal de descarga posteriormente.
+   */
   useEffect(() => {
     const checkFirstLaunch = async () => {
       const hasLaunched = await AsyncStorage.getItem("hasLaunchedddd");
@@ -95,12 +142,28 @@ export const HomePage2 = () => {
     checkFirstLaunch();
   }, []);
 
+  /**
+   * useEffect para mostrar el modal de descarga en el primer lanzamiento después de que termine la carga.
+   */
   useEffect(() => {
     if (!isLoading && isFirstLaunch) {
       setShowDownloadModal(true);
     }
   }, [isLoading, isFirstLaunch]);
 
+  /**
+   * Nuevo useEffect para solicitar los permisos de almacenamiento una vez que la animación de carga ha finalizado.
+   */
+  useEffect(() => {
+    if (!isLoading) {
+      requestStoragePermissions();
+    }
+  }, [isLoading]);
+
+  /**
+   * Función para verificar la sesión del usuario.
+   * Si no hay sesión, redirige a la pantalla de Login.
+   */
   const checkSession = async () => {
     const session = await getSession();
     if (!session) {
@@ -111,10 +174,9 @@ export const HomePage2 = () => {
     }
   };
 
-  const handleCloseDownloadModal = () => {
-    setShowDownloadModal(false);
-  };
-
+  /**
+   * Función para cargar el ícono seleccionado almacenado en AsyncStorage.
+   */
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -122,10 +184,14 @@ export const HomePage2 = () => {
         setSelectedIcon(JSON.parse(savedIcon));
       }
     } catch (error) {
-      console.error("Error loading selected icon:", error);
+      console.error("Error al cargar el ícono seleccionado:", error);
     }
   };
 
+  /**
+   * Función que se ejecuta cuando finaliza la animación de carga del mapa.
+   * Se oculta la pantalla de carga y se muestra el contenido principal.
+   */
   const handleImageLoad = () => {
     Animated.parallel([
       Animated.timing(loadingOpacity, {
@@ -139,36 +205,49 @@ export const HomePage2 = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
+      // Una vez terminada la animación se establece que la carga ha finalizado,
+      // lo que activará también la solicitud de permisos en el useEffect correspondiente.
       setIsLoading(false);
     });
   };
 
-  const handleFilesDeleted = async () => {
-    await AsyncStorage.removeItem("hasLaunchedd");
-    setShowDownloadModal(true);
-  };
-
+  /**
+   * Función para manejar la pulsación en un punto del mapa.
+   * Muestra el BottomSheet con la información del punto seleccionado.
+   */
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
   };
 
+  /**
+   * Función para alternar la visibilidad de la barra de búsqueda.
+   */
   const toggleSearchBar = () => {
     console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
   };
 
+  /**
+   * Función para cerrar la barra de búsqueda.
+   */
   const closeSearchBar = () => {
     console.log("Cerrando barra de búsqueda...");
     setShowSearchBar(false);
   };
 
+  /**
+   * Función para cerrar el BottomSheet.
+   */
   const handleCloseBottomSheet = () => {
     setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
   };
 
+  /**
+   * Función para realizar una búsqueda específica en los puntos del mapa.
+   */
   const handleSpecificSearch = (pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
@@ -177,7 +256,10 @@ export const HomePage2 = () => {
     setShowSpecificSearch(false);
   };
 
-  // Función de búsqueda: recibe el objeto de ruta completo (del JSON)
+  /**
+   * Función de búsqueda que recibe un objeto de ruta (del JSON) y activa la ruta,
+   * estableciendo los puntos, identificador de la ruta y video asociado.
+   */
   const handleSearch = async (routeObject) => {
     console.log("onSearch:", routeObject);
     if (routeObject) {
@@ -192,23 +274,22 @@ export const HomePage2 = () => {
     }
   };
 
+  /**
+   * Función para limpiar la ruta activa y reiniciar los estados relacionados.
+   */
   const clearRoute = () => {
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
-    setCurrentMapImage(require("./assets/images/mapa2.webp"));
+    setCurrentMapImage(require("./assets/images/mapa3.webp"));
   };
 
+  /**
+   * Función para alternar la visibilidad del modal de video.
+   */
   const toggleVideoModal = () => {
     setIsVideoModalVisible(!isVideoModalVisible);
-  };
-
-  const handleViewDownload = () => {
-    setShowDownloadModal(false);
-    navigation.navigate("FileManagementScreen", {
-      startDownloadAutomatically: true,
-    });
   };
 
   return (
@@ -223,14 +304,14 @@ export const HomePage2 = () => {
           autoPlay
           loop={false}
           style={styles.lottieAnimation}
-          onAnimationFinish={handleImageLoad}
+          onAnimationFinish={handleImageLoad} // Se ejecuta cuando finaliza la animación
         />
         <Text style={styles.loadingText}>Cargando mapa...</Text>
       </Animated.View>
 
-      {/* Contenido principal */}
+      {/* Contenido principal de la aplicación */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
-        {/* Header */}
+        {/* Botón de menú */}
         <TouchableOpacity
           style={styles.menu_icon}
           onPress={() => navigation.openDrawer()}
@@ -241,6 +322,7 @@ export const HomePage2 = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
+        {/* Botón de perfil */}
         <TouchableOpacity
           style={[
             styles.profile_icon,
@@ -258,6 +340,7 @@ export const HomePage2 = () => {
             />
           )}
         </TouchableOpacity>
+        {/* Botón para mostrar la barra de búsqueda */}
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
           <FontAwesomeIcon
             icon={faRoute}
@@ -265,9 +348,11 @@ export const HomePage2 = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
+        {/* Renderizado condicional de la barra de búsqueda */}
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
+        {/* Componente para búsqueda específica */}
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -275,7 +360,7 @@ export const HomePage2 = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con pan/zoom */}
+        {/* Contenedor del mapa con funcionalidad de pan y zoom */}
         <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
             cropWidth={Dimensions.get("window").width}
@@ -297,11 +382,10 @@ export const HomePage2 = () => {
                 style={styles.mapImage}
                 resizeMode="stretch"
               />
-              {/* Se usa MapWithPointsAndRoutes para renderizar los puntos */}
+              {/* Renderizado del mapa con los puntos y rutas */}
               <MapSVG
                 isRouteActive={isRouteActive}
                 activeRoutePoints={activeRoutePoints}
-                
                 onPointPress={handlePointPress}
                 points={points}
                 markedObject={markedObject}
@@ -311,7 +395,7 @@ export const HomePage2 = () => {
           </ImageZoom>
         </GestureHandlerRootView>
 
-        {/* Botón para finalizar ruta */}
+        {/* Botón para finalizar la ruta activa */}
         {isRouteActive && (
           <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
             <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
@@ -323,6 +407,7 @@ export const HomePage2 = () => {
           pointerEvents="none"
         />
 
+        {/* Botón para ver el video asociado a la ruta activa */}
         {isRouteActive && (
           <TouchableOpacity
             style={styles.videoButton}
@@ -337,6 +422,7 @@ export const HomePage2 = () => {
           </TouchableOpacity>
         )}
 
+        {/* Modal para reproducir el video */}
         <VideoModal
           isVisible={isVideoModalVisible}
           onClose={() => setIsVideoModalVisible(false)}
@@ -344,8 +430,10 @@ export const HomePage2 = () => {
           routeId={selectedRouteId}
         />
 
+        {/* Se muestra el botón del chatbot cuando no hay ruta activa ni la barra de búsqueda */}
         {!isRouteActive && !showSearchBar && <ChatbotButton />}
 
+        {/* Componente BottomSheet para mostrar información del punto seleccionado */}
         <BottomSheetComponent
           ref={bottomSheetRef}
           snapPoints={["50%", "75%"]}

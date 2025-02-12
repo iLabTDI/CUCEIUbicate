@@ -31,6 +31,8 @@ import * as Animatable from "react-native-animatable";
 import ImageZoom from "react-native-image-pan-zoom";
 import { animalIcons, careerImages } from "./Data_iconos_mallas";
 import { clearSession } from "../../auth/SessionManager";
+// Importa la imagen por defecto (avatar "amendias")  
+import defaultAvatar from "../../assets/images/usuario.png"; 
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const isTablet = SCREEN_WIDTH >= 768;
@@ -80,7 +82,8 @@ export const ProfileScreen = ({ route }) => {
   const { user } = route.params;
   const userData = Array.isArray(user) ? user[0] : user;
 
-  const [selectedIcon, setSelectedIcon] = useState(userData.avatar);
+  // Si el usuario no tiene avatar definido, se usa el defaultAvatar importado
+  const [selectedIcon, setSelectedIcon] = useState(userData.avatar || defaultAvatar);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
@@ -110,6 +113,8 @@ export const ProfileScreen = ({ route }) => {
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
+      // Si se ha guardado un avatar previamente, se actualiza el estado;
+      // de lo contrario, se mantiene el defaultAvatar.
       if (savedIcon) setSelectedIcon(JSON.parse(savedIcon));
     } catch (error) {
       console.error("Error loading selected icon:", error);

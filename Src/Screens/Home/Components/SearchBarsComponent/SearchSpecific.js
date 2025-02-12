@@ -72,7 +72,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     if (showSpecificSearchState) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
-    // Se notifica al componente padre el estado del search
+    // Notifica al componente padre el estado del search
     setShowSpecificSearch(showSpecificSearchState);
   }, [showSpecificSearchState]);
 
@@ -302,8 +302,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
               renderItem={showHistory ? renderHistoryItem : renderSearchResult}
               keyExtractor={(item, index) => index.toString()}
               keyboardShouldPersistTaps="always"
-              maxToRenderPerBatch={10}
-              initialNumToRender={10}
+              scrollEnabled={true}
               style={styles.resultsList}
             />
           )}
@@ -389,7 +388,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   resultsList: {
-    maxHeight: isTablet ? height * 0.6 : height * 0.5,
+    flexGrow: 1,
   },
   resultItem: {
     flexDirection: "row",
@@ -401,17 +400,9 @@ const styles = StyleSheet.create({
   resultIcon: {
     marginRight: isTablet ? 16 : 12,
   },
-  resultTextContainer: {
-    flex: 1,
-  },
   resultText: {
     fontSize: isTablet ? 18 : 16,
     color: "#333333",
-  },
-  resultSubtext: {
-    fontSize: isTablet ? 14 : 12,
-    color: "#666666",
-    marginTop: 2,
   },
   errorContainer: {
     flexDirection: "row",
