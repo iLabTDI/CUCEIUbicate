@@ -105,8 +105,9 @@ export const CID = () => {
               size={isTablet ? 32 : 24}
               color="#fff"
             />
-            <Text style={styles.headerTitle}>CID</Text>
+              <Text style={styles.headerTitle}>CID</Text>
           </View>
+        
         </LinearGradient>
 
         <View style={styles.card}>
@@ -163,7 +164,13 @@ const styles = StyleSheet.create({
     color: "#0056b3",
     marginTop: 10,
   },
+  centrar: {
+    textAlign: "center",
+  },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    // textAlign: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
