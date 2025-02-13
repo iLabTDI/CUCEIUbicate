@@ -47,7 +47,7 @@ export const HomePage = () => {
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [currentMapImage, setCurrentMapImage] = useState(
-    require("./assets/images/Mapa.webp")
+    require("./assets/images/mapa.webp")
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
@@ -288,7 +288,7 @@ export const HomePage = () => {
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
-    setCurrentMapImage(require("./assets/images/Mapa.webp"));
+    setCurrentMapImage(require("./assets/images/mapa.webp"));
   };
 
   /**
