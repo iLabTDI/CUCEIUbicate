@@ -27,10 +27,49 @@ import {
   faIdCard,
   faGraduationCap,
   faChevronDown,
+  faLaptopCode,
+  faFlask,
+  faCog,
+  faIndustry,
+  faCalculator,
+  faMicrochip,
+  faNetworkWired,
+  faAtom,
+  faRobot,
+  faBuilding,
+  faStethoscope,
+  faMapMarkedAlt,
+  faTruck,
+  faUtensils,
 } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
-const isTablet = width >= 768; // Consideramos tablet si el ancho es 768 o mayor
+const isTablet = width >= 768;
+
+// Array de iconos en el orden de las carreras proporcionadas
+const careerIconsOrder = [
+  faBuilding,         // 1. Ingeniería Civil
+  faAtom,             // 2. Ingeniería en Fotónica
+  faStethoscope,      // 3. Ingeniería Biomédica
+  faNetworkWired,     // 4. Ingeniería en Comunicaciones y Electrónica
+  faLaptopCode,       // 5. Ingeniería en Computación
+  faIndustry,         // 6. Ingeniería Industrial
+  faLaptopCode,       // 7. Ingeniería en Informática
+  faCog,              // 8. Ingeniería Mecánica Eléctrica
+  faFlask,            // 9. Ingeniería Química
+  faRobot,            // 10. Ingeniería en Robótica
+  faMapMarkedAlt,     // 11. Ingeniería en Topografía Geomática
+  faFlask,            // 12. Licenciatura en Ciencia de Materiales
+  faUtensils,         // 13. Ingeniería en Alimentos y Biotecnología
+  faAtom,             // 14. Licenciatura en Física
+  faCalculator,       // 15. Licenciatura en Matemáticas
+  faTruck,            // 16. Ingeniería en Logística y Transporte
+  faFlask,            // 17. Licenciatura en Químico Farmacéutico Biólogo
+  faFlask,            // 18. Licenciatura en Química
+];
+
+// Expresión regular que permite únicamente letras (con acentos, ñ) y espacios
+const NAME_REGEX = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
 
 export const CompleteProfile = () => {
   const [name, setName] = useState("");
@@ -57,8 +96,8 @@ export const CompleteProfile = () => {
   const correo = mail;
   const contraseña = pass;
 
-  // Se define la longitud mínima para el código de estudiante
-  const MIN_CODE_LENGTH = 9;
+  // El código debe tener exactamente 9 dígitos
+  const CODE_LENGTH = 9;
 
   useEffect(() => {
     const fetchDegrees = async () => {
@@ -68,37 +107,42 @@ export const CompleteProfile = () => {
     fetchDegrees();
   }, []);
 
+  const validateForm = () => {
+    let valid = true;
+    // Validar que el nombre no esté vacío y solo contenga letras y espacios
+    if (!name.trim() || !NAME_REGEX.test(name)) {
+      setNameError(true);
+      valid = false;
+    } else {
+      setNameError(false);
+    }
+    // Validar que el apellido no esté vacío y solo contenga letras y espacios
+    if (!lastName.trim() || !NAME_REGEX.test(lastName)) {
+      setLastNameError(true);
+      valid = false;
+    } else {
+      setLastNameError(false);
+    }
+    // Validar que el código tenga exactamente 9 dígitos
+    if (Codigo.length !== CODE_LENGTH) {
+      setCodigoError(true);
+      valid = false;
+    } else {
+      setCodigoError(false);
+    }
+    // Validar que se haya seleccionado una carrera
+    if (!selectedCareer) {
+      alert("Seleccione una carrera.");
+      valid = false;
+    }
+    return valid;
+  };
+
   const handleCompleteProfile = async () => {
     setIsLoading(true);
 
-    // Verificar campos vacíos
-    if (!name || !lastName || !username || !Codigo || !selectedCareer) {
-      setNameError(!name);
-      setLastNameError(!lastName);
-      setUsernameError(!username);
-      setCodigoError(!Codigo);
-      setIsLoading(false);
-      shakeForm();
-      return;
-    }
-
-    // Validar que "Nombre" y "Apellidos" no contengan números
-    if (/\d/.test(name)) {
-      setNameError(true);
-      setIsLoading(false);
-      shakeForm();
-      return;
-    }
-    if (/\d/.test(lastName)) {
-      setLastNameError(true);
-      setIsLoading(false);
-      shakeForm();
-      return;
-    }
-
-    // Validar la longitud del código de estudiante
-    if (Codigo.length < MIN_CODE_LENGTH) {
-      setCodigoError(true);
+    // Verificar campos vacíos y validaciones
+    if (!validateForm()) {
       setIsLoading(false);
       shakeForm();
       return;
@@ -139,8 +183,8 @@ export const CompleteProfile = () => {
       }).start();
     } catch (error) {
       console.error("Error al completar el perfil:", error);
-    } finally {
       setIsLoading(false);
+      shakeForm();
     }
   };
 
@@ -176,10 +220,7 @@ export const CompleteProfile = () => {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.scrollViewContent}>
             <Animated.View 
-              style={[
-                styles.container, 
-                { transform: [{ translateX: shakeAnimation }] }
-              ]}>
+              style={[styles.container, { transform: [{ translateX: shakeAnimation }] }]}>
               <Text style={styles.title}>Completa tu Perfil</Text>
               <LottieView
                 source={require("../assets/animations/completeProfile.json")}
@@ -198,9 +239,7 @@ export const CompleteProfile = () => {
                     value={name}
                     onChangeText={(text) => {
                       setName(text);
-                      if (!text) {
-                        setNameError(true);
-                      } else if (/\d/.test(text)) {
+                      if (!text.trim() || !NAME_REGEX.test(text)) {
                         setNameError(true);
                       } else {
                         setNameError(false);
@@ -210,7 +249,7 @@ export const CompleteProfile = () => {
                 </View>
                 {nameError && (
                   <Text style={styles.errorText}>
-                    {!name ? "Campo requerido" : "No se permiten números"}
+                    {!name.trim() ? "Campo requerido" : "Solo se permiten letras y espacios"}
                   </Text>
                 )}
 
@@ -224,9 +263,7 @@ export const CompleteProfile = () => {
                     value={lastName}
                     onChangeText={(text) => {
                       setLastName(text);
-                      if (!text) {
-                        setLastNameError(true);
-                      } else if (/\d/.test(text)) {
+                      if (!text.trim() || !NAME_REGEX.test(text)) {
                         setLastNameError(true);
                       } else {
                         setLastNameError(false);
@@ -236,13 +273,12 @@ export const CompleteProfile = () => {
                 </View>
                 {lastNameError && (
                   <Text style={styles.errorText}>
-                    {!lastName ? "Campo requerido" : "No se permiten números"}
+                    {!lastName.trim() ? "Campo requerido" : "Solo se permiten letras y espacios"}
                   </Text>
                 )}
 
                 {/* Campo Nombre de Usuario */}
                 <View style={styles.inputContainer}>
-                  {/* Se cambia el icono de faEnvelope a faUser para mayor coherencia */}
                   <FontAwesomeIcon icon={faUser} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, usernameError && styles.errorInput]}
@@ -258,21 +294,20 @@ export const CompleteProfile = () => {
                 </View>
                 {usernameError && (
                   <Text style={styles.errorText}>
-                    { !username ? "Campo requerido" : "Este usuario ya ha sido registrado" }
+                    {!username ? "Campo requerido" : "Este usuario ya ha sido registrado"}
                   </Text>
                 )}
 
-                {/* Campo Código de Estudiante */}
+                {/* Campo Código de Estudiante (9 dígitos) */}
                 <View style={styles.inputContainer}>
                   <FontAwesomeIcon icon={faIdCard} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <TextInput
                     style={[styles.input, CodigoError && styles.errorInput]}
-                    placeholder="Código de estudiante"
+                    placeholder="Código de estudiante (9 dígitos)"
                     placeholderTextColor="#999"
                     value={Codigo}
-                    maxLength={10}
-                    minLength={MIN_CODE_LENGTH}
-                    keyboardType="numeric"
+                    maxLength={9}
+                    keyboardType="number-pad"
                     onChangeText={(text) => {
                       const numericText = text.replace(/[^0-9]/g, '');
                       setCodigo(numericText);
@@ -282,33 +317,20 @@ export const CompleteProfile = () => {
                 </View>
                 {CodigoError && (
                   <Text style={styles.errorText}>
-                    { !Codigo ? "Campo requerido" : "Este código ya ha sido registrado" }
+                    {!Codigo ? "Campo requerido" : "El código debe tener exactamente 9 dígitos"}
                   </Text>
                 )}
 
                 {/* Selector de Carrera */}
-                <TouchableOpacity
-                  style={styles.pickerContainer}
-                  onPress={toggleModal}>
-                  <FontAwesomeIcon
-                    icon={faGraduationCap}
-                    style={styles.inputIcon}
-                    size={isTablet ? 24 : 20}
-                  />
+                <TouchableOpacity style={styles.pickerContainer} onPress={toggleModal}>
+                  <FontAwesomeIcon icon={faGraduationCap} style={styles.inputIcon} size={isTablet ? 24 : 20} />
                   <Text style={styles.pickerText}>
                     {selectedCareer || "Seleccione una carrera"}
                   </Text>
-                  <FontAwesomeIcon
-                    icon={faChevronDown}
-                    style={styles.pickerIcon}
-                    size={isTablet ? 24 : 20}
-                  />
+                  <FontAwesomeIcon icon={faChevronDown} style={styles.pickerIcon} size={isTablet ? 24 : 20} />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleCompleteProfile}
-                  disabled={isLoading}>
+                <TouchableOpacity style={styles.button} onPress={handleCompleteProfile} disabled={isLoading}>
                   {isLoading ? (
                     <ActivityIndicator size={isTablet ? 32 : 24} color="#fff" />
                   ) : (
@@ -328,24 +350,15 @@ export const CompleteProfile = () => {
             style={styles.confetti}
           />
           <View style={styles.completedContent}>
-            <Text style={styles.profileCompleteText}>
-              ¡PERFIL COMPLETADO!
-            </Text>
+            <Text style={styles.profileCompleteText}>¡PERFIL COMPLETADO!</Text>
             <Text style={styles.welcomeText}>Bienvenido, @{username}</Text>
-            <Image
-              source={require("../../assets/images/cucei.png")}
-              style={styles.logo}
-            />
+            <Image source={require("../../assets/images/cucei.png")} style={styles.logo} />
           </View>
         </Animated.View>
       )}
 
       {/* Modal para seleccionar carrera */}
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleModal}>
+      <Modal visible={isModalVisible} animationType="slide" transparent={true} onRequestClose={toggleModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccione una carrera</Text>
@@ -355,10 +368,14 @@ export const CompleteProfile = () => {
                   key={index}
                   style={styles.careerOption}
                   onPress={() => {
-                    // Se guarda la carrera completa sin recortar la cadena
                     setSelectedCareer(option);
                     toggleModal();
                   }}>
+                  <FontAwesomeIcon
+                    icon={careerIconsOrder[index] || faGraduationCap}
+                    style={styles.careerIcon}
+                    size={isTablet ? 24 : 20}
+                  />
                   <Text style={styles.careerOptionText}>{option}</Text>
                 </TouchableOpacity>
               ))}
@@ -531,6 +548,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
     paddingVertical: isTablet ? height * 0.025 : height * 0.02,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  careerIcon: {
+    marginRight: isTablet ? width * 0.02 : width * 0.03,
+    color: "#0b34b0",
   },
   careerOptionText: {
     fontSize: isTablet ? width * 0.025 : width * 0.04,

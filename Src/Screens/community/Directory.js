@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect } from "react"
+"use client"
+
+import { useState, useCallback, useEffect } from "react"
 import {
   View,
   Text,
@@ -14,29 +16,61 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import { faBuilding, faMapMarkerAlt, faPhone, faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons"
 import { LinearGradient } from "expo-linear-gradient"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import staticJsonData from "../../../json/contact_info.json"
 import { ContactImage } from "../../../json/contact_images"
 
 const { width } = Dimensions.get("window")
 const isTablet = width >= 768
 
+const STORAGE_KEY = "directory_data"
+const FIRST_LOAD_KEY = "directory_first_load"
+
 export const Directory = () => {
-  // Estado para almacenar los datos del directorio
   const [jsonData, setJsonData] = useState([])
-  // Estado para controlar la actualización de la lista
   const [refreshing, setRefreshing] = useState(false)
-  // Estado para mostrar el indicador de carga
   const [loading, setLoading] = useState(true)
+  const [isFirstLoad, setIsFirstLoad] = useState(true)
 
   useEffect(() => {
-    // Simulación de carga de datos
-    setTimeout(() => {
-      setJsonData(staticJsonData)
-      setLoading(false)
-    }, 2000)
+    loadData()
   }, [])
 
-  // Función para obtener la imagen del contacto
+  const loadData = async () => {
+    try {
+      // Check if it's first load
+      const hasLoadedBefore = await AsyncStorage.getItem(FIRST_LOAD_KEY)
+
+      if (!hasLoadedBefore) {
+        // If it's first load, show spinner and store data
+        setTimeout(async () => {
+          setJsonData(staticJsonData)
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(staticJsonData))
+          await AsyncStorage.setItem(FIRST_LOAD_KEY, "true")
+          setLoading(false)
+          setIsFirstLoad(false)
+        }, 2000)
+      } else {
+        // If not first load, get data from storage
+        const storedData = await AsyncStorage.getItem(STORAGE_KEY)
+        if (storedData) {
+          setJsonData(JSON.parse(storedData))
+          setLoading(false)
+          setIsFirstLoad(false)
+        } else {
+          // Fallback if storage is empty
+          setJsonData(staticJsonData)
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(staticJsonData))
+          setLoading(false)
+        }
+      }
+    } catch (error) {
+      console.error("Error loading directory data:", error)
+      setJsonData(staticJsonData)
+      setLoading(false)
+    }
+  }
+
   const getImageSource = (imageName) => {
     if (ContactImage.hasOwnProperty(imageName)) {
       return ContactImage[imageName]
@@ -45,32 +79,28 @@ export const Directory = () => {
     }
   }
 
-  // Función para actualizar la lista (pull-to-refresh)
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    setLoading(true)
-    // Simulación de recarga de datos
-    setTimeout(() => {
+    // On refresh, update stored data without showing loading spinner
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(staticJsonData))
       setJsonData(staticJsonData)
-      setRefreshing(false)
-      setLoading(false)
-    }, 2000)
+    } catch (error) {
+      console.error("Error refreshing directory data:", error)
+    }
+    setRefreshing(false)
   }, [])
 
-  // Función para abrir el cliente de correo electrónico
   const openEmail = (email) => {
     Linking.openURL(`mailto:${email}`)
   }
 
-  // Función para abrir el marcador telefónico
   const openPhone = (phone) => {
-    // Extraer solo el número de teléfono principal
     const mainPhone = phone.split(",")[0].trim()
     Linking.openURL(`tel:${mainPhone}`)
   }
 
-  // Mostrar indicador de carga mientras se obtienen los datos
-  if (loading) {
+  if (loading && isFirstLoad) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size={isTablet ? 48 : 24} color="#0056b3" />
@@ -131,7 +161,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
   },
-  
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -233,3 +262,4 @@ const styles = StyleSheet.create({
 })
 
 export default Directory
+

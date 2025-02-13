@@ -13,7 +13,7 @@ export const animalIcons = [
   // { id: "11", uri: require("./Iconos_animales/oveja.png") },
   // { id: "12", uri: require("./Iconos_animales/perro.png") },
   { id: "13", uri: require("./Iconos_animales/tigre.png") },
-  { id: "14", uri: require("./Iconos_animales/tortuga.png") },
+  // { id: "14", uri: require("./Iconos_animales/tortuga.png") },
   { id: "15", uri: require("./Iconos_animales/vaca.png") },
   { id: "16", uri: require("./Iconos_animales/anaconda.png") },
   { id: "1", uri: require("./Iconos_animales/abeja.png") },
@@ -55,3 +55,11 @@ export const careerImages = {
   LQFB: require("./Mallas_Curriculares/malla_LQFB.png"),
   LQUI: require("./Mallas_Curriculares/malla_LQUI.png"),
 };
+
+// export const careerPdfs = {
+//   INCO: require("./Mallas_Curriculares/INCO.pdf"),
+//   INFO: require("./Mallas_Curriculares/INFO.pdf"),
+//   LOGT: require("./Mallas_Curriculares/LOGT.pdf"),
+//   // etc.
+// };
+

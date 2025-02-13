@@ -15,22 +15,17 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "yairhdz24",
-      "newArchEnabled": true,
       "infoPlist": {
         "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes."
       }
     },
     "android": {
-      "buildProperties": {
-        "gradlePlugin": "com.android.tools.build:gradle:8.0.0",
-        "kotlinVersion": "1.8.0"
-      },
+      "package": "com.CUCEIUbicate.CUCEIUbicate",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "newArchEnabled": true,
-      "package": "com.CUCEIUbicate.CUCEIUbicate",
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE",
@@ -41,16 +36,6 @@
     },
     "plugins": [
       "expo-secure-store",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "networkSecurityConfig": {
-              "usesCleartextTraffic": true
-            }
-          }
-        }
-      ],
       "expo-asset",
       "expo-video"
     ],
