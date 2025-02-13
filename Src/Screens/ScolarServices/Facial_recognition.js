@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,80 +10,95 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
-} from "react-native"
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faChevronRight, faUserGraduate, faExclamationTriangle, faCamera } from "@fortawesome/free-solid-svg-icons"
-import { LinearGradient } from "expo-linear-gradient"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faChevronRight,
+  faUserGraduate,
+  faExclamationTriangle,
+  faCamera,
+} from "@fortawesome/free-solid-svg-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window")
-const isTablet = width >= 768
+const { width } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 export const Facial_recognition = () => {
-  const [jsonData, setJsonData] = useState(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [jsonData, setJsonData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadJsonFromStorage()
-  }, [])
+    loadJsonFromStorage();
+  }, []);
 
   const loadJsonFromStorage = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("facialRecognitionData")
+      const storedData = await AsyncStorage.getItem("facialRecognitionData");
       if (storedData !== null) {
-        setJsonData(JSON.parse(storedData))
+        setJsonData(JSON.parse(storedData));
       } else {
-        const json = require("../../../json/face_access.json")
-        setJsonData(json)
-        await AsyncStorage.setItem("facialRecognitionData", JSON.stringify(json))
+        const json = require("../../../json/face_access.json");
+        setJsonData(json);
+        await AsyncStorage.setItem(
+          "facialRecognitionData",
+          JSON.stringify(json)
+        );
       }
     } catch (error) {
-      console.error("Error loading data from storage:", error)
-      const json = require("../../../json/face_access.json")
-      setJsonData(json)
+      console.error("Error loading data from storage:", error);
+      const json = require("../../../json/face_access.json");
+      setJsonData(json);
     }
-  }
+  };
 
   const loadJson = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const json = require("../../../json/face_access.json")
-      await AsyncStorage.setItem("facialRecognitionData", JSON.stringify(json))
-      setJsonData(json)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const json = require("../../../json/face_access.json");
+      await AsyncStorage.setItem("facialRecognitionData", JSON.stringify(json));
+      setJsonData(json);
     } catch (error) {
-      console.error("Error refreshing data:", error)
+      console.error("Error refreshing data:", error);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const RenderTextPart = ({ text }) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
     if (urlRegex.test(text)) {
       return (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => Linking.openURL(text)}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => Linking.openURL(text)}>
           <Text style={styles.linkText}>{text}</Text>
         </TouchableOpacity>
-      )
+      );
     }
-    return <Text style={styles.listItemText}>{text}</Text>
-  }
+    return <Text style={styles.listItemText}>{text}</Text>;
+  };
 
   const renderListItem = (text, index) => {
-    const parts = text.split(/(https?:\/\/[^\s]+)/g)
+    const parts = text.split(/(https?:\/\/[^\s]+)/g);
 
     return (
       <View key={index} style={styles.listItem}>
-        <FontAwesomeIcon icon={faChevronRight} size={isTablet ? 16 : 14} color="#0056b3" style={styles.listItemIcon} />
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          size={isTablet ? 16 : 14}
+          color="#0056b3"
+          style={styles.listItemIcon}
+        />
         <View style={styles.listItemTextContainer}>
           {parts.map((part, i) => (
             <RenderTextPart key={i} text={part} />
           ))}
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   if (!jsonData) {
     return (
@@ -93,7 +108,7 @@ export const Facial_recognition = () => {
           <Text style={styles.loadingText}>Cargando información...</Text>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
@@ -101,20 +116,30 @@ export const Facial_recognition = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
-      >
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }>
         <LinearGradient
           colors={["#0056b3", "#007bff"]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <FontAwesomeIcon icon={faCamera} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData["section-description"].name}</Text>
+          end={{ x: 1, y: 0 }}>
+          <View style={styles.headerContent}>
+            <FontAwesomeIcon
+              icon={faCamera}
+              size={isTablet ? 32 : 24}
+              color="#fff"
+            />
+            <Text style={styles.headerTitle}>
+              {jsonData["section-description"].name}
+            </Text>
+          </View>
         </LinearGradient>
 
         <View style={styles.card}>
-          <Text style={styles.description}>{jsonData["section-description"].description}</Text>
+          <Text style={styles.description}>
+            {jsonData["section-description"].description}
+          </Text>
         </View>
 
         <View style={styles.card}>
@@ -125,24 +150,31 @@ export const Facial_recognition = () => {
               color="#0056b3"
               style={styles.sectionIcon}
             />
-            <Text style={styles.sectionTitle}>{jsonData["section-description"].tittle}</Text>
+            <Text style={styles.sectionTitle}>
+              {jsonData["section-description"].tittle}
+            </Text>
           </View>
           <View style={styles.sectionContent}>
-            {Object.values(jsonData["section-description"]["listed-elements"]).map((item, index) =>
-              renderListItem(item, index),
-            )}
+            {Object.values(
+              jsonData["section-description"]["listed-elements"]
+            ).map((item, index) => renderListItem(item, index))}
           </View>
           <View style={styles.noteContainer}>
-            <FontAwesomeIcon icon={faExclamationTriangle} size={isTablet ? 18 : 16} color="#f39c12" />
+            <FontAwesomeIcon
+              icon={faExclamationTriangle}
+              size={isTablet ? 18 : 16}
+              color="#f39c12"
+            />
             <Text style={styles.noteText}>
-              Si tienes problemas, acude a la Coordinación de Seguridad y Protección Universitaria.
+              Si tienes problemas, acude a la Coordinación de Seguridad y
+              Protección Universitaria.
             </Text>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -166,17 +198,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -252,7 +288,6 @@ const styles = StyleSheet.create({
     marginLeft: isTablet ? 15 : 10,
     flex: 1,
   },
-})
+});
 
-export default Facial_recognition
-
+export default Facial_recognition;

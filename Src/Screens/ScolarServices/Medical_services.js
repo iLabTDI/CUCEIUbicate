@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,110 +10,133 @@ import {
   Linking,
   Dimensions,
   ActivityIndicator,
-} from "react-native"
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faHospital, faChevronRight, faUserMd, faStethoscope, faPhoneAlt } from "@fortawesome/free-solid-svg-icons"
-import { LinearGradient } from "expo-linear-gradient"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import staticJsonData from "../../../json/medical_services.json"
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faHospital,
+  faChevronRight,
+  faUserMd,
+  faStethoscope,
+  faPhoneAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import staticJsonData from "../../../json/medical_services.json";
 
-const { width } = Dimensions.get("window")
-const isTablet = width >= 768
+const { width } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 export const Medical_services = () => {
-  const [jsonData, setJsonData] = useState(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [jsonData, setJsonData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadJsonFromStorage()
-  }, [])
+    loadJsonFromStorage();
+  }, []);
 
   const loadJsonFromStorage = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("medicalServicesData")
+      const storedData = await AsyncStorage.getItem("medicalServicesData");
       if (storedData !== null) {
-        setJsonData(JSON.parse(storedData))
+        setJsonData(JSON.parse(storedData));
       } else {
-        setJsonData(staticJsonData)
-        await AsyncStorage.setItem("medicalServicesData", JSON.stringify(staticJsonData))
+        setJsonData(staticJsonData);
+        await AsyncStorage.setItem(
+          "medicalServicesData",
+          JSON.stringify(staticJsonData)
+        );
       }
     } catch (error) {
-      console.error("Error loading data from storage:", error)
-      setJsonData(staticJsonData)
+      console.error("Error loading data from storage:", error);
+      setJsonData(staticJsonData);
     }
-  }
+  };
 
   const loadJson = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      await AsyncStorage.setItem("medicalServicesData", JSON.stringify(staticJsonData))
-      setJsonData(staticJsonData)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await AsyncStorage.setItem(
+        "medicalServicesData",
+        JSON.stringify(staticJsonData)
+      );
+      setJsonData(staticJsonData);
     } catch (error) {
-      console.error("Error refreshing data:", error)
+      console.error("Error refreshing data:", error);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const RenderTextPart = ({ text }) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g
-    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
 
     if (urlRegex.test(text)) {
       return (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => Linking.openURL(text)}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => Linking.openURL(text)}>
           <Text style={styles.linkText}>{text}</Text>
         </TouchableOpacity>
-      )
+      );
     } else if (emailRegex.test(text)) {
       return (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => Linking.openURL(`mailto:${text}`)}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => Linking.openURL(`mailto:${text}`)}>
           <Text style={styles.linkText}>{text}</Text>
         </TouchableOpacity>
-      )
+      );
     }
-    return <Text style={styles.listItemText}>{text}</Text>
-  }
+    return <Text style={styles.listItemText}>{text}</Text>;
+  };
 
   const renderListItem = (text, index) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g
-    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
-    const parts = text.split(new RegExp(`(${urlRegex.source}|${emailRegex.source})`, "gi"))
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+    const parts = text.split(
+      new RegExp(`(${urlRegex.source}|${emailRegex.source})`, "gi")
+    );
 
     return (
       <View key={index} style={styles.listItem}>
-        <FontAwesomeIcon icon={faChevronRight} size={isTablet ? 16 : 14} color="#0056b3" style={styles.listItemIcon} />
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          size={isTablet ? 16 : 14}
+          color="#0056b3"
+          style={styles.listItemIcon}
+        />
         <View style={styles.listItemTextContainer}>
           {parts.map((part, i) => (
             <RenderTextPart key={i} text={part} />
           ))}
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   const renderContent = (content) => {
     if (Array.isArray(content)) {
-      return content.map((item, index) => renderListItem(item, index))
+      return content.map((item, index) => renderListItem(item, index));
     } else if (typeof content === "string") {
-      return renderListItem(content, 0)
+      return renderListItem(content, 0);
     }
-    return null
-  }
+    return null;
+  };
 
   const getSectionIcon = (sectionId) => {
     switch (sectionId) {
       case "1":
-        return faUserMd
+        return faUserMd;
       case "2":
-        return faStethoscope
+        return faStethoscope;
       case "3":
-        return faPhoneAlt
+        return faPhoneAlt;
       default:
-        return faHospital
+        return faHospital;
     }
-  }
+  };
 
   const renderSection = (sectionId, section) => (
     <View key={sectionId} style={styles.card}>
@@ -131,12 +154,14 @@ export const Medical_services = () => {
         {section["listed-elements"] &&
           Object.entries(section["listed-elements"]).map(([key, element]) =>
             Array.isArray(element)
-              ? element.map((subElement, subIndex) => renderListItem(subElement, `${key}-${subIndex}`))
-              : renderListItem(element, key),
+              ? element.map((subElement, subIndex) =>
+                  renderListItem(subElement, `${key}-${subIndex}`)
+                )
+              : renderListItem(element, key)
           )}
       </View>
     </View>
-  )
+  );
 
   if (!jsonData) {
     return (
@@ -146,7 +171,7 @@ export const Medical_services = () => {
           <Text style={styles.loadingText}>Cargando información...</Text>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
@@ -154,27 +179,37 @@ export const Medical_services = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
-      >
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }>
         <LinearGradient
           colors={["#0056b3", "#007bff"]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <FontAwesomeIcon icon={faHospital} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+          end={{ x: 1, y: 0 }}>
+          <View style={styles.headerContent}>
+            <FontAwesomeIcon
+              icon={faHospital}
+              size={isTablet ? 32 : 24}
+              color="#fff"
+            />
+            <Text style={styles.headerTitle}>
+              {jsonData.section_description.name}
+            </Text>
+          </View>
         </LinearGradient>
         <View style={styles.card}>
-          <Text style={styles.description}>{jsonData.section_description.description}</Text>
+          <Text style={styles.description}>
+            {jsonData.section_description.description}
+          </Text>
         </View>
-        {Object.entries(jsonData.section_description["sub-sections"]).map(([sectionId, section]) =>
-          renderSection(sectionId, section),
+        {Object.entries(jsonData.section_description["sub-sections"]).map(
+          ([sectionId, section]) => renderSection(sectionId, section)
         )}
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -198,17 +233,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -270,7 +309,6 @@ const styles = StyleSheet.create({
     color: "#0056b3",
     textDecorationLine: "underline",
   },
-})
+});
 
-export default Medical_services
-
+export default Medical_services;

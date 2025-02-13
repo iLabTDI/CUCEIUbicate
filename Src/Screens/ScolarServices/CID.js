@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,70 +8,82 @@ import {
   Dimensions,
   SafeAreaView,
   ActivityIndicator,
-} from "react-native"
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faBook, faChevronRight, faGraduationCap, faLanguage } from "@fortawesome/free-solid-svg-icons"
-import { LinearGradient } from "expo-linear-gradient"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faBook,
+  faChevronRight,
+  faGraduationCap,
+  faLanguage,
+} from "@fortawesome/free-solid-svg-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window")
-const isTablet = width >= 768
+const { width } = Dimensions.get("window");
+const isTablet = width >= 768;
 
 export const CID = () => {
-  const [jsonData, setJsonData] = useState(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [jsonData, setJsonData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadJsonFromStorage()
-  }, [])
+    loadJsonFromStorage();
+  }, []);
 
   const loadJsonFromStorage = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("cidData")
+      const storedData = await AsyncStorage.getItem("cidData");
       if (storedData !== null) {
-        setJsonData(JSON.parse(storedData))
+        setJsonData(JSON.parse(storedData));
       } else {
-        const json = require("../../../json/cid.json")
-        setJsonData(json)
-        await AsyncStorage.setItem("cidData", JSON.stringify(json))
+        const json = require("../../../json/cid.json");
+        setJsonData(json);
+        await AsyncStorage.setItem("cidData", JSON.stringify(json));
       }
     } catch (error) {
-      console.error("Error loading data from storage:", error)
-      const json = require("../../../json/cid.json")
-      setJsonData(json)
+      console.error("Error loading data from storage:", error);
+      const json = require("../../../json/cid.json");
+      setJsonData(json);
     }
-  }
+  };
 
   const loadJson = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const json = require("../../../json/cid.json")
-      await AsyncStorage.setItem("cidData", JSON.stringify(json))
-      setJsonData(json)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const json = require("../../../json/cid.json");
+      await AsyncStorage.setItem("cidData", JSON.stringify(json));
+      setJsonData(json);
     } catch (error) {
-      console.error("Error refreshing data:", error)
+      console.error("Error refreshing data:", error);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const renderListItem = (text, index) => (
     <View key={index} style={styles.listItem}>
-      <FontAwesomeIcon icon={faChevronRight} size={isTablet ? 16 : 14} color="#0056b3" style={styles.listItemIcon} />
+      <FontAwesomeIcon
+        icon={faChevronRight}
+        size={isTablet ? 16 : 14}
+        color="#0056b3"
+        style={styles.listItemIcon}
+      />
       <Text style={styles.listItemText}>{text}</Text>
     </View>
-  )
+  );
 
   if (!jsonData) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0056b3" />
-          <Text style={styles.loadingText}>Cargando información del CID...</Text>
+          <Text style={styles.loadingText}>
+            Cargando información del CID...
+          </Text>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
@@ -79,16 +91,22 @@ export const CID = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
-      >
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }>
         <LinearGradient
           colors={["#0056b3", "#007bff"]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <FontAwesomeIcon icon={faBook} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+          end={{ x: 1, y: 0 }}>
+          <View style={styles.headerContent}>
+            <FontAwesomeIcon
+              icon={faBook}
+              size={isTablet ? 32 : 24}
+              color="#fff"
+            />
+            <Text style={styles.headerTitle}>CID</Text>
+          </View>
         </LinearGradient>
 
         <View style={styles.card}>
@@ -99,26 +117,30 @@ export const CID = () => {
           ))}
         </View>
 
-        {Object.entries(jsonData.section_description["sub-sections"]).map(([sectionId, section]) => (
-          <View key={sectionId} style={styles.card}>
-            <View style={styles.sectionHeader}>
-              <FontAwesomeIcon
-                icon={section.title === "CAG" ? faLanguage : faGraduationCap}
-                size={isTablet ? 24 : 20}
-                color="#0056b3"
-                style={styles.sectionIcon}
-              />
-              <Text style={styles.sectionTitle}>{section.title}</Text>
+        {Object.entries(jsonData.section_description["sub-sections"]).map(
+          ([sectionId, section]) => (
+            <View key={sectionId} style={styles.card}>
+              <View style={styles.sectionHeader}>
+                <FontAwesomeIcon
+                  icon={section.title === "CAG" ? faLanguage : faGraduationCap}
+                  size={isTablet ? 24 : 20}
+                  color="#0056b3"
+                  style={styles.sectionIcon}
+                />
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+              </View>
+              <View style={styles.sectionContent}>
+                {Object.values(section["listed-elements"]).map((item, index) =>
+                  renderListItem(item, index)
+                )}
+              </View>
             </View>
-            <View style={styles.sectionContent}>
-              {Object.values(section["listed-elements"]).map((item, index) => renderListItem(item, index))}
-            </View>
-          </View>
-        ))}
+          )
+        )}
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -142,17 +164,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -206,7 +232,6 @@ const styles = StyleSheet.create({
     color: "#333",
     lineHeight: isTablet ? 28 : 24,
   },
-})
+});
 
-export default CID
-
+export default CID;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,8 @@ import {
   Linking,
   Dimensions,
   SafeAreaView,
-} from "react-native"
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
+} from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faGraduationCap,
   faClipboardList,
@@ -19,106 +19,115 @@ import {
   faCreditCard,
   faCalendarAlt,
   faChevronRight,
-} from "@fortawesome/free-solid-svg-icons"
-import * as FileSystem from "expo-file-system"
-import { LinearGradient } from "expo-linear-gradient"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+} from "@fortawesome/free-solid-svg-icons";
+import * as FileSystem from "expo-file-system";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get("window")
-const isTablet = width >= 768
+const { width } = Dimensions.get("window");
+const isTablet = width >= 768;
 
-const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`
+const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`;
 
 const isURL = (text) => {
-  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i
-  return urlPattern.test(text)
-}
+  const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+  return urlPattern.test(text);
+};
 
 const isEmail = (text) => {
-  const emailPattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
-  return emailPattern.test(text)
-}
+  const emailPattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return emailPattern.test(text);
+};
 
 const sectionIcons = {
   "Justificación de faltas": faClipboardList,
   "Solicitud de documentos": faFileAlt,
   "Orden de pago": faCreditCard,
   Agenda: faCalendarAlt,
-}
+};
 
 export const School_services = () => {
-  const [jsonData, setJsonData] = useState(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [jsonData, setJsonData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadJsonFromStorage()
-  }, [])
+    loadJsonFromStorage();
+  }, []);
 
   const loadJsonFromStorage = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("scholarServicesData")
+      const storedData = await AsyncStorage.getItem("scholarServicesData");
       if (storedData !== null) {
-        setJsonData(JSON.parse(storedData))
+        setJsonData(JSON.parse(storedData));
       } else {
-        const json = require("../../../json/scholar_services.json")
-        setJsonData(json)
-        await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json))
+        const json = require("../../../json/scholar_services.json");
+        setJsonData(json);
+        await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json));
       }
     } catch (error) {
-      console.error("Error loading data from storage:", error)
-      const json = require("../../../json/scholar_services.json")
-      setJsonData(json)
+      console.error("Error loading data from storage:", error);
+      const json = require("../../../json/scholar_services.json");
+      setJsonData(json);
     }
-  }
+  };
 
   const loadJson = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const json = require("../../../json/scholar_services.json")
-      await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json))
-      setJsonData(json)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const json = require("../../../json/scholar_services.json");
+      await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json));
+      setJsonData(json);
     } catch (error) {
-      console.error("Error refreshing data:", error)
+      console.error("Error refreshing data:", error);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const RenderTextPart = ({ text }) => {
     if (isURL(text) || isEmail(text)) {
       return (
-        <TouchableOpacity activeOpacity={0.7} onPress={() => Linking.openURL(isEmail(text) ? `mailto:${text}` : text)}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() =>
+            Linking.openURL(isEmail(text) ? `mailto:${text}` : text)
+          }>
           <Text style={styles.linkText}>{text}</Text>
         </TouchableOpacity>
-      )
+      );
     }
-    return <Text style={styles.listItemText}>{text}</Text>
-  }
+    return <Text style={styles.listItemText}>{text}</Text>;
+  };
 
   const renderListItem = (text, index) => {
-    const parts = text.split(/(\s+)/)
+    const parts = text.split(/(\s+)/);
 
     return (
       <View key={index} style={styles.listItem}>
-        <FontAwesomeIcon icon={faChevronRight} size={isTablet ? 16 : 14} color="#0056b3" style={styles.listItemIcon} />
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          size={isTablet ? 16 : 14}
+          color="#0056b3"
+          style={styles.listItemIcon}
+        />
         <View style={styles.listItemTextContainer}>
           {parts.map((part, i) => (
             <RenderTextPart key={i} text={part} />
           ))}
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   const renderContent = (content) => {
     if (Array.isArray(content)) {
-      return content.map((item, index) => renderListItem(item, index))
+      return content.map((item, index) => renderListItem(item, index));
     } else if (typeof content === "string") {
-      return renderListItem(content, 0)
+      return renderListItem(content, 0);
     }
-    return null
-  }
+    return null;
+  };
 
   const renderSection = (sectionId, section) => (
     <View key={sectionId} style={styles.card}>
@@ -136,22 +145,26 @@ export const School_services = () => {
         {section["listed-elements"] &&
           Object.entries(section["listed-elements"]).map(([key, element]) =>
             Array.isArray(element)
-              ? element.map((subElement, subIndex) => renderListItem(subElement, `${key}-${subIndex}`))
-              : renderListItem(element, key),
+              ? element.map((subElement, subIndex) =>
+                  renderListItem(subElement, `${key}-${subIndex}`)
+                )
+              : renderListItem(element, key)
           )}
       </View>
     </View>
-  )
+  );
 
   if (!jsonData) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0056b3" />
-          <Text style={styles.loadingText}>Cargando servicios escolares...</Text>
+          <Text style={styles.loadingText}>
+            Cargando servicios escolares...
+          </Text>
         </View>
       </SafeAreaView>
-    )
+    );
   }
 
   return (
@@ -159,24 +172,32 @@ export const School_services = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
-      >
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }>
         <LinearGradient
           colors={["#0056b3", "#007bff"]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <FontAwesomeIcon icon={faGraduationCap} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+          end={{ x: 1, y: 0 }}>
+          <View style={styles.headerContent}>
+            <FontAwesomeIcon
+              icon={faGraduationCap}
+              size={isTablet ? 32 : 24}
+              color="#fff"
+            />
+            <Text style={styles.headerTitle}>
+              {jsonData.section_description.name}
+            </Text>
+          </View>
         </LinearGradient>
-        {Object.entries(jsonData.section_description["sub-sections"]).map(([sectionId, section]) =>
-          renderSection(sectionId, section),
+        {Object.entries(jsonData.section_description["sub-sections"]).map(
+          ([sectionId, section]) => renderSection(sectionId, section)
         )}
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -200,17 +221,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
     color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#fff",
@@ -266,7 +291,6 @@ const styles = StyleSheet.create({
     color: "#0056b3",
     textDecorationLine: "underline",
   },
-})
+});
 
-export default School_services
-
+export default School_services;
