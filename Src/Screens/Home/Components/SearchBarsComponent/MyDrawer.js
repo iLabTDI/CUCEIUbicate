@@ -29,15 +29,12 @@ import {
   faFolder,
   faHandsHelping,
   faRobot,
-  faArchive,
-  faFileDownload,
-  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 // Import all the screen components
-import { HomePage2 } from "../../HomePage2";
+import { HomePage } from "../../HomePage";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
 import { CUCEI_radio } from "../../../Education/CUCEI_radio";
@@ -152,7 +149,7 @@ export const MyDrawer = () => {
       {/* Define all the drawer screens */}
       <Drawer.Screen
         name="Mapa"
-        component={HomePage2}
+        component={HomePage}
         initialParams={{ user }}
         options={{
           drawerLabel: "Inicio",
