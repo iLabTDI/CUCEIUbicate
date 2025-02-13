@@ -87,8 +87,10 @@ export const CID = () => {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
         >
-          <FontAwesomeIcon icon={faBook} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+          <View style={styles.centrar}>
+            <FontAwesomeIcon icon={faBook} size={isTablet ? 32 : 24} color="#fff" />
+            <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
+          </View>
         </LinearGradient>
 
         <View style={styles.card}>
@@ -141,9 +143,13 @@ const styles = StyleSheet.create({
     color: "#0056b3",
     marginTop: 10,
   },
+  centrar: {
+    textAlign: "center",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    // textAlign: "center",
     padding: isTablet ? 30 : 20,
     borderBottomLeftRadius: isTablet ? 30 : 20,
     borderBottomRightRadius: isTablet ? 30 : 20,
