@@ -9,11 +9,16 @@ import {
   Animated,
   Alert,
 } from "react-native";
-import { Video } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
+import { Video } from "expo-av";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTimes, faVideoSlash, faExclamationTriangle, faDownload } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTimes,
+  faVideoSlash,
+  faExclamationTriangle,
+  faDownload,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -24,8 +29,20 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const [progress, setProgress] = useState(0);
   const [cachedUri, setCachedUri] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [mediaLibraryPermission, setMediaLibraryPermission] = useState(null);
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
+
+  // Solicitar permiso para acceder a MediaLibrary al montar el componente
+  useEffect(() => {
+    const requestPermission = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      setMediaLibraryPermission(status);
+      console.log("Permiso MediaLibrary:", status);
+    };
+    requestPermission();
+  }, []);
 
   useEffect(() => {
     if (isVisible) {
@@ -48,6 +65,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
       ]).start();
 
       if (videoUri) {
+        console.log("Iniciando descarga del video desde:", videoUri);
         cacheVideo(videoUri);
       } else {
         setIsLoading(false);
@@ -74,11 +92,12 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
     setProgress(0);
 
     const fileUri = `${FileSystem.cacheDirectory}video_${routeId}.mp4`;
+    console.log("Ruta de cache:", fileUri);
     
     try {
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      
       if (fileInfo.exists) {
+        console.log("Video ya existe en cache.");
         setCachedUri(fileUri);
         setIsLoading(false);
         setProgress(100);
@@ -92,8 +111,8 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
             setProgress(progress);
           }
         );
-
         const { uri: downloadedUri } = await downloadResumable.downloadAsync();
+        console.log("Video descargado en:", downloadedUri);
         setCachedUri(downloadedUri);
         setIsLoading(false);
         setProgress(100);
@@ -120,14 +139,8 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
       "Descargar Video",
       "¿Quieres descargar este video?",
       [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Descargar",
-          onPress: () => handleDownload()
-        }
+        { text: "Cancelar", style: "cancel" },
+        { text: "Descargar", onPress: () => handleDownload() },
       ]
     );
   };
@@ -136,14 +149,14 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
     if (cachedUri) {
       try {
         setIsDownloading(true);
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        if (status === "granted") {
-          const asset = await MediaLibrary.createAssetAsync(cachedUri);
-          await MediaLibrary.createAlbumAsync("MisVideos", asset, false);
-          Alert.alert("Éxito", "El video se ha descargado correctamente.");
-        } else {
-          Alert.alert("Error", "No se otorgaron permisos para guardar el video.");
+        if (mediaLibraryPermission !== "granted") {
+          Alert.alert("Permiso denegado", "No se han otorgado permisos para guardar el video.");
+          setIsDownloading(false);
+          return;
         }
+        const asset = await MediaLibrary.createAssetAsync(cachedUri);
+        await MediaLibrary.createAlbumAsync("MisVideos", asset, false);
+        Alert.alert("Éxito", "El video se ha descargado correctamente.");
       } catch (error) {
         console.error("Error al descargar el video:", error);
         Alert.alert("Error", "No se pudo descargar el video.");
@@ -213,6 +226,11 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
                     </>
                   )}
                 </TouchableOpacity>
+                {mediaLibraryPermission !== "granted" && (
+                  <Text style={styles.permissionText}>
+                    Permiso para guardar video no otorgado.
+                  </Text>
+                )}
               </View>
             )}
           </>
@@ -220,7 +238,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
           <View style={styles.noVideoContainer}>
             <FontAwesomeIcon icon={faExclamationTriangle} size={isTablet ? 70 : 50} color="#FFFF00" />
             <Text style={styles.noVideoText}>
-              Video no disponible para esta ruta
+              Video no disponible para esta ruta.
             </Text>
             <Text style={styles.noVideoSubText}>
               Estamos trabajando para agregar más videos. ¡Vuelve a consultar en futuras actualizaciones!
@@ -280,16 +298,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   progressBarContainer: {
-    width: isTablet ? '70%' : '80%',
+    width: isTablet ? "70%" : "80%",
     height: isTablet ? 8 : 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: isTablet ? 4 : 3,
     marginTop: isTablet ? 30 : 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBar: {
-    height: '100%',
-    backgroundColor: '#FFFFFF',
+    height: "100%",
+    backgroundColor: "#FFFFFF",
   },
   progressText: {
     color: "#FFFFFF",
@@ -314,7 +332,7 @@ const styles = StyleSheet.create({
     marginTop: isTablet ? 30 : 20,
     paddingVertical: isTablet ? 15 : 10,
     paddingHorizontal: isTablet ? 30 : 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: isTablet ? 30 : 20,
   },
   retryButtonText: {
@@ -344,21 +362,27 @@ const styles = StyleSheet.create({
     fontSize: isTablet ? 20 : 16,
   },
   downloadButton: {
-    position: 'absolute',
+    position: "absolute",
     bottom: isTablet ? 30 : 20,
     right: isTablet ? 30 : 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingVertical: isTablet ? 12 : 8,
     paddingHorizontal: isTablet ? 20 : 15,
     borderRadius: isTablet ? 25 : 20,
   },
   downloadButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     marginLeft: 10,
+    fontSize: isTablet ? 24 : 18,
+    fontWeight: "bold",
+  },
+  permissionText: {
+    color: "#FFFFFF",
     fontSize: isTablet ? 18 : 14,
-    fontWeight: 'bold',
+    marginTop: 10,
+    textAlign: "center",
   },
 });
 
