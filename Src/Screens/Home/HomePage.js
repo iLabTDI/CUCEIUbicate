@@ -1,4 +1,3 @@
-// HomePage2.js
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -9,8 +8,8 @@ import {
   Text,
   Animated,
   Alert,
-  PermissionsAndroid, // Se importa para solicitar permisos en Android
-  Platform, // Se utiliza para identificar la plataforma (Android o iOS)
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -32,14 +31,14 @@ import { getSession } from "../../auth/SessionManager";
 import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
-// Componente para renderizar puntos y rutas en el mapa
-// import MapWithPointsAndRoutes from "./Components/MapComponent/MapPoints";
 import MapSVG from "./Components/MapComponent/MapSVG";
+// Para iOS, usamos expo-media-library
+import * as MediaLibrary from "expo-media-library";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
-export const HomePage2 = () => {
+export const HomePage = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const bottomSheetRef = useRef(null);
@@ -69,12 +68,13 @@ export const HomePage2 = () => {
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
   /**
-   * Función para solicitar permisos de almacenamiento en Android.
-   * Se solicita tanto READ como WRITE, y se muestra un mensaje en caso de denegación.
+   * Función para solicitar permisos de almacenamiento.
+   * En Android se solicitan READ y WRITE del almacenamiento externo,
+   * y en iOS se solicita el permiso de acceso a la biblioteca mediante expo-media-library.
    */
   const requestStoragePermissions = async () => {
-    if (Platform.OS === "android") {
-      try {
+    try {
+      if (Platform.OS === "android") {
         const granted = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -85,28 +85,34 @@ export const HomePage2 = () => {
           granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
             PermissionsAndroid.RESULTS.GRANTED
         ) {
-          console.log("Permisos de almacenamiento concedidos.");
-          // Aquí podrías agregar lógica adicional si es necesario
+          console.log("Permisos de almacenamiento concedidos en Android.");
         } else {
-          console.log("Permisos de almacenamiento denegados.");
+          console.log("Permisos de almacenamiento denegados en Android.");
           Alert.alert(
             "Permisos denegados",
             "No se han concedido los permisos de almacenamiento. Algunas funciones pueden no funcionar correctamente."
           );
         }
-      } catch (error) {
-        console.warn("Error al solicitar permisos:", error);
+      } else {
+        // En iOS, usamos expo-media-library para solicitar acceso a la biblioteca de fotos.
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== "granted") {
+          console.log("Permiso de acceso a la biblioteca denegado en iOS.");
+          Alert.alert(
+            "Permiso denegado",
+            "No se ha concedido el permiso para acceder a la biblioteca de fotos. Algunas funciones pueden no funcionar correctamente."
+          );
+        } else {
+          console.log("Permiso de acceso a la biblioteca concedido en iOS.");
+        }
       }
-    } else {
-      // En iOS no se solicitan estos permisos de esta manera
-      console.log(
-        "No se requiere solicitud de permisos en iOS para almacenamiento local."
-      );
+    } catch (error) {
+      console.warn("Error al solicitar permisos de almacenamiento:", error);
     }
   };
 
   /**
-   * useEffect para verificar la sesión del usuario y cargar datos cuando la pantalla se encuentra en foco.
+   * useEffect para verificar la sesión del usuario y cargar datos cuando la pantalla está en foco.
    */
   useEffect(() => {
     if (isFocused) {
@@ -154,7 +160,7 @@ export const HomePage2 = () => {
   }, [isLoading, isFirstLaunch]);
 
   /**
-   * Nuevo useEffect para solicitar los permisos de almacenamiento una vez que la animación de carga ha finalizado.
+   * useEffect para solicitar los permisos de almacenamiento una vez finalizada la animación de carga.
    */
   useEffect(() => {
     if (!isLoading) {
@@ -207,8 +213,6 @@ export const HomePage2 = () => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // Una vez terminada la animación se establece que la carga ha finalizado,
-      // lo que activará también la solicitud de permisos en el useEffect correspondiente.
       setIsLoading(false);
     });
   };
@@ -259,7 +263,7 @@ export const HomePage2 = () => {
   };
 
   /**
-   * Función de búsqueda que recibe un objeto de ruta (del JSON) y activa la ruta,
+   * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
    * estableciendo los puntos, identificador de la ruta y video asociado.
    */
   const handleSearch = async (routeObject) => {
@@ -299,13 +303,14 @@ export const HomePage2 = () => {
       {/* Pantalla de carga animada */}
       <Animated.View
         style={[styles.loadingContainer, { opacity: loadingOpacity }]}
-        pointerEvents={isLoading ? "auto" : "none"}>
+        pointerEvents={isLoading ? "auto" : "none"}
+      >
         <LottieView
           source={require("../../assets/animations/Map_loading.json")}
           autoPlay
           loop={false}
           style={styles.lottieAnimation}
-          onAnimationFinish={handleImageLoad} // Se ejecuta cuando finaliza la animación
+          onAnimationFinish={handleImageLoad}
         />
         <Text style={styles.loadingText}>Cargando mapa...</Text>
       </Animated.View>
@@ -315,7 +320,8 @@ export const HomePage2 = () => {
         {/* Botón de menú */}
         <TouchableOpacity
           style={styles.menu_icon}
-          onPress={() => navigation.openDrawer()}>
+          onPress={() => navigation.openDrawer()}
+        >
           <FontAwesomeIcon
             icon={faBars}
             size={isTablet ? width * 0.04 : width * 0.06}
@@ -328,7 +334,8 @@ export const HomePage2 = () => {
             styles.profile_icon,
             selectedIcon && styles.profile_icon_selected,
           ]}
-          onPress={() => navigation.navigate("Perfil")}>
+          onPress={() => navigation.navigate("Perfil")}
+        >
           {selectedIcon ? (
             <Image source={selectedIcon} style={styles.profileImage} />
           ) : (
@@ -372,15 +379,14 @@ export const HomePage2 = () => {
             minScale={0.5}
             maxScale={2}
             enableCenterFocus={false}
-            useNativeDriver={true}>
-            {/* Contenedor con dimensiones fijas y posición relativa */}
+            useNativeDriver={true}
+          >
             <View style={styles.zoomContainer}>
               <Image
                 source={currentMapImage}
                 style={styles.mapImage}
                 resizeMode="stretch"
               />
-              {/* Renderizado del mapa con los puntos y rutas */}
               <MapSVG
                 isRouteActive={isRouteActive}
                 activeRoutePoints={activeRoutePoints}
@@ -407,9 +413,7 @@ export const HomePage2 = () => {
 
         {/* Botón para ver el video asociado a la ruta activa */}
         {isRouteActive && (
-          <TouchableOpacity
-            style={styles.videoButton}
-            onPress={toggleVideoModal}>
+          <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
             <FontAwesomeIcon
               icon={faPlay}
               size={isTablet ? 28 : 24}
@@ -555,4 +559,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage2;
+export default HomePage;
