@@ -7,11 +7,13 @@ import {
   ActivityIndicator,
   Dimensions,
   Animated,
+  Alert,
 } from "react-native";
 import { Video } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTimes, faVideoSlash, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faVideoSlash, faExclamationTriangle, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -21,6 +23,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const [error, setError] = useState(false);
   const [progress, setProgress] = useState(0);
   const [cachedUri, setCachedUri] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
@@ -112,6 +115,44 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
     setError(false);
   };
 
+  const handleDownloadRequest = () => {
+    Alert.alert(
+      "Descargar Video",
+      "¿Quieres descargar este video?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Descargar",
+          onPress: () => handleDownload()
+        }
+      ]
+    );
+  };
+
+  const handleDownload = async () => {
+    if (cachedUri) {
+      try {
+        setIsDownloading(true);
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status === "granted") {
+          const asset = await MediaLibrary.createAssetAsync(cachedUri);
+          await MediaLibrary.createAlbumAsync("MisVideos", asset, false);
+          Alert.alert("Éxito", "El video se ha descargado correctamente.");
+        } else {
+          Alert.alert("Error", "No se otorgaron permisos para guardar el video.");
+        }
+      } catch (error) {
+        console.error("Error al descargar el video:", error);
+        Alert.alert("Error", "No se pudo descargar el video.");
+      } finally {
+        setIsDownloading(false);
+      }
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -148,15 +189,31 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
             )}
 
             {!error && cachedUri && (
-              <Video
-                source={{ uri: cachedUri }}
-                style={styles.video}
-                useNativeControls
-                resizeMode="contain"
-                onError={handleVideoError}
-                onLoad={handleVideoLoad}
-                shouldPlay
-              />
+              <View style={styles.videoContainer}>
+                <Video
+                  source={{ uri: cachedUri }}
+                  style={styles.video}
+                  useNativeControls
+                  resizeMode="contain"
+                  onError={handleVideoError}
+                  onLoad={handleVideoLoad}
+                  shouldPlay
+                />
+                <TouchableOpacity 
+                  style={styles.downloadButton} 
+                  onPress={handleDownloadRequest}
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faDownload} size={isTablet ? 24 : 18} color="#FFFFFF" />
+                      <Text style={styles.downloadButtonText}>Descargar video</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
             )}
           </>
         ) : (
@@ -202,6 +259,9 @@ const styles = StyleSheet.create({
     padding: isTablet ? 15 : 10,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: isTablet ? 30 : 20,
+  },
+  videoContainer: {
+    flex: 1,
   },
   video: {
     width: "100%",
@@ -282,6 +342,23 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     opacity: 0.7,
     fontSize: isTablet ? 20 : 16,
+  },
+  downloadButton: {
+    position: 'absolute',
+    bottom: isTablet ? 30 : 20,
+    right: isTablet ? 30 : 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingVertical: isTablet ? 12 : 8,
+    paddingHorizontal: isTablet ? 20 : 15,
+    borderRadius: isTablet ? 25 : 20,
+  },
+  downloadButtonText: {
+    color: '#FFFFFF',
+    marginLeft: 10,
+    fontSize: isTablet ? 18 : 14,
+    fontWeight: 'bold',
   },
 });
 

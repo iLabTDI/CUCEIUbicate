@@ -3,6 +3,8 @@ export const routeVideos = {
   "Modulo X - Modulo Z": require("./route_videos/N-UCT1.mp4"),
   "Modulo X - Modulo V":
     "https://drive.google.com/uc?id=1-rdjSOCO1WniPoEWqkTkwNKa-FWkRBcr&export=download",
+  "Modulo X - Bibloteca":
+    "https://drive.google.com/uc?id=1-rdjSOCO1WniPoEWqkTkwNKa-FWkRBcr&export=download",
   "Biblioteca - Modulo V":
     "https://drive.google.com/uc?id=12c0GrLVgw84gjcqA-fYZCpFiynvd24GP&export=download",
   "Modulo O - Modulo G":
