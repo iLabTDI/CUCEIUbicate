@@ -605,4 +605,103 @@ export const bottomSheetContents = {
     description:
       "El edificio del Titanic es un edificio que cuenta con maquinaria industrial y un estacionamiento en la parte inferior del edificio.",
   },
+  Cafebreria: {
+    name: "Cafebreria",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Cafebreria/Cafebreria.png"),
+    ],
+    description:
+      "La Cafebreria es un lugar donde los estudiantes pueden comprar alimentos y bebidas ademas de leer libros",
+  },
+  "Modulo L2": {
+    name: "Modulo L2",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Modulo_L/L2.png"),
+    ],
+    description:
+      "El Módulo L2 es un edificio que se encuentra detras del audiotrio Matute remus, en el cual se imparten conferencias y eventos.",
+  },
+  "Auditorio Matute Remus": {
+    name: "Auditorio Matute Remus",
+    classrooms: "",
+    "relevant-places": ["Se encunetra una estatua del ING Jorge Matute Remus al igual que ina estatua del logo de Cucei"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Matute/Audirotio_Matute.png"),
+    ],
+    description:
+      "El Auditorio Matute Remus es un auditorio en el cual se imparten conferencias y eventos.",
+  },
+  "Matute": {
+    name: "Matute",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Matute/Audirotio_Matute.png"),
+    ],
+    description:
+      "Bancas que conectan el auditorio Matute Remus con el modulo L2. Regularmente se utilizan para eventos y conferencias.",
+  },
+  "Modulo Q2": {
+    name: "Modulo Q2",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Modulo_Q/Q2.png"),
+    ],
+    description:
+      "El Módulo Q2 es un edificio que se utiliza para .",
+  },
+  "Comida15": {
+    name: "Comida",
+    classrooms: "",
+    "relevant-places": ["Hay varios puestos de comida ademas de un Cafe de Flor de Cordoba"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Comida/Comida-Titanic.png"),
+    ],
+    description:
+      "En el area de comida se encuentran varios puestos de comida y un cafe de Flor de Cordoba.",
+  },
+  "Comida14": {
+    name: "Comida",
+    classrooms: "",
+    "relevant-places": ["Hay varios puestos de comida ademas de un Cafe de Flor de Cordoba"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Comida/Comida-Titanic.png"),
+    ],
+    description:
+      "En el area de comida se encuentran varios puestos de comida y un cafe de Flor de Cordoba.",
+  },
+  "La Flor de Córdoba": {
+    name: "La Flor de Córdoba",
+    classrooms: "",
+    "relevant-places": ["hay lugares sy puestos de comida a demas de bancas con sombrilla para poder comer"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Comida/Flor_de_Cordoba.png"),
+    ],
+    description:
+      "La Flor de Córdoba es un cafe que se encuentra en el area de comida del campus.",
+  },
+  "Santander": {
+    name: "Santander",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Modulo_N/Santander.png"),
+    ],
+    description:
+      "Santander es un banco que se encuentra debajo del Modulo N en el cual puedes retirar dinero tramitar tarjetas y demas.",
+  },
 };

@@ -14,15 +14,12 @@ const MapSVG = ({
   setMarkedObject,
 }) => {
   // Convierte las coordenadas de la ruta a la cadena "x1,y1 x2,y2 ..."
-  const pointsString = activeRoutePoints
-    .map(([x, y]) => `${x},${y}`)
-    .join(" ");
+  const pointsString = activeRoutePoints.map(([x, y]) => `${x},${y}`).join(" ");
 
-    const handlePointPress = (point) => {
-      onPointPress(point.id); // Llama a la función onPointPress con el ID del punto presionado
-      // setMarkedObject(point); // Marca el punto como seleccionado
-    };
-  
+  const handlePointPress = (point) => {
+    onPointPress(point.id); // Llama a la función onPointPress con el ID del punto presionado
+    // setMarkedObject(point); // Marca el punto como seleccionado
+  };
 
   // Renderiza los puntos clicables (por ejemplo, edificios u otros elementos)
   const renderPoints = () => {
@@ -61,8 +58,7 @@ const MapSVG = ({
         <Text style={styles.markerText}>{markedObject.name}</Text>
         <TouchableOpacity
           onPress={() => setMarkedObject(null)}
-          style={styles.removeMarkerButton}
-        >
+          style={styles.removeMarkerButton}>
           <FontAwesomeIcon icon={faTimes} size={14} color="#666666" />
         </TouchableOpacity>
       </View>
@@ -74,6 +70,16 @@ const MapSVG = ({
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     return (
       <Svg style={StyleSheet.absoluteFill}>
+        {/* Línea de borde (negro) */}
+        <Polyline
+          points={pointsString}
+          fill="none"
+          stroke="black"
+          strokeWidth={8}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Línea interior (amarilla) */}
         <Polyline
           points={pointsString}
           fill="none"
@@ -93,10 +99,18 @@ const MapSVG = ({
     const destination = activeRoutePoints[activeRoutePoints.length - 1];
     return (
       <>
-        <View style={[styles.routePin, { left: origin[0] - 12, top: origin[1] - 24 }]}>
+        <View
+          style={[
+            styles.routePin,
+            { left: origin[0] - 12, top: origin[1] - 24 },
+          ]}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#0000FF" />
         </View>
-        <View style={[styles.routePin, { left: destination[0] - 12, top: destination[1] - 24 }]}>
+        <View
+          style={[
+            styles.routePin,
+            { left: destination[0] - 12, top: destination[1] - 24 },
+          ]}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#00FF00" />
         </View>
       </>
