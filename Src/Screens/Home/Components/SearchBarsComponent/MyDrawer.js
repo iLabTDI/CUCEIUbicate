@@ -7,6 +7,8 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  Platform,
+  Alert,
 } from "react-native";
 import {
   createDrawerNavigator,
@@ -29,11 +31,13 @@ import {
   faFolder,
   faHandsHelping,
   faRobot,
+  faSignOutAlt,
+  faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
-// Import all the screen components
 import { HomePage } from "../../HomePage";
 import { Directory } from "../../../community/Directory";
 import { Articles } from "../../../community/Articles";
@@ -45,69 +49,110 @@ import { School_services } from "../../../ScolarServices/School_services";
 import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
-// import { Chatbot } from "../../../ChatBot/Chatbot";
-// import { FileManagement } from "../../Routes/FileManagement";
-// import { NewChatbot } from "../../../new_chatbot/New_Chatbot";
 import { Chatbot } from "../../../ChatBot/Chatbot";
 
+// Crea el Drawer
 const Drawer = createDrawerNavigator();
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
-// Custom drawer content component
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    navigation.navigate("Inicio");
-    console.log("Cerrando sesión...");
+    Alert.alert(
+      "Cerrar Sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Sí, cerrar sesión", onPress: confirmLogout },
+      ]
+    );
+  };
+
+  const confirmLogout = () => {
+    // Aquí pones tu lógica de limpiar sesión
+    // Por ejemplo: clearSession();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
+  };
+
+  const handleHelp = () => {
+    Alert.alert(
+      "Ayuda",
+      "Para asistencia, contacta al soporte o visita el centro de ayuda.",
+      [{ text: "Entendido" }]
+    );
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={styles.drawerContent}>
-        <LinearGradient
-          colors={["#4c669f", "#3b5998", "#192f6a"]}
-          style={styles.drawerHeader}>
-          <Image
-            source={require("../../../../../assets/images/Logo_Cucei.png")}
-            style={styles.logo}
-          />
-          <Text style={styles.drawerHeaderText}>CUCEI UBICATE</Text>
-        </LinearGradient>
-        <View style={styles.drawerItemsContainer}>
-          <DrawerItemList {...props} />
-          {/* Uncomment the following DrawerItem to add a logout option
-          <DrawerItem
-            label="Cerrar Sesión"
-            onPress={handleLogout}
-            icon={({ color, size }) => (
-              <FontAwesomeIcon icon={faSignOutAlt} size={size} color={color} />
-            )}
-            labelStyle={styles.drawerItemLabel}
-          />
-          */}
-        </View>
-      </DrawerContentScrollView>
-    </ScrollView>
+    <View style={styles.drawerContainer}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
+          <Animated.View entering={FadeInDown.duration(800)} style={styles.drawerHeaderContainer}>
+            <LinearGradient
+              colors={["#0b34b0", "#267bee"]}
+              style={styles.drawerHeader}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require("../../../../../assets/images/Logo_Cucei.png")}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </View>
+              <Text style={styles.drawerHeaderText}>CUCEI UBICATE</Text>
+              <View style={styles.versionContainer}>
+                <Text style={styles.versionText}>v1.0.0</Text>
+              </View>
+            </LinearGradient>
+          </Animated.View>
+
+          <Animated.View entering={FadeInUp.duration(800)} style={styles.drawerItemsContainer}>
+            <DrawerItemList {...props} />
+          </Animated.View>
+        </DrawerContentScrollView>
+      </ScrollView>
+
+      <Animated.View entering={FadeInUp.duration(800).delay(400)} style={styles.bottomContainer}>
+        <DrawerItem
+          label="Ayuda"
+          onPress={handleHelp}
+          icon={({ color, size }) => (
+            // Ícono más pequeño (size=18), en color azul
+            <FontAwesomeIcon icon={faQuestionCircle} size={18} color="#0b34b0" />
+          )}
+          labelStyle={styles.bottomDrawerLabel}
+          style={styles.bottomDrawerItem}
+        />
+        <View style={styles.separator} />
+        <DrawerItem
+          label="Cerrar Sesión"
+          onPress={handleLogout}
+          icon={({ color, size }) => (
+            // Ícono más pequeño (size=18), en color rojo
+            <FontAwesomeIcon icon={faSignOutAlt} size={18} color="#d32f2f" />
+          )}
+          labelStyle={[styles.bottomDrawerLabel, styles.logoutLabel]}
+          style={styles.bottomDrawerItem}
+        />
+      </Animated.View>
+    </View>
   );
 };
 
-// Custom header button component
 const DrawerHeaderButton = () => {
   const navigation = useNavigation();
-
   return (
-    <TouchableOpacity
-      onPress={() => navigation.openDrawer()}
-      style={styles.menuIcon}>
-      <FontAwesomeIcon icon={faBars} size={23} color="#FFFFFF" />
+    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuIcon} activeOpacity={0.7}>
+      <FontAwesomeIcon icon={faBars} size={24} color="#FFFFFF" />
     </TouchableOpacity>
   );
 };
 
-// Custom header component with icon
 const HeaderWithIcon = ({ title, icon }) => (
   <View style={styles.header}>
     <FontAwesomeIcon icon={icon} size={24} color="#FFFFFF" />
@@ -115,7 +160,6 @@ const HeaderWithIcon = ({ title, icon }) => (
   </View>
 );
 
-// Main drawer navigator component
 export const MyDrawer = () => {
   const route = useRoute();
   const { user } = route.params;
@@ -126,7 +170,9 @@ export const MyDrawer = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#0b34b0",
-          height: 100,
+          height: Platform.OS === "ios" ? 110 : 100,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         headerTintColor: "#FFFFFF",
         headerTitleStyle: {
@@ -134,19 +180,27 @@ export const MyDrawer = () => {
           fontSize: 18,
         },
         drawerStyle: {
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#ffffff",
           width: 280,
+          borderTopRightRadius: 20,
+          borderBottomRightRadius: 20,
         },
-        drawerActiveBackgroundColor: "#e0e0e0",
-        drawerActiveTintColor: "#4c669f",
-        drawerInactiveTintColor: "#000000",
+        drawerActiveBackgroundColor: "#e3f2fd",
+        drawerActiveTintColor: "#0b34b0",
+        drawerInactiveTintColor: "#424242",
         drawerLabelStyle: {
           fontSize: 14,
           fontWeight: "500",
+          marginLeft: -16,
+        },
+        drawerItemStyle: {
+          borderRadius: 8,
+          marginHorizontal: 8,
+          marginVertical: 2,
         },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      {/* Define all the drawer screens */}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
       <Drawer.Screen
         name="Mapa"
         component={HomePage}
@@ -183,9 +237,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faBookBookmark} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Directorio" icon={faFolder} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Directorio" icon={faFolder} />,
         }}
       />
       <Drawer.Screen
@@ -197,9 +249,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faNewspaper} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Artículos" icon={faNewspaper} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Artículos" icon={faNewspaper} />,
         }}
       />
       <Drawer.Screen
@@ -211,9 +261,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faHandsHelping} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Servicio social" icon={faHandsHelping} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Servicio social" icon={faHandsHelping} />,
         }}
       />
       <Drawer.Screen
@@ -237,9 +285,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faRadio} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Radio CUCEI" icon={faRadio} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Radio CUCEI" icon={faRadio} />,
         }}
       />
       <Drawer.Screen
@@ -251,9 +297,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faFaceSmile} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Reconocimiento facial" icon={faFaceSmile} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Reconocimiento facial" icon={faFaceSmile} />,
         }}
       />
       <Drawer.Screen
@@ -265,9 +309,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faUserFriends} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Servicios escolares" icon={faUserFriends} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Servicios escolares" icon={faUserFriends} />,
         }}
       />
       <Drawer.Screen
@@ -279,9 +321,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faMedkit} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Servicios médicos" icon={faMedkit} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="Servicios médicos" icon={faMedkit} />,
         }}
       />
       <Drawer.Screen
@@ -293,9 +333,7 @@ export const MyDrawer = () => {
             <FontAwesomeIcon icon={faBookBookmark} size={size} color={color} />
           ),
           headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="CID" icon={faBookBookmark} />
-          ),
+          headerTitle: () => <HeaderWithIcon title="CID" icon={faBookBookmark} />,
         }}
       />
       <Drawer.Screen
@@ -310,71 +348,101 @@ export const MyDrawer = () => {
           headerTitle: () => <HeaderWithIcon title="Chatbot" icon={faRobot} />,
         }}
       />
-      {/* <Drawer.Screen
-        name="FileManagementScreen"
-        component={FileManagement}
-        initialParams={{ user }}
-        options={{
-          drawerLabel: "Gestión de Archivos",
-          drawerIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faFileDownload} size={size} color={color} />
-          ),
-          headerLeft: () => <DrawerHeaderButton />,
-          headerTitle: () => (
-            <HeaderWithIcon title="Gestión de Archivos" icon={faFileDownload} />
-          ),
-        }}
-      /> */}
     </Drawer.Navigator>
   );
 };
 
-// Styles for the component
 const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
   scrollView: {
     flex: 1,
   },
   drawerContent: {
-    flex: 1,
+    flexGrow: 1,
+    paddingTop: 0,
+  },
+  drawerHeaderContainer: {
+    marginBottom: 8,
   },
   drawerHeader: {
     height: 180,
-    alignItems: "center",
     justifyContent: "center",
-    padding: 16,
+    alignItems: "center",
+    borderBottomRightRadius: 20,
+  },
+  logoContainer: {
+    width: 160,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
   },
   logo: {
-    width: 200,
-    height: 100,
-    marginBottom: 5,
+    width: "100%",
+    height: "100%",
   },
   drawerHeaderText: {
     color: "white",
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    letterSpacing: 1,
+  },
+  versionContainer: {
+    position: "absolute",
+    bottom: 8,
+    right: 8,
+  },
+  versionText: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 14,
   },
   drawerItemsContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    paddingTop: 10,
+    paddingTop: 8,
   },
-  drawerItemLabel: {
+  bottomContainer: {
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+    paddingBottom: Platform.OS === "ios" ? 30 : 5,
+    marginTop: "auto",
+  },
+  bottomDrawerItem: {
+    marginHorizontal: 0,
+    marginVertical: 0,
+  },
+  bottomDrawerLabel: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
+    color: "#0b34b0",
+  },
+  logoutLabel: {
+    color: "#d32f2f",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#e0e0e0",
+    marginVertical: 4,
+    marginHorizontal: 16,
   },
   menuIcon: {
-    paddingLeft: 16,
+    padding: 12,
+    marginLeft: 8,
+    borderRadius: 8,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 16,
   },
   headerText: {
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
-    marginLeft: 8,
+    marginLeft: 12,
+    letterSpacing: 0.5,
   },
 });
 

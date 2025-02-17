@@ -107,8 +107,11 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
           fileUri,
           {},
           (downloadProgress) => {
-            const progress = (downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite) * 100;
-            setProgress(progress);
+            const progressPercent =
+              (downloadProgress.totalBytesWritten /
+                downloadProgress.totalBytesExpectedToWrite) *
+              100;
+            setProgress(progressPercent);
           }
         );
         const { uri: downloadedUri } = await downloadResumable.downloadAsync();
@@ -135,25 +138,32 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   };
 
   const handleDownloadRequest = () => {
-    Alert.alert(
-      "Descargar Video",
-      "¿Quieres descargar este video?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Descargar", onPress: () => handleDownload() },
-      ]
-    );
+    Alert.alert("Descargar Video", "¿Quieres descargar este video?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Descargar", onPress: () => handleDownload() },
+    ]);
   };
 
   const handleDownload = async () => {
     if (cachedUri) {
       try {
         setIsDownloading(true);
-        if (mediaLibraryPermission !== "granted") {
-          Alert.alert("Permiso denegado", "No se han otorgado permisos para guardar el video.");
+        // Verificar y, de ser necesario, solicitar el permiso
+        let permission = mediaLibraryPermission;
+        if (permission !== "granted") {
+          const { status } = await MediaLibrary.requestPermissionsAsync();
+          permission = status;
+          setMediaLibraryPermission(status);
+        }
+        if (permission !== "granted") {
+          Alert.alert(
+            "Permiso denegado",
+            "No se han otorgado permisos para guardar el video."
+          );
           setIsDownloading(false);
           return;
         }
+        // Proceder con la descarga del video
         const asset = await MediaLibrary.createAssetAsync(cachedUri);
         await MediaLibrary.createAlbumAsync("MisVideos", asset, false);
         Alert.alert("Éxito", "El video se ha descargado correctamente.");
