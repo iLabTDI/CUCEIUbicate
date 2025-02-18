@@ -31,8 +31,7 @@ import * as Animatable from "react-native-animatable";
 import ImageZoom from "react-native-image-pan-zoom";
 import { animalIcons, careerImages } from "./Data_iconos_mallas";
 import { clearSession } from "../../auth/SessionManager";
-// Importa la imagen por defecto (avatar "amendias")  
-import defaultAvatar from "../../assets/images/usuario.png"; 
+import defaultAvatar from "../../assets/images/usuario.png";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const isTablet = SCREEN_WIDTH >= 768;
@@ -82,7 +81,6 @@ export const ProfileScreen = ({ route }) => {
   const { user } = route.params;
   const userData = Array.isArray(user) ? user[0] : user;
 
-  // Si el usuario no tiene avatar definido, se usa el defaultAvatar importado
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar || defaultAvatar);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalVisible, setModalVisible] = useState(false);
@@ -106,18 +104,15 @@ export const ProfileScreen = ({ route }) => {
       setLoadedIcons(iconsWithDelay);
       setLoadingIcons(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
-  
+
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
-      // Si se ha guardado un avatar previamente, se actualiza el estado;
-      // de lo contrario, se mantiene el defaultAvatar.
       if (savedIcon) setSelectedIcon(JSON.parse(savedIcon));
     } catch (error) {
-      console.error("Error loading selected icon:", error);
+      // No mostramos error en consola
     }
   };
 
@@ -125,7 +120,7 @@ export const ProfileScreen = ({ route }) => {
     try {
       await AsyncStorage.setItem("selectedIcon", JSON.stringify(icon));
     } catch (error) {
-      console.error("Error saving selected icon:", error);
+      // No se muestra error en consola
     }
   };
 
@@ -191,7 +186,9 @@ export const ProfileScreen = ({ route }) => {
           </TouchableOpacity>
         </Animatable.View>
         <Animatable.View animation="fadeInUp" duration={1000} style={styles.userInfo}>
-          <Text style={styles.name}>{userData.name} {userData.lastnames}</Text>
+          <Text style={styles.name}>
+            {userData.name} {userData.lastnames}
+          </Text>
           <Text style={styles.username}>@{userData.username}</Text>
           <View style={styles.statusIndicator}>
             <FontAwesomeIcon icon={faCheckCircle} size={isTablet ? 20 : 16} color="#4CAF50" />
@@ -207,10 +204,10 @@ export const ProfileScreen = ({ route }) => {
         <View style={styles.cardContent}>
           <InfoItem icon={faUser} title="Usuario" value={`@${userData.username}`} />
           <InfoItem icon={faIdCard} title="Código" value={userData.code} />
-          <InfoItem 
-            icon={faGraduationCap} 
-            title="Carrera" 
-            value={degreeNames[userData.degree_code] || userData.degree_code} 
+          <InfoItem
+            icon={faGraduationCap}
+            title="Carrera"
+            value={degreeNames[userData.degree_code] || userData.degree_code}
           />
           <InfoItem icon={faEnvelope} title="Correo" value={userData.email} />
         </View>
@@ -272,15 +269,10 @@ export const ProfileScreen = ({ route }) => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <Animatable.View 
-            animation="zoomIn" 
-            duration={300} 
-            style={styles.modalView}
-          >
+          <Animatable.View animation="zoomIn" duration={300} style={styles.modalView}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
             </View>
-           
             {loadingIcons ? (
               <ActivityIndicator size="large" color="#0b34b0" style={styles.modalSpinner} />
             ) : (
@@ -292,11 +284,7 @@ export const ProfileScreen = ({ route }) => {
                 contentContainerStyle={styles.iconGrid}
               />
             )}
-     
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>Cerrar</Text>
             </TouchableOpacity>
           </Animatable.View>
@@ -317,23 +305,24 @@ export const ProfileScreen = ({ route }) => {
           >
             <FontAwesomeIcon icon={faTimes} size={isTablet ? 30 : 24} color="#FFFFFF" />
           </TouchableOpacity>
-          <ImageZoom
-            ref={imageZoomRef}
-            cropWidth={SCREEN_WIDTH}
-            cropHeight={SCREEN_HEIGHT}
-            imageWidth={SCREEN_WIDTH}
-            imageHeight={SCREEN_HEIGHT}
-            enableSwipeDown={true}
-            onSwipeDown={() => setCurriculumModalVisible(false)}
-            minScale={1}
-            maxScale={3}
-          >
-            <Image
-              source={careerImages[userData.degree_code]}
-              style={styles.modalImage}
-              resizeMode="contain"
-            />
-          </ImageZoom>
+          <View style={styles.curriculumContainer}>
+            <ImageZoom
+              cropWidth={SCREEN_WIDTH * 0.9}
+              cropHeight={SCREEN_HEIGHT * 0.8}
+              imageWidth={SCREEN_WIDTH * 0.9}
+              imageHeight={SCREEN_HEIGHT * 0.8}
+              enableSwipeDown={true}
+              onSwipeDown={() => setCurriculumModalVisible(false)}
+              minScale={1}
+              maxScale={3}
+            >
+              <Image
+                source={careerImages[userData.degree_code]}
+                style={styles.modalImage}
+                resizeMode="contain"
+              />
+            </ImageZoom>
+          </View>
         </View>
       </Modal>
     </ScrollView>
@@ -498,17 +487,17 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: isTablet ? 30 : 20,
     padding: isTablet ? 30 : 20,
-    width: isTablet ? '80%' : '90%',
+    width: isTablet ? "80%" : "90%",
     maxWidth: isTablet ? 600 : 400,
-    maxHeight: '80%',
+    maxHeight: "80%",
   },
   modalHeader: {
     alignItems: "center",
@@ -524,37 +513,45 @@ const styles = StyleSheet.create({
     marginTop: isTablet ? 30 : 20,
   },
   iconGrid: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   iconButton: {
     margin: GRID_PADDING / 2,
     borderRadius: ICON_SIZE / 2,
-    overflow: 'hidden',
+    overflow: "hidden",
     width: ICON_SIZE,
     height: ICON_SIZE,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
   },
   selectedIconButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   iconImage: {
     width: ICON_SIZE - 4,
     height: ICON_SIZE - 4,
     borderRadius: (ICON_SIZE - 4) / 2,
     borderWidth: 2,
-    borderColor: '#0b34b0',
+    borderColor: "#0b34b0",
   },
   selectedIconImage: {
-    borderColor: '#FFFFFF',
-    borderWidth: 2, 
+    borderColor: "#FFFFFF",
+    borderWidth: 2,
   },
   curriculumModalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.9)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  curriculumContainer: {
+    width: SCREEN_WIDTH * 0.9,
+    height: SCREEN_HEIGHT * 0.8,
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
   },
   closeModalButton: {
     position: "absolute",
@@ -567,10 +564,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1,
-  },
-  modalImage: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
   },
   closeButton: {
     marginTop: isTablet ? 30 : 20,
