@@ -59,9 +59,14 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
     loadSearchHistory()
   }, [])
 
+  const normalizeText = (text) => {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+  }
+
   const filterSuggestions = (text, isOrigin) => {
-    if (text.trim().length > 0) {
-      const suggestions = points.filter((point) => point.name.toLowerCase().includes(text.toLowerCase()))
+    const normalizedText = normalizeText(text)
+    if (normalizedText.length > 0) {
+      const suggestions = points.filter((point) => normalizeText(point.name).includes(normalizedText))
       if (isOrigin) {
         setOriginData(suggestions)
         setShowOriginSuggestions(true)
@@ -104,6 +109,8 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
     const temp = originText
     setOriginText(destinationText)
     setDestinationText(temp)
+    filterSuggestions(destinationText, true)
+    filterSuggestions(originText, false)
   }
 
   const handleSearch = async () => {
@@ -112,11 +119,11 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return
     }
 
-    const originInput = originText.trim().toLowerCase()
-    const destinationInput = destinationText.trim().toLowerCase()
+    const originInput = normalizeText(originText.trim())
+    const destinationInput = normalizeText(destinationText.trim())
 
-    const originExists = points.some((point) => point.name.toLowerCase() === originInput)
-    const destinationExists = points.some((point) => point.name.toLowerCase() === destinationInput)
+    const originExists = points.some((point) => normalizeText(point.name) === originInput)
+    const destinationExists = points.some((point) => normalizeText(point.name) === destinationInput)
 
     if (!originExists || !destinationExists) {
       Alert.alert("Error", "El origen o destino no existen en el mapa. Por favor, verifique los nombres.")
@@ -126,8 +133,8 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
     const matchingRoute = routesData.routes.find((route) => {
       const parts = route.name.split(" - ")
       if (parts.length < 2) return false
-      const routeOrigin = parts[0].trim().toLowerCase()
-      const routeDestination = parts[1].trim().toLowerCase()
+      const routeOrigin = normalizeText(parts[0].trim())
+      const routeDestination = normalizeText(parts[1].trim())
       return (
         (routeOrigin === originInput && routeDestination === destinationInput) ||
         (routeOrigin === destinationInput && routeDestination === originInput)
