@@ -283,13 +283,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
-    elevation: 10,
+    // elevation: 10,
   },
   searchBarContainer: {
     width: "90%",
     maxWidth: 400,
     marginTop: 20,
     alignItems: "center",
+    position: "absolute",
+    top: "10%", // Adjust this value to position the search bar container
   },
   searchBar: {
     backgroundColor: "#fff",
@@ -398,6 +400,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    // marginTop: 20,
   },
   searchHistoryTitle: {
     fontSize: 20,
@@ -442,4 +445,3 @@ const styles = StyleSheet.create({
 })
 
 export default SearchRoute2
-
