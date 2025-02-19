@@ -480,11 +480,11 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1HRPnVFlWAME0c87nboeKC20cS5kFRLW1&export=download",
   "Biblioteca - Modulo E.mp4":
     "https://drive.google.com/uc?id=1HV60AiPfI5D7RK044RVDGDMTjbAARpzE&export=download",
-  "Modulo M - Alfamp4":
+  "Modulo M - UCT1.mp4":
     "https://drive.google.com/uc?id=1cGfQceINi5u7QBZYFDG8GwcXDFe3cSxB&export=download",
   "Modulo M - Modulo K.mp4":
     "https://drive.google.com/uc?id=1d77KjMkFZmqfZNByNVtiswdR0NTRluEp&export=download",
-  "Modulo K - Alfa.mp4":
+  "Modulo K - UCT1.mp4":
     "https://drive.google.com/uc?id=1ccS1nZ8fVCl1a7_BDXbWVbk6WASfBodO&export=download",
   "Modulo K - Modulo S.mp4":
     "https://drive.google.com/uc?id=1tY--NmM6xQVjmWWJXDMO6td1dTtOAlNO&export=download",
@@ -540,7 +540,7 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1IxB0gqyaYVTW76BX0jZ5gARWhi3ZZZKo&export=download",
   "Modulo J - Modulo N.mp4":
     "https://drive.google.com/uc?id=1Is7pCEG-2YyH0uiCxw0-2hASn22Gkn5-&export=download",
-  "Modulo O - Revolucion.mp4":
+  "Modulo O - Entrada Revolucion.mp4":
     "https://drive.google.com/uc?id=1plTWF_FeriJOnH_KKoBO8IWFYHcunL1O&export=download",
   "Modulo F - Modulo J.mp4":
     "https://drive.google.com/uc?id=1Iq41vpzFElg882I8Ev54p2JEMZYMtNmV&export=download",
@@ -562,7 +562,7 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1pXWnBFBkSdbh0cNXWIzUJPAdrPINyyip&export=download",
   "Modulo E - Modulo K.mp4":
     "https://drive.google.com/uc?id=1ICHUb9I519ZGpm4M0Mh7u5n_yZiu1oyd&export=download",
-  "Modulo N - Revolucion":
+  "Modulo N - Entrada Revolucion":
     "https://drive.google.com/uc?id=1pPnsuiRumZ0lGUX4qc3LZs4nIgmi-1-U&export=download",
   "Modulo E - Modulo N.mp4":
     "https://drive.google.com/uc?id=1IB_rNsnlYZZQp8FowzbIt7YkdYrH7-Ez&export=download",

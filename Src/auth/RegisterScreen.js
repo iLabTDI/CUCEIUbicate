@@ -89,7 +89,7 @@ export const RegisterScreen = () => {
       // Validar contraseña con regex
       if (!passwordRegex.test(password)) {
         setPasswordError(true)
-        setErrorMsg("La contraseña debe incluir al menos 8 caracteres, 1 mayúscula, 1 número y 1 símbolo.")
+        setErrorMsg("La contraseña no valida.")
         shakeForm()
         throw new Error("Contraseña no válida")
       }
