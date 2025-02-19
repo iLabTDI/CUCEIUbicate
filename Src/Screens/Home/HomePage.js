@@ -33,7 +33,7 @@ import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 import MapSVG from "./Components/MapComponent/MapSVG";
 // Para iOS, usamos expo-media-library
-import * as MediaLibrary from "expo-media-library";
+// import * as MediaLibrary from "expo-media-library";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -72,44 +72,44 @@ export const HomePage = () => {
    * En Android se solicitan READ y WRITE del almacenamiento externo,
    * y en iOS se solicita el permiso de acceso a la biblioteca mediante expo-media-library.
    */
-  const requestStoragePermissions = async () => {
-    try {
-      if (Platform.OS === "android") {
-        const granted = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        ]);
-        if (
-          granted["android.permission.READ_EXTERNAL_STORAGE"] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          console.log("Permisos de almacenamiento concedidos en Android.");
-        } else {
-          console.log("Permisos de almacenamiento denegados en Android.");
-          Alert.alert(
-            "Permisos denegados",
-            "No se han concedido los permisos de almacenamiento. Algunas funciones pueden no funcionar correctamente."
-          );
-        }
-      } else {
-        // En iOS, usamos expo-media-library para solicitar acceso a la biblioteca de fotos.
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        if (status !== "granted") {
-          console.log("Permiso de acceso a la biblioteca denegado en iOS.");
-          Alert.alert(
-            "Permiso denegado",
-            "No se ha concedido el permiso para acceder a la biblioteca de fotos. Algunas funciones pueden no funcionar correctamente."
-          );
-        } else {
-          console.log("Permiso de acceso a la biblioteca concedido en iOS.");
-        }
-      }
-    } catch (error) {
-      console.warn("Error al solicitar permisos de almacenamiento:", error);
-    }
-  };
+  // const requestStoragePermissions = async () => {
+  //   try {
+  //     if (Platform.OS === "android") {
+  //       const granted = await PermissionsAndroid.requestMultiple([
+  //         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       ]);
+  //       if (
+  //         granted["android.permission.READ_EXTERNAL_STORAGE"] ===
+  //           PermissionsAndroid.RESULTS.GRANTED &&
+  //         granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
+  //           PermissionsAndroid.RESULTS.GRANTED
+  //       ) {
+  //         console.log("Permisos de almacenamiento concedidos en Android.");
+  //       } else {
+  //         console.log("Permisos de almacenamiento denegados en Android.");
+  //         Alert.alert(
+  //           "Permisos denegados",
+  //           "No se han concedido los permisos de almacenamiento. Algunas funciones pueden no funcionar correctamente."
+  //         );
+  //       }
+  //     } else {
+  //       // En iOS, usamos expo-media-library para solicitar acceso a la biblioteca de fotos.
+  //       const { status } = await MediaLibrary.requestPermissionsAsync();
+  //       if (status !== "granted") {
+  //         console.log("Permiso de acceso a la biblioteca denegado en iOS.");
+  //         Alert.alert(
+  //           "Permiso denegado",
+  //           "No se ha concedido el permiso para acceder a la biblioteca de fotos. Algunas funciones pueden no funcionar correctamente."
+  //         );
+  //       } else {
+  //         console.log("Permiso de acceso a la biblioteca concedido en iOS.");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.warn("Error al solicitar permisos de almacenamiento:", error);
+  //   }
+  // };
 
   /**
    * useEffect para verificar la sesión del usuario y cargar datos cuando la pantalla está en foco.
@@ -162,11 +162,11 @@ export const HomePage = () => {
   /**
    * useEffect para solicitar los permisos de almacenamiento una vez finalizada la animación de carga.
    */
-  useEffect(() => {
-    if (!isLoading) {
-      requestStoragePermissions();
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     requestStoragePermissions();
+  //   }
+  // }, [isLoading]);
 
   /**
    * Función para verificar la sesión del usuario.
