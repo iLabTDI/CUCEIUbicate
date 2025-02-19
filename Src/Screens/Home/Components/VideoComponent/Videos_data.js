@@ -114,7 +114,7 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=12NVfZww4y_8WM0LxIlzYS3WX-_aC8HCL&export=download",
   "Entrada Boulevard - Modulo N":
     "https://drive.google.com/uc?id=12I4PIydu_kSUuSRnryLDKe83NV8EDvAI&export=download",
-  "Entrada Boulevard - O":
+  "Entrada Boulevard - Modulo O":
     "https://drive.google.com/uc?id=12A20jKZePKhYE63g63BranUkz-rf4Hb-&export=download",
   "Entrada Boulevard - Modulo S":
     "https://drive.google.com/uc?id=128e1SHOjY0Rdfa4sLcx-1V8iyX66gvCd&export=download",
@@ -144,7 +144,7 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1q1F14OQZOBrJpaVefY1_n2zrktiRYlRK&export=download",
   "Modulo M - Modulo UTC1":
     "https://drive.google.com/uc?id=1cGfQceINi5u7QBZYFDG8GwcXDFe3cSxB&export=download",
-  "Modulo K - Modulo UTC1":
+  "Modulo K - UCT1":
     "https://drive.google.com/uc?id=1ccS1nZ8fVCl1a7_BDXbWVbk6WASfBodO&export=download",
   "Modulo K - Modulo S":
     "https://drive.google.com/uc?id=1tY--NmM6xQVjmWWJXDMO6td1dTtOAlNO&export=download",
@@ -434,23 +434,23 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=12X74xoor4gHiCj5TmvyQLVOoHPmpwhKb&export=download",
   "Biblioteca - Modulo O.mp4":
     "https://drive.google.com/uc?id=12OeEPs36Cxa5RdjwiuD33C1M5epBWtYw&export=download",
-  "Boulevard - Modulo M.mp4":
+  "Entrada Boulevard - Modulo M.mp4":
     "https://drive.google.com/uc?id=12GYoF9_p6bRrrA5XP_0djUa87gyOPf3t&export=download",
   "Biblioteca - Modulo A.mp4":
     "https://drive.google.com/uc?id=12NVfZww4y_8WM0LxIlzYS3WX-_aC8HCL&export=download",
-  "Boulevard - Modulo N.mp4":
+  "Entrada Boulevard - Modulo N.mp4":
     "https://drive.google.com/uc?id=12I4PIydu_kSUuSRnryLDKe83NV8EDvAI&export=download",
-  "Boulevard - O.mp4":
+  "Entrada Boulevard - O.mp4":
     "https://drive.google.com/uc?id=12A20jKZePKhYE63g63BranUkz-rf4Hb-&export=download",
-  "Boulevard - Modulo S.mp4":
+  "Entrada Boulevard - Modulo S.mp4":
     "https://drive.google.com/uc?id=128e1SHOjY0Rdfa4sLcx-1V8iyX66gvCd&export=download",
   "Modulo V - Modulo S.mp4":
     "https://drive.google.com/uc?id=1272G27ZK_W-ZBbd3uWaVcD6CwYM4_atV&export=download",
-  "Boulevard - Modulo V2.mp4":
+  "Entrada Boulevard - Modulo V2.mp4":
     "https://drive.google.com/uc?id=12-GHcgA1zMfGghSM_z5MHOKZp6XtgW3O&export=download",
-  "Boulevard - Modulo K.mp4":
+  "Entrada Boulevard - Modulo K.mp4":
     "https://drive.google.com/uc?id=11WZEBm_cwywN5TppEkHhMproRHeaTa_J&export=download",
-  "Boulevard - Modulo V.mp4":
+  "Entrada Boulevard - Modulo V.mp4":
     "https://drive.google.com/uc?id=11vtPj2gMDdhJ8895uiCv_NtyrkRG0xU7&export=download",
   "Modulo R - Modulo N.mp4":
     "https://drive.google.com/uc?id=1oLb1LkZTpng53oheoShqvL9Fs8cdBYun&export=download",
@@ -494,15 +494,15 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1d3Ya9OU2_zthatSygfB4_fbgXY7bDV9c&export=download",
   "Modulo K - Modulo M.mp4":
     "https://drive.google.com/uc?id=1d3lS2VgKMnSDx5Lf61pZ1iW5QME9Sz1e&export=download",
-  "Boulevard - Modulo J.mp4":
+  "Entrada Boulevard - Modulo J.mp4":
     "https://drive.google.com/uc?id=11Rfutngj_CJnyievCkpmswzyiQKhsuw8&export=download",
-  "Boulevard - Modulo F.mp4":
+  "Entrada Boulevard - Modulo F.mp4":
     "https://drive.google.com/uc?id=11MOFscOrIRYMFEsK35nCKfYdq2SmJYuj&export=download",
-  "Boulevard - Modulo E.mp4":
+  "Entrada Boulevard - Modulo E.mp4":
     "https://drive.google.com/uc?id=11JvPCXl6dU7Auci9X1fGAb6MqsPz4Jht&export=download",
-  "Boulevard - Biblioteca.mp4":
+  "Entrada Boulevard - Biblioteca.mp4":
     "https://drive.google.com/uc?id=11JeyXsv3_Y_HSCoOMlHPHxMlnoVl80PA&export=download",
-  "Boulevard - Modulo A.mp4":
+  "Entrada Boulevard - Modulo A.mp4":
     "https://drive.google.com/uc?id=11A8_TQ1Vof6LovSMSJWymjumFiRFoeHl&export=download",
   "Modulo S - Modulo E.mp4":
     "https://drive.google.com/uc?id=115l8KvYz56wpe_I-fHL6Qv2YZrmvEJ2b&export=download",

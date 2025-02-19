@@ -50,6 +50,7 @@ import { Social_service } from "../../../ScolarServices/Social_service";
 import { ProfileScreen } from "../../../Profile/ProfileScreen";
 import { CID } from "../../../ScolarServices/CID";
 import { Chatbot } from "../../../ChatBot/Chatbot";
+import { clearSession } from "../../../../auth/SessionManager";
 
 // Crea el Drawer
 const Drawer = createDrawerNavigator();
@@ -71,7 +72,7 @@ const CustomDrawerContent = (props) => {
 
   const confirmLogout = () => {
     // Aquí pones tu lógica de limpiar sesión
-    // Por ejemplo: clearSession();
+    clearSession();
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],

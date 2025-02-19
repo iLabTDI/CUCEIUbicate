@@ -19,11 +19,14 @@ import {
   faExclamationTriangle,
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
+// Importa el objeto exportado con nombre
+import { routeVideos } from "./Videos_data";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
+  const [localVideoUri, setLocalVideoUri] = useState(videoUri);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -34,16 +37,60 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
-  // Solicitar permiso para acceder a MediaLibrary al montar el componente
+  // Solicitar permiso para acceder a MediaLibrary
   useEffect(() => {
     const requestPermission = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       setMediaLibraryPermission(status);
-      console.log("Permiso MediaLibrary:", status);
+      // Se puede comentar o eliminar este log
+      // console.log("Permiso MediaLibrary:", status);
     };
     requestPermission();
   }, []);
 
+  // Si se pasa un videoUri por props, actualízalo
+  useEffect(() => {
+    setLocalVideoUri(videoUri);
+  }, [videoUri]);
+
+  // Cada vez que cambie el routeId, reiniciamos los estados y buscamos el video correspondiente
+  useEffect(() => {
+    if (routeId) {
+      setLocalVideoUri(null);
+      setCachedUri(null);
+      setIsLoading(true);
+      setError(false);
+      setProgress(0);
+      fetchVideoFromJson();
+    }
+  }, [routeId]);
+
+  const fetchVideoFromJson = () => {
+    try {
+      // console.log("routeId:", routeId, "routeVideos:", routeVideos);
+      let videoUriFromData = routeVideos[routeId];
+      if (!videoUriFromData) {
+        // Si no se encontró, intentamos invertir el orden
+        const parts = routeId.split(" - ");
+        if (parts.length === 2) {
+          const reversedKey = `${parts[1].trim()} - ${parts[0].trim()}`;
+          // console.log("Intentando con clave invertida:", reversedKey);
+          videoUriFromData = routeVideos[reversedKey];
+        }
+      }
+      if (videoUriFromData) {
+        setLocalVideoUri(videoUriFromData);
+      } else {
+        // No se encontró video: se muestra el error en el modal
+        setError(true);
+      }
+    } catch (err) {
+      // No se muestra el error en consola
+      setError(true);
+    }
+  };
+
+  // Cuando el modal se muestra, inicia la animación y descarga el video
   useEffect(() => {
     if (isVisible) {
       setIsLoading(true);
@@ -64,9 +111,9 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
         }),
       ]).start();
 
-      if (videoUri) {
-        console.log("Iniciando descarga del video desde:", videoUri);
-        cacheVideo(videoUri);
+      if (localVideoUri) {
+        // console.log("Iniciando descarga del video desde:", localVideoUri);
+        cacheVideo(localVideoUri);
       } else {
         setIsLoading(false);
       }
@@ -84,20 +131,24 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
         }),
       ]).start();
     }
-  }, [isVisible, videoUri]);
+  }, [isVisible, localVideoUri]);
+
+  // Se utiliza el routeId para formar un nombre único de archivo en caché
+  const getSanitizedRouteId = (id) => (id ? id.replace(/\s+/g, "_") : "default");
 
   const cacheVideo = async (uri) => {
     setIsLoading(true);
     setError(false);
     setProgress(0);
 
-    const fileUri = `${FileSystem.cacheDirectory}video_${routeId}.mp4`;
-    console.log("Ruta de cache:", fileUri);
+    const sanitizedRouteId = getSanitizedRouteId(routeId);
+    const fileUri = `${FileSystem.cacheDirectory}video_${sanitizedRouteId}.mp4`;
+    // console.log("Ruta de cache:", fileUri);
     
     try {
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
       if (fileInfo.exists) {
-        console.log("Video ya existe en cache.");
+        // console.log("Video ya existe en cache para la ruta:", routeId);
         setCachedUri(fileUri);
         setIsLoading(false);
         setProgress(100);
@@ -115,13 +166,13 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
           }
         );
         const { uri: downloadedUri } = await downloadResumable.downloadAsync();
-        console.log("Video descargado en:", downloadedUri);
+        // console.log("Video descargado en:", downloadedUri);
         setCachedUri(downloadedUri);
         setIsLoading(false);
         setProgress(100);
       }
     } catch (e) {
-      console.error("Error caching video:", e);
+      // No se imprime el error en consola
       setError(true);
       setIsLoading(false);
     }
@@ -148,7 +199,6 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
     if (cachedUri) {
       try {
         setIsDownloading(true);
-        // Verificar y, de ser necesario, solicitar el permiso
         let permission = mediaLibraryPermission;
         if (permission !== "granted") {
           const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -163,12 +213,11 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
           setIsDownloading(false);
           return;
         }
-        // Proceder con la descarga del video
         const asset = await MediaLibrary.createAssetAsync(cachedUri);
         await MediaLibrary.createAlbumAsync("MisVideos", asset, false);
         Alert.alert("Éxito", "El video se ha descargado correctamente.");
       } catch (error) {
-        console.error("Error al descargar el video:", error);
+        // No se imprime el error en consola
         Alert.alert("Error", "No se pudo descargar el video.");
       } finally {
         setIsDownloading(false);
@@ -185,8 +234,8 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <FontAwesomeIcon icon={faTimes} size={isTablet ? 32 : 24} color="#FFFFFF" />
         </TouchableOpacity>
-        
-        {videoUri ? (
+
+        {localVideoUri ? (
           <>
             {isLoading && !error && (
               <View style={styles.loadingContainer}>
@@ -198,14 +247,14 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
                 <Text style={styles.progressText}>{`${Math.round(progress)}%`}</Text>
               </View>
             )}
-            
+
             {error && (
               <View style={styles.errorContainer}>
                 <FontAwesomeIcon icon={faVideoSlash} size={isTablet ? 70 : 50} color="#FFFFFF" />
                 <Text style={styles.errorText}>
                   No se pudo cargar el video. Inténtalo más tarde.
                 </Text>
-                <TouchableOpacity style={styles.retryButton} onPress={() => cacheVideo(videoUri)}>
+                <TouchableOpacity style={styles.retryButton} onPress={() => cacheVideo(localVideoUri)}>
                   <Text style={styles.retryButtonText}>Reintentar</Text>
                 </TouchableOpacity>
               </View>
