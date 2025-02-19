@@ -9,16 +9,16 @@ export const validar_correo = async (email) => {
       .eq('email', email);
 
 
-     if (data && data.length > 0) {
+    if (data && data.length > 0) {
       return false;
     }else{
-    	return true;
+      return true;
     }
-      
+
   } catch (error) {
-    
+
   }
- 
+
 };
 
 export const validar_codigo = async (codigo) => {
@@ -30,16 +30,16 @@ export const validar_codigo = async (codigo) => {
       .eq('code', codigo);
 
 
-     if (data && data.length > 0) {
+    if (data && data.length > 0) {
       return false;
     }else{
-    	return true;
+      return true;
     }
-      
+
   } catch (error) {
-    
+
   }
- 
+
 };
 
 export const validar_usuario = async (username) => {
@@ -51,14 +51,14 @@ export const validar_usuario = async (username) => {
       .eq('username', username);
 
 
-     if (data && data.length > 0) {
+    if (data && data.length > 0) {
       return false;
     }else{
-    	return true;
+      return true;
     }
-      
+
   } catch (error) {
-    
+
   }
- 
+
 };
