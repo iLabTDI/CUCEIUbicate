@@ -23,7 +23,7 @@
       "package": "com.CUCEIUbicate.CUCEIUbicate",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
