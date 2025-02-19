@@ -286,7 +286,7 @@ export const LoginScreen = () => {
           onPress={togglePasswordVisibility}
           style={styles.passwordToggle}>
           <FontAwesomeIcon
-            icon={showPassword ? faEye : faEyeSlash}
+            icon={showPassword ?  faEyeSlash : faEye}
             size={20}
             color={isFocused.password ? "#0b34b0" : "#999"}
           />
