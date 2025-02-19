@@ -11,19 +11,20 @@ import {
   Dimensions,
   Animated,
   ActivityIndicator,
+  TouchableWithoutFeedback
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { alta_usuario } from "../Api/altaUsuario";
 import { validar_correo } from "../Api/validaciones";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { 
-  faEye, 
-  faEyeSlash, 
-  faEnvelope, 
-  faLock, 
-  faCheckCircle, 
-  faTimesCircle 
+import {
+  faEye,
+  faEyeSlash,
+  faEnvelope,
+  faLock,
+  faCheckCircle,
+  faTimesCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get('window');
@@ -40,6 +41,10 @@ export const RegisterScreen = () => {
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [shakeAnimation] = useState(new Animated.Value(0));
   const [isLoading, setIsLoading] = useState(false);
+  const [inputVisible, setInputVisible] = useState(false);
+  const [mayusTextColor, setmayusTextColor] = useState('red');
+  const [noCharsColor, setnoCharsColor] = useState('red');
+  const [simbolTextColor, setsimbolTextColor] = useState('red');
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -50,18 +55,28 @@ export const RegisterScreen = () => {
     "gmail.com",
   ];
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&.,-_<>?¿¡!]])(?=.{8,})/; //^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/
+
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (password.match(/[A-Z]/)) strength++;
-    if (password.match(/[a-z]/)) strength++;
-    if (password.match(/[0-9]/)) strength++;
-    if (password.match(/[^A-Za-z0-9]/)) strength++;
-    setPasswordStrength(strength);
+    if (password.length >= 8) {
+      setnoCharsColor('green')
+    } else
+      setnoCharsColor("red")
+
+    if (password.match(/[A-Z]/)) {
+      setmayusTextColor('green')
+    } else {
+      setmayusTextColor('red')
+    }
+
+    if (password.match(/[@$!%*?&.,-_<>?¿¡!H]/)) {
+      setsimbolTextColor('green')
+    } else {
+      setsimbolTextColor('red')
+    }
   }, [password]);
 
   const handleRegister = async () => {
@@ -128,27 +143,37 @@ export const RegisterScreen = () => {
     ]).start();
   };
 
+  const handleInputClick = () => {
+    setInputVisible(true);
+  };
+
+  const handleOutsideClick = () => {
+    console.log("Prueba click fuera");
+    setInputVisible(false);
+    setShowPassword(false);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.KeyboardAvoidingView}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <ScrollView 
-        keyboardShouldPersistTaps="handled" 
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.scrollViewContent}
         alwaysBounceVertical={false}
       >
         <Animated.View style={[styles.container, { transform: [{ translateX: shakeAnimation }] }]}>
           <Text style={styles.title}>Registra tu cuenta</Text>
-          
+
           <LottieView
             source={require("../assets/animations/register.json")}
             autoPlay
             loop={true}
             style={styles.animation}
           />
-          
+
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} size={isTablet ? 24 : 20} />
@@ -171,26 +196,40 @@ export const RegisterScreen = () => {
               )}
             </View>
 
-            <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
-              <TextInput
-                style={[styles.input, passwordError && styles.inputError]}
-                placeholder="Contraseña"
-                placeholderTextColor="#999"
-                value={password}
-                secureTextEntry={!showPassword}
-                onChangeText={(text) => setPassword(text)}
-              />
-              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
-                <FontAwesomeIcon
-                  icon={showPassword ? faEyeSlash : faEye}
-                  size={isTablet ? 24 : 20}
-                  color="#999"
-                />
-              </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={handleOutsideClick}>
+              <View style={styles.container}>
+                <View style={styles.inputContainer}>
+                  <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={24} />
+                  <TextInput
+                    style={[styles.input, passwordError && styles.inputError]}
+                    placeholder="Contraseña"
+                    placeholderTextColor="#999"
+                    value={password}
+                    secureTextEntry={!showPassword}
+                    onChangeText={(text) => setPassword(text)}
+                    autoCapitalize="none"
+                    onFocus={handleInputClick}
+                    onBlur={handleOutsideClick}
+                  />
+                  <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
+                    <FontAwesomeIcon
+                      icon={showPassword ? faEye : faEyeSlash}
+                      size={24}
+                      color="#999"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {inputVisible && (
+                    <View style={styles.horizontalLabels}>
+                        <Text style={[styles.mayusLabel, { color: mayusTextColor }]}>Mayuscula</Text>
+                        <Text style={[styles.simbolLabel, { color: simbolTextColor }]}>Simbolo</Text>
+                        <Text style={[styles.noChars, { color: noCharsColor }]}>8 caracteres o más</Text>
+                    </View>
+                )}
             </View>
+        </TouchableWithoutFeedback>
 
-            <View style={styles.passwordStrengthContainer}>
+            {/* <View style={styles.passwordStrengthContainer}>
               {[...Array(5)].map((_, index) => (
                 <View
                   key={index}
@@ -200,7 +239,7 @@ export const RegisterScreen = () => {
                   ]}
                 />
               ))}
-            </View>
+            </View> */}
 
             <View style={styles.inputContainer}>
               <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
@@ -211,10 +250,11 @@ export const RegisterScreen = () => {
                 value={confirmPassword}
                 secureTextEntry={!showPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
+                autoCapitalize="none"
               />
               <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
                 <FontAwesomeIcon
-                  icon={showPassword ? faEyeSlash : faEye}
+                  icon={showPassword ? faEye : faEyeSlash}
                   size={isTablet ? 24 : 20}
                   color="#999"
                 />
@@ -263,7 +303,7 @@ const styles = StyleSheet.create({
     color: "#0b34b0",
     marginBottom: height * 0.04,
     textAlign: "center",
-    marginTop: height * -0.08,  
+    marginTop: height * -0.08,
   },
   animation: {
     width: isTablet ? width * 0.4 : width * 0.5,
@@ -339,6 +379,31 @@ const styles = StyleSheet.create({
   },
   passwordStrengthBarFilled: {
     backgroundColor: '#0b34b0',
+  },
+  revealLabels: {
+    marginLeft: '-65',
+    height: 80,
+    alignSelf: 'center',    
+    alignItems: "center",
+  },
+  horizontalLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  passLabelView: {
+    color: 'gray',
+  },
+  mayusLabel: {
+    marginLeft: '-80',
+    flexBasis: '33%'
+  },
+  simbolLabel: {
+    marginLeft: '-80',
+    flexBasis: '33%'
+  },
+  noChars: {
+    marginLeft: '-80',
+    flexBasis: '33%'
   },
 });
 
