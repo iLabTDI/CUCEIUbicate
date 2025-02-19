@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+"use client"
+
+import { useState, useRef } from "react"
 import {
   View,
   Text,
@@ -11,263 +13,230 @@ import {
   Dimensions,
   Animated,
   ActivityIndicator,
-  TouchableWithoutFeedback
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import LottieView from "lottie-react-native";
-import { alta_usuario } from "../Api/altaUsuario";
-import { validar_correo } from "../Api/validaciones";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+} from "react-native"
+import { useNavigation } from "@react-navigation/native"
+import LottieView from "lottie-react-native"
+import { validar_correo } from "../Api/validaciones"
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import {
   faEye,
   faEyeSlash,
   faEnvelope,
   faLock,
   faCheckCircle,
-  faTimesCircle
-} from "@fortawesome/free-solid-svg-icons";
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons"
 
-const { width, height } = Dimensions.get('window');
-const isTablet = width >= 768; // Consideramos tablet si el ancho es 768 o mayor
+const { width, height } = Dimensions.get("window")
+const isTablet = width >= 768
 
 export const RegisterScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [shakeAnimation] = useState(new Animated.Value(0));
-  const [isLoading, setIsLoading] = useState(false);
-  const [inputVisible, setInputVisible] = useState(false);
-  const [mayusTextColor, setmayusTextColor] = useState('red');
-  const [noCharsColor, setnoCharsColor] = useState('red');
-  const [simbolTextColor, setsimbolTextColor] = useState('red');
+  const navigation = useNavigation()
+  const scrollViewRef = useRef(null)
 
+  // Estados
+  const [email, setEmail] = useState("")
+  const [emailError, setEmailError] = useState(false)
+
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordError, setPasswordError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const [errorMsg, setErrorMsg] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Animación de "shake" para el formulario en caso de error
+  const [shakeAnimation] = useState(new Animated.Value(0))
+
+  // Lista de dominios permitidos
+  const allowedDomains = ["alumnos.udg.mx", "gmail.com"]
+
+  // Regex para correo y contraseña
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+  // Requiere: 1 mayúscula, 1 dígito, 1 símbolo y mínimo 8 caracteres
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.,-_<>?¿¡!])(?=.{8,})/
+
+  // Alternar visibilidad de contraseña
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    setShowPassword(!showPassword)
+  }
 
-  const allowedDomains = [
-    "alumnos.udg.mx",
-    "gmail.com",
-  ];
-  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&.,-_<>?¿¡!]])(?=.{8,})/; //^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/
-
-
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    if (password.length >= 8) {
-      setnoCharsColor('green')
-    } else
-      setnoCharsColor("red")
-
-    if (password.match(/[A-Z]/)) {
-      setmayusTextColor('green')
-    } else {
-      setmayusTextColor('red')
-    }
-
-    if (password.match(/[@$!%*?&.,-_<>?¿¡!H]/)) {
-      setsimbolTextColor('green')
-    } else {
-      setsimbolTextColor('red')
-    }
-  }, [password]);
-
+  // Función principal para validar y navegar
   const handleRegister = async () => {
-    setEmailError(false);
-    setPasswordError(false);
-    setErrorMsg("");
-    setIsLoading(true);
+    setEmailError(false)
+    setPasswordError(false)
+    setErrorMsg("")
+    setIsLoading(true)
 
     try {
+      // Validar campos vacíos
       if (!email || !password || !confirmPassword) {
-        setErrorMsg("Por favor, completa todos los campos");
-        shakeForm();
-        throw new Error("Campos incompletos");
+        setErrorMsg("Por favor, completa todos los campos")
+        shakeForm()
+        throw new Error("Campos incompletos")
       }
 
-      if (
-        !emailRegex.test(email) ||
-        !allowedDomains.includes(email.split("@")[1])
-      ) {
-        setEmailError(true);
-        setErrorMsg("Correo electrónico no válido");
-        shakeForm();
-        throw new Error("Correo no válido");
+      // Validar correo y dominio
+      if (!emailRegex.test(email) || !allowedDomains.includes(email.split("@")[1])) {
+        setEmailError(true)
+        setErrorMsg("Correo electrónico no válido")
+        shakeForm()
+        throw new Error("Correo no válido")
       }
 
+      // Validar contraseña con regex
       if (!passwordRegex.test(password)) {
-        setPasswordError(true);
-        setErrorMsg(
-          "La contraseña debe tener al menos 8 caracteres, incluyendo al menos 1 letra y 1 número."
-        );
-        shakeForm();
-        throw new Error("Contraseña no válida");
+        setPasswordError(true)
+        setErrorMsg("La contraseña debe incluir al menos 8 caracteres, 1 mayúscula, 1 número y 1 símbolo.")
+        shakeForm()
+        throw new Error("Contraseña no válida")
       }
 
+      // Validar confirmación de contraseña
       if (password !== confirmPassword) {
-        setPasswordError(true);
-        setErrorMsg("Las contraseñas no coinciden");
-        shakeForm();
-        throw new Error("Las contraseñas no coinciden");
+        setPasswordError(true)
+        setErrorMsg("Las contraseñas no coinciden")
+        shakeForm()
+        throw new Error("Las contraseñas no coinciden")
       }
 
-      const correoValido = await validar_correo(email);
+      // Validar si el correo ya existe en la base
+      const correoValido = await validar_correo(email)
       if (!correoValido) {
-        setEmailError(true);
-        setErrorMsg("Este correo electrónico ya se ha registrado");
-        shakeForm();
-        throw new Error("Correo ya registrado");
+        setEmailError(true)
+        setErrorMsg("Este correo electrónico ya se ha registrado")
+        shakeForm()
+        throw new Error("Correo ya registrado")
       }
 
-      navigation.navigate("Completar Perfil", { mail: email, pass: password });
+      // Si todo está bien, navegamos a la siguiente pantalla
+      navigation.navigate("Completar Perfil", { mail: email, pass: password })
     } catch (error) {
-      // console.error(error.message);
+      // Se omiten logs en consola
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
+  // Animación de "shake" para el formulario
   const shakeForm = () => {
     Animated.sequence([
       Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
       Animated.timing(shakeAnimation, { toValue: -10, duration: 100, useNativeDriver: true }),
       Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
-    ]).start();
-  };
+      Animated.timing(shakeAnimation, { toValue: 0, duration: 100, useNativeDriver: true }),
+    ]).start()
+  }
 
-  const handleInputClick = () => {
-    setInputVisible(true);
-  };
-
-  const handleOutsideClick = () => {
-    console.log("Prueba click fuera");
-    setInputVisible(false);
-    setShowPassword(false);
-  };
+  const handleFocus = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true })
+  }
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.KeyboardAvoidingView}
+      style={styles.container}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        ref={scrollViewRef}
         contentContainerStyle={styles.scrollViewContent}
-        alwaysBounceVertical={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <Animated.View style={[styles.container, { transform: [{ translateX: shakeAnimation }] }]}>
+        <Animated.View style={[styles.formWrapper, { transform: [{ translateX: shakeAnimation }] }]}>
           <Text style={styles.title}>Registra tu cuenta</Text>
 
           <LottieView
             source={require("../assets/animations/register.json")}
             autoPlay
-            loop={true}
+            loop
             style={styles.animation}
           />
 
           <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faEnvelope} style={styles.inputIcon} size={isTablet ? 24 : 20} />
+            {/* Input de Correo */}
+            <View style={[styles.inputContainer, emailError && styles.inputContainerError]}>
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                style={styles.inputIconBlue}
+                size={20}
+              />
               <TextInput
-                style={[styles.input, emailError && styles.inputError]}
+                style={styles.input}
                 placeholder="Correo electrónico"
                 placeholderTextColor="#999"
                 value={email}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={setEmail}
+                onFocus={handleFocus}
                 autoCapitalize="none"
-                autoCompleteType="email"
                 keyboardType="email-address"
               />
-              {email && (
+              {emailRegex.test(email) && allowedDomains.includes(email.split("@")[1]) && (
                 <FontAwesomeIcon
-                  icon={emailError ? faTimesCircle : faCheckCircle}
-                  style={[styles.inputIcon, { color: emailError ? 'red' : 'green' }]}
-                  size={isTablet ? 24 : 20}
+                  icon={faCheckCircle}
+                  style={styles.inputIconValid}
+                  size={20}
                 />
               )}
             </View>
 
-            <TouchableWithoutFeedback onPress={handleOutsideClick}>
-              <View style={styles.container}>
-                <View style={styles.inputContainer}>
-                  <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={24} />
-                  <TextInput
-                    style={[styles.input, passwordError && styles.inputError]}
-                    placeholder="Contraseña"
-                    placeholderTextColor="#999"
-                    value={password}
-                    secureTextEntry={!showPassword}
-                    onChangeText={(text) => setPassword(text)}
-                    autoCapitalize="none"
-                    onFocus={handleInputClick}
-                    onBlur={handleOutsideClick}
-                  />
-                  <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
-                    <FontAwesomeIcon
-                      icon={showPassword ? faEye : faEyeSlash}
-                      size={24}
-                      color="#999"
-                    />
-                  </TouchableOpacity>
-                </View>
-                {inputVisible && (
-                    <View style={styles.horizontalLabels}>
-                        <Text style={[styles.mayusLabel, { color: mayusTextColor }]}>Mayuscula</Text>
-                        <Text style={[styles.simbolLabel, { color: simbolTextColor }]}>Simbolo</Text>
-                        <Text style={[styles.noChars, { color: noCharsColor }]}>8 caracteres o más</Text>
-                    </View>
-                )}
-            </View>
-        </TouchableWithoutFeedback>
-
-            {/* <View style={styles.passwordStrengthContainer}>
-              {[...Array(5)].map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.passwordStrengthBar,
-                    index < passwordStrength && styles.passwordStrengthBarFilled
-                  ]}
-                />
-              ))}
-            </View> */}
-
-            <View style={styles.inputContainer}>
-              <FontAwesomeIcon icon={faLock} style={styles.inputIcon} size={isTablet ? 24 : 20} />
+            {/* Input de Contraseña */}
+            <View style={[styles.inputContainer, passwordError && styles.inputContainerError]}>
+              <FontAwesomeIcon
+                icon={faLock}
+                style={styles.inputIconBlue}
+                size={20}
+              />
               <TextInput
-                style={[styles.input, passwordError && styles.inputError]}
-                placeholder="Confirmar contraseña"
+                style={styles.input}
+                placeholder="Contraseña"
                 placeholderTextColor="#999"
-                value={confirmPassword}
                 secureTextEntry={!showPassword}
-                onChangeText={(text) => setConfirmPassword(text)}
+                value={password}
+                onChangeText={setPassword}
+                onFocus={handleFocus}
                 autoCapitalize="none"
               />
-              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordToggle}>
-                <FontAwesomeIcon
-                  icon={showPassword ? faEye : faEyeSlash}
-                  size={isTablet ? 24 : 20}
-                  color="#999"
-                />
+              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="#999" />
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleRegister}
-              disabled={isLoading}
-            >
+            
+
+            {/* Input de Confirmar Contraseña */}
+            <View style={[styles.inputContainer, passwordError && styles.inputContainerError]}>
+              <FontAwesomeIcon
+                icon={faLock}
+                style={styles.inputIconBlue}
+                size={20}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirmar contraseña"
+                placeholderTextColor="#999"
+                secureTextEntry={!showPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                onFocus={handleFocus}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="#999" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Texto de requisitos de contraseña */}
+            <Text style={styles.passwordHint}>
+              Debe incluir 8 caracteres, 1 mayúscula, 1 número y 1 símbolo
+            </Text>
+
+            {/* Botón para Continuar */}
+            <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isLoading}>
               {isLoading ? (
-                <ActivityIndicator size={isTablet ? 32 : 24} color="#fff" />
+                <ActivityIndicator size={24} color="#fff" />
               ) : (
                 <Text style={styles.buttonText}>Continuar</Text>
               )}
@@ -278,133 +247,120 @@ export const RegisterScreen = () => {
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
-  );
-};
+  )
+}
 
+/* Estilos, inspirados en el login */
 const styles = StyleSheet.create({
-  KeyboardAvoidingView: {
+  container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#f2f2f2",
   },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: height * 0.05,
+    paddingVertical: 40,
   },
-  container: {
-    width: "100%",
+  formWrapper: {
+    width: "85%",
+    maxWidth: 400,
     alignItems: "center",
-    paddingHorizontal: isTablet ? width * 0.1 : width * 0.05,
   },
   title: {
-    fontSize: isTablet ? width * 0.05 : width * 0.08,
+    fontSize: 32,
     fontWeight: "bold",
     color: "#0b34b0",
-    marginBottom: height * 0.04,
+    marginBottom: 30,
     textAlign: "center",
-    marginTop: height * -0.08,
   },
   animation: {
-    width: isTablet ? width * 0.4 : width * 0.5,
-    height: isTablet ? width * 0.3 : width * 0.5,
-    marginBottom: height * 0.02,
+    width: width * 0.55,
+    height: width * 0.55,
+    // marginBottom: 30,
   },
   formContainer: {
     width: "100%",
-    maxWidth: isTablet ? 600 : 400,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 20,
-    padding: isTablet ? width * 0.04 : width * 0.05,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+    alignItems: "center",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: height * 0.02,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    paddingHorizontal: isTablet ? width * 0.02 : width * 0.03,
+    borderColor: "#e9ecef",
+    height: isTablet ? 60 : 50,
+    width: "100%",
+  },
+  inputContainerError: {
+    borderColor: "#ff4d4f",
   },
   inputIcon: {
-    marginRight: isTablet ? width * 0.015 : width * 0.02,
+    marginRight: 10,
+  },
+  inputIconBlue: {
     color: "#0b34b0",
+  },
+  inputIconValid: {
+    color: "#52c41a",
+  },
+  inputIconError: {
+    color: "#ff4d4f",
   },
   input: {
     flex: 1,
-    paddingVertical: isTablet ? height * 0.02 : height * 0.015,
-    fontSize: isTablet ? width * 0.02 : width * 0.04,
-    color: "#333",
+    fontSize: isTablet ? 18 : 16,
+    color: "#000",
+    marginRight: 10,
+    paddingLeft: 10, 
   },
-  inputError: {
-    borderColor: "red",
+  eyeIconContainer: {
+    padding: 10,
   },
-  passwordToggle: {
-    padding: isTablet ? width * 0.015 : width * 0.02,
+  passwordHint: {
+    alignSelf: "flex-start",
+    marginLeft: 10,
+    fontSize: 14,
+    color: "#666",
   },
   button: {
     backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: isTablet ? height * 0.025 : height * 0.02,
+    borderRadius: 12,
+    width: "100%",
+    height: isTablet ? 60 : 50,
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: height * 0.02,
+    marginTop: 10,
+    shadowColor: "#0b34b0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
   buttonText: {
     color: "white",
-    fontSize: isTablet ? width * 0.025 : width * 0.04,
+    fontSize: isTablet ? 20 : 16,
     fontWeight: "bold",
   },
   errorText: {
-    color: "red",
+    color: "#ff4d4f",
     textAlign: "center",
-    marginTop: height * 0.02,
-    fontSize: isTablet ? width * 0.02 : width * 0.035,
+    marginTop: 15,
+    fontSize: isTablet ? 18 : 16,
+    fontWeight: "500",
   },
-  passwordStrengthContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: height * 0.02,
-  },
-  passwordStrengthBar: {
-    flex: 1,
-    height: isTablet ? 8 : 5,
-    backgroundColor: '#ddd',
-    marginHorizontal: 2,
-    borderRadius: 2,
-  },
-  passwordStrengthBarFilled: {
-    backgroundColor: '#0b34b0',
-  },
-  revealLabels: {
-    marginLeft: '-65',
-    height: 80,
-    alignSelf: 'center',    
-    alignItems: "center",
-  },
-  horizontalLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  passLabelView: {
-    color: 'gray',
-  },
-  mayusLabel: {
-    marginLeft: '-80',
-    flexBasis: '33%'
-  },
-  simbolLabel: {
-    marginLeft: '-80',
-    flexBasis: '33%'
-  },
-  noChars: {
-    marginLeft: '-80',
-    flexBasis: '33%'
-  },
-});
+})
 
-export default RegisterScreen;
+export default RegisterScreen
