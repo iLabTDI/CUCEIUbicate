@@ -34,7 +34,6 @@
     },
     "plugins": [
       "expo-secure-store",
-      "expo-asset",
       "expo-video"
     ],
     "extra": {
