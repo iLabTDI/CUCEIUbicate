@@ -40,6 +40,12 @@ const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 export const LoginScreen = () => {
+  // Shake global: activa cuando showError es true
+  useEffect(() => {
+    if (showError) {
+      shakeForm();
+    }
+  }, [showError]);
   const navigation = useNavigation();
 
   // Estado para alternar entre modo "Iniciar Sesión" y "Modo Invitado"
@@ -63,8 +69,28 @@ export const LoginScreen = () => {
   const shakeAnimation = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const loginBoxAnim = useRef(new Animated.Value(0)).current;
-  const bgAnim = useRef(new Animated.Value(0)).current;
+  const [bgAnim] = useState(new Animated.Value(0));
+  const [floatingAnim] = useState(new Animated.Value(0));
+  const logoPulseAnim = useRef(new Animated.Value(1)).current;
 
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoPulseAnim, {
+          toValue: 1.08,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoPulseAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
   useEffect(() => {
     checkExistingSession();
     // Animación de entrada para el loginBox
@@ -74,15 +100,35 @@ export const LoginScreen = () => {
       tension: 60,
       useNativeDriver: true,
     }).start();
-    // Animación infinita para el fondo
+
+    // Animación del fondo como en RegisterScreen
     Animated.loop(
       Animated.timing(bgAnim, {
         toValue: 1,
-        duration: 6000,
-        easing: Easing.linear,
+        duration: 8000,
+        easing: Easing.bezier(0.4, 0, 0.6, 1),
         useNativeDriver: false,
       })
     ).start();
+
+    // Animación flotante
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatingAnim, {
+          toValue: 1,
+          duration: 3000,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatingAnim, {
+          toValue: 0,
+          duration: 3000,
+          easing: Easing.inOut(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
@@ -196,7 +242,9 @@ export const LoginScreen = () => {
           setShowSuccessAnimation(false);
           navigation.reset({
             index: 0,
-            routes: [{ name: "Principal Home", params: { user: result.userData } }],
+            routes: [
+              { name: "Principal Home", params: { user: result.userData } },
+            ],
           });
         }, 2000);
       } else {
@@ -211,399 +259,529 @@ export const LoginScreen = () => {
     }
   };
 
+  // Función de shake mejorada
+  const shakeForm = () => {
+    shakeAnimation.setValue(0);
+    Animated.sequence([
+      Animated.timing(shakeAnimation, {
+        toValue: 16,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: -16,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: 12,
+        duration: 60,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: -12,
+        duration: 60,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: 0,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  // Gradiente animado de fondo como en RegisterScreen
+  const bgColor = bgAnim.interpolate({
+    inputRange: [0, 0.3, 0.6, 1],
+    outputRange: ["#e8f2ff", "#f0f6ff", "#e3e9fa", "#f4f8ff"],
+  });
+
+  // const floatingTransform = floatingAnim.interpolate({
+  //   inputRange: [0, 1],
+  //   outputRange: [0, -8],
+  // });
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.container}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-        >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.scrollViewContent}
-            alwaysBounceVertical={false}
-          >
-            <Animated.View style={[styles.formContainer, { transform: [{ translateX: shakeAnimation }] }]}> 
+    <>
+      {/* Fondo animado con gradiente dinámico */}
+      <Animated.View
+        style={[styles.animatedBg, { backgroundColor: bgColor }]}
+      />
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 24 : 0}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}>
+          <Animated.View
+            style={[
+              styles.formWrapper,
+              // {
+              //   transform: [
+              //     { translateX: shakeAnimation },
+              //     { translateY: floatingTransform },
+              //   ],
+              // },
+            ]}>
+            {/* Logo con fondo circular, gradiente y animación de pulso */}
+            <Animated.View
+              style={[
+                styles.logoCircle,
+                {
+                  shadowColor: "#0b34b0",
+                  shadowOffset: { width: 0, height: 12 },
+                  shadowOpacity: 0.22,
+                  shadowRadius: 24,
+                  elevation: 16,
+                },
+              ]}>
               <Image
                 source={require("../../assets/images/Logo_Cucei.png")}
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <View style={styles.loginBox}>
-                <View style={styles.iconCircle}>
-                  <Image
-                    source={require("../assets/images/usuario.png")}
-                    style={styles.userImage}
-                  />
-                </View>
-                <Text style={styles.title}>
-                  {isGuestMode ? "Modo Invitado" : "Iniciar Sesión"}
-                </Text>
-                <Text style={styles.subtitle}>
-                  {isGuestMode
-                    ? "Ingresa tus datos para continuar"
-                    : "Ingresa tus credenciales para continuar"}
-                </Text>
-                {isGuestMode ? (
-                  <>
-                    <View style={styles.inputContainer}>
-                      <FontAwesomeIcon icon={faUser} style={[styles.inputIcon, isFocused.fullName && styles.inputIconFocused]} size={20} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Nombre Completo"
-                        placeholderTextColor="#999"
-                        value={formData.fullName}
-                        onChangeText={text => handleInputChange('fullName', text)}
-                        onFocus={() => setIsFocused(prev => ({ ...prev, fullName: true }))}
-                        onBlur={() => setIsFocused(prev => ({ ...prev, fullName: false }))}
-                        autoCapitalize="words"
-                      />
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <FontAwesomeIcon icon={faPhone} style={[styles.inputIcon, isFocused.phone && styles.inputIconFocused]} size={20} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Teléfono"
-                        placeholderTextColor="#999"
-                        value={formData.phone}
-                        onChangeText={text => handleInputChange('phone', text)}
-                        keyboardType="phone-pad"
-                        onFocus={() => setIsFocused(prev => ({ ...prev, phone: true }))}
-                        onBlur={() => setIsFocused(prev => ({ ...prev, phone: false }))}
-                        maxLength={10}
-                      />
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <FontAwesomeIcon icon={faIdCard} style={[styles.inputIcon, isFocused.id && styles.inputIconFocused]} size={20} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Identificación"
-                        placeholderTextColor="#999"
-                        value={formData.id}
-                        onChangeText={text => handleInputChange('id', text)}
-                        onFocus={() => setIsFocused(prev => ({ ...prev, id: true }))}
-                        onBlur={() => setIsFocused(prev => ({ ...prev, id: false }))}
-                        autoCapitalize="characters"
-                      />
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    <View style={styles.inputContainer}>
-                      <FontAwesomeIcon icon={faEnvelope} style={[styles.inputIcon, isFocused.username && styles.inputIconFocused]} size={20} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Correo electrónico"
-                        placeholderTextColor="#999"
-                        value={formData.username}
-                        onChangeText={text => handleInputChange('username', text)}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        onFocus={() => setIsFocused(prev => ({ ...prev, username: true }))}
-                        onBlur={() => setIsFocused(prev => ({ ...prev, username: false }))}
-                      />
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <FontAwesomeIcon icon={faLock} style={[styles.inputIcon, isFocused.password && styles.inputIconFocused]} size={20} />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Contraseña"
-                        placeholderTextColor="#999"
-                        value={formData.password}
-                        onChangeText={text => handleInputChange('password', text)}
-                        secureTextEntry={!showPassword}
-                        autoCapitalize="none"
-                        onFocus={() => setIsFocused(prev => ({ ...prev, password: true }))}
-                        onBlur={() => setIsFocused(prev => ({ ...prev, password: false }))}
-                      />
-                      <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.passwordToggle}>
-                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color={isFocused.password ? "#0b34b0" : "#999"} />
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )}
-                {showError && (
-                  <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{errorMessage}</Text>
+              {/* Brillo decorativo */}
+              <View style={styles.logoGlow} />
+            </Animated.View>
+
+            <View style={styles.formContainer}>
+              <View style={styles.iconCircle}>
+                <Image
+                  source={require("../assets/images/usuario.png")}
+                  style={styles.userImage}
+                />
+              </View>
+
+              <Text style={styles.title}>
+                {isGuestMode ? "Modo Invitado" : "Iniciar Sesión"}
+              </Text>
+              <Text style={styles.subtitle}>
+                {isGuestMode
+                  ? "Ingresa tus datos para continuar"
+                  : "Ingresa tus credenciales para continuar"}
+              </Text>
+
+              {isGuestMode ? (
+                <>
+                  {/* Modo Invitado - Campo Nombre Completo */}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      style={styles.inputIconBlue}
+                      size={22}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Nombre Completo"
+                      placeholderTextColor="#a8b2c8"
+                      value={formData.fullName}
+                      onChangeText={(text) =>
+                        handleInputChange("fullName", text)
+                      }
+                      autoCapitalize="words"
+                      selectionColor="#0b34b0"
+                    />
                   </View>
-                )}
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleLogin}
-                  disabled={isLoading}
-                  activeOpacity={0.8}
-                >
+
+                  {/* Modo Invitado - Campo Teléfono */}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      style={styles.inputIconBlue}
+                      size={22}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Teléfono"
+                      placeholderTextColor="#a8b2c8"
+                      value={formData.phone}
+                      onChangeText={(text) => handleInputChange("phone", text)}
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      selectionColor="#0b34b0"
+                    />
+                  </View>
+
+                  {/* Modo Invitado - Campo Identificación */}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon
+                      icon={faIdCard}
+                      style={styles.inputIconBlue}
+                      size={22}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Identificación"
+                      placeholderTextColor="#a8b2c8"
+                      value={formData.id}
+                      onChangeText={(text) => handleInputChange("id", text)}
+                      autoCapitalize="characters"
+                      selectionColor="#0b34b0"
+                    />
+                  </View>
+                </>
+              ) : (
+                <>
+                  {/* Login Normal - Campo Email */}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      style={styles.inputIconBlue}
+                      size={22}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Correo electrónico"
+                      placeholderTextColor="#a8b2c8"
+                      value={formData.username}
+                      onChangeText={(text) =>
+                        handleInputChange("username", text)
+                      }
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      selectionColor="#0b34b0"
+                    />
+                  </View>
+
+                  {/* Login Normal - Campo Contraseña */}
+                  <View style={styles.inputContainer}>
+                    <FontAwesomeIcon
+                      icon={faLock}
+                      style={styles.inputIconBlue}
+                      size={22}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Contraseña"
+                      placeholderTextColor="#a8b2c8"
+                      value={formData.password}
+                      onChangeText={(text) =>
+                        handleInputChange("password", text)
+                      }
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      selectionColor="#0b34b0"
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      style={styles.eyeIconContainer}>
+                      <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
+                        size={20}
+                        color="#7a89a8"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+
+              {/* Mensaje de error mejorado */}
+              {showError && (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
+
+              {/* Botón principal con gradiente */}
+              <TouchableOpacity
+                style={[styles.button, isLoading && styles.buttonLoading]}
+                onPress={handleLogin}
+                disabled={isLoading}
+                activeOpacity={0.85}>
+                <View style={styles.buttonGradient}>
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size={28} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>
-                      {isGuestMode ? "Continuar como Invitado" : "Iniciar Sesión"}
+                      {isGuestMode
+                        ? "Continuar como Invitado"
+                        : "Iniciar Sesión"}
                     </Text>
                   )}
+                </View>
+              </TouchableOpacity>
+
+              {/* Botón de registro */}
+              {!isGuestMode && (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Registro")}
+                  style={styles.registerButton}
+                  activeOpacity={0.7}>
+                  <Text style={styles.registerText}>
+                    ¿No tienes cuenta?{" "}
+                    <Text style={styles.registerTextBold}>¡Regístrate!</Text>
+                  </Text>
                 </TouchableOpacity>
+              )}
+            </View>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {/* Modal de éxito mejorado */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
-          {showSuccessAnimation && (
-            <LottieView
-              source={successAnimation}
-              autoPlay
-              loop={false}
-              style={styles.animation}
-            />
-          )}
+          <View style={styles.modalContentWrapper}>
+            {showSuccessAnimation && (
+              <LottieView
+                source={successAnimation}
+                autoPlay
+                loop={false}
+                style={styles.animation}
+              />
+            )}
+          </View>
         </View>
       </Modal>
-                {!isGuestMode && (
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('Registro')}
-                    style={styles.registerButton}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.registerText}>
-                      ¿No tienes cuenta? <Text style={styles.registerTextBold}>¡Regístrate!</Text>
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </Animated.View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </SafeAreaView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  // Fondo animado
   animatedBg: {
     ...StyleSheet.absoluteFillObject,
     zIndex: -1,
-    // Gradiente vertical suave (simulado con dos colores)
-    backgroundColor: "#e3e9fa",
   },
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f4f4f4",
-  },
+
+  // Container principal
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "transparent",
   },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
-  scrollViewContentKeyboard: {
-    justifyContent: "flex-start",
-    paddingTop: 40,
-  },
-  formContainer: {
+
+  // Wrapper del formulario
+  formWrapper: {
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 30,
+    maxWidth: 480,
   },
+
+  // Logo
   logo: {
-    width: isTablet ? 450 : 320,
-    height: isTablet ? 220 : 160,
-    marginBottom: 18,
-    marginTop: 10,
+    width: isTablet ? 400 : 280,
+    height: isTablet ? 200 : 140,
+    marginBottom: 20,
     shadowColor: "#0b34b0",
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.15,
     shadowRadius: 12,
-    elevation: 10,
-    borderRadius: 30,
-    backgroundColor: "#fff",
+    elevation: 8,
   },
-  loginBox: {
-    width: isTablet ? "70%" : "100%",
-    maxWidth: 500,
-    backgroundColor: "rgba(255,255,255,0.98)",
-    borderRadius: 32,
-    padding: isTablet ? 40 : 28,
+
+  // Contenedor del formulario
+  formContainer: {
+    width: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 28,
+    padding: isTablet ? 40 : 32,
     alignItems: "center",
     shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.13,
-    shadowRadius: 24,
-    elevation: 16,
-    borderWidth: 1.5,
-    borderColor: "#d0d8f6",
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.15,
+    shadowRadius: 30,
+    elevation: 20,
+    borderWidth: 1,
+    borderColor: "rgba(208, 216, 246, 0.6)",
+    backdropFilter: "blur(10px)",
   },
+
+  // Círculo del icono
   iconCircle: {
-    width: isTablet ? 130 : 90,
-    height: isTablet ? 130 : 90,
-    borderRadius: isTablet ? 65 : 45,
-    backgroundColor: "#f4f4f4",
+    width: isTablet ? 120 : 80,
+    height: isTablet ? 120 : 80,
+    borderRadius: isTablet ? 60 : 40,
+    backgroundColor: "rgba(11, 52, 176, 0.08)",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: -60,
-    marginBottom: 18,
+    marginTop: -50,
+    marginBottom: 20,
     shadowColor: "#0b34b0",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 6,
     borderWidth: 2,
-    borderColor: "#e9ecef",
+    borderColor: "rgba(208, 216, 246, 0.3)",
   },
   userImage: {
-    width: "70%",
-    height: "70%",
+    width: "60%",
+    height: "60%",
     resizeMode: "contain",
   },
+
+  // Títulos
   title: {
-    fontSize: isTablet ? 36 : 28,
-    fontWeight: "bold",
+    fontSize: isTablet ? 32 : 26,
+    fontWeight: "800",
     color: "#0b34b0",
-    marginBottom: 6,
+    marginBottom: 8,
     textAlign: "center",
     letterSpacing: 1.2,
+    textShadowColor: "rgba(11, 52, 176, 0.15)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   subtitle: {
-    fontSize: isTablet ? 20 : 16,
-    color: "#666",
-    marginBottom: 28,
+    fontSize: isTablet ? 16 : 14,
+    color: "#6b7280",
     textAlign: "center",
+    marginBottom: 24,
     fontWeight: "500",
   },
+
+  // Inputs
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    marginBottom: 18,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 20,
+    paddingHorizontal: 6,
+    marginBottom: 20,
     borderWidth: 2,
-    borderColor: "#d0d8f6",
+    borderColor: "#e5e9f5",
     height: isTablet ? 64 : 54,
     shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 4,
-    elevation: 2,
-    transitionProperty: "border-color, box-shadow",
-    transitionDuration: "0.2s",
-  },
-  inputContainerFocused: {
-    borderColor: "#0b34b0",
-    backgroundColor: "#f4f8ff",
-    shadowColor: "#0b34b0",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 4,
-  },
-  inputIcon: {
-    color: "#999",
-    marginRight: 14,
-    fontSize: isTablet ? 26 : 22,
-    transitionProperty: "color",
-    transitionDuration: "0.2s",
-  },
-  inputIconFocused: {
-    color: "#0b34b0",
+    width: "100%",
+    overflow: "hidden",
+    position: "relative",
   },
   input: {
     flex: 1,
-    fontSize: isTablet ? 20 : 17,
-    color: "#222",
+    fontSize: isTablet ? 16 : 14,
+    color: "#2d3748",
     fontWeight: "500",
-    letterSpacing: 0.2,
-    backgroundColor: "transparent",
-    paddingVertical: 10,
+    letterSpacing: 0.3,
+    paddingVertical: 12,
+    paddingRight: 12,
+    marginLeft: 8,
   },
-  passwordToggle: {
-    padding: 10,
-  },
-  errorContainer: {
-    backgroundColor: "#fff3f3",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 18,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#ffb3b3",
-    shadowColor: "#ff3b30",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  errorText: {
-    color: "#ff3b30",
-    textAlign: "center",
-    fontSize: isTablet ? 17 : 15,
-    fontWeight: "600",
-  },
-  button: {
-    backgroundColor: "#0b34b0",
-    borderRadius: 16,
-    width: "100%",
-    height: isTablet ? 64 : 54,
+  eyeIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: "rgba(122, 137, 168, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 12,
+    marginRight: 8,
+  },
+
+  // Iconos
+  inputIconBlue: {
+    color: "#0b34b0",
+    marginLeft: 8,
+    marginRight: 4,
+    alignSelf: "center",
+  },
+
+  // Error
+  errorContainer: {
+    marginBottom: 8,
+    width: "100%",
+  },
+  errorText: {
+    color: "#ff4d4f",
+    fontSize: isTablet ? 13 : 12,
+    fontWeight: "400",
+    textAlign: "center",
+    letterSpacing: 0.2,
+    marginTop: 2,
+    marginBottom: 2,
+  },
+
+  // Botón principal
+  button: {
+    borderRadius: 20,
+    width: "100%",
+    height: isTablet ? 64 : 54,
     shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 2,
-    borderColor: "#0b34b0",
-    transitionProperty: "background-color, box-shadow",
-    transitionDuration: "0.2s",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 12,
+    overflow: "hidden",
+    marginTop: 8,
+  },
+  buttonGradient: {
+    backgroundColor: "#0b34b0",
+    borderRadius: 20,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonLoading: {
+    shadowOpacity: 0.15,
   },
   buttonText: {
     color: "white",
-    fontSize: isTablet ? 22 : 18,
-    fontWeight: "bold",
-    letterSpacing: 1.1,
+    fontSize: isTablet ? 18 : 16,
+    fontWeight: "700",
+    letterSpacing: 1,
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
+
+  // Botón de registro
   registerButton: {
-    marginTop: 24,
+    marginTop: 20,
     padding: 12,
   },
   registerText: {
-    color: "#666",
-    fontSize: isTablet ? 19 : 15,
+    color: "#6b7280",
+    fontSize: isTablet ? 16 : 14,
     textAlign: "center",
     fontWeight: "500",
   },
   registerTextBold: {
     color: "#0b34b0",
-    fontWeight: "bold",
-    fontSize: isTablet ? 19 : 15,
+    fontWeight: "700",
   },
-  modeToggleButton: {
-    marginTop: 18,
-    padding: 12,
-  },
-  modeToggleText: {
-    color: "#0b34b0",
-    fontSize: isTablet ? 17 : 15,
-    textAlign: "center",
-    fontWeight: "500",
-  },
+
+  // Modal mejorado
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     justifyContent: "center",
     alignItems: "center",
+    backdropFilter: "blur(8px)",
+  },
+  modalContentWrapper: {
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: "#0b34b0",
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.25,
+    shadowRadius: 30,
+    elevation: 20,
   },
   animation: {
-    width: 250,
-    height: 250,
+    width: 220,
+    height: 220,
   },
 });
 export default LoginScreen;

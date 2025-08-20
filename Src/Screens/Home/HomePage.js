@@ -139,10 +139,10 @@ export const HomePage = () => {
    */
   useEffect(() => {
     const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem("hasLaunchedddd");
+      const hasLaunched = await AsyncStorage.getItem("hasLaunched");
       if (hasLaunched === null) {
         setIsFirstLaunch(true);
-        await AsyncStorage.setItem("hasLaunchedd", "true");
+        await AsyncStorage.setItem("hasLaunched", "true");
       } else {
         setIsFirstLaunch(false);
       }

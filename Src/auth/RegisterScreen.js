@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   View,
   Text,
@@ -30,13 +30,12 @@ import {
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons"
 
-const { width, height } = Dimensions.get("window")
+const { width } = Dimensions.get("window")
 const isTablet = width >= 768
 
 export const RegisterScreen = () => {
   const navigation = useNavigation()
   const scrollViewRef = useRef(null)
-
 
   // Estados
   const [email, setEmail] = useState("")
@@ -51,15 +50,40 @@ export const RegisterScreen = () => {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
   const [shakeAnimation] = useState(new Animated.Value(0))
   const [bgAnim] = useState(new Animated.Value(0))
+  const [floatingAnim] = useState(new Animated.Value(0))
+  const [sparkleAnims] = useState([...Array(8)].map(() => new Animated.Value(0)))
 
   // Lista de dominios permitidos
   const allowedDomains = ["alumnos.udg.mx", "gmail.com"]
 
   // Regex para correo y contraseña
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
-  // Requiere: 1 mayúscula, 1 dígito, 1 símbolo y mínimo 8 caracteres
-  const passwordRegex =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.,-_<>?¿¡!])(?=.{8,})/
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.,-_<>?¿¡!])(?=.{8,})/
+
+  // Inicializar animaciones
+  useEffect(() => {
+    // Animación del fondo
+    Animated.loop(
+      Animated.timing(bgAnim, {
+        toValue: 1,
+        duration: 8000,
+        easing: Easing.bezier(0.4, 0, 0.6, 1),
+        useNativeDriver: false,
+      })
+    ).start()
+
+    // Animación flotante
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatingAnim, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.bezier(0.4, 0, 0.6, 1),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start( )
+  }, [])
 
   // Alternar visibilidad de contraseña
   const togglePasswordVisibility = () => {
@@ -121,7 +145,7 @@ export const RegisterScreen = () => {
         setModalVisible(false)
         setShowSuccessAnimation(false)
         navigation.navigate("Completar Perfil", { mail: email, pass: password })
-      }, 2000)
+      }, 2500)
     } catch (error) {
       // Se omiten logs en consola
     } finally {
@@ -143,27 +167,22 @@ export const RegisterScreen = () => {
     scrollViewRef.current?.scrollToEnd({ animated: true })
   }
 
-  // Gradiente animado de fondo (simulado con interpolación de color)
+  // Gradiente animado de fondo
   const bgColor = bgAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ["#e3e9fa", "#f4f4f4", "#e3e9fa"],
-  });
+    inputRange: [0, 0.3, 0.6, 1],
+    outputRange: ["#e8f2ff", "#f0f6ff", "#e3e9fa", "#f4f8ff"],
+  })
 
-  // Animación infinita para el fondo
-  useState(() => {
-    Animated.loop(
-      Animated.timing(bgAnim, {
-        toValue: 1,
-        duration: 6000,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      })
-    ).start();
-  }, []);
+  // const floatingTransform = floatingAnim.interpolate({
+  //   inputRange: [0, 1],
+  //   outputRange: [0, -8],
+  // })
 
   return (
     <>
+      {/* Fondo animado con gradiente dinámico */}
       <Animated.View style={[styles.animatedBg, { backgroundColor: bgColor }]} />
+    
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
@@ -173,11 +192,24 @@ export const RegisterScreen = () => {
           ref={scrollViewRef}
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <Animated.View style={[styles.formWrapper, { transform: [{ translateX: shakeAnimation }] }]}> 
+          <Animated.View 
+            style={[
+              styles.formWrapper, 
+              // { 
+              //   transform: [
+              //     { translateX: shakeAnimation },
+              //     { translateY: floatingTransform }
+              //   ] 
+              // }
+            ]}
+          > 
             <Text style={styles.title}>Registra tu cuenta</Text>
+            <Text style={styles.subtitle}>Únete a la comunidad CUCEI</Text>
+            
             <View style={styles.lottieOverlayContainer}>
-              <View style={styles.lottieOverlay} />
+              {/* <View style={styles.lottieOverlay} /> */}
               <LottieView
                 source={require("../assets/animations/register.json")}
                 autoPlay
@@ -185,287 +217,444 @@ export const RegisterScreen = () => {
                 style={styles.animation}
               />
             </View>
+            
             <View style={styles.formContainer}>
-              {/* Input de Correo */}
+              {/* Input de Correo con icono limpio */}
               <View style={[styles.inputContainer, emailError && styles.inputContainerError]}>
                 <FontAwesomeIcon
                   icon={faEnvelope}
-                  style={styles.inputIconBlue}
-                  size={20}
+                  style={emailError ? styles.inputIconError : styles.inputIconBlue}
+                  size={22}
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="Correo electrónico"
-                  placeholderTextColor="#999"
+                  placeholder="Correo electrónico institucional"
+                  placeholderTextColor="#a8b2c8"
                   value={email}
                   onChangeText={setEmail}
                   onFocus={handleFocus}
                   autoCapitalize="none"
                   keyboardType="email-address"
+                  selectionColor="#0b34b0"
                 />
                 {emailRegex.test(email) && allowedDomains.includes(email.split("@")[1]) && (
-                  <FontAwesomeIcon
-                    icon={faCheckCircle}
-                    style={styles.inputIconValid}
-                    size={20}
-                  />
+                  <Animated.View style={styles.validIconWrapper}>
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      style={styles.inputIconValid}
+                      size={22}
+                    />
+                  </Animated.View>
                 )}
               </View>
-              {/* Input de Contraseña */}
+
+              {/* Input de Contraseña con icono limpio */}
               <View style={[styles.inputContainer, passwordError && styles.inputContainerError]}>
                 <FontAwesomeIcon
                   icon={faLock}
-                  style={styles.inputIconBlue}
-                  size={20}
+                  style={passwordError ? styles.inputIconError : styles.inputIconBlue}
+                  size={22}
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="Contraseña"
-                  placeholderTextColor="#999"
+                  placeholder="Contraseña segura"
+                  placeholderTextColor="#a8b2c8"
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
                   onFocus={handleFocus}
                   autoCapitalize="none"
+                  selectionColor="#0b34b0"
                 />
                 <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
-                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="#999" />
+                  <FontAwesomeIcon 
+                    icon={showPassword ? faEyeSlash : faEye} 
+                    size={20} 
+                    color="#7a89a8" 
+                  />
                 </TouchableOpacity>
               </View>
-              {/* Input de Confirmar Contraseña */}
+
+              {/* Input de Confirmar Contraseña con icono limpio */}
               <View style={[styles.inputContainer, passwordError && styles.inputContainerError]}>
                 <FontAwesomeIcon
                   icon={faLock}
-                  style={styles.inputIconBlue}
-                  size={20}
+                  style={passwordError ? styles.inputIconError : styles.inputIconBlue}
+                  size={22}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Confirmar contraseña"
-                  placeholderTextColor="#999"
+                  placeholderTextColor="#a8b2c8"
                   secureTextEntry={!showPassword}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   onFocus={handleFocus}
                   autoCapitalize="none"
+                  selectionColor="#0b34b0"
                 />
                 <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
-                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="#999" />
+                  <FontAwesomeIcon 
+                    icon={showPassword ? faEyeSlash : faEye} 
+                    size={20} 
+                    color="#7a89a8" 
+                  />
                 </TouchableOpacity>
               </View>
-              {/* Texto de requisitos de contraseña */}
-              <Text style={styles.passwordHint}>
-                Debe incluir 8 caracteres, 1 mayúscula, 1 número y 1 símbolo
-              </Text>
-              {/* Botón para Continuar */}
-              <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isLoading}>
-                {isLoading ? (
-                  <ActivityIndicator size={24} color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Continuar</Text>
-                )}
+
+              {/* Texto de requisitos de contraseña mejorado */}
+              <View style={styles.hintContainer}>
+                <Text style={styles.passwordHint}>
+                  <Text style={styles.hintTitle}>Requisitos: </Text>
+                  8+ caracteres, 1 mayúscula, 1 número y 1 símbolo
+                </Text>
+              </View>
+
+              {/* Botón para Continuar con gradiente */}
+              <TouchableOpacity
+                style={[styles.button, isLoading && styles.buttonLoading]}
+                onPress={handleRegister}
+                disabled={isLoading}
+                activeOpacity={0.85}
+              >
+                <View style={styles.buttonGradient}>
+                  {isLoading ? (
+                    <ActivityIndicator size={28} color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Continuar</Text>
+                  )}
+                </View>
               </TouchableOpacity>
-              {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+
+              {/* Mensaje de error mejorado */}
+              {errorMsg ? (
+                <Animated.View style={styles.errorContainer}>
+                  <FontAwesomeIcon icon={faTimesCircle} size={16} color="#ff4d4f" />
+                  <Text style={styles.errorText}>{errorMsg}</Text>
+                </Animated.View>
+              ) : null}
             </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
-      {/* Modal de éxito con Lottie */}
+
+      {/* Modal de paso completado */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          {showSuccessAnimation && (
-            <LottieView
-              source={successAnimation}
-              autoPlay
-              loop={false}
-              style={styles.animation}
-            />
-          )}
+        <View style={styles.modalBlurBg}>
+          <Animated.View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>✔️ Primer paso completado</Text>
+              <Text style={styles.modalSubtitle}>Ahora completa tu perfil</Text>
+            </View>
+          </Animated.View>
         </View>
       </Modal>
     </>
   )
 }
 
-/* Estilos, inspirados en el login */
+/* Estilos modernos y hermosos */
 const styles = StyleSheet.create({
+  // Fondo y overlay
+  animatedBg: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: -1,
+  },
+  particlesOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+  },
+  sparkle: {
+    position: "absolute",
+    opacity: 0.6,
+  },
+
+  // Container principal
+  container: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+  },
+
+  // Wrapper del formulario
+  formWrapper: {
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
+    maxWidth: 480,
+  },
+
+  // Títulos
+  title: {
+    fontSize: isTablet ? 38 : 32,
+    fontWeight: "800",
+    color: "#0b34b0",
+    marginBottom: 8,
+    textAlign: "center",
+    letterSpacing: 1.5,
+    textShadowColor: "rgba(11, 52, 176, 0.15)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  subtitle: {
+    fontSize: isTablet ? 18 : 16,
+    color: "#6b7280",
+    textAlign: "center",
+    marginBottom: 24,
+    fontWeight: "500",
+  },
+
+  // Contenedor de Lottie
   lottieOverlayContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
     position: 'relative',
-    height: isTablet ? 220 : 180,
+    height: isTablet ? 200 : 160,
   },
   lottieOverlay: {
     position: 'absolute',
     top: 0,
     left: '50%',
-    transform: [{ translateX: -0.5 * (isTablet ? 350 : 260) }],
-    width: isTablet ? 350 : 260,
-    height: isTablet ? 350 : 260,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    borderRadius: 120,
+    transform: [{ translateX: -0.5 * (isTablet ? 320 : 240) }],
+    width: isTablet ? 320 : 240,
+    height: isTablet ? 320 : 240,
+    backgroundColor: 'rgba(11, 52, 176, 0.08)',
+    borderRadius: 160,
     zIndex: 1,
   },
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f2f2",
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  formWrapper: {
-    width: "85%",
-    maxWidth: 400,
-    alignItems: "center",
-  },
-  animatedBg: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: -1,
-    backgroundColor: "#e3e9fa",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#f4f4f4",
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  formWrapper: {
-    width: "100%",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    maxWidth: 500,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#0b34b0",
-    marginBottom: 18,
-    textAlign: "center",
-    letterSpacing: 1.2,
-  },
   animation: {
-    width: isTablet ? 350 : 260,
-    height: isTablet ? 350 : 260,
+    width: isTablet ? 320 : 240,
+    height: isTablet ? 320 : 240,
     alignSelf: "center",
-    marginVertical: 18,
-    justifyContent: "center",
-    alignItems: "center",
+    zIndex: 2,
   },
+
+  // Contenedor del formulario
   formContainer: {
-    width: isTablet ? "70%" : "100%",
-    maxWidth: 500,
-    backgroundColor: "rgba(255,255,255,0.98)",
-    borderRadius: 32,
-    padding: isTablet ? 40 : 28,
-    alignItems: "center",
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.13,
-    shadowRadius: 24,
-    elevation: 16,
-    borderWidth: 1.5,
-    borderColor: "#d0d8f6",
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    marginBottom: 18,
-    borderWidth: 2,
-    borderColor: "#d0d8f6",
-    height: isTablet ? 64 : 54,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 4,
-    elevation: 2,
-    transitionProperty: "border-color, box-shadow",
-    transitionDuration: "0.2s",
     width: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 28,
+    padding: isTablet ? 40 : 32,
+    alignItems: "center",
+    shadowColor: "#0b34b0",
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.15,
+    shadowRadius: 30,
+    elevation: 20,
+    borderWidth: 1,
+    borderColor: "rgba(208, 216, 246, 0.6)",
+    backdropFilter: "blur(10px)",
+  },
+
+  // Inputs
+  inputContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  backgroundColor: "rgba(255, 255, 255, 0.9)",
+  borderRadius: 20,
+  paddingHorizontal: 6,
+  marginBottom: 20,
+  borderWidth: 2,
+  borderColor: "#e5e9f5",
+  height: isTablet ? 68 : 58,
+  shadowColor: "#0b34b0",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.08,
+  shadowRadius: 12,
+  elevation: 4,
+  width: "100%",
+  overflow: 'hidden',
+  position: 'relative',
   },
   inputContainerError: {
-    borderColor: "#ff4d4f",
-    backgroundColor: "#fff3f3",
+    borderColor: "#ff6b6b",
+    backgroundColor: "rgba(255, 240, 240, 0.9)",
+    shadowColor: "#ff6b6b",
   },
-  inputIcon: {
-    marginRight: 14,
-  },
-  inputIconBlue: {
-    color: "#0b34b0",
-  },
-  inputIconValid: {
-    color: "#52c41a",
-  },
-  inputIconError: {
-    color: "#ff4d4f",
+  iconWrapper: {
+    width: 50,
+    height: 50,
+    borderRadius: 15,
+    backgroundColor: "rgba(11, 52, 176, 0.08)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: isTablet ? 20 : 17,
-    color: "#222",
+    fontSize: isTablet ? 18 : 16,
+    color: "#2d3748",
     fontWeight: "500",
-    letterSpacing: 0.2,
-    backgroundColor: "transparent",
-    paddingVertical: 10,
-    marginRight: 10,
-    paddingLeft: 10,
+    letterSpacing: 0.3,
+    paddingVertical: 12,
+    paddingRight: 12,
+    marginLeft: 8,
   },
-  eyeIconContainer: {
-    padding: 10,
-  },
-  passwordHint: {
-    alignSelf: "flex-start",
-    marginLeft: 10,
-    fontSize: 14,
-    color: "#666",
-  },
-  button: {
-    backgroundColor: "#0b34b0",
-    borderRadius: 16,
-    width: "100%",
-    height: isTablet ? 64 : 54,
+  validIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(82, 196, 26, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 12,
+    marginRight: 8,
+  },
+  eyeIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: "rgba(122, 137, 168, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+
+  // Iconos
+  inputIconBlue: {
+    color: "#0b34b0",
+    marginLeft: 8,
+    marginRight: 4,
+    alignSelf: 'center',
+  },
+  inputIconValid: {
+    color: "#52c41a",
+    alignSelf: 'center',
+  },
+  inputIconError: {
+    color: "#ff6b6b",
+    marginLeft: 8,
+    marginRight: 4,
+    alignSelf: 'center',
+  },
+
+  // Hint de contraseña
+  hintContainer: {
+    backgroundColor: "rgba(11, 52, 176, 0.05)",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    width: "100%",
+  },
+  passwordHint: {
+    fontSize: 14,
+    color: "#64748b",
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  hintTitle: {
+    color: "#0b34b0",
+    fontWeight: "700",
+  },
+
+  // Botón
+  button: {
+    borderRadius: 20,
+    width: "100%",
+    height: isTablet ? 68 : 58,
     shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 2,
-    borderColor: "#0b34b0",
-    transitionProperty: "background-color, box-shadow",
-    transitionDuration: "0.2s",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 12,
+    overflow: 'hidden',
+  },
+  buttonGradient: {
+    backgroundColor: "#0b34b0",
+    borderRadius: 20,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonLoading: {
+    shadowOpacity: 0.15,
   },
   buttonText: {
     color: "white",
-    fontSize: isTablet ? 22 : 18,
-    fontWeight: "bold",
-    letterSpacing: 1.1,
+    fontSize: isTablet ? 20 : 18,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+
+  // Error
+  errorContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginTop: 8,
   },
   errorText: {
-    color: "#ff4d4f",
-    textAlign: "center",
-    marginTop: 15,
-    fontSize: isTablet ? 18 : 16,
-    fontWeight: "500",
+  color: "#ff4d4f",
+  fontSize: isTablet ? 15 : 14,
+  fontWeight: "600",
+  marginLeft: 6,
+  flex: 1,
+  letterSpacing: 0.5,
+  fontWeight: "500",
+  marginLeft: 6,
+  flex: 1,
+  },
+
+  // Modal
+  modalBlurBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backdropFilter: "blur(8px)",
+  },
+  modalContainer: {
+    marginHorizontal: 32,
+    borderRadius: 32,
+    overflow: "hidden",
+  },
+  modalContent: {
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderRadius: 32,
+    padding: 40,
+    alignItems: 'center',
+    shadowColor: '#0b34b0',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.25,
+    shadowRadius: 40,
+    elevation: 25,
+    borderWidth: 1,
+    borderColor: 'rgba(208, 216, 246, 0.8)',
+  },
+  modalAnimation: {
+    width: isTablet ? 160 : 120,
+    height: isTablet ? 160 : 120,
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: isTablet ? 26 : 22,
+    color: '#0b34b0',
+    fontWeight: '800',
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: 1.2,
+  },
+  modalSubtitle: {
+    fontSize: isTablet ? 16 : 14,
+    color: '#64748b',
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
