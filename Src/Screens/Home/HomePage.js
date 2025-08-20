@@ -8,6 +8,8 @@ import {
   Text,
   Animated,
   Alert,
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -20,19 +22,18 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
 import LottieView from "lottie-react-native";
-import { SearchRoute } from "./Components/SearchBarsComponent/SearchRoute";
+import { SearchRoute2 } from "./Components/SearchBarsComponent/SearchRoute2";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
-import { MapWithPointsAndRoutes } from "./Components/MapComponent/MapPoints";
 import { points } from "./Components/MapComponent/data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSession } from "../../auth/SessionManager";
-import { ChatbotButton } from "../new_chatbot/Chatboot_Button";
+import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
-import { DownloadAssets } from "./Routes/DownloadAssets";
-import { DeleteLocalFiles } from "./Routes/DeleteLocalFiles";
-import * as FileSystem from "expo-file-system";
+import MapSVG from "./Components/MapComponent/MapSVG";
+// Para iOS, usamos expo-media-library
+// import * as MediaLibrary from "expo-media-library";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -40,13 +41,11 @@ const isTablet = width >= 768;
 export const HomePage = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const imageZoomRef = useRef(null);
   const bottomSheetRef = useRef(null);
 
   // Estados del componente
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [selectedRouteImage, setSelectedRouteImage] = useState(null);
   const [currentMapImage, setCurrentMapImage] = useState(
     require("./assets/images/mapa.webp")
   );
@@ -63,12 +62,58 @@ export const HomePage = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
 
-  // Valores animados
+  // Valores animados para la transición entre la pantalla de carga y el contenido principal
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const loadingOpacity = useRef(new Animated.Value(1)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  // Efecto para manejar la sesión y cargar el icono seleccionado
+  /**
+   * Función para solicitar permisos de almacenamiento.
+   * En Android se solicitan READ y WRITE del almacenamiento externo,
+   * y en iOS se solicita el permiso de acceso a la biblioteca mediante expo-media-library.
+   */
+  // const requestStoragePermissions = async () => {
+  //   try {
+  //     if (Platform.OS === "android") {
+  //       const granted = await PermissionsAndroid.requestMultiple([
+  //         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  //         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       ]);
+  //       if (
+  //         granted["android.permission.READ_EXTERNAL_STORAGE"] ===
+  //           PermissionsAndroid.RESULTS.GRANTED &&
+  //         granted["android.permission.WRITE_EXTERNAL_STORAGE"] ===
+  //           PermissionsAndroid.RESULTS.GRANTED
+  //       ) {
+  //         console.log("Permisos de almacenamiento concedidos en Android.");
+  //       } else {
+  //         console.log("Permisos de almacenamiento denegados en Android.");
+  //         Alert.alert(
+  //           "Permisos denegados",
+  //           "No se han concedido los permisos de almacenamiento. Algunas funciones pueden no funcionar correctamente."
+  //         );
+  //       }
+  //     } else {
+  //       // En iOS, usamos expo-media-library para solicitar acceso a la biblioteca de fotos.
+  //       const { status } = await MediaLibrary.requestPermissionsAsync();
+  //       if (status !== "granted") {
+  //         console.log("Permiso de acceso a la biblioteca denegado en iOS.");
+  //         Alert.alert(
+  //           "Permiso denegado",
+  //           "No se ha concedido el permiso para acceder a la biblioteca de fotos. Algunas funciones pueden no funcionar correctamente."
+  //         );
+  //       } else {
+  //         console.log("Permiso de acceso a la biblioteca concedido en iOS.");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.warn("Error al solicitar permisos de almacenamiento:", error);
+  //   }
+  // };
+
+  /**
+   * useEffect para verificar la sesión del usuario y cargar datos cuando la pantalla está en foco.
+   */
   useEffect(() => {
     if (isFocused) {
       checkSession().then(() => {
@@ -77,7 +122,9 @@ export const HomePage = () => {
     }
   }, [isFocused]);
 
-  // Efecto para manejar la animación del BottomSheet
+  /**
+   * useEffect para manejar la animación del BottomSheet.
+   */
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: isBottomSheetVisible ? 1 : 0,
@@ -86,29 +133,45 @@ export const HomePage = () => {
     }).start();
   }, [isBottomSheetVisible, fadeAnim]);
 
-  // Efecto para verificar si es la primera vez que se lanza la aplicación
+  /**
+   * useEffect para comprobar si es el primer lanzamiento de la aplicación.
+   * Si es el primer lanzamiento, se muestra el modal de descarga posteriormente.
+   */
   useEffect(() => {
     const checkFirstLaunch = async () => {
-      const hasLaunched = await AsyncStorage.getItem("hasLaunchedd");
+      const hasLaunched = await AsyncStorage.getItem("hasLaunched");
       if (hasLaunched === null) {
         setIsFirstLaunch(true);
-        await AsyncStorage.setItem("hasLaunchedd", "true");
+        await AsyncStorage.setItem("hasLaunched", "true");
       } else {
         setIsFirstLaunch(false);
       }
     };
-
     checkFirstLaunch();
   }, []);
 
-  // Efecto para mostrar el modal de descarga en el primer lanzamiento
+  /**
+   * useEffect para mostrar el modal de descarga en el primer lanzamiento después de que termine la carga.
+   */
   useEffect(() => {
     if (!isLoading && isFirstLaunch) {
       setShowDownloadModal(true);
     }
   }, [isLoading, isFirstLaunch]);
 
-  // Función para verificar la sesión del usuario
+  /**
+   * useEffect para solicitar los permisos de almacenamiento una vez finalizada la animación de carga.
+   */
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     requestStoragePermissions();
+  //   }
+  // }, [isLoading]);
+
+  /**
+   * Función para verificar la sesión del usuario.
+   * Si no hay sesión, redirige a la pantalla de Login.
+   */
   const checkSession = async () => {
     const session = await getSession();
     if (!session) {
@@ -119,12 +182,9 @@ export const HomePage = () => {
     }
   };
 
-  // Función para cerrar el modal de descarga
-  const handleCloseDownloadModal = () => {
-    setShowDownloadModal(false);
-  };
-
-  // Función para cargar el icono seleccionado
+  /**
+   * Función para cargar el ícono seleccionado almacenado en AsyncStorage.
+   */
   const loadSelectedIcon = async () => {
     try {
       const savedIcon = await AsyncStorage.getItem("selectedIcon");
@@ -132,13 +192,15 @@ export const HomePage = () => {
         setSelectedIcon(JSON.parse(savedIcon));
       }
     } catch (error) {
-      console.error("Error loading selected icon:", error);
+      console.error("Error al cargar el ícono seleccionado:", error);
     }
   };
 
-  // Función mejorada para manejar la carga de la imagen
+  /**
+   * Función que se ejecuta cuando finaliza la animación de carga del mapa.
+   * Se oculta la pantalla de carga y se muestra el contenido principal.
+   */
   const handleImageLoad = () => {
-    // Inicia la animación de desvanecimiento de la pantalla de carga
     Animated.parallel([
       Animated.timing(loadingOpacity, {
         toValue: 0,
@@ -155,35 +217,43 @@ export const HomePage = () => {
     });
   };
 
-  // // Función para manejar la eliminación de archivos
-  // const handleFilesDeleted = async () => {
-  //   await AsyncStorage.removeItem("hasLaunchedd");
-  //   setShowDownloadModal(true);
-  // };
-
-  // Función para manejar la pulsación de un punto en el mapa
+  /**
+   * Función para manejar la pulsación en un punto del mapa.
+   * Muestra el BottomSheet con la información del punto seleccionado.
+   */
   const handlePointPress = (pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
   };
 
-  // Funciones para manejar la barra de búsqueda
+  /**
+   * Función para alternar la visibilidad de la barra de búsqueda.
+   */
   const toggleSearchBar = () => {
+    console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
   };
 
+  /**
+   * Función para cerrar la barra de búsqueda.
+   */
   const closeSearchBar = () => {
+    console.log("Cerrando barra de búsqueda...");
     setShowSearchBar(false);
   };
 
-  // Función para cerrar el BottomSheet
+  /**
+   * Función para cerrar el BottomSheet.
+   */
   const handleCloseBottomSheet = () => {
     setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
   };
 
-  // Función para manejar la búsqueda específica
+  /**
+   * Función para realizar una búsqueda específica en los puntos del mapa.
+   */
   const handleSpecificSearch = (pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
@@ -192,80 +262,40 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
-  // Función para encontrar un archivo coincidente sin importar el prefijo
-  const getMatchingUri = async (searchKey) => {
-    try {
-      const directoryContent = await FileSystem.readDirectoryAsync(
-        FileSystem.documentDirectory
-      );
-
-      // Crear una expresión regular para eliminar los prefijos
-      const prefixRegex = /^([A-Z]+)_/;
-
-      // Buscar un archivo cuyo nombre contenga el searchKey después de quitar el prefijo
-      const matchingFile = directoryContent.find(
-        (fileName) => fileName.replace(prefixRegex, "") === `${searchKey}.webp`
-      );
-
-      return matchingFile
-        ? `${FileSystem.documentDirectory}${matchingFile}`
-        : null;
-    } catch (error) {
-      console.error("Error al buscar archivos en el directorio:", error);
-      return null;
+  /**
+   * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
+   * estableciendo los puntos, identificador de la ruta y video asociado.
+   */
+  const handleSearch = async (routeObject) => {
+    console.log("onSearch:", routeObject);
+    if (routeObject) {
+      setActiveRoutePoints(routeObject.coordinates);
+      setIsRouteActive(true);
+      setSelectedRouteId(routeObject.name);
+      const videoUri = routeVideos[routeObject.name] || null;
+      setCurrentVideoUri(videoUri);
+      setShowSearchBar(false);
+    } else {
+      Alert.alert("Error", "No se encontró la ruta en el JSON.");
     }
   };
 
-  const handleSearch = async ({ searchKey, reverseSearchKey }) => {
-    console.log("onSearch:", { searchKey, reverseSearchKey });
-    try {
-      const localUri = await getMatchingUri(searchKey) || await getMatchingUri(reverseSearchKey);
-  
-      if (localUri) {
-        console.log("Imagen encontrada:", localUri);
-        setSelectedRouteImage(localUri);
-        setCurrentMapImage({ uri: localUri });
-        setIsRouteActive(true);
-  
-        // Establece el ID de la ruta basado en la clave de búsqueda para que sea único
-        setSelectedRouteId(searchKey || reverseSearchKey);
-  
-        // Busca el video asociado a la ruta
-        const videoUri = routeVideos[searchKey] || routeVideos[reverseSearchKey];
-        setCurrentVideoUri(videoUri || null); // Si no hay video, establece null
-  
-        setShowSearchBar(false);
-        return;
-      }
-  
-      Alert.alert("No se encontró ninguna imagen para esta búsqueda.");
-    } catch (error) {
-      console.error("Error al buscar ruta:", error);
-    }
-  };
-  
-
-  // Función para limpiar la ruta seleccionada
+  /**
+   * Función para limpiar la ruta activa y reiniciar los estados relacionados.
+   */
   const clearRoute = () => {
-    setSelectedRouteImage(null);
-    setCurrentMapImage(require("./assets/images/mapa.webp"));
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
+    setCurrentMapImage(require("./assets/images/mapa.webp"));
   };
 
-  // Función para alternar la visibilidad del modal de video
+  /**
+   * Función para alternar la visibilidad del modal de video.
+   */
   const toggleVideoModal = () => {
     setIsVideoModalVisible(!isVideoModalVisible);
-  };
-
-  // Función para manejar la vista de descarga
-  const handleViewDownload = () => {
-    setShowDownloadModal(false);
-    navigation.navigate("FileManagementScreen", {
-      startDownloadAutomatically: true,
-    });
   };
 
   return (
@@ -273,7 +303,8 @@ export const HomePage = () => {
       {/* Pantalla de carga animada */}
       <Animated.View
         style={[styles.loadingContainer, { opacity: loadingOpacity }]}
-        pointerEvents={isLoading ? "auto" : "none"}>
+        pointerEvents={isLoading ? "auto" : "none"}
+      >
         <LottieView
           source={require("../../assets/animations/Map_loading.json")}
           autoPlay
@@ -284,19 +315,27 @@ export const HomePage = () => {
         <Text style={styles.loadingText}>Cargando mapa...</Text>
       </Animated.View>
 
-      {/* Contenido principal */}
+      {/* Contenido principal de la aplicación */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
-        {/* Botón del menú */}
+        {/* Botón de menú */}
         <TouchableOpacity
           style={styles.menu_icon}
-          onPress={() => navigation.openDrawer()}>
-          <FontAwesomeIcon icon={faBars} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
+          onPress={() => navigation.openDrawer()}
+        >
+          <FontAwesomeIcon
+            icon={faBars}
+            size={isTablet ? width * 0.04 : width * 0.06}
+            color="#FFFFFF"
+          />
         </TouchableOpacity>
-
         {/* Botón de perfil */}
         <TouchableOpacity
-          style={styles.profile_icon}
-          onPress={() => navigation.navigate("Perfil")}>
+          style={[
+            styles.profile_icon,
+            selectedIcon && styles.profile_icon_selected,
+          ]}
+          onPress={() => navigation.navigate("Perfil")}
+        >
           {selectedIcon ? (
             <Image source={selectedIcon} style={styles.profileImage} />
           ) : (
@@ -307,22 +346,19 @@ export const HomePage = () => {
             />
           )}
         </TouchableOpacity>
-
-        {/* Botón de búsqueda */}
+        {/* Botón para mostrar la barra de búsqueda */}
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
-          <FontAwesomeIcon icon={faRoute} size={isTablet ? width * 0.04 : width * 0.06} color="#FFFFFF" />
-        </TouchableOpacity>
-
-        {/* Componente de búsqueda de ruta */}
-        {showSearchBar && (
-          <SearchRoute
-            onClose={closeSearchBar}
-            onSearch={handleSearch}
-            points={points}
+          <FontAwesomeIcon
+            icon={faRoute}
+            size={isTablet ? width * 0.04 : width * 0.06}
+            color="#FFFFFF"
           />
+        </TouchableOpacity>
+        {/* Renderizado condicional de la barra de búsqueda */}
+        {showSearchBar && (
+          <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
-
-        {/* Componente de búsqueda específica */}
+        {/* Componente para búsqueda específica */}
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -330,10 +366,9 @@ export const HomePage = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con zoom */}
-        <GestureHandlerRootView style={styles.imageContainer}>
+        {/* Contenedor del mapa con funcionalidad de pan y zoom */}
+        <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
-            ref={imageZoomRef}
             cropWidth={Dimensions.get("window").width}
             cropHeight={Dimensions.get("window").height}
             imageWidth={1600}
@@ -345,73 +380,61 @@ export const HomePage = () => {
             maxScale={2}
             enableCenterFocus={false}
             useNativeDriver={true}
-            centerOn={{ x: 250, y: -20, scale: 0.9 }}>
-            <Image
-              source={currentMapImage}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <MapWithPointsAndRoutes
-              onPointPress={handlePointPress}
-              selectedRoute={selectedRouteImage}
-              selectedPoint={selectedPoint}
-              points={points}
-              clearRoute={clearRoute}
-              markedObject={markedObject}
-              setMarkedObject={setMarkedObject}
-              isRouteActive={isRouteActive}
-              activeRoutePoints={activeRoutePoints}
-            />
+          >
+            <View style={styles.zoomContainer}>
+              <Image
+                source={currentMapImage}
+                style={styles.mapImage}
+                resizeMode="stretch"
+              />
+              <MapSVG
+                isRouteActive={isRouteActive}
+                activeRoutePoints={activeRoutePoints}
+                onPointPress={handlePointPress}
+                points={points}
+                markedObject={markedObject}
+                setMarkedObject={setMarkedObject}
+              />
+            </View>
           </ImageZoom>
         </GestureHandlerRootView>
 
-        {/* Modal de descarga de assets */}
-        {showDownloadModal && (
-          <DownloadAssets
-            onClose={handleCloseDownloadModal}
-            onViewDownload={handleViewDownload}
-            visible={showDownloadModal}
-          />
-        )}
-
-        {/* Componente para eliminar archivos locales */}
-        {/* <DeleteLocalFiles onFilesDeleted={handleFilesDeleted} /> */}
-
-        {/* Botón para finalizar ruta */}
+        {/* Botón para finalizar la ruta activa */}
         {isRouteActive && (
           <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
             <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
           </TouchableOpacity>
         )}
 
-        {/* Overlay para el BottomSheet */}
         <Animated.View
           style={[styles.overlay, { opacity: fadeAnim }]}
           pointerEvents="none"
         />
 
-        {/* Botón para ver video */}
+        {/* Botón para ver el video asociado a la ruta activa */}
         {isRouteActive && (
-          <TouchableOpacity
-            style={styles.videoButton}
-            onPress={toggleVideoModal}>
-            <FontAwesomeIcon icon={faPlay} size={isTablet ? 28 : 24} color="#FFFFFF" />
+          <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
+            <FontAwesomeIcon
+              icon={faPlay}
+              size={isTablet ? 28 : 24}
+              color="#FFFFFF"
+            />
             <Text style={styles.videoButtonText}>Ver Video</Text>
           </TouchableOpacity>
         )}
 
-        {/* Modal de video */}
+        {/* Modal para reproducir el video */}
         <VideoModal
           isVisible={isVideoModalVisible}
           onClose={() => setIsVideoModalVisible(false)}
           videoUri={currentVideoUri}
-          routeId={selectedRouteId} 
+          routeId={selectedRouteId}
         />
 
-        {/* Botón del chatbot */}
+        {/* Se muestra el botón del chatbot cuando no hay ruta activa ni la barra de búsqueda */}
         {!isRouteActive && !showSearchBar && <ChatbotButton />}
 
-        {/* Componente BottomSheet */}
+        {/* Componente BottomSheet para mostrar información del punto seleccionado */}
         <BottomSheetComponent
           ref={bottomSheetRef}
           snapPoints={["50%", "75%"]}
@@ -424,14 +447,9 @@ export const HomePage = () => {
   );
 };
 
-// Estilos del componente
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  content: { flex: 1 },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
@@ -483,20 +501,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  profile_icon_selected: {
+    padding: 0,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#0000ff",
+  },
   profileImage: {
-    width: isTablet ? width * 0.04 : width * 0.06,
-    height: isTablet ? width * 0.04 : width * 0.06,
-    borderRadius: isTablet ? width * 0.02 : width * 0.03,
+    width: isTablet ? width * 0.04 : width * 0.13,
+    height: isTablet ? width * 0.04 : width * 0.13,
+    borderRadius: (isTablet ? width * 0.04 : width * 0.2) / 2,
   },
-  imageContainer: {
-    flex: 1,
-  },
-  image: {
-    flex: 1,
-    width: undefined,
-    height: undefined,
-    alignSelf: "stretch",
-  },
+  mapContainer: { flex: 1 },
+  zoomContainer: { width: 1600, height: 1400, position: "relative" },
+  mapImage: { width: 1600, height: 1400 },
   finalizeButton: {
     position: "absolute",
     bottom: isTablet ? 30 : 20,
@@ -538,16 +556,6 @@ const styles = StyleSheet.create({
     marginLeft: isTablet ? 12 : 8,
     fontWeight: "bold",
     fontSize: isTablet ? 20 : 16,
-  },
-  downloadButton: {
-    position: "absolute",
-    bottom: isTablet ? 30 : 20,
-    left: isTablet ? 100 : 80,
-    backgroundColor: "#007bff",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: isTablet ? 20 : 15,
-    borderRadius: isTablet ? 25 : 20,
   },
 });
 

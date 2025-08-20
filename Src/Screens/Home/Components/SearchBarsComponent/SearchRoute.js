@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Modal,
   Text,
   ScrollView,
   KeyboardAvoidingView,
@@ -12,12 +11,13 @@ import {
   Platform,
   Dimensions,
   FlatList,
+  Animated,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faTimes, faMapMarkerAlt, faArrowUp, faExchangeAlt, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [originText, setOriginText] = useState("");
@@ -25,6 +25,26 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
   const [searchHistory, setSearchHistory] = useState([]);
   const [originSuggestions, setOriginSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+  const slideAnim = useRef(new Animated.Value(height)).current; // Estado animado
+
+
+  // Animación de entrada
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0, // Lo mueve a la pantalla
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  // Animación de salida
+  const handleClose = () => {
+    Animated.timing(slideAnim, {
+      toValue: height, // Lo mueve fuera de la pantalla
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => onClose()); // Luego cierra el modal
+  };
 
   // Cargar el historial de búsqueda al montar el componente
   useEffect(() => {
@@ -168,17 +188,19 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
+  
+
   return (
-    <Modal animationType="slide" transparent={true} visible={true}>
+    <Animated.View style={[styles.overlay, { transform: [{ translateY: slideAnim }] }]}>
       <KeyboardAvoidingView 
-        style={styles.modalBackground} 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container} 
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Buscar Ruta</Text>
-              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                 <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
@@ -263,42 +285,39 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             </ScrollView>
             {searchHistory.length > 0 && (
               <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-                <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
+              <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
                 <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
               </TouchableOpacity>
             )}
           </View>
         </View>
       </KeyboardAvoidingView>
-    </Modal>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingTop: height * 0.05,
-  },
-  searchBarContainer: {
-    width: "90%",
-    maxWidth: 400,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  searchBar: {
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 20,
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    zIndex: 1000, // Asegura que esté sobre todos los elementos
+    elevation: 10, // Necesario en Android para sobreponer vistas
+  },
+  container: {
+    width: "100%",
+    maxWidth: 500,
+    // backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 10,
+    alignItems: "center",
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
     elevation: 5,
   },
   header: {
@@ -309,7 +328,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#0033A0",
   },
@@ -332,6 +351,40 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: "#000",
+  },
+  searchButton: {
+    backgroundColor: "#0033A0",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  searchButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    marginLeft: 10,
+    fontSize: 16,
+  },
+  searchBarContainer: {
+    width: "90%",
+    maxWidth: 400,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  searchBar: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 20,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   suggestionList: {
     maxHeight: 100,
@@ -357,20 +410,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#0033A0",
     padding: 12,
     borderRadius: 10,
-  },
-  searchButton: {
-    backgroundColor: "#0033A0",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  searchButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    marginLeft: 10,
-    fontSize: 16,
   },
   searchHistoryContainer: {
     backgroundColor: "#FFFFFF",

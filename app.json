@@ -11,43 +11,22 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "yairhdz24",
-      "newArchEnabled": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Esta aplicación necesita acceso a la cámara para tomar fotos.",
-        "NSPhotoLibraryUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para seleccionar imágenes.",
-        "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes.",
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": false,
-          "NSExceptionDomains": {
-            "148.202.152.59": {
-              "NSIncludesSubdomains": true,
-              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true,
-              "NSTemporaryExceptionMinimumTLSVersion": "TLSv1.0"
-            }
-          }
-        }
+        "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes."
       }
     },
     "android": {
-      "buildProperties": {
-        "gradlePlugin": "com.android.tools.build:gradle:8.0.0",
-        "kotlinVersion": "1.8.0"
-      },
+      "package": "com.CUCEIUbicate.CUCEIUbicate",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "newArchEnabled": true,
-      "package": "com.CUCEIUbicate.CUCEIUbicate",
       "permissions": [
-        "INTERNET",
-        "ACCESS_NETWORK_STATE",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ],
@@ -55,17 +34,6 @@
     },
     "plugins": [
       "expo-secure-store",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "networkSecurityConfig": {
-              "usesCleartextTraffic": true
-            }
-          }
-        }
-      ],
-      "expo-asset",
       "expo-video"
     ],
     "extra": {

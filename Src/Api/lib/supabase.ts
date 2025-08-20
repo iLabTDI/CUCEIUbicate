@@ -29,9 +29,9 @@ const ExpoSecureStoreAdapter = {
 //Nueva bd TESTING 18/01/25 https://ieyytowzcqypnbcfzhdu.supabase.co
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXl0b3d6Y3F5cG5iY2Z6aGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcyMzA2MDgsImV4cCI6MjA1MjgwNjYwOH0.RQEYyXctXFOmoEcJP4A6M6N_6s9ErBvHLuZwov89Yzg
 
-const supabaseUrl = 'https://ieyytowzcqypnbcfzhdu.supabase.co';  //https://zyzkfthsghyynigudpsk.supabase.co (MAIN)https://pkxynuqxusbwhgjvyssq.supabase.co
+const supabaseUrl = 'https://fbsjpqbvsbmisgpgpunm.supabase.co';  //https://zyzkfthsghyynigudpsk.supabase.co (MAIN)https://pkxynuqxusbwhgjvyssq.supabase.co
 //esta constante tambien
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleXl0b3d6Y3F5cG5iY2Z6aGR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcyMzA2MDgsImV4cCI6MjA1MjgwNjYwOH0.RQEYyXctXFOmoEcJP4A6M6N_6s9ErBvHLuZwov89Yzg'; 
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZic2pwcWJ2c2JtaXNncGdwdW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTYzNzQsImV4cCI6MjA3MDY5MjM3NH0.ET3bwQz4nhnasjrR6LLWA0HLYHky7WwLhrHb3EGc340'; 
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {

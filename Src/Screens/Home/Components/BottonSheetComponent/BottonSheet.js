@@ -1,8 +1,7 @@
-// Importamos los módulos y componentes necesarios de React y React Native
+// BottomSheetComponent.js
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import {
   View,
-  Image,
   StyleSheet,
   Dimensions,
   Text,
@@ -11,6 +10,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -23,31 +23,28 @@ import {
   faChalkboardTeacher,
   faMapSigns,
 } from "@fortawesome/free-solid-svg-icons";
+// Supongo que bottomSheetContents es un objeto que asocia un id de punto a la información del lugar
 import { bottomSheetContents } from "./bottomSheetContents";
 
-// Obtenemos el ancho de la ventana actual
 const { width } = Dimensions.get("window");
 
-// Definimos el componente BottomSheetComponent utilizando forwardRef para poder manipular el BottomSheet desde el exterior
 export const BottomSheetComponent = React.forwardRef(
   ({ snapPoints, selectedPoint, isVisible, onClose }, ref) => {
-    const bottomSheetRef = useRef(null); // Referencia del BottomSheet
-    const scrollRef = useRef(null); // Referencia del ScrollView para manejar el deslizamiento de imágenes
-    const [currentImageIndex, setCurrentImageIndex] = useState(0); // Estado para almacenar el índice de la imagen actual en el carrusel
-    const [loadedImages, setLoadedImages] = useState([]); // Estado para almacenar las imágenes que se han cargado
+    const bottomSheetRef = useRef(null);
+    const scrollRef = useRef(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [loadedImages, setLoadedImages] = useState([]);
 
-    // Efecto que permite expandir o cerrar el BottomSheet desde fuera usando la referencia
+    // Expone métodos para expandir o cerrar el BottomSheet
     useEffect(() => {
       if (ref) {
         ref.current = {
-          expand: () => bottomSheetRef.current?.expand(), // Expande el BottomSheet
-          close: () => bottomSheetRef.current?.close(), // Cierra el BottomSheet
+          expand: () => bottomSheetRef.current?.expand(),
+          close: () => bottomSheetRef.current?.close(),
         };
       }
     }, [ref]);
 
-    // Efecto que se activa cuando la visibilidad del BottomSheet cambia
-    // Si isVisible es true, expande el BottomSheet, de lo contrario lo cierra
     useEffect(() => {
       if (isVisible) {
         bottomSheetRef.current?.expand();
@@ -56,60 +53,54 @@ export const BottomSheetComponent = React.forwardRef(
       }
     }, [isVisible]);
 
-    // Callback que detecta cambios en el estado del BottomSheet (si se ha cerrado o no)
     const handleSheetChanges = useCallback(
       (index) => {
         if (index === -1) {
-          // Cuando el índice es -1, el BottomSheet está cerrado
-          onClose(); // Ejecuta la función onClose para notificar el cierre
+          onClose();
         }
       },
       [onClose]
     );
 
-    // Callback que avanza a la siguiente imagen en el carrusel
     const goToNextImage = useCallback(
       (imagesLength) => {
-        const nextIndex = (currentImageIndex + 1) % imagesLength; // Calcula el índice de la siguiente imagen
-        scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true }); // Desplaza el ScrollView a la siguiente imagen
-        setCurrentImageIndex(nextIndex); // Actualiza el estado del índice actual
+        const nextIndex = (currentImageIndex + 1) % imagesLength;
+        scrollRef.current?.scrollTo({ x: nextIndex * width, animated: true });
+        setCurrentImageIndex(nextIndex);
       },
       [currentImageIndex]
     );
 
-    // Callback que retrocede a la imagen anterior en el carrusel
     const goToPrevImage = useCallback(
       (imagesLength) => {
         const prevIndex =
-          currentImageIndex === 0 ? imagesLength - 1 : currentImageIndex - 1; // Calcula el índice de la imagen anterior
-        scrollRef.current?.scrollTo({ x: prevIndex * width, animated: true }); // Desplaza el ScrollView a la imagen anterior
-        setCurrentImageIndex(prevIndex); // Actualiza el estado del índice actual
+          currentImageIndex === 0 ? imagesLength - 1 : currentImageIndex - 1;
+        scrollRef.current?.scrollTo({ x: prevIndex * width, animated: true });
+        setCurrentImageIndex(prevIndex);
       },
       [currentImageIndex]
     );
 
-    // Callback que se ejecuta cuando se detiene el desplazamiento en el carrusel
-    // Calcula el índice de la imagen actual basado en la posición de desplazamiento
     const handleMomentumScrollEnd = useCallback((event) => {
       const slideWidth = event.nativeEvent.layoutMeasurement.width;
       const index = Math.round(event.nativeEvent.contentOffset.x / slideWidth);
-      setCurrentImageIndex(index); // Actualiza el estado con el nuevo índice
+      setCurrentImageIndex(index);
     }, []);
 
-    // Función que renderiza el carrusel de imágenes
     const renderImageCarousel = useCallback(
       (images) => {
+        if (!images || images.length === 0) return null;
         return (
           <View style={styles.carouselContainer}>
             <ScrollView
               ref={scrollRef}
               horizontal
               pagingEnabled
-              showsHorizontalScrollIndicator={false} // Oculta el indicador de desplazamiento horizontal
-              onMomentumScrollEnd={handleMomentumScrollEnd} // Ejecuta el callback al final del desplazamiento
-              scrollEventThrottle={16} // Controla la frecuencia de los eventos de desplazamiento
-              contentContainerStyle={styles.scrollViewContent}>
-              {/* Mapea las imágenes recibidas y las renderiza */}
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleMomentumScrollEnd}
+              scrollEventThrottle={16}
+              contentContainerStyle={styles.scrollViewContent}
+            >
               {images.map((image, index) => (
                 <View key={index} style={styles.imageContainer}>
                   {!loadedImages.includes(index) && (
@@ -119,49 +110,37 @@ export const BottomSheetComponent = React.forwardRef(
                     </View>
                   )}
                   <Image
-                    key={index}
-                    source={image} // Fuente de la imagen
-                    style={styles.carouselImage} // Estilo de la imagen
-                    resizeMode="cover" // La imagen se ajusta para cubrir el área del contenedor
-                    onLoad={() => setLoadedImages(prev => [...prev, index])} // Actualiza el estado cuando la imagen se carga
+                    source={image}
+                    style={styles.carouselImage}
+                    resizeMode="cover"
+                    onLoad={() => setLoadedImages((prev) => [...prev, index])}
                   />
                 </View>
               ))}
             </ScrollView>
-            {/* Si hay más de una imagen, muestra los botones para avanzar y retroceder */}
             {images.length > 1 && (
               <>
-                {/* Botón para ir a la imagen anterior */}
                 <TouchableOpacity
                   style={styles.prevButton}
                   onPress={() => goToPrevImage(images.length)}
-                  activeOpacity={0.6}>
-                  <FontAwesomeIcon
-                    icon={faChevronLeft}
-                    size={24}
-                    color="#FFFFFF"
-                  />
+                  activeOpacity={0.6}
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} size={24} color="#FFFFFF" />
                 </TouchableOpacity>
-                {/* Botón para ir a la siguiente imagen */}
                 <TouchableOpacity
                   style={styles.nextButton}
                   onPress={() => goToNextImage(images.length)}
-                  activeOpacity={0.6}>
-                  <FontAwesomeIcon
-                    icon={faChevronRight}
-                    size={24}
-                    color="#FFFFFF"
-                  />
+                  activeOpacity={0.6}
+                >
+                  <FontAwesomeIcon icon={faChevronRight} size={24} color="#FFFFFF" />
                 </TouchableOpacity>
-                {/* Paginación visual para mostrar qué imagen está activa */}
                 <View style={styles.paginationContainer}>
                   {images.map((_, index) => (
                     <View
                       key={index}
                       style={[
                         styles.paginationDot,
-                        index === currentImageIndex &&
-                          styles.paginationDotActive, // Resalta el punto correspondiente a la imagen actual
+                        index === currentImageIndex && styles.paginationDotActive,
                       ]}
                     />
                   ))}
@@ -177,24 +156,27 @@ export const BottomSheetComponent = React.forwardRef(
     return (
       <BottomSheet
         ref={bottomSheetRef}
-        index={-1} // El índice -1 indica que el BottomSheet comienza cerrado
-        snapPoints={snapPoints} // Puntos de anclaje para el BottomSheet
-        onChange={handleSheetChanges} // Callback para manejar los cambios de estado del BottomSheet
-        backgroundStyle={styles.bottomSheetBackground} // Estilo de fondo del BottomSheet
-        handleIndicatorStyle={styles.bottomSheetIndicator} // Estilo del indicador de arrastre del BottomSheet
-        enablePanDownToClose={true} // Permite cerrar el BottomSheet arrastrando hacia abajo
+        index={-1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        backgroundStyle={styles.bottomSheetBackground}
+        handleIndicatorStyle={styles.bottomSheetIndicator}
+        enablePanDownToClose={true}
+        enableContentPanningGesture={false}
       >
-        {/* El KeyboardAvoidingView permite que el contenido del BottomSheet evite el teclado en iOS */}
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingView}>
+          style={styles.keyboardAvoidingView}
+        >
           <ScrollView
-            contentContainerStyle={styles.bottomSheetContent}>
-            {/* Solo muestra contenido si se ha seleccionado un punto y tiene datos asociados */}
+            contentContainerStyle={styles.bottomSheetContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+          >
             {selectedPoint && bottomSheetContents[selectedPoint] && (
               <View style={styles.contentContainer}>
                 <View style={styles.header}>
-                  {/* Icono y nombre del lugar seleccionado */}
                   <FontAwesomeIcon
                     icon={faMapMarkerAlt}
                     size={24}
@@ -205,12 +187,13 @@ export const BottomSheetComponent = React.forwardRef(
                     {bottomSheetContents[selectedPoint].name}
                   </Text>
                 </View>
-                {/* Carrusel de imágenes del lugar seleccionado */}
+                {/* {renderImageCarousel(
+                  bottomSheetContents[selectedPoint]["photo-path"]
+                )} */}
                 {renderImageCarousel(
                   bottomSheetContents[selectedPoint]["images-path"]
                 )}
                 <View style={styles.infoContainer}>
-                  {/* Sección de descripción del lugar */}
                   <View style={styles.descriptionContainer}>
                     <FontAwesomeIcon
                       icon={faInfoCircle}
@@ -222,8 +205,6 @@ export const BottomSheetComponent = React.forwardRef(
                       {bottomSheetContents[selectedPoint].description}
                     </Text>
                   </View>
-
-                  {/* Detalles adicionales del lugar, como aulas, lugares relevantes y baños */}
                   <View style={styles.detailsContainer}>
                     <View style={styles.detailItem}>
                       <FontAwesomeIcon
@@ -236,7 +217,6 @@ export const BottomSheetComponent = React.forwardRef(
                         Aulas: {bottomSheetContents[selectedPoint].classrooms}
                       </Text>
                     </View>
-
                     <View style={styles.detailItem}>
                       <FontAwesomeIcon
                         icon={faMapSigns}
@@ -248,7 +228,6 @@ export const BottomSheetComponent = React.forwardRef(
                         Lugares relevantes:
                       </Text>
                     </View>
-                    {/* Muestra los lugares relevantes asociados */}
                     {bottomSheetContents[selectedPoint]["relevant-places"].map(
                       (place, index) => (
                         <Text key={index} style={styles.detailSubText}>
@@ -256,7 +235,6 @@ export const BottomSheetComponent = React.forwardRef(
                         </Text>
                       )
                     )}
-
                     <View style={styles.detailItem}>
                       <FontAwesomeIcon
                         icon={faToilet}
@@ -266,7 +244,6 @@ export const BottomSheetComponent = React.forwardRef(
                       />
                       <Text style={styles.detailTitle}>Baños:</Text>
                     </View>
-                    {/* Muestra los baños asociados */}
                     {bottomSheetContents[selectedPoint].bathrooms.map(
                       (bathroom, index) => (
                         <Text key={index} style={styles.detailSubText}>
@@ -285,7 +262,6 @@ export const BottomSheetComponent = React.forwardRef(
   }
 );
 
-// Estilos del componente
 const styles = StyleSheet.create({
   bottomSheetBackground: {
     backgroundColor: "#f8f9fa",
@@ -344,13 +320,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   loadingContainer: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
-    color: '#0000ff',
+    color: "#0000ff",
     fontSize: 16,
   },
   prevButton: {
@@ -402,13 +378,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 16,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
     elevation: 5,
   },
   descriptionIcon: {
@@ -418,7 +391,7 @@ const styles = StyleSheet.create({
   description: {
     flex: 1,
     fontSize: 16,
-    color: "#000000",
+    color: "#000",
     lineHeight: 24,
   },
   detailsContainer: {
@@ -426,13 +399,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 16,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
     elevation: 5,
   },
   detailItem: {
@@ -445,17 +415,17 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 16,
-    color: "#000000",
+    color: "#000",
   },
   detailTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000000",
+    color: "#000",
     marginBottom: 8,
   },
   detailSubText: {
     fontSize: 14,
-    color: "#666666",
+    color: "#666",
     marginLeft: 30,
     marginBottom: 8,
   },

@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import React, { useState, useEffect } from "react";
 import { StatusBar, Platform, View, ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -37,7 +39,7 @@ function App() {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const value = await AsyncStorage.getItem("@onboarding_completed");
+        const value = await AsyncStorage.getItem("@onboarding_completeddd");
         setIsFirstLaunch(value == null);
       } catch (error) {
         console.error("Error al verificar el estado de onboarding:", error);

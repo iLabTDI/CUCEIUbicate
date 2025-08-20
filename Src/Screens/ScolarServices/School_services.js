@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,21 +9,22 @@ import {
   RefreshControl,
   Linking,
   Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faLink,
-  faSync,
   faGraduationCap,
   faClipboardList,
   faFileAlt,
   faCreditCard,
   faCalendarAlt,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import * as FileSystem from "expo-file-system";
-import { ErrorComponent } from "../Components/ErrorComponent";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 const jsonFilePath = `${FileSystem.documentDirectory}scholar_services.json`;
@@ -33,217 +34,262 @@ const isURL = (text) => {
   return urlPattern.test(text);
 };
 
+const isEmail = (text) => {
+  const emailPattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  return emailPattern.test(text);
+};
+
 const sectionIcons = {
   "Justificación de faltas": faClipboardList,
   "Solicitud de documentos": faFileAlt,
   "Orden de pago": faCreditCard,
-  "Agenda": faCalendarAlt,
+  Agenda: faCalendarAlt,
 };
 
 export const School_services = () => {
   const [jsonData, setJsonData] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const downloadJson = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const json = require("../../../json/scholar_services.json");
-      await FileSystem.writeAsStringAsync(jsonFilePath, JSON.stringify(json));
-      setJsonData(json);
-      setError(null);
-    } catch (error) {
-      console.error("Error al cargar el archivo local:", error);
-      setError("Error al cargar el archivo local");
-      try {
-        const fileInfo = await FileSystem.getInfoAsync(jsonFilePath);
-        if (fileInfo.exists) {
-          const localJson = await FileSystem.readAsStringAsync(jsonFilePath);
-          setJsonData(JSON.parse(localJson));
-          setError(null);
-        } else {
-          console.log("No hay datos locales disponibles.");
-        }
-      } catch (readError) {
-        console.error("Error al leer el archivo local:", readError);
-        setError("No se pudo leer el archivo local");
-      }
-    } finally {
-      setIsLoading(false);
-      setRefreshing(false);
-    }
+  useEffect(() => {
+    loadJsonFromStorage();
   }, []);
 
-  useEffect(() => {
-    downloadJson();
-  }, [downloadJson]);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    downloadJson();
-  }, [downloadJson]);
-
-  const renderListItem = (item, index) => {
-    if (isURL(item)) {
-      return (
-        <TouchableOpacity
-          key={index}
-          onPress={() => Linking.openURL(item)}
-          style={styles.linkContainer}
-        >
-          <FontAwesomeIcon icon={faLink} size={isTablet ? 20 : 16} color="#0b34b0" />
-          <Text style={styles.link}>{item}</Text>
-        </TouchableOpacity>
-      );
-    } else {
-      return (
-        <Text key={index} style={styles.text}>
-          • {item}
-        </Text>
-      );
+  const loadJsonFromStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("scholarServicesData");
+      if (storedData !== null) {
+        setJsonData(JSON.parse(storedData));
+      } else {
+        const json = require("../../../json/scholar_services.json");
+        setJsonData(json);
+        await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json));
+      }
+    } catch (error) {
+      console.error("Error loading data from storage:", error);
+      const json = require("../../../json/scholar_services.json");
+      setJsonData(json);
     }
   };
 
-  if (error) {
-    return (
-      <ErrorComponent
-        title="Error al cargar datos"
-        message={error}
-        buttonText="Reintentar"
-        onRetry={downloadJson}
-      />
-    );
-  }
+  const loadJson = async () => {
+    setRefreshing(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const json = require("../../../json/scholar_services.json");
+      await AsyncStorage.setItem("scholarServicesData", JSON.stringify(json));
+      setJsonData(json);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
-  if (isLoading) {
+  const RenderTextPart = ({ text }) => {
+    if (isURL(text) || isEmail(text)) {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() =>
+            Linking.openURL(isEmail(text) ? `mailto:${text}` : text)
+          }>
+          <Text style={styles.linkText}>{text}</Text>
+        </TouchableOpacity>
+      );
+    }
+    return <Text style={styles.listItemText}>{text}</Text>;
+  };
+
+  const renderListItem = (text, index) => {
+    const parts = text.split(/(\s+)/);
+
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size={isTablet ? 32 : 24} color="#0b34b0" />
-        <Text style={styles.loadingText}>Cargando servicios escolares...</Text>
+      <View key={index} style={styles.listItem}>
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          size={isTablet ? 16 : 14}
+          color="#0056b3"
+          style={styles.listItemIcon}
+        />
+        <View style={styles.listItemTextContainer}>
+          {parts.map((part, i) => (
+            <RenderTextPart key={i} text={part} />
+          ))}
+        </View>
       </View>
+    );
+  };
+
+  const renderContent = (content) => {
+    if (Array.isArray(content)) {
+      return content.map((item, index) => renderListItem(item, index));
+    } else if (typeof content === "string") {
+      return renderListItem(content, 0);
+    }
+    return null;
+  };
+
+  const renderSection = (sectionId, section) => (
+    <View key={sectionId} style={styles.card}>
+      <View style={styles.sectionHeader}>
+        <FontAwesomeIcon
+          icon={sectionIcons[section.title] || faGraduationCap}
+          size={isTablet ? 24 : 20}
+          color="#0056b3"
+          style={styles.sectionIcon}
+        />
+        <Text style={styles.sectionTitle}>{section.title}</Text>
+      </View>
+      <View style={styles.sectionContent}>
+        {renderContent(section.content)}
+        {section["listed-elements"] &&
+          Object.entries(section["listed-elements"]).map(([key, element]) =>
+            Array.isArray(element)
+              ? element.map((subElement, subIndex) =>
+                  renderListItem(subElement, `${key}-${subIndex}`)
+                )
+              : renderListItem(element, key)
+          )}
+      </View>
+    </View>
+  );
+
+  if (!jsonData) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0056b3" />
+          <Text style={styles.loadingText}>
+            Cargando servicios escolares...
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      {jsonData?.section_description && (
-        <View style={styles.card}>
-          <View style={styles.titleContainer}>
-            <FontAwesomeIcon icon={faGraduationCap} size={isTablet ? 32 : 24} color="#0b34b0" />
-            <Text style={styles.mainTitle}>{jsonData.section_description.name}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadJson} />
+        }>
+        <LinearGradient
+          colors={["#0056b3", "#007bff"]}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}>
+          <View style={styles.headerContent}>
+            <FontAwesomeIcon
+              icon={faGraduationCap}
+              size={isTablet ? 32 : 24}
+              color="#fff"
+            />
+            <Text style={styles.headerTitle}>
+              {jsonData.section_description.name}
+            </Text>
           </View>
-        </View>
-      )}
-
-      {jsonData?.section_description?.["sub-sections"] &&
-        Object.entries(jsonData.section_description["sub-sections"]).map(
-          ([sectionId, section]) => (
-            <View key={sectionId} style={styles.card}>
-              <View style={styles.sectionTitleContainer}>
-                <FontAwesomeIcon 
-                  icon={sectionIcons[section.title] || faGraduationCap} 
-                  size={isTablet ? 24 : 20} 
-                  color="#0b34b0" 
-                />
-                <Text style={styles.sectionTitle}>{section.title}</Text>
-              </View>
-              {section["listed-elements"] &&
-                Object.entries(section["listed-elements"]).map(([elementId, element]) => (
-                  <View key={elementId} style={styles.listItem}>
-                    {Array.isArray(element)
-                      ? element.map((item, index) =>
-                          renderListItem(item, `${elementId}-${index}`)
-                        )
-                      : renderListItem(element, elementId)}
-                  </View>
-                ))}
-            </View>
-          )
+        </LinearGradient>
+        {Object.entries(jsonData.section_description["sub-sections"]).map(
+          ([sectionId, section]) => renderSection(sectionId, section)
         )}
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f0f4f8",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   contentContainer: {
-    paddingHorizontal: isTablet ? 24 : 16,
     paddingBottom: 20,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   loadingText: {
-    marginTop: 10,
     fontSize: isTablet ? 20 : 16,
-    color: "#0b34b0",
+    color: "#0056b3",
+    marginTop: 10,
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    marginVertical: isTablet ? 15 : 10,
-    padding: isTablet ? 24 : 20,
-    borderRadius: isTablet ? 16 : 12,
-    shadowColor: "#000000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+  header: {
+    padding: isTablet ? 30 : 20,
+    borderBottomLeftRadius: isTablet ? 30 : 20,
+    borderBottomRightRadius: isTablet ? 30 : 20,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: isTablet ? 15 : 10,
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  mainTitle: {
+  headerTitle: {
     fontSize: isTablet ? 32 : 24,
     fontWeight: "bold",
-    color: "#0b34b0",
+    color: "#fff",
     marginLeft: isTablet ? 15 : 10,
+    textAlign: "center",
   },
-  sectionTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: isTablet ? 20 : 15,
+  card: {
+    backgroundColor: "#fff",
+    marginHorizontal: isTablet ? 24 : 16,
+    marginVertical: isTablet ? 15 : 10,
+    borderRadius: isTablet ? 16 : 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 5,
+    overflow: "hidden",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: isTablet ? 20 : 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e8ed",
+  },
+  sectionIcon: {
+    marginRight: isTablet ? 15 : 10,
   },
   sectionTitle: {
     fontSize: isTablet ? 24 : 20,
     fontWeight: "bold",
-    color: "#0b34b0",
-    marginLeft: isTablet ? 15 : 10,
+    color: "#0056b3",
+    flex: 1,
   },
-  text: {
-    fontSize: isTablet ? 18 : 16,
-    color: "#333333",
-    marginBottom: isTablet ? 12 : 8,
-    lineHeight: isTablet ? 28 : 24,
-  },
-  linkContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: isTablet ? 12 : 8,
-    flexWrap: "wrap",
-  },
-  link: {
-    fontSize: isTablet ? 18 : 16,
-    color: "#0b34b0",
-    textDecorationLine: "underline",
-    marginLeft: isTablet ? 12 : 8,
+  sectionContent: {
+    padding: isTablet ? 20 : 15,
   },
   listItem: {
-    marginBottom: isTablet ? 12 : 8,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: isTablet ? 15 : 10,
+  },
+  listItemIcon: {
+    marginTop: isTablet ? 6 : 4,
+    marginRight: isTablet ? 15 : 10,
+  },
+  listItemTextContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  listItemText: {
+    fontSize: isTablet ? 18 : 16,
+    color: "#333",
+  },
+  linkText: {
+    fontSize: isTablet ? 18 : 16,
+    color: "#0056b3",
+    textDecorationLine: "underline",
   },
 });
 
