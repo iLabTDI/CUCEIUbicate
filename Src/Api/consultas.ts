@@ -2,26 +2,22 @@ import { supabase } from "./lib/supabase";
 
 export const get_degrees = async () => {
   try {
-    const { data: namesData, error } = await supabase
+    const { data, error } = await supabase
       .from('degrees')
-      .select('name');
+      .select('name, code');
 
-const { data: codesData, error: codesError } = await supabase
-      .from('degrees')
-      .select('code');
-
-    if (error || codesError) {
-      console.error('Error al consultar los datos:', error || codesError);
+    if (error) {
+      console.error('Error al consultar los datos:', error);
       return [];
     }
 
-    if (!namesData || !codesData) {
+    if (!data) {
       console.error('Error: Datos faltantes');
       return [];
     }
 
-    const careerOptions = namesData.map((degree, index) => `${degree.name} ${codesData[index].code}`);
-    return careerOptions;
+    // Regresa un array de objetos { name, code }
+    return data;
   } catch (error) {
     console.error('Error al consultar los datos:', error);
     return [];

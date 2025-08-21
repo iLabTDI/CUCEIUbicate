@@ -548,7 +548,7 @@ export const CompleteProfile = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccione una carrera</Text>
             <ScrollView style={styles.careerOptionsContainer}>
-              {careerOptions.map((option, index) => (
+                            {careerOptions.map((option, index) => (
                 <TouchableOpacity
                   key={index}
                   style={styles.careerOption}
@@ -561,7 +561,7 @@ export const CompleteProfile = () => {
                     style={styles.careerIcon}
                     size={20}
                   />
-                  <Text style={styles.careerOptionText}>{option}</Text>
+                  <Text style={styles.careerOptionText}>{option.name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>

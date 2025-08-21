@@ -11,23 +11,29 @@ import {
   Modal,
   FlatList,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faSignOutAlt,
-  faEdit,
-  faCalendarDay,
-  faCheckCircle,
   faUser,
   faIdCard,
   faGraduationCap,
   faEnvelope,
   faTimes,
+  faCamera,
+  faImage,
+  faBookOpen,
+  faChevronRight,
+  faBuilding,
+  faUniversity,
+  faCalendarAlt,
+  faCheckCircle,
+  faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Animatable from "react-native-animatable";
 import ImageZoom from "react-native-image-pan-zoom";
 import { animalIcons, careerImages } from "./Data_iconos_mallas";
 import { clearSession } from "../../auth/SessionManager";
@@ -35,7 +41,7 @@ import defaultAvatar from "../../assets/images/usuario.png";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const ICON_SIZE = SCREEN_WIDTH * 0.15;
-const GRID_PADDING = 16;
+const isTablet = SCREEN_WIDTH >= 768;
 
 const degreeNames = {
   ICIV: "Ingeniería Civil",
@@ -58,20 +64,17 @@ const degreeNames = {
   LQUI: "Licenciatura en Química",
 };
 
-const InfoItem = ({ icon, title, value }) => (
-  <Animatable.View animation="fadeIn" duration={800} style={styles.infoItem}>
-    <LinearGradient
-      colors={["#0b34b0", "#267bee"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.infoIconContainer}>
-      <FontAwesomeIcon icon={icon} size={20} color="#FFFFFF" />
-    </LinearGradient>
+// Componente para cards de información
+const InfoCard = ({ icon, title, value, color }) => (
+  <View style={styles.infoCard}>
+    <View style={[styles.infoIcon, { backgroundColor: color }]}>
+      <FontAwesomeIcon icon={icon} size={16} color="#FFFFFF" />
+    </View>
     <View style={styles.infoContent}>
       <Text style={styles.infoTitle}>{title}</Text>
       <Text style={styles.infoValue}>{value}</Text>
     </View>
-  </Animatable.View>
+  </View>
 );
 
 export const ProfileScreen = ({ route }) => {
@@ -79,15 +82,26 @@ export const ProfileScreen = ({ route }) => {
   const { user } = route.params;
   const userData = Array.isArray(user) ? user[0] : user;
 
-  const [selectedIcon, setSelectedIcon] = useState(
-    userData.avatar || defaultAvatar
-  );
+  // Función para extraer el código de carrera del string completo
+  const extractCareerCode = (degreeString) => {
+    if (!degreeString) return null;
+    
+    // Si ya es solo el código (4-5 letras mayúsculas), devolverlo tal como está
+    if (/^[A-Z]{3,5}$/.test(degreeString.trim())) {
+      return degreeString.trim();
+    }
+    
+    // Si contiene un string largo, extraer el código del final
+    const match = degreeString.match(/\b([A-Z]{3,5})\b$/);
+    return match ? match[1] : null;
+  };
+
+  const [selectedIcon, setSelectedIcon] = useState(userData.avatar || defaultAvatar);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
   const [isCurriculumModalVisible, setCurriculumModalVisible] = useState(false);
   const [loadingIcons, setLoadingIcons] = useState(true);
   const [loadedIcons, setLoadedIcons] = useState({});
-  const imageZoomRef = useRef(null);
 
   useEffect(() => {
     loadSelectedIcon();
@@ -96,15 +110,13 @@ export const ProfileScreen = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const iconsWithDelay = animalIcons.reduce((acc, icon) => {
-        acc[icon.id] = true;
-        return acc;
-      }, {});
-      setLoadedIcons(iconsWithDelay);
-      setLoadingIcons(false);
-    }, 2000);
-    return () => clearTimeout(timer);
+    // Cargar iconos inmediatamente sin delay
+    const iconsWithDelay = animalIcons.reduce((acc, icon) => {
+      acc[icon.id] = true;
+      return acc;
+    }, {});
+    setLoadedIcons(iconsWithDelay);
+    setLoadingIcons(false);
   }, []);
 
   const loadSelectedIcon = async () => {
@@ -127,7 +139,7 @@ export const ProfileScreen = ({ route }) => {
   const handleAvatarChange = (newAvatar) => {
     setSelectedIcon(newAvatar);
     saveSelectedIcon(newAvatar);
-    setModalVisible(false);
+    setAvatarModalVisible(false);
   };
 
   const handleLogout = () => {
@@ -149,301 +161,532 @@ export const ProfileScreen = ({ route }) => {
     });
   };
 
-  const renderIcon = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => handleAvatarChange(item.uri)}
-      style={[
-        styles.iconButton,
-        selectedIcon === item.uri && styles.selectedIconButton,
-      ]}>
-      {loadedIcons[item.id] ? (
-        <Image
-          source={item.uri}
-          style={[
-            styles.iconImage,
-            selectedIcon === item.uri && styles.selectedIconImage,
-          ]}
-        />
-      ) : (
-        <ActivityIndicator size={24} color="#0b34b0" />
-      )}
-    </TouchableOpacity>
-  );
+  const renderIcon = ({ item }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => handleAvatarChange(item.uri)}
+        style={[
+          styles.iconButton,
+          selectedIcon === item.uri && styles.selectedIconButton,
+        ]}
+        activeOpacity={0.7}
+      >
+        <View style={styles.iconImageContainer}>
+          <Image
+            source={item.uri}
+            style={[
+              styles.iconImage,
+              selectedIcon === item.uri && styles.selectedIconImage,
+            ]}
+          />
+          {selectedIcon === item.uri && (
+            <View style={styles.selectedBadge}>
+              <FontAwesomeIcon icon={faCheckCircle} size={14} color="#10b981" />
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <LinearGradient
-        colors={["#0b34b0", "#267bee"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}>
-        <Animatable.View
-          animation="fadeIn"
-          duration={1000}
-          style={styles.avatarContainer}>
-          <Image source={selectedIcon} style={styles.avatar} />
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => setModalVisible(true)}>
-            <FontAwesomeIcon icon={faEdit} size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        </Animatable.View>
-        <Animatable.View
-          animation="fadeInUp"
-          duration={1000}
-          style={styles.userInfo}>
-          <Text style={styles.name}>
-            {userData.name} {userData.lastnames}
-          </Text>
-          <Text style={styles.username}>@{userData.username}</Text>
-          <View style={styles.statusIndicator}>
-            <FontAwesomeIcon icon={faCheckCircle} size={20} color="#4CAF50" />
-            <Text style={styles.statusText}>Activo</Text>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {/* Header with Gradient */}
+        <LinearGradient colors={["#1e40af", "#3b82f6", "#60a5fa"]} style={styles.header}>
+          <View style={styles.headerContent}>
+            {/* Avatar Section */}
+            <View style={styles.avatarSection}>
+              <View style={styles.avatarContainer}>
+                <Image source={selectedIcon} style={styles.avatar} />
+                <TouchableOpacity
+                  style={styles.editAvatarButton}
+                  onPress={() => setAvatarModalVisible(true)}
+                  activeOpacity={0.8}
+                >
+                  <FontAwesomeIcon icon={faCamera} size={16} color="#FFFFFF" />
+                </TouchableOpacity>
+              </View>
+              
+              <View style={styles.userInfo}>
+                <Text style={styles.userName}>
+                  {userData.name} {userData.lastnames}
+                </Text>
+                <Text style={styles.userUsername}>@{userData.username}</Text>
+                
+                <View style={styles.statusBadge}>
+                  <FontAwesomeIcon icon={faCheckCircle} size={14} color="#10b981" />
+                  <Text style={styles.statusText}>A</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* University Info Card */}
+            <View style={styles.universityCard}>
+              <View style={styles.universityHeader}>
+                <View style={styles.universityLogoContainer}>
+                  <FontAwesomeIcon icon={faGraduationCap} size={24} color="#FFFFFF" />
+                </View>
+                <View style={styles.universityInfo}>
+                  <Text style={styles.universityName}>Universidad de Guadalajara</Text>
+                  <Text style={styles.centerName}>Centro Universitario de Ciencias Exactas e Ingenierías</Text>
+                </View>
+              </View>
+              
+              <View style={styles.universityStats}>
+                <View style={styles.universityStatItem}>
+                  <View style={styles.statIconContainer}>
+                    <FontAwesomeIcon icon={faBuilding} size={16} color="#1e40af" />
+                  </View>
+                  <View style={styles.statInfoContainer}>
+                    <Text style={styles.statValueNew}>CUCEI</Text>
+                    <Text style={styles.statLabelNew}>Centro Universitario</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.universityStatItem}>
+                  <View style={styles.statIconContainer}>
+                    <FontAwesomeIcon icon={faUniversity} size={16} color="#1e40af" />
+                  </View>
+                  <View style={styles.statInfoContainer}>
+                    <Text style={styles.statValueNew}>UDG</Text>
+                    <Text style={styles.statLabelNew}>Universidad</Text>
+                  </View>
+                </View>
+                
+                <View style={styles.universityStatItem}>
+                  <View style={styles.statIconContainer}>
+                    <FontAwesomeIcon icon={faCalendarAlt} size={16} color="#1e40af" />
+                  </View>
+                  <View style={styles.statInfoContainer}>
+                    <Text style={styles.statValueNew}>2025</Text>
+                    <Text style={styles.statLabelNew}>Ciclo Escolar</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
           </View>
-        </Animatable.View>
-      </LinearGradient>
+        </LinearGradient>
 
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={300}
-        style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Información del Perfil</Text>
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Información Personal */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <FontAwesomeIcon icon={faUser} size={20} color="#1e40af" />
+              <Text style={styles.sectionTitle}>Mi Información</Text>
+            </View>
+            
+            <View style={styles.card}>
+              <InfoCard
+                icon={faUser}
+                title="Nombre de Usuario"
+                value={`@${userData.username}`}
+                color="#3b82f6"
+              />
+              <InfoCard
+                icon={faIdCard}
+                title="Código Estudiantil"
+                value={userData.code}
+                color="#6366f1"
+              />
+              <InfoCard
+                icon={faGraduationCap}
+                title="Programa Académico"
+                value={degreeNames[userData.degree_code] || userData.degree_code}
+                color="#8b5cf6"
+              />
+              <InfoCard
+                icon={faEnvelope}
+                title="Correo Institucional"
+                value={userData.email}
+                color="#06b6d4"
+              />
+            </View>
+          </View>
+
+          {/* Malla Curricular */}
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.curriculumCard}
+              onPress={() => setCurriculumModalVisible(true)}
+              activeOpacity={0.9}
+            >
+              <LinearGradient colors={["#1e40af", "#3b82f6"]} style={styles.curriculumGradient}>
+                <View style={styles.curriculumContent}>
+                  <View style={styles.curriculumIcon}>
+                    <FontAwesomeIcon icon={faBookOpen} size={24} color="#FFFFFF" />
+                  </View>
+                  <View style={styles.curriculumText}>
+                    <Text style={styles.curriculumTitle}>Malla Curricular</Text>
+                    <Text style={styles.curriculumSubtitle}>
+                      {(() => {
+                        const careerCode = extractCareerCode(userData.degree_code);
+                        return degreeNames[careerCode] || userData.degree_code;
+                      })()}
+                    </Text>
+                    <Text style={styles.curriculumDescription}>
+                      Ver plan de estudios completo
+                    </Text>
+                  </View>
+                  <FontAwesomeIcon icon={faChevronRight} size={20} color="#FFFFFF" />
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* Fecha Actual */}
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.dateCard}>
+                <View style={styles.dateIconContainer}>
+                  <FontAwesomeIcon icon={faCalendar} size={20} color="#3b82f6" />
+                </View>
+                <View style={styles.dateContent}>
+                  <Text style={styles.dateTitle}>Fecha Actual</Text>
+                  <Text style={styles.dateText}>
+                    {currentDate.toLocaleDateString("es-ES", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Botón de Logout */}
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={handleLogout}
+              activeOpacity={0.8}
+            >
+              <FontAwesomeIcon icon={faSignOutAlt} size={20} color="#dc2626" />
+              <Text style={styles.logoutText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.cardContent}>
-          <InfoItem
-            icon={faUser}
-            title="Usuario"
-            value={`@${userData.username}`}
-          />
-          <InfoItem icon={faIdCard} title="Código" value={userData.code} />
-          <InfoItem
-            icon={faGraduationCap}
-            title="Carrera"
-            value={degreeNames[userData.degree_code] || userData.degree_code}
-          />
-          <InfoItem icon={faEnvelope} title="Correo" value={userData.email} />
-        </View>
-      </Animatable.View>
+      </ScrollView>
 
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={600}
-        style={styles.card}>
-        <View style={styles.cardHeader}>
-          <FontAwesomeIcon icon={faCalendarDay} size={24} color="#0b34b0" />
-          <Text style={styles.cardTitle}>Fecha Actual</Text>
-        </View>
-        <View style={styles.cardContent}>
-          <Text style={styles.dateText}>
-            {currentDate.toLocaleDateString("es-ES", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Text>
-        </View>
-      </Animatable.View>
-
-      <Animatable.View
-        animation="fadeInUp"
-        duration={1000}
-        delay={800}
-        style={styles.card}>
-        <TouchableOpacity
-          style={styles.curriculumButton}
-          onPress={() => setCurriculumModalVisible(true)}>
-          <LinearGradient
-            colors={["#0b34b0", "#267bee"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.curriculumGradient}>
-            <FontAwesomeIcon icon={faGraduationCap} size={24} color="#FFFFFF" />
-            <Text style={styles.curriculumText}>Ver Malla Curricular</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </Animatable.View>
-
-      <Animatable.View animation="fadeInUp" duration={1000} delay={900}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LinearGradient
-            colors={["#fb0c06", "#fb0c06"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.logoutGradient}>
-            <FontAwesomeIcon icon={faSignOutAlt} size={24} color="#FFFFFF" />
-            <Text style={styles.logoutText}>Cerrar Sesión</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </Animatable.View>
-
-      {/* Avatar Selection Modal */}
+      {/* Modal para selección de avatar - MEJORADO */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)}>
+        visible={isAvatarModalVisible}
+        onRequestClose={() => setAvatarModalVisible(false)}
+      >
         <View style={styles.modalOverlay}>
-          <Animatable.View
-            animation="zoomIn"
-            duration={300}
-            style={styles.modalView}>
+          <View style={styles.avatarModal}>
+            {/* Header del Modal */}
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Selecciona un Avatar</Text>
+              <View style={styles.modalHeaderContent}>
+                <View style={styles.modalIconContainer}>
+                  <FontAwesomeIcon icon={faCamera} size={24} color="#1e40af" />
+                </View>
+                <View style={styles.modalHeaderText}>
+                  <Text style={styles.modalTitle}>Selecciona tu Avatar</Text>
+                  <Text style={styles.modalSubtitle}>Elige tu imagen de perfil favorita</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setAvatarModalVisible(false)}
+              >
+                <FontAwesomeIcon icon={faTimes} size={20} color="#6b7280" />
+              </TouchableOpacity>
             </View>
-            {loadingIcons ? (
-              <ActivityIndicator
-                size="large"
-                color="#0b34b0"
-                style={styles.modalSpinner}
-              />
-            ) : (
+
+            {/* Contenido del Modal */}
+            <View style={styles.modalContent}>
               <FlatList
                 data={animalIcons}
                 renderItem={renderIcon}
                 keyExtractor={(item) => item.id}
                 numColumns={4}
                 contentContainerStyle={styles.iconGrid}
+                showsVerticalScrollIndicator={false}
               />
-            )}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Cerrar</Text>
-            </TouchableOpacity>
-          </Animatable.View>
-        </View>
-      </Modal>
+            </View>
 
-      {/* Curriculum Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isCurriculumModalVisible}
-        onRequestClose={() => setCurriculumModalVisible(false)}>
-        <View style={styles.curriculumModalOverlay}>
-          <TouchableOpacity
-            style={styles.closeModalButton}
-            onPress={() => setCurriculumModalVisible(false)}>
-            <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <View style={styles.curriculumContainer}>
-            <ImageZoom
-              cropWidth={SCREEN_WIDTH * 0.9}
-              cropHeight={SCREEN_HEIGHT * 0.8}
-              imageWidth={SCREEN_WIDTH * 0.9}
-              imageHeight={SCREEN_HEIGHT * 0.8}
-              enableSwipeDown={true}
-              onSwipeDown={() => setCurriculumModalVisible(false)}
-              minScale={1}
-              maxScale={3}>
-              <Image
-                source={careerImages[userData.degree_code]}
-                style={styles.modalImage}
-                resizeMode="contain"
-              />
-            </ImageZoom>
+            {/* Footer del Modal */}
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => setAvatarModalVisible(false)}
+              >
+                <Text style={styles.modalCancelText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
-    </ScrollView>
+
+      {/* Modal para Malla Curricular */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isCurriculumModalVisible}
+        onRequestClose={() => setCurriculumModalVisible(false)}
+      >
+        <View style={styles.curriculumModalOverlay}>
+          <View style={styles.curriculumModalContent}>
+            <View style={styles.curriculumModalHeader}>
+              <View style={styles.curriculumModalHeaderLeft}>
+                <FontAwesomeIcon icon={faBookOpen} size={20} color="#1e40af" />
+                <Text style={styles.curriculumModalTitle}>Malla Curricular</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.curriculumModalCloseButton}
+                onPress={() => setCurriculumModalVisible(false)}
+              >
+                <FontAwesomeIcon icon={faTimes} size={20} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.curriculumImageContainer}>
+              <ImageZoom
+                cropWidth={SCREEN_WIDTH * 0.9}
+                cropHeight={SCREEN_HEIGHT * 0.7}
+                imageWidth={SCREEN_WIDTH * 0.9}
+                imageHeight={SCREEN_HEIGHT * 0.7}
+                enableSwipeDown={true}
+                onSwipeDown={() => setCurriculumModalVisible(false)}
+                minScale={0.8}
+                maxScale={3}
+                enableCenterFocus={true}
+              >
+                {(() => {
+                  const careerCode = extractCareerCode(userData.degree_code);
+                  return careerImages[careerCode] ? (
+                    <Image
+                      source={careerImages[careerCode]}
+                      style={styles.curriculumImage}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <View style={styles.noImageContainer}>
+                      <FontAwesomeIcon icon={faImage} size={48} color="#9ca3af" />
+                      <Text style={styles.noImageText}>
+                        Malla curricular no disponible
+                      </Text>
+                      <Text style={styles.noImageSubtext}>
+                        Esta carrera aún no tiene malla curricular disponible
+                      </Text>
+                    </View>
+                  );
+                })()}
+              </ImageZoom>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#f8fafc",
   },
+  scrollContainer: {
+    flex: 1,
+  },
+
+  // Header
   header: {
-    padding: 20,
-    alignItems: "center",
+    paddingTop: Platform.OS === "ios" ? 50 : 30,
+    paddingBottom: 30,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
+  headerContent: {
+    paddingHorizontal: 20,
+  },
+
+  // Avatar Section
+  avatarSection: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
   avatarContainer: {
     position: "relative",
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 15,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 75,
+    width: isTablet ? 120 : 100,
+    height: isTablet ? 120 : 100,
+    borderRadius: isTablet ? 60 : 50,
     borderWidth: 4,
     borderColor: "#FFFFFF",
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
-  editButton: {
+  editAvatarButton: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 20,
-    padding: 8,
+    backgroundColor: "#3b82f6",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
   },
-  userInfo: { alignItems: "center" },
-  name: {
-    fontSize: 24,
+
+  // User Info
+  userInfo: {
+    alignItems: "center",
+  },
+  userName: {
+    fontSize: isTablet ? 24 : 20,
     fontWeight: "bold",
     color: "#FFFFFF",
-    marginTop: 10,
     textAlign: "center",
+    marginBottom: 5,
   },
-  username: { fontSize: 16, color: "#FFFFFF", opacity: 0.8 },
-  statusIndicator: {
+  userUsername: {
+    fontSize: isTablet ? 16 : 14,
+    color: "#FFFFFF",
+    opacity: 0.9,
+    marginBottom: 10,
+  },
+  statusBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
-    marginTop: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   statusText: {
-    marginLeft: 5,
     color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: "600",
+    marginLeft: 5,
   },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    margin: 15,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+
+  // University Card - NUEVO Y MEJORADO
+  universityCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    marginTop: 10,
   },
-  cardHeader: {
+  universityHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
+    marginBottom: 20,
   },
-  cardTitle: {
-    fontSize: 18,
+  universityLogoContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  universityInfo: {
+    flex: 1,
+  },
+  universityName: {
+    fontSize: isTablet ? 18 : 16,
     fontWeight: "bold",
-    color: "#0b34b0",
-    marginLeft: 10,
+    color: "#FFFFFF",
+    marginBottom: 4,
   },
-  cardContent: { padding: 15 },
-  infoItem: {
+  centerName: {
+    fontSize: isTablet ? 12 : 11,
+    color: "#FFFFFF",
+    opacity: 0.9,
+    lineHeight: 16,
+  },
+  universityStats: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  universityStatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  statIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  statInfoContainer: {
+    flex: 1,
+  },
+  statValueNew: {
+    fontSize: isTablet ? 14 : 12,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  statLabelNew: {
+    fontSize: isTablet ? 10 : 9,
+    color: "#FFFFFF",
+    opacity: 0.8,
+  },
+
+  // Content
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
+  },
+
+  // Sections
+  section: {
+    marginBottom: 20,
+  },
+  sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 15,
-    opacity: 0,
   },
-  infoIconContainer: {
+  sectionTitle: {
+    fontSize: isTablet ? 18 : 16,
+    fontWeight: "bold",
+    color: "#1f2937",
+    marginLeft: 10,
+  },
+
+  // Cards
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+
+  // Info Cards
+  infoCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  infoIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -451,131 +694,341 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 15,
   },
-  infoContent: { flex: 1 },
+  infoContent: {
+    flex: 1,
+  },
   infoTitle: {
-    fontSize: 14,
-    color: "#666666",
-    fontWeight: "500",
-    marginBottom: 4,
+    fontSize: isTablet ? 12 : 11,
+    color: "#6b7280",
+    marginBottom: 2,
   },
-  infoValue: { fontSize: 16, fontWeight: "bold", color: "#333333" },
-  dateText: {
-    fontSize: 16,
-    color: "#333333",
-    textAlign: "center",
-    fontWeight: "500",
-    textTransform: "capitalize",
+  infoValue: {
+    fontSize: isTablet ? 16 : 14,
+    fontWeight: "600",
+    color: "#1f2937",
   },
-  curriculumButton: { margin: 15, borderRadius: 10, overflow: "hidden" },
+
+  // Curriculum Card
+  curriculumCard: {
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
   curriculumGradient: {
+    padding: 20,
+  },
+  curriculumContent: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  curriculumIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
-    paddingVertical: 12,
+    alignItems: "center",
+    marginRight: 15,
   },
   curriculumText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    flex: 1,
+  },
+  curriculumTitle: {
+    fontSize: isTablet ? 18 : 16,
     fontWeight: "bold",
-    marginLeft: 10,
+    color: "#FFFFFF",
+    marginBottom: 4,
   },
+  curriculumSubtitle: {
+    fontSize: isTablet ? 14 : 12,
+    color: "#FFFFFF",
+    opacity: 0.9,
+    marginBottom: 2,
+  },
+  curriculumDescription: {
+    fontSize: isTablet ? 12 : 11,
+    color: "#FFFFFF",
+    opacity: 0.8,
+  },
+
+  // Date Card
+  dateCard: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dateIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#eff6ff",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  dateContent: {
+    flex: 1,
+  },
+  dateTitle: {
+    fontSize: isTablet ? 14 : 13,
+    fontWeight: "600",
+    color: "#1f2937",
+    marginBottom: 2,
+  },
+  dateText: {
+    fontSize: isTablet ? 16 : 14,
+    color: "#6b7280",
+    textTransform: "capitalize",
+  },
+
+  // Logout Button
   logoutButton: {
-    margin: 15,
-    borderRadius: 10,
-    overflow: "hidden",
-    marginBottom: 30,
-  },
-  logoutGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 15,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#fecaca",
+    elevation: 2,
+    shadowColor: "#dc2626",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   logoutText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 10,
+    fontSize: isTablet ? 16 : 14,
+    fontWeight: "600",
+    color: "#dc2626",
+    marginLeft: 8,
   },
+
+  // Modal Overlay - CENTRADO
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: 20,
   },
-  modalView: {
-    backgroundColor: "white",
+
+  // Avatar Modal - COMPLETAMENTE REDISEÑADO Y CENTRADO
+  avatarModal: {
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
+    width: "100%",
+    maxWidth: 400,
+    height: "55%",
+    maxHeight: SCREEN_HEIGHT,
+    paddingBottom: Platform.OS === "ios" ? 20 : 15,
+    elevation: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: SCREEN_WIDTH * 0.9,
-    maxHeight: SCREEN_HEIGHT * 0.8,
+    shadowRadius: 20,
   },
-  modalHeader: { alignItems: "center", marginBottom: 20 },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  modalHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  modalIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#eff6ff",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  modalHeaderText: {
+    flex: 1,
+  },
   modalTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 20 : 18,
     fontWeight: "bold",
-    color: "#0b34b0",
+    color: "#1f2937",
+    marginBottom: 2,
+  },
+  modalSubtitle: {
+    fontSize: isTablet ? 14 : 13,
+    color: "#6b7280",
+  },
+  modalCloseButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f3f4f6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  modalFooter: {
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#f3f4f6",
+  },
+  modalCancelButton: {
+    backgroundColor: "#f3f4f6",
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalCancelText: {
+    fontSize: isTablet ? 16 : 14,
+    fontWeight: "600",
+    color: "#6b7280",
+  },
+
+  // Loading
+  loadingContainer: {
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+  loadingText: {
+    fontSize: isTablet ? 16 : 14,
+    color: "#6b7280",
+    marginTop: 10,
     textAlign: "center",
   },
-  modalSpinner: { marginVertical: 20 },
-  iconGrid: { alignItems: "center" },
+
+  // Icon Grid - LIMPIO
+  iconGrid: {
+    paddingVertical: 20,
+    justifyContent: "center",
+  },
   iconButton: {
-    margin: GRID_PADDING / 2,
+    margin: 8,
     borderRadius: ICON_SIZE / 2,
     overflow: "hidden",
     width: ICON_SIZE,
     height: ICON_SIZE,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-  },
-  selectedIconButton: { backgroundColor: "#4CAF50" },
-  iconImage: {
-    width: ICON_SIZE - 4,
-    height: ICON_SIZE - 4,
-    borderRadius: (ICON_SIZE - 4) / 2,
+    backgroundColor: "#f8fafc",
     borderWidth: 2,
-    borderColor: "#0b34b0",
+    borderColor: "#e5e7eb",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  selectedIconImage: { borderColor: "#FFFFFF", borderWidth: 2 },
+  selectedIconButton: {
+    borderColor: "#10b981",
+    backgroundColor: "#ecfdf5",
+    elevation: 4,
+    shadowOpacity: 0.15,
+  },
+  iconImageContainer: {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconImage: {
+    width: ICON_SIZE - 8,
+    height: ICON_SIZE - 8,
+    borderRadius: (ICON_SIZE - 8) / 2,
+  },
+  selectedIconImage: {
+    borderWidth: 2,
+    borderColor: "#10b981",
+  },
+  selectedBadge: {
+    position: "absolute",
+    bottom: 2,
+    right: 2,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 2,
+    elevation: 2,
+  },
+
+  // Curriculum Modal
   curriculumModalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.9)",
     justifyContent: "center",
     alignItems: "center",
   },
-  curriculumContainer: {
-    width: SCREEN_WIDTH * 0.9,
-    height: SCREEN_HEIGHT * 0.8,
-  },
-  modalImage: { width: "100%", height: "100%" },
-  closeModalButton: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+  curriculumModalContent: {
+    width: SCREEN_WIDTH * 0.95,
+    height: SCREEN_HEIGHT * 0.9,
     borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+  },
+  curriculumModalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#f8fafc",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+  },
+  curriculumModalHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  curriculumModalTitle: {
+    fontSize: isTablet ? 18 : 16,
+    fontWeight: "bold",
+    color: "#1f2937",
+    marginLeft: 10,
+  },
+  curriculumModalCloseButton: {
     width: 40,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f3f4f6",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
   },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#0b34b0",
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    alignSelf: "center",
+  curriculumImageContainer: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
   },
-  closeButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
+  curriculumImage: {
+    width: "100%",
+    height: "100%",
+  },
+  noImageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8fafc",
+  },
+  noImageText: {
+    fontSize: isTablet ? 16 : 14,
+    color: "#6b7280",
+    marginTop: 10,
+    textAlign: "center",
+  },
+  noImageSubtext: {
+    fontSize: isTablet ? 12 : 11,
+    color: "#9ca3af",
+    marginTop: 5,
+    textAlign: "center",
+  },
 });
 
 export default ProfileScreen;
