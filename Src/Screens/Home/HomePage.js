@@ -10,6 +10,7 @@ import {
   Alert,
   PermissionsAndroid,
   Platform,
+  StatusBar,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -42,6 +43,7 @@ export const HomePage = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const bottomSheetRef = useRef(null);
+  const imageZoomRef = useRef(null); // Ref para el componente ImageZoom
 
   // Estados del componente
   const [selectedPoint, setSelectedPoint] = useState(null);
@@ -262,6 +264,7 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
+  
   /**
    * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
    * estableciendo los puntos, identificador de la ruta y video asociado.
@@ -300,6 +303,11 @@ export const HomePage = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle="dark-content" // negro sobre fondo claro
+        backgroundColor="#f8fafc" // mismo color que el fondo
+        animated={true}
+      />
       {/* Pantalla de carga animada */}
       <Animated.View
         style={[styles.loadingContainer, { opacity: loadingOpacity }]}
@@ -366,9 +374,10 @@ export const HomePage = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con funcionalidad de pan y zoom */}
+        {/* Contenedor del mapa con funcionalidad de pan y zoom - MEJORADO PARA ANDROID */}
         <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
+            ref={imageZoomRef}
             cropWidth={Dimensions.get("window").width}
             cropHeight={Dimensions.get("window").height}
             imageWidth={1600}
@@ -448,114 +457,183 @@ export const HomePage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1 },
+  container: { 
+    flex: 1,
+    backgroundColor: '#f8fafc'
+  },
+  content: { 
+    flex: 1 
+  },
+  
+  // Loading optimizado
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#f8fafc",
     zIndex: 1000,
   },
   lottieAnimation: {
-    width: isTablet ? width * 0.3 : width * 0.5,
-    height: isTablet ? width * 0.3 : width * 0.5,
+    width: Platform.OS === 'android' ? width * 0.45 : width * 0.5,
+    height: Platform.OS === 'android' ? width * 0.45 : width * 0.5,
   },
   loadingText: {
     marginTop: 20,
-    fontSize: isTablet ? 24 : 18,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: Platform.OS === 'android' ? 16 : 18,
+    fontWeight: "700",
+    color: "#1e293b",
+    letterSpacing: 0.5,
   },
+  
+  // Overlay
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     zIndex: 0,
   },
+
+  // Botones flotantes mejorados para Android
   menu_icon: {
     position: "absolute",
-    top: isTablet ? height * 0.03 : height * 0.05,
-    left: isTablet ? width * 0.02 : width * 0.03,
-    backgroundColor: "#0000ff",
-    borderRadius: isTablet ? width * 0.06 : width * 0.1,
-    padding: isTablet ? width * 0.03 : width * 0.04,
+    top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
+    left: Platform.OS === 'android' ? width * 0.04 : width * 0.03,
+    backgroundColor: "#0b34b0",
+    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
+    elevation: Platform.OS === 'android' ? 8 : 0,
+    shadowColor: Platform.OS === 'ios' ? "#000" : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.25 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3.84 : undefined,
+    width: Platform.OS === 'android' ? 56 : undefined,
+    height: Platform.OS === 'android' ? 56 : undefined,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  
   search_icon: {
     position: "absolute",
-    top: isTablet ? height * 0.03 : height * 0.05,
-    right: isTablet ? width * 0.13 : width * 0.2,
-    backgroundColor: "#0000ff",
-    borderRadius: isTablet ? width * 0.06 : width * 0.1,
-    padding: isTablet ? width * 0.03 : width * 0.04,
+    top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
+    right: Platform.OS === 'android' ? width * 0.04 : width * 0.2,
+    backgroundColor: "#0b34b0",
+    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
+    elevation: Platform.OS === 'android' ? 8 : 0,
+    shadowColor: Platform.OS === 'ios' ? "#000" : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.25 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3.84 : undefined,
+    width: Platform.OS === 'android' ? 56 : undefined,
+    height: Platform.OS === 'android' ? 56 : undefined,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  
   profile_icon: {
     position: "absolute",
-    top: isTablet ? height * 0.03 : height * 0.05,
-    left: isTablet ? width * 0.14 : width * 0.19,
-    backgroundColor: "#0000ff",
-    borderRadius: isTablet ? width * 0.06 : width * 0.1,
-    padding: isTablet ? width * 0.03 : width * 0.04,
+    top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
+    left: Platform.OS === 'android' ? width * 0.2 : width * 0.19,
+    backgroundColor: "#0b34b0",
+    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
     justifyContent: "center",
     alignItems: "center",
+    elevation: Platform.OS === 'android' ? 8 : 0,
+    shadowColor: Platform.OS === 'ios' ? "#000" : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.25 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3.84 : undefined,
+    width: Platform.OS === 'android' ? 56 : undefined,
+    height: Platform.OS === 'android' ? 56 : undefined,
   },
+  
   profile_icon_selected: {
-    padding: 0,
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#0000ff",
+    padding: Platform.OS === 'android' ? 4 : 0,
+    backgroundColor: "#ffffff",
+    borderWidth: 3,
+    borderColor: "#0b34b0",
   },
+  
   profileImage: {
-    width: isTablet ? width * 0.04 : width * 0.13,
-    height: isTablet ? width * 0.04 : width * 0.13,
-    borderRadius: (isTablet ? width * 0.04 : width * 0.2) / 2,
+    width: Platform.OS === 'android' ? 48 : width * 0.13,
+    height: Platform.OS === 'android' ? 48 : width * 0.13,
+    borderRadius: Platform.OS === 'android' ? 12 : (width * 0.13) / 2,
   },
-  mapContainer: { flex: 1 },
-  zoomContainer: { width: 1600, height: 1400, position: "relative" },
-  mapImage: { width: 1600, height: 1400 },
+
+  // Mapa optimizado para Android
+  mapContainer: { 
+    flex: 1,
+    backgroundColor: '#ffffff'
+  },
+  
+  zoomContainer: { 
+    width: 1600, 
+    height: 1400, 
+    position: "relative",
+    backgroundColor: '#ffffff'
+  },
+  
+  mapImage: { 
+    width: 1600, 
+    height: 1400,
+    backgroundColor: '#ffffff'
+  },
+
+  // Botones de acción mejorados
   finalizeButton: {
     position: "absolute",
-    bottom: isTablet ? 30 : 20,
-    left: isTablet ? 30 : 20,
-    right: isTablet ? 30 : 20,
-    backgroundColor: "#FF0000",
-    padding: isTablet ? 15 : 15,
-    borderRadius: isTablet ? 15 : 10,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    bottom: Platform.OS === 'android' ? 24 : 20,
+    left: Platform.OS === 'android' ? 16 : 20,
+    right: Platform.OS === 'android' ? 16 : 20,
+    backgroundColor: "#ef4444",
+    paddingVertical: Platform.OS === 'android' ? 16 : 15,
+    paddingHorizontal: Platform.OS === 'android' ? 24 : 15,
+    borderRadius: Platform.OS === 'android' ? 16 : 10,
+    elevation: Platform.OS === 'android' ? 8 : 5,
+    shadowColor: Platform.OS === 'ios' ? "#000" : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.25 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3.84 : undefined,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  
   finalizeButtonText: {
     color: "#FFFFFF",
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: isTablet ? 22 : 18,
+    fontWeight: "700",
+    fontSize: Platform.OS === 'android' ? 16 : 18,
+    letterSpacing: 0.5,
   },
+  
   videoButton: {
     position: "absolute",
-    bottom: isTablet ? 110 : 80,
-    right: isTablet ? 30 : 20,
+    bottom: Platform.OS === 'android' ? 96 : 80,
+    right: Platform.OS === 'android' ? 16 : 20,
     backgroundColor: "#0b34b0",
-    paddingVertical: isTablet ? 15 : 10,
-    paddingHorizontal: isTablet ? 20 : 15,
-    borderRadius: isTablet ? 40 : 30,
+    paddingVertical: Platform.OS === 'android' ? 12 : 10,
+    paddingHorizontal: Platform.OS === 'android' ? 18 : 15,
+    borderRadius: Platform.OS === 'android' ? 28 : 30,
     flexDirection: "row",
     alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    elevation: Platform.OS === 'android' ? 8 : 5,
+    shadowColor: Platform.OS === 'ios' ? "#000000" : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.25 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3.84 : undefined,
+    minHeight: Platform.OS === 'android' ? 56 : undefined,
+    justifyContent: 'center',
   },
+  
   videoButtonText: {
     color: "#FFFFFF",
-    marginLeft: isTablet ? 12 : 8,
-    fontWeight: "bold",
-    fontSize: isTablet ? 20 : 16,
+    marginLeft: Platform.OS === 'android' ? 8 : 8,
+    fontWeight: "600",
+    fontSize: Platform.OS === 'android' ? 14 : 16,
+    letterSpacing: 0.3,
   },
 });
 
