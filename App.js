@@ -39,7 +39,7 @@ function App() {
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const value = await AsyncStorage.getItem("@onboarding_completed");
+        const value = await AsyncStorage.getItem("@onboarding_completedd");
         setIsFirstLaunch(value == null);
       } catch (error) {
         console.error("Error al verificar el estado de onboarding:", error);
