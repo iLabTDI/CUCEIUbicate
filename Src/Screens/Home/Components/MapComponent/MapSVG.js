@@ -1,8 +1,25 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
-import Svg, { Polyline, Defs, LinearGradient, Stop } from "react-native-svg";
+import { StyleSheet, View, TouchableOpacity, Text, Animated, Platform } from "react-native";
+import Svg, { 
+  Polyline, 
+  Defs, 
+  LinearGradient, 
+  Stop, 
+  Circle, 
+  RadialGradient,
+  Filter,
+  DropShadow,
+  Marker
+} from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faTimes, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faTimes, 
+  faMapMarkerAlt, 
+  faLocationArrow, 
+  faFlag,
+  faRoute,
+  faDotCircle
+} from "@fortawesome/free-solid-svg-icons";
 
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
@@ -19,16 +36,52 @@ const MapSVG = ({
     .map(([x, y]) => `${x},${y}`)
     .join(" ");
 
-  // Animación para dash offset, crea un efecto de desplazamiento en el trazo
+  // Animaciones múltiples para efectos más sofisticados
   const dashOffset = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  
   useEffect(() => {
     if (isRouteActive && activeRoutePoints.length > 1) {
+      // Animación del dash offset para el efecto de flujo
       Animated.loop(
         Animated.timing(dashOffset, {
-          toValue: 20,
-          duration: 1000,
+          toValue: 30,
+          duration: 2000,
           useNativeDriver: true,
         })
+      ).start();
+
+      // Animación de pulso para los pines
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.3,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Animación de brillo para la línea
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
       ).start();
     }
   }, [isRouteActive, activeRoutePoints]);
@@ -62,84 +115,186 @@ const MapSVG = ({
   const renderMarker = () => {
     if (!markedObject) return null;
     const markerPosition = {
-      left: markedObject.left + markedObject.width / 2 - 50,
-      top: markedObject.top - 30,
+      left: markedObject.left + markedObject.width / 2 - 60,
+      top: markedObject.top - 45,
     };
     return (
-      <View style={[styles.markerContainer, markerPosition]}>
-        <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#ff6b6b" />
+      <Animated.View 
+        style={[
+          styles.markerContainer, 
+          markerPosition,
+          {
+            transform: [{ scale: pulseAnim }],
+          }
+        ]}
+      >
+        <View style={styles.markerIconContainer}>
+          <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color="#0033A0" />
+        </View>
         <Text style={styles.markerText}>{markedObject.name}</Text>
         <TouchableOpacity
           onPress={() => setMarkedObject(null)}
           style={styles.removeMarkerButton}
         >
-          <FontAwesomeIcon icon={faTimes} size={14} color="#666666" />
+          <FontAwesomeIcon icon={faTimes} size={12} color="#666666" />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     );
   };
 
-  // Renderiza la línea de la ruta con dos capas: borde y trazo interior degradado y animado
+  // Renderiza la línea de la ruta con múltiples capas para un efecto premium
   const renderRouteLine = () => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     return (
-      <Svg style={StyleSheet.absoluteFill}>
+      <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
         <Defs>
-          <LinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0%" stopColor="#FFFF00" stopOpacity="1" />
-            <Stop offset="100%" stopColor="#FFD700" stopOpacity="1" />
+          {/* Gradiente principal azul vibrante */}
+          <LinearGradient id="routeGradient" x1="0" y1="0" x2="1" y2="0">
+            <Stop offset="0%" stopColor="#0033A0" stopOpacity="1" />
+            <Stop offset="25%" stopColor="#1E40AF" stopOpacity="1" />
+            <Stop offset="50%" stopColor="#3B82F6" stopOpacity="1" />
+            <Stop offset="75%" stopColor="#60A5FA" stopOpacity="1" />
+            <Stop offset="100%" stopColor="#93C5FD" stopOpacity="1" />
+          </LinearGradient>
+          
+          {/* Gradiente de brillo para efecto glow */}
+          <RadialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+            <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
+            <Stop offset="70%" stopColor="#3B82F6" stopOpacity="0.4" />
+            <Stop offset="100%" stopColor="#0033A0" stopOpacity="0" />
+          </RadialGradient>
+
+          {/* Gradiente para la sombra */}
+          <LinearGradient id="shadowGradient" x1="0" y1="0" x2="1" y2="0">
+            <Stop offset="0%" stopColor="#000000" stopOpacity="0.3" />
+            <Stop offset="50%" stopColor="#000000" stopOpacity="0.2" />
+            <Stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
           </LinearGradient>
         </Defs>
-        {/* Línea de borde (negro) */}
+
+        {/* Capa de sombra exterior */}
         <AnimatedPolyline
           points={pointsString}
           fill="none"
-          stroke="black"
+          stroke="url(#shadowGradient)"
+          strokeWidth={14}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="0"
+          style={{
+            transform: [
+              { translateX: 2 },
+              { translateY: 2 }
+            ]
+          }}
+        />
+
+        {/* Capa de borde exterior */}
+        <AnimatedPolyline
+          points={pointsString}
+          fill="none"
+          stroke="#1F2937"
+          strokeWidth={12}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="0"
+        />
+
+        {/* Capa principal con gradiente */}
+        <AnimatedPolyline
+          points={pointsString}
+          fill="none"
+          stroke="url(#routeGradient)"
           strokeWidth={8}
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeDasharray="10,5"
+          strokeDasharray="15,8"
           strokeDashoffset={dashOffset}
         />
-        {/* Línea interior con degradado */}
+
+        {/* Capa de brillo interior */}
         <AnimatedPolyline
           points={pointsString}
           fill="none"
-          stroke="url(#grad)"
-          strokeWidth={6}
+          stroke="#FFFFFF"
+          strokeWidth={3}
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeDasharray="10,5"
+          strokeDasharray="10,15"
           strokeDashoffset={dashOffset}
+          style={{
+            opacity: glowAnim,
+          }}
         />
+
+        {/* Puntos decorativos a lo largo de la ruta */}
+        {activeRoutePoints.map((point, index) => {
+          if (index === 0 || index === activeRoutePoints.length - 1) return null;
+          return (
+            <Circle
+              key={index}
+              cx={point[0]}
+              cy={point[1]}
+              r={3}
+              fill="#FFFFFF"
+              stroke="#0033A0"
+              strokeWidth={2}
+              opacity={0.8}
+            />
+          );
+        })}
       </Svg>
     );
   };
 
-  // Renderiza pines de origen y destino con sombra para resaltarlos
+  // Renderiza pines de origen y destino con efectos premium
   const renderRoutePins = () => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     const origin = activeRoutePoints[0];
     const destination = activeRoutePoints[activeRoutePoints.length - 1];
+    
     return (
       <>
+        {/* Pin de origen sin animación */}
         <View
           style={[
             styles.routePin,
-            styles.pinShadow,
-            { left: origin[0] - 12, top: origin[1] - 24 },
+            styles.originPin,
+            { 
+              left: origin[0] - 15, 
+              top: origin[1] - 20,
+            },
           ]}
         >
-          <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#FF0000" />
+          <View style={styles.pinGlow}>
+            <View style={styles.pinContainer}>
+              <FontAwesomeIcon icon={faLocationArrow} size={12} color="#FFFFFF" />
+            </View>
+          </View>
+          <View style={styles.pinLabel}>
+            <Text style={styles.pinLabelText}>Origen</Text>
+          </View>
         </View>
+
+        {/* Pin de destino sin animación */}
         <View
           style={[
             styles.routePin,
-            styles.pinShadow,
-            { left: destination[0] - 12, top: destination[1] - 24 },
+            styles.destinationPin,
+            { 
+              left: destination[0] - 17, 
+              top: destination[1] - 20,
+            },
           ]}
         >
-          <FontAwesomeIcon icon={faMapMarkerAlt} size={24} color="#FF0000" />
+          <View style={styles.pinGlow}>
+            <View style={[styles.pinContainer, styles.destinationPinContainer]}>
+              <FontAwesomeIcon icon={faFlag} size={12} color="#FFFFFF" />
+            </View>
+          </View>
+          <View style={[styles.pinLabel, styles.destinationLabel]}>
+            <Text style={styles.pinLabelText}>Destino</Text>
+          </View>
         </View>
       </>
     );
@@ -185,13 +340,64 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   routePin: {
-    position: "absolute",
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
   },
-  pinShadow: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
+  originPin: {
+    zIndex: 1001,
+  },
+  destinationPin: {
+    zIndex: 1002,
+  },
+  pinContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#0033A0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  destinationPinContainer: {
+    backgroundColor: '#FF6B35',
+  },
+  pinGlow: {
+    padding: 2,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    elevation: 6,
+    shadowColor: '#0033A0',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+  },
+  pinLabel: {
+    marginTop: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    backgroundColor: 'rgba(0, 51, 160, 0.9)',
+    borderRadius: 8,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 5,
+  },
+  destinationLabel: {
+    backgroundColor: 'rgba(255, 107, 53, 0.95)',
+  },
+  pinLabelText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
