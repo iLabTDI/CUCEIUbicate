@@ -43,6 +43,21 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const ICON_SIZE = SCREEN_WIDTH * 0.15;
 const isTablet = SCREEN_WIDTH >= 768;
 
+// Función getShadowStyle para sombras consistentes
+const getShadowStyle = (elevation) => {
+  if (Platform.OS === 'android') {
+    return {
+      elevation: Math.min(elevation, 8), // Límite máximo en Android
+    };
+  }
+  return {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: elevation / 2 },
+    shadowOpacity: 0.1 + (elevation * 0.02),
+    shadowRadius: elevation,
+  };
+};
+
 const degreeNames = {
   ICIV: "Ingeniería Civil",
   IGFO: "Ingeniería en Fotónica",
@@ -216,7 +231,7 @@ export const ProfileScreen = ({ route }) => {
                 
                 <View style={styles.statusBadge}>
                   <FontAwesomeIcon icon={faCheckCircle} size={14} color="#10b981" />
-                  <Text style={styles.statusText}>A</Text>
+                  <Text style={styles.statusText}>Activo</Text>
                 </View>
               </View>
             </View>
@@ -335,28 +350,6 @@ export const ProfileScreen = ({ route }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Fecha Actual */}
-          <View style={styles.section}>
-            <View style={styles.card}>
-              <View style={styles.dateCard}>
-                <View style={styles.dateIconContainer}>
-                  <FontAwesomeIcon icon={faCalendar} size={20} color="#3b82f6" />
-                </View>
-                <View style={styles.dateContent}>
-                  <Text style={styles.dateTitle}>Fecha Actual</Text>
-                  <Text style={styles.dateText}>
-                    {currentDate.toLocaleDateString("es-ES", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
           {/* Botón de Logout */}
           <View style={styles.section}>
             <TouchableOpacity
@@ -371,7 +364,7 @@ export const ProfileScreen = ({ route }) => {
         </View>
       </ScrollView>
 
-      {/* Modal para selección de avatar - MEJORADO */}
+      {/* Modal para selección de avatar */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -424,62 +417,132 @@ export const ProfileScreen = ({ route }) => {
         </View>
       </Modal>
 
-      {/* Modal para Malla Curricular */}
+      {/* Modal para Malla Curricular - SÚPER MEJORADO */}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={isCurriculumModalVisible}
         onRequestClose={() => setCurriculumModalVisible(false)}
+        statusBarTranslucent={true}
       >
         <View style={styles.curriculumModalOverlay}>
           <View style={styles.curriculumModalContent}>
-            <View style={styles.curriculumModalHeader}>
+            {/* Header Mejorado */}
+            <LinearGradient
+              colors={['#1e40af', '#3b82f6']}
+              style={styles.curriculumModalHeader}
+            >
               <View style={styles.curriculumModalHeaderLeft}>
-                <FontAwesomeIcon icon={faBookOpen} size={20} color="#1e40af" />
-                <Text style={styles.curriculumModalTitle}>Malla Curricular</Text>
+                <View style={styles.curriculumHeaderIconContainer}>
+                  <FontAwesomeIcon icon={faBookOpen} size={22} color="#FFFFFF" />
+                </View>
+                <View style={styles.curriculumHeaderTextContainer}>
+                  <Text style={styles.curriculumModalTitle}>Malla Curricular</Text>
+                  <Text style={styles.curriculumModalSubtitle}>
+                    {(() => {
+                      const careerCode = extractCareerCode(userData.degree_code);
+                      return degreeNames[careerCode] || userData.degree_code;
+                    })()}
+                  </Text>
+                </View>
               </View>
               <TouchableOpacity
                 style={styles.curriculumModalCloseButton}
                 onPress={() => setCurriculumModalVisible(false)}
+                activeOpacity={0.8}
               >
-                <FontAwesomeIcon icon={faTimes} size={20} color="#6b7280" />
+                <FontAwesomeIcon icon={faTimes} size={20} color="#FFFFFF" />
               </TouchableOpacity>
-            </View>
+            </LinearGradient>
 
+            {/* Contenedor de Imagen Optimizado */}
             <View style={styles.curriculumImageContainer}>
-              <ImageZoom
-                cropWidth={SCREEN_WIDTH * 0.9}
-                cropHeight={SCREEN_HEIGHT * 0.7}
-                imageWidth={SCREEN_WIDTH * 0.9}
-                imageHeight={SCREEN_HEIGHT * 0.7}
-                enableSwipeDown={true}
-                onSwipeDown={() => setCurriculumModalVisible(false)}
-                minScale={0.8}
-                maxScale={3}
-                enableCenterFocus={true}
-              >
-                {(() => {
-                  const careerCode = extractCareerCode(userData.degree_code);
-                  return careerImages[careerCode] ? (
-                    <Image
-                      source={careerImages[careerCode]}
-                      style={styles.curriculumImage}
-                      resizeMode="contain"
-                    />
-                  ) : (
-                    <View style={styles.noImageContainer}>
-                      <FontAwesomeIcon icon={faImage} size={48} color="#9ca3af" />
-                      <Text style={styles.noImageText}>
-                        Malla curricular no disponible
-                      </Text>
-                      <Text style={styles.noImageSubtext}>
-                        Esta carrera aún no tiene malla curricular disponible
+              {(() => {
+                const careerCode = extractCareerCode(userData.degree_code);
+                return careerImages[careerCode] ? (
+                  <View style={styles.imageZoomWrapper}>
+                    <ImageZoom
+                      cropWidth={SCREEN_WIDTH * 0.95}
+                      cropHeight={SCREEN_HEIGHT * 0.75}
+                      imageWidth={SCREEN_WIDTH * 0.95}
+                      imageHeight={SCREEN_HEIGHT * 0.75}
+                      enableSwipeDown={true}
+                      onSwipeDown={() => setCurriculumModalVisible(false)}
+                      minScale={0.5}
+                      maxScale={4}
+                      enableCenterFocus={true}
+                      doubleClickInterval={250}
+                      enableDoubleClickZoom={true}
+                      pinchToZoom={true}
+                      panToMove={true}
+                      clickDistance={10}
+                    >
+                      <Image
+                        source={careerImages[careerCode]}
+                        style={styles.curriculumImage}
+                        resizeMode="contain"
+                        fadeDuration={300}
+                      />
+                    </ImageZoom>
+                    
+                    {/* Indicador de Zoom */}
+                    <View style={styles.zoomIndicator}>
+                      <FontAwesomeIcon icon={faImage} size={14} color="#6b7280" />
+                      <Text style={styles.zoomIndicatorText}>
+                        Pellizca para hacer zoom
                       </Text>
                     </View>
-                  );
-                })()}
-              </ImageZoom>
+                  </View>
+                ) : (
+                  <View style={styles.noImageContainer}>
+                    <View style={styles.noImageIconContainer}>
+                      <FontAwesomeIcon icon={faImage} size={64} color="#d1d5db" />
+                    </View>
+                    <Text style={styles.noImageTitle}>
+                      Malla curricular no disponible
+                    </Text>
+                    <Text style={styles.noImageSubtext}>
+                      Esta carrera aún no tiene malla curricular disponible en el sistema
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.noImageButton}
+                      onPress={() => setCurriculumModalVisible(false)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.noImageButtonText}>Entendido</Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })()}
             </View>
+
+            {/* Footer con Acciones */}
+            {(() => {
+              const careerCode = extractCareerCode(userData.degree_code);
+              return careerImages[careerCode] && (
+                <View style={styles.curriculumModalFooter}>
+                  <View style={styles.footerActions}>
+                    <TouchableOpacity
+                      style={styles.footerActionButton}
+                      activeOpacity={0.8}
+                    >
+                      <FontAwesomeIcon icon={faBookOpen} size={16} color="#3b82f6" />
+                      <Text style={styles.footerActionText}>Detalles</Text>
+                    </TouchableOpacity>
+                    
+                    <View style={styles.footerDivider} />
+                    
+                    <TouchableOpacity
+                      style={styles.footerCloseButton}
+                      onPress={() => setCurriculumModalVisible(false)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.footerCloseText}>Cerrar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            })()}
           </View>
         </View>
       </Modal>
@@ -571,7 +634,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 
-  // University Card - NUEVO Y MEJORADO
+  // University Card
   universityCard: {
     backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderRadius: 20,
@@ -755,35 +818,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
-  // Date Card
-  dateCard: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  dateIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#eff6ff",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  dateContent: {
-    flex: 1,
-  },
-  dateTitle: {
-    fontSize: isTablet ? 14 : 13,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-  dateText: {
-    fontSize: isTablet ? 16 : 14,
-    color: "#6b7280",
-    textTransform: "capitalize",
-  },
-
   // Logout Button
   logoutButton: {
     flexDirection: "row",
@@ -807,7 +841,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 
-  // Modal Overlay - CENTRADO
+  // Modal Overlay
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
@@ -816,7 +850,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  // Avatar Modal - COMPLETAMENTE REDISEÑADO Y CENTRADO
+  // Avatar Modal
   avatarModal: {
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
@@ -896,19 +930,7 @@ const styles = StyleSheet.create({
     color: "#6b7280",
   },
 
-  // Loading
-  loadingContainer: {
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  loadingText: {
-    fontSize: isTablet ? 16 : 14,
-    color: "#6b7280",
-    marginTop: 10,
-    textAlign: "center",
-  },
-
-  // Icon Grid - LIMPIO
+  // Icon Grid
   iconGrid: {
     paddingVertical: 20,
     justifyContent: "center",
@@ -962,72 +984,239 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 
-  // Curriculum Modal
+  // Curriculum Modal - COMPLETAMENTE REDISEÑADO Y HERMOSO
   curriculumModalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.9)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Platform.OS === 'android' ? 8 : 12,
+    paddingVertical: Platform.OS === 'android' ? 20 : 30,
   },
+
   curriculumModalContent: {
-    width: SCREEN_WIDTH * 0.95,
-    height: SCREEN_HEIGHT * 0.9,
-    borderRadius: 20,
-    overflow: "hidden",
-    backgroundColor: "#FFFFFF",
+    width: '100%',
+    height: Platform.OS === 'android' ? '92%' : '90%',
+    maxWidth: isTablet ? 800 : SCREEN_WIDTH * 0.95,
+    borderRadius: Platform.OS === 'android' ? 16 : 20,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+    ...getShadowStyle(15),
   },
+
+  // Header Hermoso con Gradiente
   curriculumModalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#f8fafc",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Platform.OS === 'android' ? 18 : 20,
+    paddingVertical: Platform.OS === 'android' ? 16 : 18,
+    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    minHeight: Platform.OS === 'android' ? 70 : 75,
   },
+
   curriculumModalHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
+
+  curriculumHeaderIconContainer: {
+    width: Platform.OS === 'android' ? 44 : 48,
+    height: Platform.OS === 'android' ? 44 : 48,
+    borderRadius: Platform.OS === 'android' ? 22 : 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+
+  curriculumHeaderTextContainer: {
+    flex: 1,
+  },
+
   curriculumModalTitle: {
-    fontSize: isTablet ? 18 : 16,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginLeft: 10,
+    fontSize: Platform.OS === 'android' ? (isTablet ? 18 : 16) : (isTablet ? 20 : 18),
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
+
+  curriculumModalSubtitle: {
+    fontSize: Platform.OS === 'android' ? (isTablet ? 12 : 11) : (isTablet ? 14 : 12),
+    color: '#FFFFFF',
+    opacity: 0.9,
+    fontWeight: '500',
+  },
+
   curriculumModalCloseButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#f3f4f6",
-    justifyContent: "center",
-    alignItems: "center",
+    width: Platform.OS === 'android' ? 40 : 44,
+    height: Platform.OS === 'android' ? 40 : 44,
+    borderRadius: Platform.OS === 'android' ? 20 : 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    ...getShadowStyle(3),
   },
+
+  // Contenedor de Imagen Optimizado
   curriculumImageContainer: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: '#f8fafc',
+    position: 'relative',
   },
+
+  imageZoomWrapper: {
+    flex: 1,
+    position: 'relative',
+    backgroundColor: '#FFFFFF',
+  },
+
   curriculumImage: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#FFFFFF',
   },
+
+  // Indicador de Zoom
+  zoomIndicator: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    marginHorizontal: 40,
+    paddingVertical: Platform.OS === 'android' ? 8 : 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    ...getShadowStyle(4),
+  },
+
+  zoomIndicatorText: {
+    color: '#FFFFFF',
+    fontSize: Platform.OS === 'android' ? 12 : 13,
+    marginLeft: 6,
+    fontWeight: '500',
+  },
+
+  // Estado Sin Imagen Mejorado
   noImageContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8fafc",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 40,
   },
-  noImageText: {
-    fontSize: isTablet ? 16 : 14,
-    color: "#6b7280",
-    marginTop: 10,
-    textAlign: "center",
+
+  noImageIconContainer: {
+    width: Platform.OS === 'android' ? 100 : 120,
+    height: Platform.OS === 'android' ? 100 : 120,
+    borderRadius: Platform.OS === 'android' ? 50 : 60,
+    backgroundColor: '#f3f4f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: '#e5e7eb',
+    ...getShadowStyle(2),
   },
+
+  noImageTitle: {
+    fontSize: Platform.OS === 'android' ? (isTablet ? 18 : 16) : (isTablet ? 20 : 18),
+    fontWeight: 'bold',
+    color: '#374151',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+
   noImageSubtext: {
-    fontSize: isTablet ? 12 : 11,
-    color: "#9ca3af",
-    marginTop: 5,
-    textAlign: "center",
+    fontSize: Platform.OS === 'android' ? (isTablet ? 14 : 13) : (isTablet ? 16 : 14),
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: Platform.OS === 'android' ? 18 : 20,
+    marginBottom: 24,
+  },
+
+  noImageButton: {
+    backgroundColor: '#3b82f6',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    ...getShadowStyle(3),
+  },
+
+  noImageButtonText: {
+    color: '#FFFFFF',
+    fontSize: Platform.OS === 'android' ? 14 : 15,
+    fontWeight: '600',
+  },
+
+  // Footer con Acciones
+  curriculumModalFooter: {
+    backgroundColor: '#f8fafc',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingHorizontal: Platform.OS === 'android' ? 18 : 20,
+    paddingVertical: Platform.OS === 'android' ? 14 : 16,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 16,
+  },
+
+  footerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  footerActionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eff6ff',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#dbeafe',
+    ...getShadowStyle(1),
+  },
+
+  footerActionText: {
+    color: '#3b82f6',
+    fontSize: Platform.OS === 'android' ? 13 : 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+
+  footerDivider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#e5e7eb',
+    marginHorizontal: 16,
+  },
+
+  footerCloseButton: {
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    ...getShadowStyle(1),
+  },
+
+  footerCloseText: {
+    color: '#6b7280',
+    fontSize: Platform.OS === 'android' ? 13 : 14,
+    fontWeight: '600',
   },
 });
 

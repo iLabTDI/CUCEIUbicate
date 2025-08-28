@@ -34,7 +34,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { login } from "../Api/login";
 import { setSession, getSession } from "./SessionManager";
-import * as Animatable from "react-native-animatable";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -64,10 +63,8 @@ export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
-  const [isFocused, setIsFocused] = useState({});
 
   const shakeAnimation = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(1)).current;
   const loginBoxAnim = useRef(new Animated.Value(0)).current;
   const [bgAnim] = useState(new Animated.Value(0));
   const [floatingAnim] = useState(new Animated.Value(0));
@@ -528,17 +525,15 @@ export const LoginScreen = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContentWrapper}>
-            {showSuccessAnimation && (
-              <LottieView
-                source={successAnimation}
-                autoPlay
-                loop={false}
-                style={styles.animation}
-              />
-            )}
-          </View>
+        <View style={styles.modalContentWrapper}>
+          {showSuccessAnimation && (
+            <LottieView
+              source={successAnimation}
+              autoPlay
+              loop={false}
+              style={styles.animation}
+            />
+          )}
         </View>
       </Modal>
     </>
@@ -615,12 +610,12 @@ const styles = StyleSheet.create({
     marginTop: -50,
     marginBottom: 20,
     shadowColor: "#0b34b0",
-    // shadowOffset: { width: 0, height: 4 },
-    // shadowOpacity: 0.12,
-    // shadowRadius: 8,
-    elevation: 6,
-    // borderWidth: 2,
-    // borderColor: "rgba(208, 216, 246, 0.3)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    // elevation: 6,
+    borderWidth: 2,
+    borderColor: "rgba(208, 216, 246, 0.3)",
   },
   userImage: {
     width: "60%",
