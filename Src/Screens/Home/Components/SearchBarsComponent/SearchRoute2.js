@@ -10,14 +10,70 @@ import {
   Animated,
   TextInput,
   FlatList,
+  Platform,
 } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faTimes, faExchangeAlt, faSearch, faTrash, faMapMarkerAlt, faHistory, faArrowUp } from "@fortawesome/free-solid-svg-icons"
+import { 
+  faTimes, 
+  faExchangeAlt, 
+  faSearch, 
+  faTrash, 
+  faMapMarkerAlt, 
+  faHistory, 
+  faArrowUp,
+  faRoute,
+  faLocationArrow,
+  faFlag,
+  faDirections,
+  faCompass,
+  faBus,
+  faWalking,
+} from "@fortawesome/free-solid-svg-icons"
 import routesData from "../MapComponent/data/routes.json"
 import { points } from "../MapComponent/data"
 
 const { width, height } = Dimensions.get("window")
+const isTablet = width >= 768
+const isAndroid = Platform.OS === 'android'
+
+// Función para obtener iconos específicos según el tipo de lugar
+const getIconForLocation = (text) => {
+  const lower = text.toLowerCase();
+  if (lower.includes("modulo")) {
+    return faLocationArrow;
+  } else if (lower.includes("entrada")) {
+    return faFlag;
+  } else if (lower.includes("edificio")) {
+    return faMapMarkerAlt;
+  } else if (lower.includes("biblioteca")) {
+    return faMapMarkerAlt;
+  } else if (lower.includes("estacionamiento")) {
+    return faMapMarkerAlt;
+  } else if (lower.includes("laboratorio")) {
+    return faMapMarkerAlt;
+  } else {
+    return faMapMarkerAlt;
+  }
+};
+
+// Función para obtener colores específicos
+const getColorForLocation = (text) => {
+  const lower = text.toLowerCase();
+  if (lower.includes("modulo")) {
+    return "#1E40AF";
+  } else if (lower.includes("entrada")) {
+    return "#059669";
+  } else if (lower.includes("edificio")) {
+    return "#374151";
+  } else if (lower.includes("biblioteca")) {
+    return "#7C3AED";
+  } else if (lower.includes("laboratorio")) {
+    return "#DC2626";
+  } else {
+    return "#0033A0";
+  }
+};
 
 export const SearchRoute2 = ({ onClose, onSearch }) => {
   const [originText, setOriginText] = useState("")
@@ -188,11 +244,25 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
     }
   }
 
-  const renderSuggestion = ({ item }) => (
-    <TouchableOpacity style={styles.suggestionItem} onPress={() => selectSuggestion(item.name, item.isOrigin)}>
-      <Text style={styles.itemText}>{item.name}</Text>
-    </TouchableOpacity>
-  )
+  const renderSuggestion = ({ item }) => {
+    const itemColor = getColorForLocation(item.name);
+    return (
+      <TouchableOpacity 
+        style={styles.suggestionItem} 
+        onPress={() => selectSuggestion(item.name, item.isOrigin)}
+        activeOpacity={0.8}
+      >
+        <View style={[styles.suggestionIcon, { backgroundColor: `${itemColor}18` }]}>
+          <FontAwesomeIcon
+            icon={getIconForLocation(item.name)}
+            size={isAndroid ? 12 : 16}
+            color={itemColor}
+          />
+        </View>
+        <Text style={styles.itemText}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <Animated.View style={[styles.overlay, { transform: [{ translateY: slideAnim }] }]}>
@@ -201,14 +271,17 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Buscar Ruta</Text>
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-              <FontAwesomeIcon icon={faTimes} size={24} color="#FFFFFF" />
+              <FontAwesomeIcon icon={faTimes} size={isAndroid ? 18 : 24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
           <View style={styles.inputWrapper}>
-            <FontAwesomeIcon icon={faArrowUp} size={20} color="#0033A0" style={styles.inputIcon} />
+            <View style={styles.inputIconContainer}>
+              <FontAwesomeIcon icon={faLocationArrow} size={isAndroid ? 14 : 18} color="#0033A0" />
+            </View>
             <TextInput
               style={styles.textInput}
               placeholder="Origen"
+              placeholderTextColor="#999"
               value={originText}
               onChangeText={handleOriginChange}
             />
@@ -222,10 +295,13 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
             />
           )}
           <View style={styles.inputWrapper}>
-            <FontAwesomeIcon icon={faMapMarkerAlt} size={20} color="#0033A0" style={styles.inputIcon} />
+            <View style={styles.inputIconContainer}>
+              <FontAwesomeIcon icon={faFlag} size={isAndroid ? 14 : 18} color="#DC2626" />
+            </View>
             <TextInput
               style={styles.textInput}
               placeholder="Destino"
+              placeholderTextColor="#999"
               value={destinationText}
               onChangeText={handleDestinationChange}
             />
@@ -239,12 +315,12 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
             />
           )}
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={swapLocations}>
-              <FontAwesomeIcon icon={faExchangeAlt} size={20} color="#FFFFFF" />
+            <TouchableOpacity style={styles.iconButton} onPress={swapLocations} activeOpacity={0.8}>
+              <FontAwesomeIcon icon={faExchangeAlt} size={isAndroid ? 16 : 20} color="#FFFFFF" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-              <FontAwesomeIcon icon={faSearch} size={20} color="#FFFFFF" />
-              <Text style={styles.searchButtonText}>Buscar</Text>
+            <TouchableOpacity style={styles.searchButton} onPress={handleSearch} activeOpacity={0.8}>
+              <FontAwesomeIcon icon={faRoute} size={isAndroid ? 16 : 20} color="#FFFFFF" />
+              <Text style={styles.searchButtonText}>Buscar Ruta</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -257,19 +333,19 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
                 style={styles.searchHistoryItem}
                 onPress={() => selectSearchFromHistory(item)}
               >
-                <FontAwesomeIcon icon={faHistory} size={18} color="#0033A0" style={styles.historyIcon} />
+                <FontAwesomeIcon icon={faHistory} size={isAndroid ? 14 : 18} color="#0033A0" style={styles.historyIcon} />
                 <Text style={styles.searchHistoryText}>
                   {item.origin} - {item.destination}
                 </Text>
                 <TouchableOpacity onPress={() => removeSearchItem(item)}>
-                  <FontAwesomeIcon icon={faTimes} size={18} color="#ff6347" />
+                  <FontAwesomeIcon icon={faTimes} size={isAndroid ? 14 : 18} color="#ff6347" />
                 </TouchableOpacity>
               </TouchableOpacity>
             ))}
           </ScrollView>
           {searchHistory.length > 0 && (
             <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-              <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
+              <FontAwesomeIcon icon={faTrash} size={isAndroid ? 14 : 18} color="#FFFFFF" />
               <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
             </TouchableOpacity>
           )}
@@ -286,134 +362,202 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 51, 160, 0.4)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
-    // elevation: 10,
   },
   searchBarContainer: {
-    width: "90%",
-    maxWidth: 400,
-    marginTop: 20,
+    width: isAndroid ? "95%" : "90%",
+    maxWidth: isAndroid ? 360 : 400,
+    marginTop: isAndroid ? 10 : 20,
     alignItems: "center",
     position: "absolute",
-    top: "10%", // Adjust this value to position the search bar container
+    top: isAndroid ? "8%" : "10%",
   },
   searchBar: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: isAndroid ? 20 : 25,
+    padding: isAndroid ? 16 : 24,
     width: "100%",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: isAndroid ? 12 : 20,
     shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: { width: 0, height: isAndroid ? 4 : 8 },
+    shadowOpacity: isAndroid ? 0.25 : 0.15,
+    shadowRadius: isAndroid ? 8 : 16,
+    elevation: isAndroid ? 8 : 12,
+    borderWidth: isAndroid ? 0 : 1,
+    borderColor: isAndroid ? "transparent" : "rgba(0, 51, 160, 0.1)",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: isAndroid ? 16 : 24,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: isAndroid ? 20 : 26,
+    fontWeight: "700",
     color: "#0033A0",
+    letterSpacing: 0.3,
   },
   closeButton: {
     backgroundColor: "#0033A0",
-    borderRadius: 20,
-    padding: 8,
+    borderRadius: isAndroid ? 18 : 25,
+    padding: isAndroid ? 8 : 12,
+    shadowColor: "#0033A0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isAndroid ? 0.4 : 0.3,
+    shadowRadius: 3,
+    elevation: isAndroid ? 5 : 4,
+    width: isAndroid ? 36 : 50,
+    height: isAndroid ? 36 : 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputWrapper: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginBottom: 15,
+    backgroundColor: "#F8FAFC",
+    borderRadius: isAndroid ? 16 : 20,
+    paddingHorizontal: isAndroid ? 14 : 20,
+    paddingVertical: isAndroid ? 10 : 16,
+    marginBottom: isAndroid ? 10 : 16,
+    borderWidth: isAndroid ? 0 : 2,
+    borderColor: isAndroid ? "transparent" : "rgba(0, 51, 160, 0.1)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: isAndroid ? 0.15 : 0.05,
+    shadowRadius: 2,
+    elevation: isAndroid ? 3 : 2,
   },
-  inputIcon: {
-    marginRight: 10,
+  inputIconContainer: {
+    width: isAndroid ? 28 : 32,
+    height: isAndroid ? 28 : 32,
+    borderRadius: isAndroid ? 14 : 16,
+    backgroundColor: "rgba(0, 51, 160, 0.12)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: isAndroid ? 8 : 12,
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
-    color: "#333",
+    fontSize: isAndroid ? 14 : 16,
+    color: "#1F2937",
+    fontWeight: "500",
+    paddingVertical: isAndroid ? 2 : 0,
   },
   suggestionList: {
-    maxHeight: 150,
+    maxHeight: isAndroid ? 140 : 180,
     width: "100%",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    marginTop: -10,
-    marginBottom: 15,
+    backgroundColor: "#FFFFFF",
+    borderWidth: isAndroid ? 0 : 1,
+    borderColor: isAndroid ? "transparent" : "rgba(0, 51, 160, 0.1)",
+    borderRadius: isAndroid ? 12 : 16,
+    marginTop: isAndroid ? -6 : -10,
+    marginBottom: isAndroid ? 8 : 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isAndroid ? 0.2 : 0.1,
+    shadowRadius: isAndroid ? 4 : 8,
+    elevation: isAndroid ? 4 : 6,
+    overflow: "hidden",
   },
   suggestionItem: {
-    padding: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: isAndroid ? 12 : 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "rgba(0, 51, 160, 0.06)",
+    backgroundColor: "#FFFFFF",
+  },
+  suggestionIcon: {
+    width: isAndroid ? 26 : 32,
+    height: isAndroid ? 26 : 32,
+    borderRadius: isAndroid ? 13 : 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: isAndroid ? 8 : 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: isAndroid ? 0.15 : 0.1,
+    shadowRadius: 1,
+    elevation: isAndroid ? 2 : 2,
   },
   itemText: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: isAndroid ? 14 : 16,
+    color: "#1F2937",
+    fontWeight: "500",
+    flex: 1,
   },
   buttonsContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: isAndroid ? 16 : 24,
     width: "100%",
+    gap: isAndroid ? 8 : 12,
   },
   iconButton: {
     backgroundColor: "#0033A0",
-    padding: 15,
-    borderRadius: 15,
+    padding: isAndroid ? 12 : 18,
+    borderRadius: isAndroid ? 16 : 20,
+    shadowColor: "#0033A0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isAndroid ? 0.4 : 0.3,
+    shadowRadius: 3,
+    elevation: isAndroid ? 5 : 6,
+    width: isAndroid ? 44 : 56,
+    height: isAndroid ? 44 : 56,
+    justifyContent: "center",
+    alignItems: "center",
   },
   searchButton: {
     backgroundColor: "#0033A0",
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 15,
+    paddingVertical: isAndroid ? 12 : 18,
+    paddingHorizontal: isAndroid ? 16 : 28,
+    borderRadius: isAndroid ? 16 : 20,
     flex: 1,
-    marginLeft: 10,
     justifyContent: "center",
+    shadowColor: "#0033A0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isAndroid ? 0.4 : 0.3,
+    shadowRadius: 3,
+    elevation: isAndroid ? 5 : 6,
+    minHeight: isAndroid ? 44 : 56,
   },
   searchButtonText: {
     color: "#FFFFFF",
-    fontWeight: "bold",
-    marginLeft: 10,
-    fontSize: 18,
+    fontWeight: "700",
+    marginLeft: isAndroid ? 6 : 12,
+    fontSize: isAndroid ? 14 : 16,
+    letterSpacing: 0.3,
   },
   searchHistoryContainer: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: isAndroid ? 20 : 25,
+    padding: isAndroid ? 16 : 24,
     width: "100%",
-    maxHeight: height * 0.4,
+    maxHeight: height * (isAndroid ? 0.35 : 0.4),
     shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    // marginTop: 20,
+    shadowOffset: { width: 0, height: isAndroid ? 4 : 8 },
+    shadowOpacity: isAndroid ? 0.25 : 0.15,
+    shadowRadius: isAndroid ? 8 : 16,
+    elevation: isAndroid ? 8 : 12,
+    borderWidth: isAndroid ? 0 : 1,
+    borderColor: isAndroid ? "transparent" : "rgba(0, 51, 160, 0.1)",
   },
   searchHistoryTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
+    fontSize: isAndroid ? 18 : 22,
+    fontWeight: "700",
+    marginBottom: isAndroid ? 12 : 20,
     color: "#0033A0",
+    letterSpacing: 0.3,
   },
   searchHistoryList: {
     flexGrow: 0,
@@ -423,31 +567,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    paddingVertical: 15,
+    borderBottomColor: "rgba(0, 51, 160, 0.06)",
+    paddingVertical: isAndroid ? 10 : 16,
+    paddingHorizontal: 2,
   },
   historyIcon: {
-    marginRight: 10,
+    marginRight: isAndroid ? 8 : 12,
+    backgroundColor: "rgba(0, 51, 160, 0.12)",
+    borderRadius: isAndroid ? 8 : 12,
+    padding: isAndroid ? 6 : 8,
+    width: isAndroid ? 28 : 32,
+    height: isAndroid ? 28 : 32,
+    justifyContent: "center",
+    alignItems: "center",
   },
   searchHistoryText: {
     flex: 1,
-    fontSize: 16,
-    color: "#333333",
+    fontSize: isAndroid ? 13 : 16,
+    color: "#1F2937",
+    fontWeight: "500",
   },
   clearHistoryButton: {
-    marginTop: 15,
-    paddingVertical: 15,
+    marginTop: isAndroid ? 12 : 20,
+    paddingVertical: isAndroid ? 10 : 16,
     backgroundColor: "#0033A0",
-    borderRadius: 15,
+    borderRadius: isAndroid ? 16 : 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#0033A0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: isAndroid ? 0.4 : 0.3,
+    shadowRadius: 3,
+    elevation: isAndroid ? 5 : 6,
+    minHeight: isAndroid ? 40 : 48,
   },
   clearHistoryButtonText: {
     color: "#FFFFFF",
-    fontWeight: "bold",
-    marginLeft: 10,
-    fontSize: 16,
+    fontWeight: "700",
+    marginLeft: isAndroid ? 6 : 10,
+    fontSize: isAndroid ? 13 : 16,
+    letterSpacing: 0.3,
   },
 })
 
