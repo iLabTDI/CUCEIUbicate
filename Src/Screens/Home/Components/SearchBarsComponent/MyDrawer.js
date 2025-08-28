@@ -214,7 +214,7 @@ const CustomDrawerContent = (props) => {
             <Text style={styles.drawerHeaderText}>CUCEI</Text>
             <Text style={styles.drawerSubHeaderText}>UBÍCATE</Text>
             <View style={styles.versionBadge}>
-              <Text style={styles.versionText}>Beta v1.0</Text>
+              <Text style={styles.versionText}>Beta v1.01</Text>
             </View>
           </View>
           {/* Decorative elements */}
@@ -582,8 +582,9 @@ const styles = StyleSheet.create({
   },
   versionBadge: {
     position: "absolute",
-    bottom: 16,
-    right: 16,
+    // bottom: 16,
+    top: Platform.OS === 'android' ? 130 : 150,
+    left: Platform.OS === 'android' ? 160 : 140,
     backgroundColor: "rgba(255, 255, 255, 0.15)",
     paddingHorizontal: 12,
     paddingVertical: 6,

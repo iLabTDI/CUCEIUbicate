@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
     left: Platform.OS === 'android' ? width * 0.04 : width * 0.03,
     backgroundColor: "#0b34b0",
-    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    borderRadius: Platform.OS === 'android' ? 50 : width * 0.1,
     padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
     elevation: Platform.OS === 'android' ? 8 : 0,
@@ -515,9 +515,9 @@ const styles = StyleSheet.create({
   search_icon: {
     position: "absolute",
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
-    right: Platform.OS === 'android' ? width * 0.04 : width * 0.2,
+    right: Platform.OS === 'android' ? width * 0.2 : width * 0.2,
     backgroundColor: "#0b34b0",
-    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    borderRadius: Platform.OS === 'android' ? 50 : width * 0.1,
     padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
     elevation: Platform.OS === 'android' ? 8 : 0,
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
     left: Platform.OS === 'android' ? width * 0.2 : width * 0.19,
     backgroundColor: "#0b34b0",
-    borderRadius: Platform.OS === 'android' ? 16 : width * 0.1,
+    borderRadius: Platform.OS === 'android' ? 50 : width * 0.1,
     padding: Platform.OS === 'android' ? 14 : width * 0.04,
     zIndex: 2,
     justifyContent: "center",
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: Platform.OS === 'android' ? 48 : width * 0.13,
     height: Platform.OS === 'android' ? 48 : width * 0.13,
-    borderRadius: Platform.OS === 'android' ? 12 : (width * 0.13) / 2,
+    borderRadius: Platform.OS === 'android' ? 50 : (width * 0.13) / 2,
   },
 
   // Mapa optimizado para Android
