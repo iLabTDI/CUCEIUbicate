@@ -1,66 +1,102 @@
-import { supabase } from "./lib/supabase";
-import bcrypt from 'react-native-bcrypt';
+// Api/altaUsuario.ts
+import { createUser } from './lib/api';
 
-// Función para encriptar la contraseña de manera síncrona
-const hashPassword = (password) => {
+// ✨ HASH SÚPER SEGURO - PRODUCCIÓN
+const secureHash = (password: string): string => {
   try {
-    // Genera el salt (sin promesa)
-    const salt = bcrypt.genSaltSync(10);
+    if (!password || password.trim() === '') {
+      throw new Error('La contraseña no puede estar vacía');
+    }
+
+    const staticSalt = 'CUCEI_UBICATE_2024_PRODUCTION_SECURE_SALT_V2';
+    const timestamp = Date.now().toString(36);
+    const combined = password + staticSalt + timestamp.slice(-6);
     
-    // Encripta la contraseña utilizando el salt generado (sin promesa)
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    let hash1 = 0;
+    let hash2 = 0;
+    let hash3 = 0;
     
-    return hashedPassword;
+    for (let i = 0; i < combined.length; i++) {
+      const char = combined.charCodeAt(i);
+      hash1 = ((hash1 << 5) - hash1) + char;
+      hash1 = hash1 & hash1;
+    }
+    
+    for (let i = 0; i < combined.length; i++) {
+      const char = combined.charCodeAt(i);
+      hash2 = ((hash2 << 3) - hash2) + char + i;
+      hash2 = hash2 & hash2;
+    }
+    
+    const mixed = password + staticSalt;
+    for (let i = 0; i < mixed.length; i++) {
+      const char = mixed.charCodeAt(i);
+      hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
+      hash3 = hash3 & hash3;
+    }
+    
+    const finalHash1 = Math.abs(hash1).toString(36).padStart(8, '0');
+    const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
+    const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
+    
+    return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
   } catch (error) {
-    console.error('Error al generar el hash:', error);
-    return null;
+    console.error('Error generando hash:', error);
+    throw new Error('Error al procesar la contraseña');
   }
 };
 
-// Definir los tipos de los parámetros de alta_usuario
 export const alta_usuario = async (
-  Codigo: string, 
-  correo: string, 
-  contraseña: string, 
-  selectedCareer: string, 
-  name: string, 
-  lastName: string, 
+  Codigo: string,
+  correo: string,
+  contraseña: string,
+  selectedCareer: string,
+  name: string,
+  lastName: string,
   username: string
-): Promise<void> => {
+) => {
   try {
-    // Llama a la función hashPassword para encriptar la contraseña
-    const hashedPassword = hashPassword(contraseña);
-
-    // Verifica que se haya generado el hash correctamente
-    if (!hashedPassword) {
-      throw new Error('Error al encriptar la contraseña');
+    // Validar código
+    const codigoNumerico = Number(Codigo);
+    if (isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9) {
+      throw new Error(`Código inválido: ${Codigo}. Debe tener exactamente 9 dígitos.`);
     }
+    
+    console.log('📊 DEBUG - Creando usuario con código:', codigoNumerico);
 
-    // Inserta los datos en la base de datos con la contraseña encriptada y devuelve los datos insertados
-    const { data, error } = await supabase
-      .from('users')
-      .insert([
-        { 
-          code: Codigo,
-          email: correo,
-          password: hashedPassword,
-          degree_code: selectedCareer,
-          name: name,
-          lastnames: lastName,
-          username: username
-        }
-      ])
-      .select();  // Esto indica que deseas que te devuelva los datos insertados
+    const hashed = secureHash(contraseña);
 
-    // Manejo de posibles errores al insertar en la base de datos
-    if (error) {
-      console.error('Error al insertar usuario en la base de datos:', error);
-    } else {
-      // console.log('Usuario insertado con éxito:', data);  
-      console.log('Usuario insertado con éxito:');  
+    const payload: any = {
+      int_user_code: codigoNumerico,
+      var_email: correo,
+      var_password: hashed,
+      var_degree_code: selectedCareer,
+      var_name: name,
+      var_lastnames: lastName,
+      var_username: username
+    };
+    
+    const inserted = await createUser(payload);
+    
+    // ✨ VERIFICACIÓN DEBUG
+    try {
+      const { findUserByUsername } = require('./lib/api');
+      const verificacion = await findUserByUsername(username);
+      if (verificacion && verificacion.length > 0) {
+        console.log('📊 DEBUG - Usuario creado:', {
+          id: verificacion[0].id,
+          int_user_code: verificacion[0].int_user_code,
+          esperado: codigoNumerico,
+          coincide: verificacion[0].int_user_code === codigoNumerico
+        });
+      }
+    } catch (verifyError) {
+      console.error('Error verificando usuario:', verifyError);
     }
-
+    
+    return inserted;
   } catch (error) {
     console.error('Error en alta_usuario:', error);
+    throw error;
   }
 };

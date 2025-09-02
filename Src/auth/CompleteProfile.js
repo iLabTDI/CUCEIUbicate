@@ -171,8 +171,26 @@ export const CompleteProfile = () => {
     ).start();
   }, []);
 
+  // Función de validación de username directamente aquí
+  const validateUsername = (username) => {
+    if (!username) {
+      return { isValid: false, message: 'El nombre de usuario es requerido' };
+    }
+    if (username.length < 3) {
+      return { isValid: false, message: 'El nombre de usuario debe tener al menos 3 caracteres' };
+    }
+    if (username.length > 30) {
+      return { isValid: false, message: 'El nombre de usuario no puede tener más de 30 caracteres' };
+    }
+    if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+      return { isValid: false, message: 'El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos' };
+    }
+    return { isValid: true };
+  };
+
   const validateForm = () => {
     let valid = true;
+    
     // Validar que el nombre no esté vacío y solo contenga letras y espacios
     if (!name.trim() || !NAME_REGEX.test(name)) {
       setNameError(true);
@@ -180,6 +198,7 @@ export const CompleteProfile = () => {
     } else {
       setNameError(false);
     }
+    
     // Validar que el apellido no esté vacío y solo contenga letras y espacios
     if (!lastName.trim() || !NAME_REGEX.test(lastName)) {
       setLastNameError(true);
@@ -187,6 +206,16 @@ export const CompleteProfile = () => {
     } else {
       setLastNameError(false);
     }
+    
+    // Validar username usando las utilidades
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
+      setUsernameError(true);
+      valid = false;
+    } else {
+      setUsernameError(false);
+    }
+    
     // Validar que el código tenga exactamente 9 dígitos
     if (Codigo.length !== CODE_LENGTH) {
       setCodigoError(true);
@@ -194,11 +223,13 @@ export const CompleteProfile = () => {
     } else {
       setCodigoError(false);
     }
+    
     // Validar que se haya seleccionado una carrera
     if (!selectedCareer) {
       alert("Seleccione una carrera.");
       valid = false;
     }
+    
     return valid;
   };
 

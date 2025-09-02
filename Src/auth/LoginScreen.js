@@ -11,7 +11,6 @@ import {
   Platform,
   Dimensions,
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   Animated,
   Keyboard,
@@ -39,23 +38,22 @@ const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 export const LoginScreen = () => {
-  // Shake global: activa cuando showError es true
-  useEffect(() => {
-    if (showError) {
-      shakeForm();
-    }
-  }, [showError]);
   const navigation = useNavigation();
 
-  // Estado para alternar entre modo "Iniciar Sesión" y "Modo Invitado"
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  // ✨ MODO INVITADO - COMENTADO (descomenta cuando lo necesites)
+  // const [isGuestMode, setIsGuestMode] = useState(false);
+
+  // ✨ DATOS DEL FORMULARIO - SIN MODO INVITADO
   const [formData, setFormData] = useState({
+    // Para login normal:
     username: "",
     password: "",
-    fullName: "",
-    phone: "",
-    id: "",
+    // ✨ CAMPOS DE MODO INVITADO - COMENTADOS
+    // fullName: "",    // Nombre completo del invitado
+    // phone: "",       // Teléfono del invitado (10 dígitos)
+    // id: "",          // Identificación del invitado
   });
+
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
@@ -69,6 +67,13 @@ export const LoginScreen = () => {
   const [bgAnim] = useState(new Animated.Value(0));
   const [floatingAnim] = useState(new Animated.Value(0));
   const logoPulseAnim = useRef(new Animated.Value(1)).current;
+
+  // Shake global: activa cuando showError es true
+  useEffect(() => {
+    if (showError) {
+      shakeForm();
+    }
+  }, [showError]);
 
   useEffect(() => {
     Animated.loop(
@@ -88,6 +93,7 @@ export const LoginScreen = () => {
       ])
     ).start();
   }, []);
+
   useEffect(() => {
     checkExistingSession();
     // Animación de entrada para el loginBox
@@ -138,6 +144,7 @@ export const LoginScreen = () => {
         setKeyboardStatus(false);
       }
     );
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -159,10 +166,11 @@ export const LoginScreen = () => {
     return emailRegex.test(email);
   };
 
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
-  };
+  // ✨ VALIDACIÓN PARA TELÉFONO - COMENTADA (solo para modo invitado)
+  // const validatePhone = (phone) => {
+  //   const phoneRegex = /^[0-9]{10}$/; // Exactamente 10 dígitos
+  //   return phoneRegex.test(phone);
+  // };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -172,65 +180,82 @@ export const LoginScreen = () => {
     setShowError(false);
   };
 
+  // ✨ FUNCIÓN PRINCIPAL DE LOGIN - SIN MODO INVITADO
   const handleLogin = async () => {
     setShowError(false);
     setErrorMessage("");
 
-    if (isGuestMode) {
-      // Validaciones para modo invitado
-      if (!formData.fullName || !formData.phone || !formData.id) {
-        setErrorMessage("Por favor, completa todos los campos.");
-        setShowError(true);
-        return;
-      }
-      if (!validatePhone(formData.phone)) {
-        setErrorMessage("Ingresa un número de teléfono válido (10 dígitos).");
-        setShowError(true);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const guestData = {
-          name: formData.fullName,
-          phone: formData.phone,
-          id: formData.id,
-          isGuest: true,
-        };
-        await setSession(guestData);
-        setShowSuccessAnimation(true);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-          setShowSuccessAnimation(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Principal Home", params: { user: guestData } }],
-          });
-        }, 2000);
-      } catch (error) {
-        setErrorMessage("Error en modo invitado. Intenta de nuevo.");
-        setShowError(true);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
+    // ✨ CÓDIGO DE MODO INVITADO - COMENTADO
+    // if (isGuestMode) {
+    //   // Validar que todos los campos estén llenos
+    //   if (!formData.fullName || !formData.phone || !formData.id) {
+    //     setErrorMessage("Por favor, completa todos los campos.");
+    //     setShowError(true);
+    //     return;
+    //   }
+    //
+    //   // Validar que el teléfono tenga 10 dígitos
+    //   if (!validatePhone(formData.phone)) {
+    //     setErrorMessage("Ingresa un número de teléfono válido (10 dígitos).");
+    //     setShowError(true);
+    //     return;
+    //   }
+    //
+    //   setIsLoading(true);
+    //   try {
+    //     // Crear datos del invitado
+    //     const guestData = {
+    //       name: formData.fullName,
+    //       phone: formData.phone,
+    //       id: formData.id,
+    //       isGuest: true,  // Marca especial para identificar que es invitado
+    //     };
+    //
+    //     // Guardar sesión local
+    //     await setSession(guestData);
+    //
+    //     // Mostrar animación de éxito
+    //     setShowSuccessAnimation(true);
+    //     setModalVisible(true);
+    //
+    //     // Navegar al home principal
+    //     setTimeout(() => {
+    //       setModalVisible(false);
+    //       setShowSuccessAnimation(false);
+    //       navigation.reset({
+    //         index: 0,
+    //         routes: [{ name: "Principal Home", params: { user: guestData } }],
+    //       });
+    //     }, 2000);
+    //   } catch (error) {
+    //     setErrorMessage("Error en modo invitado. Intenta de nuevo.");
+    //     setShowError(true);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    //   return; // Salir aquí para no ejecutar el login normal
+    // }
 
-    // Validaciones para login normal
+    // ✨ LOGIN NORMAL (siempre activo)
     if (!formData.username || !formData.password) {
       setErrorMessage("Por favor, completa todos los campos.");
       setShowError(true);
       return;
     }
+
     if (!validateEmail(formData.username)) {
       setErrorMessage("Ingresa un correo electrónico válido.");
       setShowError(true);
       return;
     }
+
     setIsLoading(true);
     try {
       const result = await login(formData.username, formData.password);
+      console.log("🔍 Resultado completo del login:", result);
+
       if (result && result.isMatch && result.userData) {
+        console.log("📊 userData que se enviará al perfil:", result.userData);
         await setSession(result.userData);
         setShowSuccessAnimation(true);
         setModalVisible(true);
@@ -249,6 +274,7 @@ export const LoginScreen = () => {
         setShowError(true);
       }
     } catch (error) {
+      console.error("🚨 Error en handleLogin:", error);
       setErrorMessage("Error al iniciar sesión. Intenta de nuevo.");
       setShowError(true);
     } finally {
@@ -317,12 +343,12 @@ export const LoginScreen = () => {
           <Animated.View
             style={[
               styles.formWrapper,
-              // {
-              //   transform: [
-              //     { translateX: shakeAnimation },
-              //     { translateY: floatingTransform },
-              //   ],
-              // },
+              {
+                transform: [
+                  { translateX: shakeAnimation },
+                  // { translateY: floatingTransform }, // Puedes descomentar si usas floatingTransform
+                ],
+              },
             ]}>
             {/* Logo con fondo circular, gradiente y animación de pulso */}
             <Animated.View
@@ -334,6 +360,7 @@ export const LoginScreen = () => {
                   shadowOpacity: 0.22,
                   shadowRadius: 24,
                   elevation: 16,
+                  transform: [{ scale: logoPulseAnim }],
                 },
               ]}>
               <Image
@@ -354,17 +381,23 @@ export const LoginScreen = () => {
               </View>
 
               <Text style={styles.title}>
-                {isGuestMode ? "Modo Invitado" : "Iniciar Sesión"}
-              </Text>
-              <Text style={styles.subtitle}>
-                {isGuestMode
-                  ? "Ingresa tus datos para continuar"
-                  : "Ingresa tus credenciales para continuar"}
+                {/* ✨ TÍTULO FIJO - MODO INVITADO COMENTADO */}
+                {/* {isGuestMode ? "Modo Invitado" : "Iniciar Sesión"} */}
+                Iniciar Sesión
               </Text>
 
-              {isGuestMode ? (
+              <Text style={styles.subtitle}>
+                {/* ✨ SUBTÍTULO FIJO - MODO INVITADO COMENTADO */}
+                {/* {isGuestMode
+                  ? "Ingresa tus datos para continuar"
+                  : "Ingresa tus credenciales para continuar"} */}
+                Ingresa tus credenciales para continuar
+              </Text>
+
+              {/* ✨ FORMULARIO SOLO LOGIN NORMAL */}
+              {/* ✨ CAMPOS DE MODO INVITADO - COMENTADOS */}
+              {/* {isGuestMode ? (
                 <>
-                  {/* Modo Invitado - Campo Nombre Completo */}
                   <View style={styles.inputContainer}>
                     <FontAwesomeIcon
                       icon={faUser}
@@ -384,7 +417,6 @@ export const LoginScreen = () => {
                     />
                   </View>
 
-                  {/* Modo Invitado - Campo Teléfono */}
                   <View style={styles.inputContainer}>
                     <FontAwesomeIcon
                       icon={faPhone}
@@ -403,7 +435,6 @@ export const LoginScreen = () => {
                     />
                   </View>
 
-                  {/* Modo Invitado - Campo Identificación */}
                   <View style={styles.inputContainer}>
                     <FontAwesomeIcon
                       icon={faIdCard}
@@ -421,60 +452,54 @@ export const LoginScreen = () => {
                     />
                   </View>
                 </>
-              ) : (
-                <>
-                  {/* Login Normal - Campo Email */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faEnvelope}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Correo electrónico"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.username}
-                      onChangeText={(text) =>
-                        handleInputChange("username", text)
-                      }
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      selectionColor="#0b34b0"
-                    />
-                  </View>
+              ) : ( */}
 
-                  {/* Login Normal - Campo Contraseña */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Contraseña"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.password}
-                      onChangeText={(text) =>
-                        handleInputChange("password", text)
-                      }
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      selectionColor="#0b34b0"
-                    />
-                    <TouchableOpacity
-                      onPress={() => setShowPassword(!showPassword)}
-                      style={styles.eyeIconContainer}>
-                      <FontAwesomeIcon
-                        icon={showPassword ? faEyeSlash : faEye}
-                        size={20}
-                        color="#7a89a8"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
+              {/* ✨ CAMPOS DE LOGIN NORMAL (siempre visibles) */}
+              <View style={styles.inputContainer}>
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  style={styles.inputIconBlue}
+                  size={22}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Correo electrónico"
+                  placeholderTextColor="#a8b2c8"
+                  value={formData.username}
+                  onChangeText={(text) => handleInputChange("username", text)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  selectionColor="#0b34b0"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <FontAwesomeIcon
+                  icon={faLock}
+                  style={styles.inputIconBlue}
+                  size={22}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Contraseña"
+                  placeholderTextColor="#a8b2c8"
+                  value={formData.password}
+                  onChangeText={(text) => handleInputChange("password", text)}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  selectionColor="#0b34b0"
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIconContainer}>
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    size={20}
+                    color="#7a89a8"
+                  />
+                </TouchableOpacity>
+              </View>
+              {/* )} */}
 
               {/* Mensaje de error mejorado */}
               {showError && (
@@ -483,7 +508,7 @@ export const LoginScreen = () => {
                 </View>
               )}
 
-              {/* Botón principal con gradiente */}
+              {/* ✨ BOTÓN PRINCIPAL FIJO */}
               <TouchableOpacity
                 style={[styles.button, isLoading && styles.buttonLoading]}
                 onPress={handleLogin}
@@ -494,46 +519,90 @@ export const LoginScreen = () => {
                     <ActivityIndicator size={28} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>
-                      {isGuestMode
+                      {/* ✨ TEXTO FIJO - MODO INVITADO COMENTADO */}
+                      {/* {isGuestMode
                         ? "Continuar como Invitado"
-                        : "Iniciar Sesión"}
+                        : "Iniciar Sesión"} */}
+                      Iniciar Sesión
                     </Text>
                   )}
                 </View>
               </TouchableOpacity>
 
-              {/* Botón de registro */}
-              {!isGuestMode && (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Registro")}
-                  style={styles.registerButton}
-                  activeOpacity={0.7}>
-                  <Text style={styles.registerText}>
-                    ¿No tienes cuenta?{" "}
-                    <Text style={styles.registerTextBold}>¡Regístrate!</Text>
+              {/* ✨ BOTÓN DE REGISTRO (siempre visible) */}
+              {/* ✨ CONDICIÓN DE MODO INVITADO COMENTADA */}
+              {/* {!isGuestMode && ( */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Registro")}
+                style={styles.registerButton}
+                activeOpacity={0.7}>
+                <Text style={styles.registerText}>
+                  ¿No tienes cuenta?{" "}
+                  <Text style={styles.registerTextBold}>¡Regístrate!</Text>
+                </Text>
+              </TouchableOpacity>
+              {/* )} */}
+
+              {/* ✨ BOTÓN PARA CAMBIAR DE MODO - COMENTADO */}
+              {/* <TouchableOpacity
+                onPress={() => {
+                  // Alternar entre modos
+                  setIsGuestMode(!isGuestMode);
+                  setShowError(false);
+                  setErrorMessage("");
+                  // Limpiar todos los campos cuando cambia de modo
+                  setFormData({
+                    username: "",
+                    password: "",
+                    fullName: "",
+                    phone: "",
+                    id: "",
+                  });
+                }}
+                style={styles.registerButton}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.registerText}>
+                  {isGuestMode
+                    ? "¿Ya tienes cuenta? "
+                    : "¿Solo quieres explorar? "}
+                  <Text style={styles.registerTextBold}>
+                    {isGuestMode ? "Inicia Sesión" : "Modo Invitado"}
                   </Text>
-                </TouchableOpacity>
-              )}
+                </Text>
+              </TouchableOpacity> */}
             </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Modal de éxito mejorado */}
+      {/* Modal de animación de éxito */}
       <Modal
-        animationType="fade"
-        transparent={true}
         visible={modalVisible}
+        transparent
+        animationType="fade"
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContentWrapper}>
-          {showSuccessAnimation && (
-            <LottieView
-              source={successAnimation}
-              autoPlay
-              loop={false}
-              style={styles.animation}
-            />
-          )}
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContentWrapper}>
+            {showSuccessAnimation && (
+              <LottieView
+                source={successAnimation}
+                autoPlay
+                loop={false}
+                style={{ width: 180, height: 180 }}
+              />
+            )}
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "700",
+                color: "#0b34b0",
+                marginTop: 16,
+                textAlign: "center",
+              }}>
+              ¡Bienvenido!
+            </Text>
+          </View>
         </View>
       </Modal>
     </>
@@ -777,6 +846,12 @@ const styles = StyleSheet.create({
   animation: {
     width: 220,
     height: 220,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginLeft: -110,
+    marginTop: -110,
+    zIndex: 100,
   },
 });
 export default LoginScreen;

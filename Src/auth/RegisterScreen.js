@@ -108,6 +108,31 @@ export const RegisterScreen = () => {
     setShowPassword(!showPassword)
   }
 
+  // Funciones de validación directamente aquí
+  const validateEmail = (email) => {
+    if (!email) {
+      return { isValid: false, message: 'El email es requerido' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { isValid: false, message: 'Formato de email inválido' };
+    }
+    return { isValid: true };
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return { isValid: false, message: 'La contraseña es requerida' };
+    }
+    if (password.length < 6) {
+      return { isValid: false, message: 'La contraseña debe tener al menos 6 caracteres' };
+    }
+    if (password.length > 50) {
+      return { isValid: false, message: 'La contraseña no puede tener más de 50 caracteres' };
+    }
+    return { isValid: true };
+  };
+
   // Función principal para validar y navegar
   const handleRegister = async () => {
     setEmailError(false)
@@ -123,18 +148,28 @@ export const RegisterScreen = () => {
         throw new Error("Campos incompletos")
       }
 
-      // Validar correo y dominio
-      if (!emailRegex.test(email) || !allowedDomains.includes(email.split("@")[1])) {
+      // Validar email usando las nuevas utilidades
+      const emailValidation = validateEmail(email);
+      if (!emailValidation.isValid) {
         setEmailError(true)
-        setErrorMsg("Correo electrónico no válido")
+        setErrorMsg(emailValidation.message)
         shakeForm()
-        throw new Error("Correo no válido")
+        throw new Error("Email no válido")
       }
 
-      // Validar contraseña con regex
-      if (!passwordRegex.test(password)) {
+      // Verificar dominio permitido
+      if (!allowedDomains.includes(email.split("@")[1])) {
+        setEmailError(true)
+        setErrorMsg("Usa tu correo institucional (@alumnos.udg.mx)")
+        shakeForm()
+        throw new Error("Dominio no permitido")
+      }
+
+      // Validar contraseña usando las nuevas utilidades
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
         setPasswordError(true)
-        setErrorMsg("La contraseña no es válida.")
+        setErrorMsg(passwordValidation.message)
         shakeForm()
         throw new Error("Contraseña no válida")
       }

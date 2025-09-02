@@ -97,6 +97,11 @@ export const ProfileScreen = ({ route }) => {
   const { user } = route.params;
   const userData = Array.isArray(user) ? user[0] : user;
 
+  // ✨ LOG PARA DEBUG - Ver qué datos llegan al ProfileScreen
+  console.log('📊 ProfileScreen - user desde route.params:', user);
+  console.log('📊 ProfileScreen - userData procesado:', userData);
+  console.log('📊 ProfileScreen - código específico:', userData?.code || userData?.user_code || userData?.codigo || userData?.int_user_code);
+
   // Función para extraer el código de carrera del string completo
   const extractCareerCode = (degreeString) => {
     if (!degreeString) return null;
@@ -109,6 +114,16 @@ export const ProfileScreen = ({ route }) => {
     // Si contiene un string largo, extraer el código del final
     const match = degreeString.match(/\b([A-Z]{3,5})\b$/);
     return match ? match[1] : null;
+  };
+
+  // ✨ FUNCIÓN HELPER PARA OBTENER EL CÓDIGO
+  const getUserCode = (userData) => {
+    return userData?.code || 
+           userData?.user_code || 
+           userData?.codigo || 
+           userData?.int_user_code || 
+           userData?.id || 
+           'Sin código';
   };
 
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar || defaultAvatar);
@@ -302,7 +317,7 @@ export const ProfileScreen = ({ route }) => {
               <InfoCard
                 icon={faIdCard}
                 title="Código Estudiantil"
-                value={userData.code}
+                value={getUserCode(userData)} // ✨ USAR LA FUNCIÓN HELPER
                 color="#6366f1"
               />
               <InfoCard

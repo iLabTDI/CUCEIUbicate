@@ -1,25 +1,13 @@
-import { supabase } from "./lib/supabase";
+// Api/consultas.ts
+import { listDegrees } from './lib/api';
 
 export const get_degrees = async () => {
   try {
-    const { data, error } = await supabase
-      .from('degrees')
-      .select('name, code');
-
-    if (error) {
-      console.error('Error al consultar los datos:', error);
-      return [];
-    }
-
-    if (!data) {
-      console.error('Error: Datos faltantes');
-      return [];
-    }
-
-    // Regresa un array de objetos { name, code }
-    return data;
-  } catch (error) {
-    console.error('Error al consultar los datos:', error);
+    const rows = await listDegrees();
+    // mapea a tu UI ({ name, code })
+    return rows.map(r => ({ name: r.var_name, code: r.var_code }));
+  } catch (e) {
+    console.error('Error al consultar carreras:', e);
     return [];
   }
 };
