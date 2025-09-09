@@ -140,6 +140,8 @@ export const OnboardingScreen = () => {
     } else {
       try {
         await AsyncStorage.setItem("@onboarding_completed", "true");
+        console.log('✅ Onboarding completado - navegando a Login');
+        // ✨ NAVEGACIÓN CORRECTA
         navigation.replace("Login");
       } catch (err) {
         console.log("Error al guardar el estado de onboarding", err);
@@ -150,6 +152,8 @@ export const OnboardingScreen = () => {
   const skip = async () => {
     try {
       await AsyncStorage.setItem("@onboarding_completed", "true");
+      console.log('✅ Onboarding saltado - navegando a Login');
+      // ✨ NAVEGACIÓN CORRECTA
       navigation.replace("Login");
     } catch (err) {
       console.log("Error al guardar el estado de onboarding", err);

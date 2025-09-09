@@ -1,7 +1,7 @@
 // Api/altaUsuario.ts
 import { createUser } from './lib/api';
 
-// ✨ HASH SÚPER SEGURO - PRODUCCIÓN
+// ✨ FUNCIÓN DE HASH EXACTAMENTE IDÉNTICA A LOGIN
 const secureHash = (password: string): string => {
   try {
     if (!password || password.trim() === '') {
@@ -39,6 +39,7 @@ const secureHash = (password: string): string => {
     const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
     const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
     
+    // ✨ FORMATO CON 6 PARTES - IDÉNTICO A LOGIN
     return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
   } catch (error) {
     console.error('Error generando hash:', error);
@@ -62,11 +63,18 @@ export const alta_usuario = async (
       throw new Error(`Código inválido: ${Codigo}. Debe tener exactamente 9 dígitos.`);
     }
     
-    console.log('📊 DEBUG - Creando usuario con código:', codigoNumerico);
+    console.log('📊 === CREANDO USUARIO CON HASH CONSISTENTE ===');
+    console.log('📊 Código:', codigoNumerico);
+    console.log('📊 Email:', correo);
+    console.log('📊 Password preview:', contraseña.substring(0, 3) + '***');
 
+    // ✨ GENERAR HASH CON LA FUNCIÓN IDÉNTICA
     const hashed = secureHash(contraseña);
+    console.log('📊 Hash generado formato:', hashed.substring(0, 20) + '...');
+    console.log('📊 Hash longitud:', hashed.length);
+    console.log('📊 Hash partes:', hashed.split('$').length);
 
-    const payload: any = {
+    const payload = {
       int_user_code: codigoNumerico,
       var_email: correo,
       var_password: hashed,
@@ -76,27 +84,15 @@ export const alta_usuario = async (
       var_username: username
     };
     
+    console.log('📊 === PAYLOAD FINAL ===');
+    console.log('Password hash final:', payload.var_password);
+    
     const inserted = await createUser(payload);
     
-    // ✨ VERIFICACIÓN DEBUG
-    try {
-      const { findUserByUsername } = require('./lib/api');
-      const verificacion = await findUserByUsername(username);
-      if (verificacion && verificacion.length > 0) {
-        console.log('📊 DEBUG - Usuario creado:', {
-          id: verificacion[0].id,
-          int_user_code: verificacion[0].int_user_code,
-          esperado: codigoNumerico,
-          coincide: verificacion[0].int_user_code === codigoNumerico
-        });
-      }
-    } catch (verifyError) {
-      console.error('Error verificando usuario:', verifyError);
-    }
-    
+    console.log('✅ === USUARIO CREADO EXITOSAMENTE ===');
     return inserted;
   } catch (error) {
-    console.error('Error en alta_usuario:', error);
+    console.error('🚨 Error en alta_usuario:', error);
     throw error;
   }
 };

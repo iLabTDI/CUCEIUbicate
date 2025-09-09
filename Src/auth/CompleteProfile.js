@@ -23,6 +23,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { validar_codigo, validar_usuario } from "../Api/validaciones";
 import { get_degrees } from "../Api/consultas";
 import { alta_usuario } from "../Api/altaUsuario"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   faUser,
@@ -83,23 +84,24 @@ const getShadowStyle = (elevation, color = "#000", opacity = 0.1) => {
 
 // Array de iconos en el orden de las carreras proporcionadas
 const careerIconsOrder = [
-  faIndustry, // Ingeniería Industrial INDU
-  faIndustry, // Ingeniería Industrial INDU
-  faLightbulb, // Ingeniería en Fotonica
   faUserDoctor, // Medicina
-  faBroadcastTower, // Electrónica INCE
-  faDesktop, // Ingeniería en Computación INCO
   faIndustry, // Ingeniería Industrial INDU
+  faAppleAlt, // Alimentos
+  faDesktop, // Ingeniería en Computación INCO
+  faBroadcastTower, // Electrónica INCE
+  faLightbulb, // Ingeniería en Fotonica
   faServer, // Ingeniería en Informática INFO
-  faCogs, // Ingeniería Mecánica Eléctrica INME
-  faFlask, // Ingeniería Química INQU
+  faTruck, // Ingeniería en Robótica INRO
   faRobot, // Ingeniería en Robótica INRO
   faMapMarkedAlt, // Ingeniería en Topografía Geomática
-  faAppleAlt, // Alimentos
+  faIndustry, // Ingeniería Industrial INDU
+  faCogs, // Ingeniería Mecánica Eléctrica INME
+  faFlask, // Ingeniería Química INQU
+  faIndustry, // Ingeniería Industrial INDU
   faRadiation, // Ingeniería en Informática INFO
   faSquareRootVariable, // Ingeniería Química INQU
-  faTruck, // Ingeniería en Robótica INRO
   faFlask, // Ingeniería en Topografía Geomática
+  faUserDoctor, // MedQuimico farmacobiologo
 ];
 
 // Expresión regular que permite únicamente letras (con acentos, ñ) y espacios
@@ -269,6 +271,14 @@ export const CompleteProfile = () => {
         lastName,
         username
       );
+
+      // ✨ GUARDAR EMAIL PARA AUTO-LOGIN
+      try {
+        await AsyncStorage.setItem("@saved_email", correo);
+        console.log('💾 Email guardado para auto-login:', correo);
+      } catch (error) {
+        console.error('Error guardando email:', error);
+      }
 
       setIsProfileComplete(true);
       Animated.timing(fadeAnim, {
@@ -583,7 +593,7 @@ export const CompleteProfile = () => {
           <View style={styles.completedContent}>
             
             {/* Círculo decorativo con animación */}
-            <Animated.View 
+            {/* <Animated.View 
               style={[
                 styles.decorativeCircle,
                 {
@@ -596,7 +606,7 @@ export const CompleteProfile = () => {
                 }
               ]}
             />
-            
+             */}
             {/* Título principal súper hermoso */}
             <View style={styles.titleContainer}>
               <Text style={styles.profileCompleteTitle}>¡PERFIL</Text>
@@ -621,7 +631,7 @@ export const CompleteProfile = () => {
             >
               <View style={styles.logoGlow} />
               <Image
-                source={require("../../assets/images/Logo_Cucei.png")}
+                source={require("../../assets/images/cucei.png")}
                 style={styles.logo}
               />
             </Animated.View>
@@ -647,36 +657,8 @@ export const CompleteProfile = () => {
               <Text style={styles.welcomeSubtext}>
                 Hola @{username}, tu perfil ha sido configurado exitosamente.
               </Text>
-              <Text style={styles.welcomeSubtext}>
-                ¡Ya puedes explorar todo lo que tenemos para ti!
-              </Text>
             </Animated.View>
             
-            {/* Indicadores de éxito súper hermosos */}
-            <Animated.View 
-              style={[
-                styles.successIndicators,
-                {
-                  transform: [{
-                    scale: floatingAnim.interpolate({
-                      inputRange: [0, 1], 
-                      outputRange: [0.95, 1.05]
-                    })
-                  }],
-                  opacity: fadeAnim
-                }
-              ]}
-            >
-              <View style={styles.successIcon}>
-                <FontAwesome name="check" size={Platform.OS === 'android' ? 16 : 20} color="#4caf50" />
-              </View>
-              <View style={styles.successIcon}>
-                <FontAwesome name="star" size={Platform.OS === 'android' ? 16 : 20} color="#ffc107" />
-              </View>
-              <View style={styles.successIcon}>
-                <FontAwesome name="heart" size={Platform.OS === 'android' ? 16 : 20} color="#e91e63" />
-              </View>
-            </Animated.View>
             
             {/* Elementos flotantes súper lindos */}
             <Animated.View 
@@ -1089,6 +1071,7 @@ const styles = StyleSheet.create({
   },
   
   logoContainer: {
+
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 25 : 35,
     zIndex: 3,
@@ -1096,7 +1079,7 @@ const styles = StyleSheet.create({
   
   logo: {
     width: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.35 : width * 0.45) 
+      ? (isTablet ? width * 0.30 : width * 0.45) 
       : (isTablet ? width * 0.4 : width * 0.5),
     height: Platform.OS === 'android' 
       ? (isTablet ? width * 0.35 : width * 0.45) 
@@ -1106,20 +1089,20 @@ const styles = StyleSheet.create({
     ...getShadowStyle(Platform.OS === 'android' ? 4 : 10, "#0b34b0", 0.15),
   },
   
-  logoGlow: {
-    position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.4 : width * 0.5) 
-      : (isTablet ? width * 0.45 : width * 0.55),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.4 : width * 0.5) 
-      : (isTablet ? width * 0.45 : width * 0.55),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.2 : width * 0.25) 
-      : (isTablet ? width * 0.225 : width * 0.275),
-    backgroundColor: 'rgba(11, 52, 176, 0.08)',
-    zIndex: 1,
-  },
+  // logoGlow: {
+  //   position: 'absolute',
+  //   width: Platform.OS === 'android' 
+  //     ? (isTablet ? width * 0.4 : width * 0.5) 
+  //     : (isTablet ? width * 0.45 : width * 0.55),
+  //   height: Platform.OS === 'android' 
+  //     ? (isTablet ? width * 0.4 : width * 0.5) 
+  //     : (isTablet ? width * 0.45 : width * 0.55),
+  //   borderRadius: Platform.OS === 'android' 
+  //     ? (isTablet ? width * 0.2 : width * 0.25) 
+  //     : (isTablet ? width * 0.225 : width * 0.275),
+  //   backgroundColor: 'rgba(11, 52, 176, 0.08)',
+  //   zIndex: 1,
+  // },
   
   welcomeContainer: {
     alignItems: 'center',

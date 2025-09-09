@@ -43,7 +43,7 @@ export const HomePage = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const bottomSheetRef = useRef(null);
-  const imageZoomRef = useRef(null); // Ref para el componente ImageZoom
+  const imageZoomRef = useRef(null);
 
   // Estados del componente
   const [selectedPoint, setSelectedPoint] = useState(null);
@@ -53,7 +53,8 @@ export const HomePage = () => {
   );
   const [showSpecificSearch, setShowSpecificSearch] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // ✨ SIN LOADING - DIRECTO AL CONTENIDO DESPUÉS DEL SPLASH
+  const [isLoading, setIsLoading] = useState(false);
   const [markedObject, setMarkedObject] = useState(null);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isRouteActive, setIsRouteActive] = useState(false);
@@ -64,10 +65,11 @@ export const HomePage = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
 
-  // Valores animados para la transición entre la pantalla de carga y el contenido principal
+  // Valores animados para la transición
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const loadingOpacity = useRef(new Animated.Value(1)).current;
-  const contentOpacity = useRef(new Animated.Value(0)).current;
+  // ✨ CONTENIDO VISIBLE DESDE EL INICIO
+  const loadingOpacity = useRef(new Animated.Value(0)).current;
+  const contentOpacity = useRef(new Animated.Value(1)).current;
 
   /**
    * Función para solicitar permisos de almacenamiento.
@@ -200,23 +202,12 @@ export const HomePage = () => {
 
   /**
    * Función que se ejecuta cuando finaliza la animación de carga del mapa.
-   * Se oculta la pantalla de carga y se muestra el contenido principal.
+   * ✨ SOLO SE EJECUTA SI REALMENTE NECESITAMOS MOSTRAR LOADING
    */
   const handleImageLoad = () => {
-    Animated.parallel([
-      Animated.timing(loadingOpacity, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(contentOpacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setIsLoading(false);
-    });
+    // ✨ YA NO NECESITAMOS ESTO PARA LOGIN PERSISTENTE
+    console.log('🎯 HandleImageLoad llamado - pero no es necesario para login persistente');
+    setIsLoading(false);
   };
 
   /**
@@ -304,26 +295,12 @@ export const HomePage = () => {
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="dark-content" // negro sobre fondo claro
-        backgroundColor="#f8fafc" // mismo color que el fondo
+        barStyle="dark-content"
+        backgroundColor="#f8fafc"
         animated={true}
       />
-      {/* Pantalla de carga animada */}
-      <Animated.View
-        style={[styles.loadingContainer, { opacity: loadingOpacity }]}
-        pointerEvents={isLoading ? "auto" : "none"}
-      >
-        <LottieView
-          source={require("../../assets/animations/Map_loading.json")}
-          autoPlay
-          loop={false}
-          style={styles.lottieAnimation}
-          onAnimationFinish={handleImageLoad}
-        />
-        <Text style={styles.loadingText}>Cargando mapa...</Text>
-      </Animated.View>
-
-      {/* Contenido principal de la aplicación */}
+      
+      {/* ✨ CONTENIDO PRINCIPAL - SIEMPRE VISIBLE (YA VIMOS EL SPLASH) */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
         {/* Botón de menú */}
         <TouchableOpacity
@@ -336,6 +313,7 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
+        
         {/* Botón de perfil */}
         <TouchableOpacity
           style={[
@@ -354,7 +332,7 @@ export const HomePage = () => {
             />
           )}
         </TouchableOpacity>
-        {/* Botón para mostrar la barra de búsqueda */}
+        
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
           <FontAwesomeIcon
             icon={faRoute}
@@ -362,11 +340,11 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-        {/* Renderizado condicional de la barra de búsqueda */}
+        
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
-        {/* Componente para búsqueda específica */}
+        
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -374,7 +352,6 @@ export const HomePage = () => {
           setMarkedObject={setMarkedObject}
         />
 
-        {/* Contenedor del mapa con funcionalidad de pan y zoom - MEJORADO PARA ANDROID */}
         <GestureHandlerRootView style={styles.mapContainer}>
           <ImageZoom
             ref={imageZoomRef}
@@ -408,7 +385,6 @@ export const HomePage = () => {
           </ImageZoom>
         </GestureHandlerRootView>
 
-        {/* Botón para finalizar la ruta activa */}
         {isRouteActive && (
           <TouchableOpacity style={styles.finalizeButton} onPress={clearRoute}>
             <Text style={styles.finalizeButtonText}>Finalizar Ruta</Text>
@@ -420,7 +396,6 @@ export const HomePage = () => {
           pointerEvents="none"
         />
 
-        {/* Botón para ver el video asociado a la ruta activa */}
         {isRouteActive && (
           <TouchableOpacity style={styles.videoButton} onPress={toggleVideoModal}>
             <FontAwesomeIcon
@@ -432,7 +407,6 @@ export const HomePage = () => {
           </TouchableOpacity>
         )}
 
-        {/* Modal para reproducir el video */}
         <VideoModal
           isVisible={isVideoModalVisible}
           onClose={() => setIsVideoModalVisible(false)}
@@ -440,10 +414,8 @@ export const HomePage = () => {
           routeId={selectedRouteId}
         />
 
-        {/* Se muestra el botón del chatbot cuando no hay ruta activa ni la barra de búsqueda */}
         {!isRouteActive && !showSearchBar && <ChatbotButton />}
 
-        {/* Componente BottomSheet para mostrar información del punto seleccionado */}
         <BottomSheetComponent
           ref={bottomSheetRef}
           snapPoints={["50%", "75%"]}
@@ -470,19 +442,19 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#f8fafc", // ✨ MISMO COLOR QUE EL SPLASH
     zIndex: 1000,
   },
   lottieAnimation: {
-    width: Platform.OS === 'android' ? width * 0.45 : width * 0.5,
-    height: Platform.OS === 'android' ? width * 0.45 : width * 0.5,
+    width: Platform.OS === 'android' ? width * 0.3 : width * 0.35, // ✨ MÁS PEQUEÑO
+    height: Platform.OS === 'android' ? width * 0.3 : width * 0.35, // ✨ MÁS PEQUEÑO
   },
   loadingText: {
-    marginTop: 20,
-    fontSize: Platform.OS === 'android' ? 16 : 18,
-    fontWeight: "700",
-    color: "#1e293b",
-    letterSpacing: 0.5,
+    marginTop: 15, // ✨ MENOS ESPACIO
+    fontSize: Platform.OS === 'android' ? 14 : 16, // ✨ MÁS PEQUEÑO
+    fontWeight: "600", // ✨ MENOS BOLD
+    color: "#64748b", // ✨ COLOR MÁS SUTIL
+    letterSpacing: 0.3,
   },
   
   // Overlay

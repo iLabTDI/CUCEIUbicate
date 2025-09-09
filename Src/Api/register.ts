@@ -1,6 +1,6 @@
 import { insertUser, findUserByEmail, findUserByUsername } from './lib/api';
 
-// ✨ HASH SÚPER SEGURO - PRODUCCIÓN
+// ✨ FUNCIÓN DE HASH EXACTAMENTE IDÉNTICA A LOGIN Y ALTAUSUARIO
 const secureHash = (password: string): string => {
   try {
     if (!password || password.trim() === '') {
@@ -38,6 +38,7 @@ const secureHash = (password: string): string => {
     const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
     const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
     
+    // ✨ FORMATO CON 6 PARTES - IDÉNTICO A TODOS
     return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
   } catch (error) {
     console.error('Error generando hash:', error);
@@ -119,7 +120,9 @@ export const register = async (userData: RegisterData): Promise<RegisterResponse
       };
     }
 
+    // ✨ USAR LA FUNCIÓN DE HASH CONSISTENTE
     const hashedPassword = secureHash(userData.password);
+    console.log('📊 Hash generado en register:', hashedPassword.substring(0, 20) + '...');
 
     const userToInsert = {
       ...userData,
@@ -142,4 +145,3 @@ export const register = async (userData: RegisterData): Promise<RegisterResponse
     };
   }
 };
-   
