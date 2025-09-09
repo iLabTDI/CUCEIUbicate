@@ -12,7 +12,17 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { faExternalLinkAlt, faBook, faGavel, faListOl, faQuoteRight, faLink } from "@fortawesome/free-solid-svg-icons"
+import { 
+  faExternalLinkAlt, 
+  faBook, 
+  faGavel, 
+  faListOl, 
+  faQuoteRight, 
+  faLink,
+  faFileAlt,
+  faInfoCircle,
+  faArrowRight
+} from "@fortawesome/free-solid-svg-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
@@ -65,10 +75,16 @@ export const Articles = () => {
   if (!jsonData) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0056b3" />
-          <Text style={styles.loadingText}>Cargando artículos...</Text>
-        </View>
+        <LinearGradient 
+          colors={["#667eea", "#764ba2"]} 
+          style={styles.loadingContainer}
+        >
+          <View style={styles.loadingContent}>
+            <ActivityIndicator size={45} color="#ffffff" />
+            <Text style={styles.loadingText}>Cargando artículos...</Text>
+            <Text style={styles.loadingSubtext}>Preparando reglamento estudiantil</Text>
+          </View>
+        </LinearGradient>
       </SafeAreaView>
     )
   }
@@ -78,63 +94,120 @@ export const Articles = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadJson} />}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={loadJson}
+            colors={["#4A90E2", "#357ABD"]}
+            progressBackgroundColor="#ffffff"
+          />
+        }
       >
-        <LinearGradient
-          colors={["#0056b3", "#007bff"]}
-          style={styles.header}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <FontAwesomeIcon icon={faBook} size={isTablet ? 32 : 24} color="#fff" />
-          <Text style={styles.headerTitle}>{jsonData.section_description.name}</Text>
-        </LinearGradient>
-
-        <View style={styles.content}>
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <FontAwesomeIcon icon={faGavel} size={isTablet ? 28 : 24} color="#0056b3" />
-              <Text style={styles.sectionTitle}>Descripción</Text>
+        {/* Sección de descripción hermosa */}
+        <View style={styles.descriptionSection}>
+          <LinearGradient
+            colors={["#4A90E2", "#357ABD", "#2E5BBA"]}
+            style={styles.descriptionHeader}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.headerIconContainer}>
+              <FontAwesomeIcon icon={faInfoCircle} size={20} color="#ffffff" />
             </View>
-            {jsonData.section_description.description.map((desc, index) => (
+            <Text style={styles.descriptionTitle}>Información Importante</Text>
+          </LinearGradient>
+          
+          <View style={styles.descriptionContent}>
+            {jsonData.section_description.description.slice(0, 2).map((desc, index) => (
               <Text key={index} style={styles.descriptionText}>
                 {desc}
               </Text>
             ))}
+            
+            {/* Botón de enlace súper visible */}
             <TouchableOpacity
-              style={styles.linkButton}
+              style={styles.mainLinkButton}
               onPress={() => openExternalLink(jsonData.section_description.description[2])}
+              activeOpacity={0.8}
             >
-              <FontAwesomeIcon icon={faLink} size={isTablet ? 20 : 16} color="#FFFFFF" style={styles.linkIcon} />
-              <Text style={styles.linkButtonText}>Ver Ley</Text>
-              <FontAwesomeIcon
-                icon={faExternalLinkAlt}
-                size={isTablet ? 20 : 16}
-                color="#FFFFFF"
-                style={styles.externalLinkIcon}
-              />
+              <LinearGradient
+                colors={["#0056b3", "#007bff"]}
+                style={styles.linkButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <View style={styles.linkButtonContent}>
+                  <FontAwesomeIcon icon={faFileAlt} size={18} color="#ffffff" />
+                  <Text style={styles.mainLinkText}>Ver Reglamento Completo</Text>
+                  <FontAwesomeIcon icon={faExternalLinkAlt} size={16} color="#ffffff" />
+                </View>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
+        </View>
 
+        {/* Artículos con diseño mejorado */}
+        <View style={styles.articlesContainer}>
           {Object.entries(jsonData.artículos).map(([articuloId, articulo]) => (
-            <View key={articuloId} style={styles.card}>
-              <View style={styles.cardHeader}>
-                <FontAwesomeIcon icon={faListOl} size={isTablet ? 28 : 24} color="#0056b3" />
-                <Text style={styles.articleTitle}>Artículo {articuloId}</Text>
-              </View>
-              {articulo.incisos.map((inciso, index) => (
-                <View key={index} style={styles.incisoContainer}>
-                  <FontAwesomeIcon
-                    icon={faQuoteRight}
-                    size={isTablet ? 20 : 16}
-                    color="#0056b3"
-                    style={styles.incisoIcon}
-                  />
-                  <Text style={styles.articleText}>{inciso}</Text>
+            <View key={articuloId} style={styles.articleCard}>
+              <LinearGradient
+                colors={["#4A90E2", "#357ABD"]}
+                style={styles.articleHeader}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.articleIconContainer}>
+                  <FontAwesomeIcon icon={faListOl} size={16} color="#ffffff" />
                 </View>
-              ))}
+                <Text style={styles.articleTitle}>Artículo {articuloId}</Text>
+                <View style={styles.articleNumberBadge}>
+                  <Text style={styles.articleNumberText}>{articuloId}</Text>
+                </View>
+              </LinearGradient>
+
+              <View style={styles.articleContent}>
+                {articulo.incisos.map((inciso, index) => (
+                  <View key={index} style={styles.incisoItem}>
+                    <View style={styles.incisoIndicator}>
+                      <FontAwesomeIcon icon={faQuoteRight} size={10} color="#4A90E2" />
+                    </View>
+                    <Text style={styles.incisoText}>{inciso}</Text>
+                  </View>
+                ))}
+              </View>
+              
+              {/* Decoración inferior del artículo */}
+              <View style={styles.articleFooter}>
+                <LinearGradient 
+                  colors={["#74b9ff", "#0984e3"]} 
+                  style={styles.articleFooterGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                />
+              </View>
             </View>
           ))}
+        </View>
+
+        {/* Enlace final prominente */}
+        <View style={styles.finalLinkContainer}>
+          <TouchableOpacity
+            style={styles.finalLinkButton}
+            onPress={() => openExternalLink(jsonData.enlace_completo)}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={["#0056b3", "#007bff"]}
+              style={styles.finalLinkGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <FontAwesomeIcon icon={faBook} size={20} color="#ffffff" />
+              <Text style={styles.finalLinkText}>Consultar Documento Oficial</Text>
+              <FontAwesomeIcon icon={faArrowRight} size={18} color="#ffffff" />
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -144,116 +217,247 @@ export const Articles = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f0f4f8",
+    backgroundColor: "#f8f9ff",
   },
   container: {
     flex: 1,
   },
   contentContainer: {
-    paddingBottom: 20,
+    paddingBottom: 30,
   },
+  
+  // Loading styles mejorados
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 30,
+  },
+  loadingContent: {
+    alignItems: "center",
+    padding: 40,
+    borderRadius: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 10,
   },
   loadingText: {
-    fontSize: isTablet ? 20 : 16,
-    color: "#0056b3",
-    marginTop: 10,
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#ffffff",
     textAlign: "center",
+    marginTop: 20,
+    letterSpacing: 0.5,
   },
-  header: {
+  loadingSubtext: {
+    fontSize: 16,
+    color: "#E8F4FD",
+    textAlign: "center",
+    marginTop: 8,
+    opacity: 0.9,
+  },
+
+  // Sección de descripción
+  descriptionSection: {
+    margin: 20,
+    marginBottom: 15,
+  },
+  descriptionHeader: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  headerIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
-    padding: isTablet ? 30 : 20,
-    borderBottomLeftRadius: isTablet ? 30 : 20,
-    borderBottomRightRadius: isTablet ? 30 : 20,
-  },
-  headerTitle: {
-    fontSize: isTablet ? 32 : 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginLeft: isTablet ? 15 : 10,
-    textAlign: "center",
-  },
-  content: {
-    padding: isTablet ? 24 : 16,
-    maxWidth: isTablet ? 800 : "100%",
-    alignSelf: "center",
-    width: "100%",
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    padding: isTablet ? 24 : 20,
-    marginBottom: isTablet ? 24 : 20,
-    borderRadius: isTablet ? 16 : 12,
-    shadowColor: "#000000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
-  },
-  cardHeader: {
-    flexDirection: "row",
     alignItems: "center",
-    marginBottom: isTablet ? 20 : 15,
+    marginRight: 12,
   },
-  sectionTitle: {
-    fontSize: isTablet ? 26 : 22,
-    fontWeight: "bold",
-    color: "#0056b3",
-    marginLeft: isTablet ? 15 : 10,
+  descriptionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#ffffff",
+    flex: 1,
+  },
+  descriptionContent: {
+    backgroundColor: "#ffffff",
+    padding: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: "#4A90E2",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 6,
   },
   descriptionText: {
-    fontSize: isTablet ? 18 : 16,
-    color: "#333333",
-    lineHeight: isTablet ? 28 : 24,
-    marginBottom: isTablet ? 15 : 10,
+    fontSize: 15,
+    color: "#374151",
+    lineHeight: 22,
+    marginBottom: 14,
+    fontWeight: "400",
   },
-  linkButton: {
-    backgroundColor: "#0056b3",
+
+  // Botón principal súper visible
+  mainLinkButton: {
+    marginTop: 8,
+    borderRadius: 12,
+    shadowColor: "#0056b3",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  linkButtonGradient: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+  },
+  linkButtonContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: isTablet ? 15 : 10,
-    borderRadius: isTablet ? 12 : 8,
-    marginTop: isTablet ? 20 : 15,
-    alignSelf: "flex-start",
   },
-  linkIcon: {
-    marginRight: isTablet ? 10 : 8,
-  },
-  linkButtonText: {
-    color: "#FFFFFF",
-    fontSize: isTablet ? 18 : 16,
-    fontWeight: "bold",
-    flex: 1,
+  mainLinkText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+    marginHorizontal: 10,
     textAlign: "center",
   },
-  externalLinkIcon: {
-    marginLeft: isTablet ? 10 : 8,
+
+  // Contenedor de artículos
+  articlesContainer: {
+    paddingHorizontal: 20,
+  },
+
+  // Tarjetas de artículos mejoradas y más pequeñas
+  articleCard: {
+    marginBottom: 18,
+    borderRadius: 18,
+    backgroundColor: "#ffffff",
+    shadowColor: "#4A90E2",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    overflow: "hidden",
+  },
+  articleHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    minHeight: 60,
+  },
+  articleIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
   },
   articleTitle: {
-    fontSize: isTablet ? 24 : 20,
-    fontWeight: "bold",
-    color: "#0056b3",
-    marginLeft: isTablet ? 15 : 10,
-  },
-  incisoContainer: {
-    flexDirection: "row",
-    marginBottom: isTablet ? 15 : 10,
-  },
-  incisoIcon: {
-    marginTop: isTablet ? 6 : 5,
-    marginRight: isTablet ? 15 : 10,
-  },
-  articleText: {
-    fontSize: isTablet ? 18 : 16,
-    color: "#333333",
-    lineHeight: isTablet ? 28 : 24,
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#ffffff",
     flex: 1,
+  },
+  articleNumberBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.4)",
+  },
+  articleNumberText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#ffffff",
+  },
+  articleContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: "#ffffff",
+  },
+  incisoItem: {
+    flexDirection: "row",
+    marginBottom: 14,
+    alignItems: "flex-start",
+  },
+  incisoIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#E8F4FD",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+    marginTop: 2,
+    borderWidth: 1,
+    borderColor: "#4A90E2" + "30",
+  },
+  incisoText: {
+    fontSize: 14,
+    color: "#374151",
+    lineHeight: 20,
+    flex: 1,
+    fontWeight: "400",
+  },
+  articleFooter: {
+    height: 3,
+  },
+  articleFooterGradient: {
+    height: "100%",
+    width: "100%",
+  },
+
+  // Enlace final prominente
+  finalLinkContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  finalLinkButton: {
+    borderRadius: 16,
+    shadowColor: "#0056b3",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  finalLinkGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+  },
+  finalLinkText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+    marginHorizontal: 12,
+    textAlign: "center",
   },
 })
 
