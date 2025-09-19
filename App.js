@@ -51,7 +51,19 @@ function App() {
     try {
       console.log('🔍 Verificando estado de la app...');
       
-      // 1. Verificar sesión activa PRIMERO
+      // 1. Verificar onboarding PRIMERO antes que sesión
+      const onboardingCompleted = await AsyncStorage.getItem("@onboarding_completed");
+      console.log('📱 Onboarding completado:', onboardingCompleted);
+      
+      // Si es primera vez (onboarding null), mostrar onboarding SIN importar la sesión
+      if (onboardingCompleted === null) {
+        console.log('🎯 Primera vez - mostrando onboarding');
+        setIsFirstLaunch(true);
+        setIsLoggedIn(false);
+        return; // ✨ SALIR AQUÍ PARA MOSTRAR ONBOARDING
+      }
+      
+      // 2. Solo después verificar sesión si ya completó onboarding
       const session = await getSession();
       console.log('👤 Sesión encontrada:', session ? 'SÍ' : 'NO');
       
@@ -60,21 +72,18 @@ function App() {
         setUserSession(session);
         setIsLoggedIn(true);
         setIsLoginSuccess(true);
-        setIsFirstLaunch(false); // ✨ IMPORTANTE: Si tiene sesión, no es primera vez
-        return; // ✨ SALIR AQUÍ SI HAY SESIÓN
+        setIsFirstLaunch(false);
+      } else {
+        console.log('🔐 No hay sesión - ir a login');
+        setIsLoggedIn(false);
+        setIsFirstLaunch(false);
       }
-      
-      // 2. Solo verificar onboarding si NO hay sesión
-      const onboardingCompleted = await AsyncStorage.getItem("@onboarding_completed"); 
-      console.log('📱 Onboarding completado:', onboardingCompleted !== null);
-      
-      setIsLoggedIn(false);
-      setIsFirstLaunch(onboardingCompleted === null);
       
     } catch (error) {
       console.error("🚨 Error verificando estado de la app:", error);
+      // En caso de error, asumir primera vez para mostrar onboarding
+      setIsFirstLaunch(true);
       setIsLoggedIn(false);
-      setIsFirstLaunch(false);
     }
   };
 
@@ -107,17 +116,9 @@ function App() {
             headerShown: false
           }}
         >
-          {/* ✨ FLUJO CORREGIDO CON PRIORIDAD PARA SESIÓN */}
-          {isLoggedIn ? (
-            // Usuario con sesión válida -> Directo al home
-            <Stack.Screen
-              name="Principal Home"
-              component={MyDrawer}
-              options={{ headerShown: false }}
-              initialParams={{ user: userSession }}
-            />
-          ) : isFirstLaunch ? (
-            // Primera vez y sin sesión -> Onboarding
+          {/* ✨ FLUJO CORREGIDO - ONBOARDING TIENE MÁXIMA PRIORIDAD */}
+          {isFirstLaunch === true ? (
+            // 🎯 Primera vez SIEMPRE -> Onboarding (sin importar si tiene sesión)
             <Stack.Group>
               <Stack.Screen
                 name="Onboarding"
@@ -145,8 +146,16 @@ function App() {
                 options={{ headerShown: false }}
               />
             </Stack.Group>
-          ) : (
-            // Ya vio onboarding pero sin sesión -> Login directo
+          ) : isLoggedIn === true ? (
+            // ✅ Ya vio onboarding Y tiene sesión -> Home directo
+            <Stack.Screen
+              name="Principal Home"
+              component={MyDrawer}
+              options={{ headerShown: false }}
+              initialParams={{ user: userSession }}
+            />
+          ) : isLoggedIn === false ? (
+            // 🔐 Ya vio onboarding pero NO tiene sesión -> Login
             <Stack.Group>
               <Stack.Screen
                 name="Login"
@@ -169,6 +178,13 @@ function App() {
                 options={{ headerShown: false }}
               />
             </Stack.Group>
+          ) : (
+            // 🔄 Estado de carga (fallback mientras se determina el estado)
+            <Stack.Screen
+              name="Loading"
+              component={() => <SplashScreen isLoginSuccess={false} onAnimationComplete={() => {}} />}
+              options={{ headerShown: false }}
+            />
           )}
         </Stack.Navigator>
       </View>
