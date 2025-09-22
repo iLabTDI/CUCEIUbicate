@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import {
   View,
@@ -39,12 +38,11 @@ import {
   faGraduationCap,
   faHeartPulse,
   faComments,
-  faPhoneAlt,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import Animated, { 
-  FadeInDown, 
+  FadeInDown,
   FadeInUp, 
   FadeInLeft, 
   SlideInRight,
@@ -182,12 +180,7 @@ const CustomDrawerContent = (props) => {
   }
 
   const sendEmail = () => {
-    Linking.openURL("mailto:yairhdz107@gmail.com")
-    closeHelpModal()
-  }
-
-  const callPhone = () => {
-    Linking.openURL("tel:+523317659254")
+    Linking.openURL("mailto:ubicatesupp@gmail.com")
     closeHelpModal()
   }
 
@@ -301,16 +294,16 @@ const CustomDrawerContent = (props) => {
             
             <View style={styles.modalBody}>
               <Text style={styles.modalDescription}>
-                Nuestro equipo de soporte está aquí para ayudarte. Puedes contactarnos de las siguientes maneras:
+                Nuestro equipo de soporte está aquí para ayudarte. Puedes contactarnos mediante correo electrónico.
               </Text>
               
               <View style={styles.developerCard}>
                 <View style={styles.developerAvatar}>
-                  <FontAwesomeIcon icon={faUser} size={32} color="#0b34b0" />
+                  <FontAwesomeIcon icon={faEnvelope} size={32} color="#0b34b0" />
                 </View>
                 <View style={styles.developerInfo}>
-                  <Text style={styles.developerName}>Yair Hernández</Text>
-                  <Text style={styles.developerRole}>Desarrollador Principal</Text>
+                  <Text style={styles.developerName}>Ubícate Support</Text>
+                  <Text style={styles.developerRole}>Equipo de Soporte Técnico</Text>
                 </View>
               </View>
 
@@ -318,11 +311,6 @@ const CustomDrawerContent = (props) => {
                 <TouchableOpacity style={styles.contactButton} onPress={sendEmail}>
                   <FontAwesomeIcon icon={faEnvelope} size={20} color="#FFFFFF" />
                   <Text style={styles.contactButtonText}>Enviar Email</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={[styles.contactButton, styles.phoneButton]} onPress={callPhone}>
-                  <FontAwesomeIcon icon={faPhoneAlt} size={20} color="#FFFFFF" />
-                  <Text style={styles.contactButtonText}>Llamar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -861,19 +849,21 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   contactButtons: {
-    flexDirection: "row",
-    gap: 12,
     width: "100%",
   },
   contactButton: {
-    flex: 1,
+    width: "100%",
     backgroundColor: "#0b34b0",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 12,
     elevation: 2,
+    shadowColor: "#0b34b0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   phoneButton: {
     backgroundColor: "#059669",
