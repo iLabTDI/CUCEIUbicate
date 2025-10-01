@@ -40,6 +40,14 @@ const { width, height } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
 
 // --------------------------------------------------------------------------------
+// Función para formatear tiempo
+// --------------------------------------------------------------------------------
+const formatTime = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
+
+// --------------------------------------------------------------------------------
 // Componente para la animación de escritura súper diferente
 // --------------------------------------------------------------------------------
 const TypingAnimation = () => {
@@ -70,7 +78,7 @@ const TypingAnimation = () => {
     <View style={styles.typingContainer}>
       <View style={styles.typingWrapper}>
         <LinearGradient
-          colors={["#667eea", "#764ba2", "#f093fb"]}
+          colors={["#1E3A8A", "#3B82F6", "#60A5FA"]}
           style={styles.typingBubble}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -97,21 +105,21 @@ const TypingAnimation = () => {
             </View>
             
             <View style={styles.typingDotsArea}>
-              {[0, 0.33, 0.66].map((delay, index) => (
+              {[0, 1, 2].map((index) => (
                 <Animated.View 
                   key={index}
                   style={[
                     styles.typingDot, 
                     { 
                       opacity: animation.interpolate({
-                        inputRange: [delay, delay + 0.33, delay + 0.66, 1],
-                        outputRange: [0.3, 1, 0.3, 0.3],
+                        inputRange: [0, 0.25, 0.5, 0.75, 1],
+                        outputRange: [0.3, index === 0 ? 1 : 0.3, index === 1 ? 1 : 0.3, index === 2 ? 1 : 0.3, 0.3],
                         extrapolate: 'clamp',
                       }),
                       transform: [{
                         translateY: animation.interpolate({
-                          inputRange: [delay, delay + 0.33, delay + 0.66, 1],
-                          outputRange: [0, -8, 0, 0],
+                          inputRange: [0, 0.25, 0.5, 0.75, 1],
+                          outputRange: [0, index === 0 ? -8 : 0, index === 1 ? -8 : 0, index === 2 ? -8 : 0, 0],
                           extrapolate: 'clamp',
                         })
                       }]
@@ -122,7 +130,7 @@ const TypingAnimation = () => {
             </View>
           </View>
           
-          <Text style={styles.typingLabel}>Escribiendo</Text>
+          {/* <Text style={styles.typingLabel}>Escribiendo</Text> */}
         </LinearGradient>
       </View>
     </View>
@@ -359,7 +367,7 @@ export const Chatbot = () => {
         // Mensaje del usuario - Diseño moderno
         <View style={styles.userMessageWrapper}>
           <LinearGradient
-            colors={["#667eea", "#764ba2"]}
+            colors={["#1E40AF", "#3B82F6"]}
             style={styles.userMessageBubble}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -383,7 +391,7 @@ export const Chatbot = () => {
         <View style={styles.botMessageWrapper}>
           <View style={styles.botAvatarContainer}>
             <LinearGradient
-              colors={["#f093fb", "#f5576c"]}
+              colors={["#3B82F6", "#1E40AF"]}
               style={styles.botAvatarBg}
             >
               <Image source={item.user.avatar} style={styles.botAvatar} />
@@ -404,7 +412,7 @@ export const Chatbot = () => {
                   style={styles.copyBtn}
                   onPress={() => copyToClipboard(item.text)}
                 >
-                  <FontAwesome name="copy" size={12} color="#667eea" />
+                  <FontAwesome name="copy" size={12} color="#3B82F6" />
                 </TouchableOpacity>
               </View>
               
@@ -503,7 +511,7 @@ export const Chatbot = () => {
       {/* Header completamente nuevo y hermoso */}
       <View style={styles.headerContainer}>
         <LinearGradient
-          colors={["#667eea", "#764ba2", "#f093fb"]}
+          colors={["#1E40AF", "#3B82F6", "#60A5FA"]}
           style={styles.headerGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -554,7 +562,7 @@ export const Chatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatArea}
-        keyboardVerticalOffset={0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 60}
       >
         <FlatList
           ref={flatListRef}
@@ -564,14 +572,15 @@ export const Chatbot = () => {
           contentContainerStyle={styles.messagesList}
           inverted
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         />
         
         {isTyping && <TypingAnimation />}
         
-        {/* Input completamente rediseñado */}
+        {/* Input súper lindo y elevado para Android */}
         <View style={styles.inputSection}>
           <LinearGradient
-            colors={["#ffffff", "#f8f9ff"]}
+            colors={["#ffffff", "#f8fafc", "#e0f2fe"]}
             style={styles.inputBackground}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -582,20 +591,14 @@ export const Chatbot = () => {
                   style={styles.messageInput}
                   value={inputMessage}
                   onChangeText={setInputMessage}
-                  placeholder="Escribe tu mensaje..."
-                  placeholderTextColor="#B0BEC5"
-                  multiline
+                  placeholder="Escribe tu mensaje aquí..."
+                  placeholderTextColor="#94A3B8"
+                  multiline={true}
                   maxLength={1000}
                   returnKeyType="send"
                   onSubmitEditing={onSend}
+                  textAlignVertical="top"
                 />
-                
-                <TouchableOpacity
-                  style={styles.attachButton}
-                  activeOpacity={0.7}
-                >
-                  <FontAwesome name="paperclip" size={18} color="#667eea" />
-                </TouchableOpacity>
               </View>
               
               <TouchableOpacity
@@ -609,15 +612,17 @@ export const Chatbot = () => {
               >
                 <LinearGradient
                   colors={inputMessage.trim() 
-                    ? ["#667eea", "#764ba2"] 
-                    : ["#E5E7EB", "#D1D5DB"]
+                    ? ["#3B82F6", "#1E40AF", "#1E3A8A"] 
+                    : ["#E5E7EB", "#D1D5DB", "#9CA3AF"]
                   }
                   style={styles.sendButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                 >
                   <FontAwesome
                     name="paper-plane"
                     size={16}
-                    color={inputMessage.trim() ? "#ffffff" : "#9CA3AF"}
+                    color={inputMessage.trim() ? "#ffffff" : "#6B7280"}
                   />
                 </LinearGradient>
               </TouchableOpacity>
@@ -640,7 +645,7 @@ export const Chatbot = () => {
             style={styles.welcomeModal}
           >
             <LinearGradient
-              colors={["#667eea", "#764ba2", "#f093fb"]}
+              colors={["#1E40AF", "#3B82F6", "#60A5FA"]}
               style={styles.modalHeaderGradient}
             >
               <View style={styles.modalIcon}>
@@ -669,7 +674,7 @@ export const Chatbot = () => {
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={["#667eea", "#764ba2"]}
+                colors={["#3B82F6", "#1E40AF"]}
                 style={styles.startButtonGradient}
               >
                 <FontAwesome name="comments" size={18} color="#ffffff" />
@@ -694,7 +699,7 @@ export const Chatbot = () => {
             style={styles.inactivityModal}
           >
             <View style={styles.inactivityIcon}>
-              <FontAwesome name="clock-o" size={48} color="#667eea" />
+              <FontAwesome name="clock-o" size={48} color="#3B82F6" />
             </View>
             
             <Text style={styles.inactivityTitle}>¿Aún estás ahí?</Text>
@@ -745,24 +750,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9ff" 
   },
   
-  // Header completamente nuevo
+  // Header hermoso y bien proporcionado
   headerContainer: {
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
     shadowRadius: 12,
-    elevation: 15,
+    // elevation: 10,
   },
   headerGradient: {
-    paddingTop: Platform.OS === "ios" ? 50 : 45,
-    paddingBottom: 25,
+    paddingTop: Platform.OS === "ios" ? 50 : 20,
+    // paddingBottom: 10,
+    zIndex: 1000,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   headerLeft: {
     flexDirection: "row",
@@ -771,42 +777,42 @@ const styles = StyleSheet.create({
   },
   headerBotAvatar: {
     position: "relative",
-    marginRight: 15,
+    marginRight: 16,
   },
   headerBotImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 3,
-    borderColor: "rgba(255, 255, 255, 0.8)",
+    borderColor: "rgba(255, 255, 255, 0.9)",
   },
-  headerOnlineBadge: {
-    position: "absolute",
-    bottom: -2,
-    right: -2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: "#00E676",
-    borderWidth: 3,
-    borderColor: "#ffffff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  onlinePulse: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#ffffff",
-  },
+  // headerOnlineBadge: {
+  //   position: "absolute",
+  //   bottom: -2,
+  //   right: -2,
+  //   width: 16,
+  //   height: 16,
+  //   borderRadius: 8,
+  //   backgroundColor: "#00E676",
+  //   borderWidth: 3,
+  //   borderColor: "#ffffff",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // onlinePulse: {
+  //   width: 8,
+  //   height: 8,
+  //   borderRadius: 4,
+  //   backgroundColor: "#ffffff",
+  // },
   headerTextArea: {
     flex: 1,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
     color: "#ffffff",
-    marginBottom: 3,
+    marginBottom: 4,
     letterSpacing: 0.5,
   },
   headerStatus: {
@@ -823,41 +829,42 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 12,
     color: "#E8F4FD",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   headerAction: {
-    marginLeft: 10,
+    marginLeft: 12,
   },
   headerActionBg: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     justifyContent: "center",
     alignItems: "center",
   },
   headerWave: {
-    height: 20,
-    marginTop: -5,
+    height: 16,
+    marginTop: -4,
   },
   waveShape: {
     flex: 1,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   
-  // Chat area
+  // Chat area optimizado para Android
   chatArea: { 
     flex: 1,
     backgroundColor: "#f8f9ff",
   },
   messagesList: { 
-    paddingHorizontal: 20, 
-    paddingVertical: 15,
+    paddingHorizontal: 16, 
+    paddingVertical: 12,
+    flexGrow: 1,
   },
   
-  // Messages completamente rediseñados
+  // Messages completamente rediseñados en azul
   messageContainer: {
-    marginVertical: 8,
+    marginVertical: 6,
   },
   
   // Usuario
@@ -869,20 +876,20 @@ const styles = StyleSheet.create({
   userMessageBubble: {
     borderRadius: 20,
     borderBottomRightRadius: 5,
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 4 },
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowRadius: 6,
+    elevation: 4,
   },
   userMessageText: { 
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 20,
     color: "#ffffff",
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   messageInfo: {
     flexDirection: "row",
@@ -890,23 +897,23 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   messageTime: {
-    fontSize: 11,
+    fontSize: 10,
     color: "rgba(255,255,255,0.8)",
-    marginRight: 6,
+    marginRight: 4,
     fontWeight: "600",
   },
   messageStatus: {
-    marginLeft: 4,
+    marginLeft: 3,
   },
   messageTail: {
     position: "absolute",
     bottom: 0,
-    right: -8,
+    right: -6,
     width: 0,
     height: 0,
-    borderLeftWidth: 15,
-    borderLeftColor: "#764ba2",
-    borderTopWidth: 15,
+    borderLeftWidth: 12,
+    borderLeftColor: "#1E40AF",
+    borderTopWidth: 12,
     borderTopColor: "transparent",
   },
   
@@ -914,113 +921,113 @@ const styles = StyleSheet.create({
   botMessageWrapper: {
     alignSelf: "flex-start",
     flexDirection: "row",
-    maxWidth: "90%",
-    marginBottom: 5,
+    maxWidth: "88%",
+    marginBottom: 4,
   },
   botAvatarContainer: {
     position: "relative",
-    marginRight: 12,
-    marginTop: 5,
+    marginRight: 10,
+    marginTop: 4,
   },
   botAvatarBg: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#f5576c",
+    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 6,
+    elevation: 4,
   },
   botAvatar: { 
-    width: 28, 
-    height: 28, 
-    borderRadius: 14,
+    width: 24, 
+    height: 24, 
+    borderRadius: 12,
   },
-  onlineDot: {
-    position: "absolute",
-    bottom: -2,
-    right: -2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#00E676",
-    borderWidth: 2,
-    borderColor: "#ffffff",
-  },
+  // onlineDot: {
+  //   position: "absolute",
+  //   bottom: 89,
+  //   right: -1,
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 6,
+  //   backgroundColor: "#00E676",
+  //   borderWidth: 2,
+  //   borderColor: "#ffffff",
+  // },
   botMessageCard: {
     flex: 1,
   },
   botMessageBubble: {
-    borderRadius: 20,
-    borderBottomLeftRadius: 5,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 18,
+    borderBottomLeftRadius: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     shadowColor: "#E0E7FF",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 6,
+    elevation: 3,
     borderWidth: 1,
-    borderColor: "rgba(102, 126, 234, 0.08)",
+    borderColor: "rgba(59, 130, 246, 0.08)",
   },
   botMessageHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   botName: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700",
-    color: "#667eea",
-    letterSpacing: 0.5,
+    color: "#3B82F6",
+    letterSpacing: 0.3,
   },
   copyBtn: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#667eea15",
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#3B82F615",
     justifyContent: "center",
     alignItems: "center",
   },
   botMessageText: { 
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 14,
+    lineHeight: 19,
     color: "#2D3748",
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   botMessageTime: {
-    fontSize: 10,
+    fontSize: 9,
     color: "#9CA3AF",
     fontWeight: "600",
     textAlign: "right",
   },
   
-  // Typing animation completamente nueva
+  // Typing animation optimizada
   typingContainer: { 
-    paddingHorizontal: 20, 
-    paddingVertical: 12,
+    paddingHorizontal: 16, 
+    paddingVertical: 10,
     alignItems: "flex-start" 
   },
   typingWrapper: {
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowRadius: 6,
+    elevation: 4,
   },
   typingBubble: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    minWidth: 140,
+    borderRadius: 22,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    minWidth: 120,
   },
   typingContentLeft: {
     flexDirection: "row",
@@ -1028,20 +1035,20 @@ const styles = StyleSheet.create({
   },
   botAvatarSmall: {
     position: "relative",
-    marginRight: 12,
+    marginRight: 10,
   },
   botImageSmall: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
   },
   avatarRing: {
     position: "absolute",
-    top: -3,
-    left: -3,
-    right: -3,
-    bottom: -3,
-    borderRadius: 17,
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    borderRadius: 14,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.6)",
   },
@@ -1049,74 +1056,68 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   typingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: "#ffffff",
-    marginHorizontal: 2,
+    marginHorizontal: 1.5,
   },
   typingLabel: {
     color: "#ffffff",
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
     fontStyle: "italic",
   },
   
-  // Input completamente rediseñado
+  // Input súper lindo y elevado perfectamente para Android
   inputSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    paddingBottom: Platform.OS === "ios" ? 30 : 15,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: Platform.OS === "android" ? 20 : 32,
+    backgroundColor: "#f8f9ff",
   },
   inputBackground: {
-    borderRadius: 30,
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 8,
+    borderRadius: 28,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
     borderWidth: 1,
-    borderColor: "rgba(102, 126, 234, 0.08)",
+    borderColor: "rgba(59, 130, 246, 0.1)",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 16,
+    minHeight: 60,
   },
   inputWrapper: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 15,
+    marginRight: 12,
+    minHeight: 40,
   },
   messageInput: {
-    flex: 1,
     fontSize: 16,
     color: "#2D3748",
     fontWeight: "500",
-    maxHeight: 100,
-    minHeight: 20,
-    textAlignVertical: "center",
-  },
-  attachButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#667eea15",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    textAlignVertical: "top",
+    minHeight: 40,
+    maxHeight: 120,
+    lineHeight: 22,
   },
   sendButtonContainer: {
-    shadowColor: "#667eea",
+    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
   sendDisabled: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
   sendButtonGradient: {
     width: 48,
@@ -1126,7 +1127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   
-  // Modals rediseñados
+  // Modals rediseñados en azul
   modalBackground: { 
     flex: 1, 
     justifyContent: "center", 
@@ -1135,130 +1136,130 @@ const styles = StyleSheet.create({
   },
   welcomeModal: {
     backgroundColor: "white",
-    borderRadius: 30,
+    borderRadius: 28,
     overflow: "hidden",
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 15 },
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.3,
-    shadowRadius: 25,
-    elevation: 20,
+    shadowRadius: 20,
+    elevation: 15,
     width: "100%",
-    maxWidth: 350,
+    maxWidth: 340,
   },
   modalHeaderGradient: {
-    paddingVertical: 30,
-    paddingHorizontal: 25,
+    paddingVertical: 28,
+    paddingHorizontal: 24,
     alignItems: "center",
   },
   modalIcon: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 65,
+    height: 65,
+    borderRadius: 32,
     backgroundColor: "rgba(255,255,255,0.2)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 12,
   },
   modalWelcomeTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "800",
     color: "#ffffff",
     textAlign: "center",
-    marginBottom: 5,
+    marginBottom: 4,
   },
   modalWelcomeSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#E8F4FD",
     textAlign: "center",
     fontWeight: "500",
   },
   modalBodyContent: {
-    paddingHorizontal: 25,
-    paddingVertical: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 18,
     alignItems: "center",
   },
   modalAnimation: { 
-    width: 120,
-    height: 120,
-    marginBottom: 15,
+    width: 100,
+    height: 100,
+    marginBottom: 12,
   },
   modalDescription: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: "center",
     color: "#475569",
-    lineHeight: 22,
+    lineHeight: 20,
     fontWeight: "500",
   },
   startChatButton: {
-    margin: 25,
-    marginTop: 15,
+    margin: 24,
+    marginTop: 12,
   },
   startButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 30,
-    borderRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 22,
   },
   startButtonText: { 
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     color: "#ffffff",
-    marginLeft: 10,
+    marginLeft: 8,
   },
   
   // Inactivity modal
   inactivityModal: {
     backgroundColor: "white",
-    borderRadius: 25,
-    padding: 30,
+    borderRadius: 22,
+    padding: 28,
     alignItems: "center",
-    shadowColor: "#667eea",
-    shadowOffset: { width: 0, height: 12 },
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 15,
+    shadowRadius: 18,
+    elevation: 12,
     width: "100%",
-    maxWidth: 320,
+    maxWidth: 300,
   },
   inactivityIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#667eea15",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#3B82F615",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 18,
   },
   inactivityTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 10,
     color: "#2D3748",
     textAlign: "center",
   },
   inactivityMessage: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: "center",
-    marginBottom: 25,
+    marginBottom: 22,
     color: "#64748B",
-    lineHeight: 21,
+    lineHeight: 19,
     fontWeight: "500",
   },
   inactivityActions: {
     flexDirection: "row",
     width: "100%",
+    gap: 12,
   },
   keepButton: {
     flex: 1,
-    marginRight: 10,
   },
   keepButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 20,
   },
@@ -1270,13 +1271,12 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     flex: 1,
-    marginLeft: 10,
   },
   clearButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 20,
   },
@@ -1289,7 +1289,7 @@ const styles = StyleSheet.create({
   
   // Link styles
   link: { 
-    color: "#667eea", 
+    color: "#3B82F6", 
     textDecorationLine: "underline",
     fontWeight: "600",
   },
