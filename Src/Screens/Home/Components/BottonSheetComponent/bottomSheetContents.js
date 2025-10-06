@@ -549,7 +549,7 @@ export const bottomSheetContents = {
       classrooms: "",
       "relevant-places": ["-"],
       bathrooms:[ "-"],
-      "images-path": [require ("./Modulos/Entradas/Entrada-Revolucion.png")],
+      "images-path": [require ("./Modulos/Entradas/Entrada-Revolucion1.png")],
       description:
         "La entrada por Revolución es una de las más concurridas por los estudiantes, ya que es la entrada principal al campus.",
     },
@@ -559,7 +559,7 @@ export const bottomSheetContents = {
     "relevant-places":[ "-"],
     bathrooms: ["-"],
     "images-path": [
-      require("./Modulos/Entradas/Entrada-Olimpica.png"),
+      require("./Modulos/Entradas/Entrada-Olimpica1.png"),
     ],
     description:
       "La entrada por Olimpica es una de las menos concurridas por los estudiantes, ya que es la entrada tracera al campus.",
@@ -570,7 +570,7 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: ["-"],
     "images-path": [
-      require("./Modulos/Entradas/Entrada-Boulevard.png"),
+      require("./Modulos/Entradas/Entrada-Boulevard1.png"),
     ],
     description:
       "La entrada por Boulevard es una de las mas concurridas por los estudiantes, ya que es la entrada tracera al campus.",
@@ -580,7 +580,7 @@ export const bottomSheetContents = {
     classrooms: "JOBS 4-8",
     "relevant-places": ["-"],
     bathrooms: ["-"],
-    "images-path": [require("./Modulos/Jobs/Jobs.png")],
+    "images-path": [require("./Modulos/Jobs/Jobs1.png")],
     description:
       "Los JOBS son aulas las cuales se imparte el programa de ingles para los estudiantes por la parte de proulex.",
   },
@@ -589,7 +589,7 @@ export const bottomSheetContents = {
     classrooms: "JOBS 1-4",
     "relevant-places": ["-"],
     bathrooms: ["-"],
-    "images-path": [require("./Modulos/Jobs/Jobs_1.png")],
+    "images-path": [require("./Modulos/Jobs/Jobs1.png")],
     description:
       "Los JOBS son aulas las cuales se imparte el programa de ingles para los estudiantes por la parte de proulex.",
   },
@@ -600,7 +600,7 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: [""],
     "images-path": [
-      require("./Modulos/Titanic/Titanic.png"),
+      require("./Modulos/Titanic/Titanic1.png"),
     ],
     description:
       "El edificio del Titanic es un edificio que cuenta con maquinaria industrial y un estacionamiento en la parte inferior del edificio.",
