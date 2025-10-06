@@ -23,7 +23,7 @@
       "package": "com.cuceiubicate.cuceiubicate",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Icon.png",
+        "foregroundImage": "./assets/images/icono.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
@@ -36,6 +36,15 @@
       "expo-secure-store",
       "expo-video"
     ],
+    "expo-build-properties":  {
+      "android": {
+        "compileSdkVersion": 34,
+        "targetSdkVersion": 34,
+        "minSdkVersion": 23,
+        "kotlinVersion": "1.9.24",
+        "javaToolchainVersion": 17
+      }
+    },
     "extra": {
       "eas": {
         "projectId": "08a561e4-8d60-47af-b4b6-f830296c28e8"
