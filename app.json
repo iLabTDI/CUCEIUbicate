@@ -41,9 +41,7 @@
           "android": {
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
-            "buildToolsVersion": "35.0.0",
-            "minSdkVersion": 23,
-            "kotlinVersion": "1.9.24"
+            "minSdkVersion": 23
           }
         }
       ]
