@@ -11,7 +11,7 @@
         "simulator": true
       },
       "android": {
-        "image": "sdk-52",
+        "image": "latest",
         "env": {
           "EXPO_DEBUG": "true"
         }
@@ -21,7 +21,7 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "image": "sdk-52",
+        "image": "latest",
         "env": {
           "EXPO_DEBUG": "true"
         }
@@ -36,7 +36,7 @@
         }
       },
       "android": {
-        "image": "sdk-52",
+        "image": "latest",
         "env": {
           "EXPO_DEBUG": "true"
         }
