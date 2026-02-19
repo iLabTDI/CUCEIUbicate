@@ -23,6 +23,36 @@ import {
   faFootballBall,
   faGraduationCap,
   faTicketAlt,
+  faMapMarkerAlt,
+  faParking,
+  faBus,
+  faRestroom,
+  faWifi,
+  faCoffee,
+  faUserTie,
+  faLaptop,
+  faFlask,
+  faHome,
+  faSchool,
+  faHospital,
+  faUsers,
+  faDesktop,
+  faChalkboardTeacher,
+  faToolbox,
+  faCamera,
+  faMusic,
+  faPrint,
+  faClipboardList,
+  faKey,
+  faShieldAlt,
+  faHeart,
+  faGamepad,
+  faMicrophone,
+  faCar,
+  faTree,
+  faStar,
+  faDoorOpen,
+  faBank,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,30 +60,94 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
-/**
- * Función auxiliar que determina el ícono según el texto recibido.
- * - "Modulo" o "Edificio": faBuilding
- * - "Biblioteca": faBook
- * - "Entrada": faTicketAlt
- * - "Comida", "Restaurante" o "Globo": faUtensils
- * - En otro caso: faSearch
- */
-const getIconForCategoryFromText = (text) => {
-  const lower = text.toLowerCase();
-  if (lower.includes("modulo") || lower.includes("edificio")) {
-    return faBuilding;
-  } else if (lower.includes("biblioteca")) {
-    return faBook;
-  } else if (lower.includes("entrada")) {
-    return faTicketAlt;
-  } else if (
-    lower.includes("comida") ||
-    lower.includes("restaurante") ||
-    lower.includes("globo")
-  ) {
-    return faUtensils;
-  }
-  return faSearch;
+// 🔹 Normalizar texto (quita acentos y pasa a minúsculas)
+const normalize = (s = "") =>
+  s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+// 🔹 Diccionario de keywords → iconos
+const iconMap = [
+  { keys: ["modulo", "edificio"], icon: faBuilding },
+  { keys: ["biblioteca"], icon: faBook },
+  { keys: ["entrada", "acceso"], icon: faDoorOpen },
+  { keys: ["comida", "restaurante", "globo", "cafeteria"], icon: faUtensils },
+  { keys: ["cafe", "starbucks", "flor de cordoba"], icon: faCoffee },
+  { keys: ["estacionamiento", "parking"], icon: faParking },
+  { keys: ["baño", "sanitario", "wc"], icon: faRestroom },
+  { keys: ["wifi", "internet"], icon: faWifi },
+  { keys: ["laboratorio", "lab"], icon: faFlask },
+  { keys: ["computo", "sistemas", "informatica"], icon: faLaptop },
+  { keys: ["aula", "salon", "clase"], icon: faChalkboardTeacher },
+  { keys: ["auditorio", "conferencia"], icon: faMicrophone },
+  { keys: ["administra", "coordinacion", "direccion"], icon: faUserTie },
+  { keys: ["secretaria", "oficina"], icon: faClipboardList },
+  { keys: ["rectoria", "rector"], icon: faHome },
+  { keys: ["medico", "enfermeria", "salud"], icon: faHospital },
+  { keys: ["psicolog", "bienestar"], icon: faHeart },
+  { keys: ["deporte", "gimnasio", "cancha"], icon: faFootballBall },
+  { keys: ["juego", "recreo"], icon: faGamepad },
+  { keys: ["estudiante", "alumno"], icon: faUsers },
+  { keys: ["beca"], icon: faStar },
+  { keys: ["impresion", "copiado"], icon: faPrint },
+  { keys: ["fotografia", "estudio"], icon: faCamera },
+  { keys: ["musica", "audio"], icon: faMusic },
+  { keys: ["transporte", "ruta", "autobus"], icon: faBus },
+  { keys: ["vehiculo", "auto"], icon: faCar },
+  { keys: ["seguridad", "vigilancia"], icon: faShieldAlt },
+  { keys: ["mantenimiento", "herramienta"], icon: faToolbox },
+  { keys: ["llave"], icon: faKey },
+  { keys: ["jardin", "verde", "patio"], icon: faTree },
+  { keys: ["santander", "banco", "jobs"], icon: faBank },
+];
+
+// 🔹 Función compacta
+const getIconForCategoryFromText = (text = "") => {
+  const t = normalize(text);
+  return (
+    iconMap.find(({ keys }) => keys.some((k) => t.includes(k)))?.icon ||
+    faSearch
+  );
+};
+
+// Función para obtener colores bonitos para cada categoría
+const colorMap = [
+  { keys: ["modulo"], color: "#1E40AF" },
+  { keys: ["edificio"], color: "#374151" },
+  { keys: ["biblioteca"], color: "#7C3AED" },
+  { keys: ["entrada", "acceso"], color: "#059669" },
+  { keys: ["comida", "restaurante", "globo", "cafeteria"], color: "#EA580C" },
+  { keys: ["cafe"], color: "#92400E" },
+  { keys: ["estacionamiento", "parking"], color: "#374151" },
+  { keys: ["baño", "sanitario", "wc"], color: "#0891B2" },
+  { keys: ["wifi", "internet"], color: "#2563EB" },
+  { keys: ["laboratorio", "lab"], color: "#DC2626" },
+  { keys: ["computo", "sistemas", "informatica"], color: "#1F2937" },
+  { keys: ["aula", "salon", "clase"], color: "#059669" },
+  { keys: ["auditorio", "conferencia"], color: "#7C3AED" },
+  { keys: ["administra", "coordinacion", "direccion"], color: "#1E40AF" },
+  { keys: ["secretaria", "oficina"], color: "#374151" },
+  { keys: ["rector"], color: "#991B1B" },
+  { keys: ["medico", "enfermeria", "salud"], color: "#DC2626" },
+  { keys: ["psicolog", "bienestar"], color: "#BE185D" },
+  { keys: ["deporte", "gimnasio", "cancha"], color: "#16A34A" },
+  { keys: ["juego", "recreo"], color: "#7C3AED" },
+  { keys: ["estudiante", "alumno"], color: "#2563EB" },
+  { keys: ["beca"], color: "#D97706" },
+  { keys: ["impresion", "copiado", "fotografia", "musica"], color: "#374151" },
+  { keys: ["transporte", "ruta", "autobus"], color: "#D97706" },
+  { keys: ["vehiculo", "auto"], color: "#374151" },
+  { keys: ["seguridad", "mantenimiento"], color: "#991B1B" },
+  { keys: ["jardin", "verde", "patio"], color: "#16A34A" },
+];
+
+const getColorForCategory = (text = "") => {
+  const t = normalize(text);
+  return (
+    colorMap.find(({ keys }) => keys.some((k) => t.includes(k)))?.color ||
+    "#0033A0"
+  );
 };
 
 export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
@@ -177,44 +271,82 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     );
   };
 
-  // Renderiza cada resultado de búsqueda con el ícono según la categoría (color azul)
-  const renderSearchResult = ({ item }) => (
-    <TouchableOpacity
-      style={styles.resultItem}
-      onPress={() => handleSelectResult(item)}
-    >
-      <FontAwesomeIcon
-        icon={getIconForCategoryFromText(item.name)}
-        size={isTablet ? 20 : 16}
-        color="#0000ff"
-        style={styles.resultIcon}
-      />
-      <Text style={styles.resultText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  // Renderiza cada resultado de búsqueda con ícono y color específico por categoría
+  const renderSearchResult = ({ item }) => {
+    const itemColor = getColorForCategory(item.name);
+    return (
+      <TouchableOpacity
+        style={[
+          styles.resultItem,
+          {
+            transform: [{ scale: 1 }],
+          },
+        ]}
+        onPress={() => handleSelectResult(item)}
+        activeOpacity={0.8}
+        underlayColor={`${itemColor}08`}>
+        <View
+          style={[
+            styles.resultIcon,
+            {
+              backgroundColor: `${itemColor}18`,
+              borderWidth: 1,
+              borderColor: `${itemColor}25`,
+            },
+          ]}>
+          <FontAwesomeIcon
+            icon={getIconForCategoryFromText(item.name)}
+            size={isTablet ? 20 : 16}
+            color={itemColor}
+          />
+        </View>
+        <Text style={styles.resultText}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
-  // Renderiza cada elemento del historial de búsqueda con su ícono (color azul)
-  const renderHistoryItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.resultItem}
-      onPress={() => {
-        setSpecificSearchText(item);
-        handleSpecificSearch(item);
-      }}
-    >
-      <FontAwesomeIcon
-        icon={getIconForCategoryFromText(item)}
-        size={isTablet ? 20 : 16}
-        color="#0000ff"
-        style={styles.resultIcon}
-      />
-      <Text style={styles.resultText}>{item}</Text>
-    </TouchableOpacity>
-  );
+  // Renderiza cada elemento del historial de búsqueda con su ícono y color específico
+  const renderHistoryItem = ({ item }) => {
+    const itemColor = getColorForCategory(item);
+    return (
+      <TouchableOpacity
+        style={[
+          styles.resultItem,
+          {
+            transform: [{ scale: 1 }],
+          },
+        ]}
+        onPress={() => {
+          setSpecificSearchText(item);
+          handleSpecificSearch(item);
+        }}
+        activeOpacity={0.8}
+        underlayColor={`${itemColor}08`}>
+        <View
+          style={[
+            styles.resultIcon,
+            {
+              backgroundColor: `${itemColor}18`,
+              borderWidth: 1,
+              borderColor: `${itemColor}25`,
+            },
+          ]}>
+          <FontAwesomeIcon
+            icon={getIconForCategoryFromText(item)}
+            size={isTablet ? 20 : 16}
+            color={itemColor}
+          />
+        </View>
+        <Text style={styles.resultText}>{item}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.search_icon} onPress={toggleSpecificSearch}>
+      <TouchableOpacity
+        style={styles.search_icon}
+        onPress={toggleSpecificSearch}>
         <FontAwesomeIcon
           icon={faSearch}
           size={isTablet ? width * 0.04 : width * 0.06}
@@ -248,11 +380,10 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
               ],
               width: animatedWidth.interpolate({
                 inputRange: [0, 1],
-                outputRange: ["0%", isTablet ? "88%" : "83%"],
+                outputRange: ["0%", isTablet ? "80%" : "79%"],
               }),
             },
-          ]}
-        >
+          ]}>
           <TextInput
             ref={inputRef}
             style={styles.searchInput}
@@ -267,8 +398,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
               setShowHistory(!showHistory);
               setError("");
               setSearchResults([]);
-            }}
-          >
+            }}>
             <FontAwesomeIcon
               icon={faHistory}
               size={isTablet ? 24 : 20}
@@ -322,20 +452,17 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   search_icon: {
-    top:
-      Platform.OS === "ios"
-        ? isTablet
-          ? height * 0.0005
-          : height * 0.001
-        : isTablet
-        ? -height * 0.001
-        : -height * 0.002,
-    right: Platform.OS === "ios" ? (isTablet ? -8 : -5) : 0,
-    backgroundColor: "#0000ff",
-    borderRadius: isTablet ? width * 0.06 : width * 0.1,
-    padding: isTablet ? width * 0.03 : width * 0.04,
+    top: Platform.OS === "android" ? 12 : 5,
+    right: Platform.OS === "android" ? 10 : 0.2,
+    backgroundColor: "#0b34b0",
+    borderRadius: Platform.OS === "android" ? 50 : width * 0.1,
+    padding: Platform.OS === "android" ? 14 : width * 0.04,
     zIndex: 2,
-    elevation: 5,
+    elevation: Platform.OS === "android" ? 8 : 0,
+    shadowColor: Platform.OS === "ios" ? "#000" : undefined,
+    shadowOffset: Platform.OS === "ios" ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === "ios" ? 0.25 : undefined,
+    shadowRadius: Platform.OS === "ios" ? 3.84 : undefined,
   },
   overlay: {
     position: "absolute",
@@ -343,22 +470,25 @@ const styles = StyleSheet.create({
     left: -width,
     right: isTablet ? -width * 0.02 : -width * 0.03,
     bottom: -height,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 51, 160, 0.4)",
     zIndex: 1,
   },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
+    top: 10,
     backgroundColor: "#FFFFFF",
     borderRadius: isTablet ? 30 : 25,
     paddingHorizontal: isTablet ? 24 : 20,
     height: isTablet ? 56 : 48,
     shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
     zIndex: 10,
+    borderWidth: 1,
+    borderColor: "rgba(0, 51, 160, 0.1)",
   },
   searchInput: {
     flex: 1,
@@ -378,31 +508,59 @@ const styles = StyleSheet.create({
     right: isTablet ? width * 0.02 : width * 0.03,
     width: isTablet ? width * 0.85 : width * 0.8,
     backgroundColor: "#FFFFFF",
-    borderRadius: isTablet ? 12 : 8,
+    borderRadius: isTablet ? 20 : 16,
     maxHeight: isTablet ? height * 0.5 : height * 0.4,
     shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 15,
     zIndex: 10,
+    borderWidth: 1,
+    borderColor: "rgba(0, 51, 160, 0.08)",
+    overflow: "hidden",
   },
   resultsList: {
     flexGrow: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
   },
   resultItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: isTablet ? 16 : 12,
+    padding: isTablet ? 20 : 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "rgba(0, 51, 160, 0.06)",
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 6,
+    marginVertical: 2,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
   },
   resultIcon: {
-    marginRight: isTablet ? 16 : 12,
+    marginRight: isTablet ? 18 : 14,
+    width: isTablet ? 44 : 36,
+    height: isTablet ? 44 : 36,
+    borderRadius: isTablet ? 22 : 18,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    // elevation: 3,
   },
   resultText: {
     fontSize: isTablet ? 18 : 16,
-    color: "#333333",
+    color: "#1F2937",
+    fontWeight: "600",
+    flex: 1,
+    lineHeight: isTablet ? 26 : 22,
+    letterSpacing: 0.3,
   },
   errorContainer: {
     flexDirection: "row",

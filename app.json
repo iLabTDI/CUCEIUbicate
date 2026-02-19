@@ -20,10 +20,10 @@
       }
     },
     "android": {
-      "package": "com.CUCEIUbicate.CUCEIUbicate",
+      "package": "com.cuceiubicate.cuceiubicate",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/icono.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
@@ -35,11 +35,14 @@
     "plugins": [
       "expo-secure-store",
       "expo-video",
+      ["./plugins/withRemovePermissions", ["android.permission.RECORD_AUDIO"]],
       [
         "expo-build-properties",
         {
           "android": {
-            "usesCleartextTraffic": true
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24
           }
         }
       ]
