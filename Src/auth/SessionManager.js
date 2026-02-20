@@ -1,32 +1,73 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// 
+// ✨ GUARDAR SESIÓN CON LOGS SÚPER DETALLADOS Y VALIDACIÓN
 export const setSession = async (userData) => { 
   try {
-    await AsyncStorage.setItem("userSession", JSON.stringify(userData));
+    console.log('💾 === GUARDANDO SESIÓN ===');
+    console.log('📊 Datos recibidos tipo:', typeof userData);
+    console.log('📊 Datos recibidos:', JSON.stringify(userData, null, 2));
+    
+    // Validar que tenemos los datos mínimos necesarios
+    if (!userData || !userData.email || !userData.username) {
+      throw new Error('Datos de usuario incompletos para guardar sesión');
+    }
+    
+    const sessionData = JSON.stringify(userData);
+    await AsyncStorage.setItem("userSession", sessionData);
+    
+    console.log('✅ Sesión guardada exitosamente');
+    console.log('🔍 Verificando guardado inmediatamente...');
+    
+    // ✨ VERIFICACIÓN INMEDIATA MEJORADA
+    const savedData = await AsyncStorage.getItem("userSession");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      console.log('✅ === VERIFICACIÓN EXITOSA ===');
+      console.log('👤 Usuario verificado:', parsedData.username);
+      console.log('📧 Email verificado:', parsedData.email);
+      console.log('🎓 Código verificado:', parsedData.code);
+      return true;
+    } else {
+      console.log('❌ Error - no se pudieron guardar los datos');
+      return false;
+    }
   } catch (error) {
-    console.error("Error guardar session:", error);
+    console.error("🚨 Error guardando sesión:", error);
+    throw error;
   }
 };
 
-//obtiene la sesion del usuario que se logueo en la app 
+// ✨ OBTENER SESIÓN CON LOGS SÚPER DETALLADOS
 export const getSession = async () => {
   try {
-    const session = await AsyncStorage.getItem("userSession"); //session guardada en el dispositivo
-    console.log("Session guardada...", session);
-    return session ? JSON.parse(session) : null; 
+    console.log('🔍 === OBTENIENDO SESIÓN ===');
+    
+    const session = await AsyncStorage.getItem("userSession");
+    
+    if (session) {
+      const userData = JSON.parse(session);
+      console.log('✅ === SESIÓN ENCONTRADA ===');
+      console.log('👤 Usuario:', userData.username || userData.name);
+      console.log('📧 Email:', userData.email);
+      console.log('🎓 Código:', userData.code || userData.user_code);
+      console.log('📊 Datos completos disponibles:', Object.keys(userData));
+      return userData;
+    } else {
+      console.log('❌ No hay sesión guardada');
+      return null;
+    }
   } catch (error) {
-    console.error("Error al obtener session", error);
+    console.error("🚨 Error obteniendo sesión:", error);
     return null;
   }
 };
 
-//borra la sesion del usuario que se logueo en la app
+// ✨ LIMPIAR SESIÓN CON LOGS MEJORADOS
 export const clearSession = async () => {
   try {
-    console.log("Session cerrada...");
-    await AsyncStorage.removeItem("userSession"); //borra la session guardada en el dispositivo
+    await AsyncStorage.removeItem("userSession");
+    console.log("🗑️ Sesión eliminada exitosamente");
   } catch (error) {
-    console.error("Error al borrar sesion:", error);
+    console.error("🚨 Error eliminando sesión:", error);
   }
 };

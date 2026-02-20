@@ -24,6 +24,7 @@ import { BlurView } from "expo-blur";
 import LottieView from "lottie-react-native";
 import * as Clipboard from "expo-clipboard";
 import { useIsFocused } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 // --------------------------------------------------------------------------------
 // Configuración de la API
@@ -39,47 +40,98 @@ const { width, height } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
 
 // --------------------------------------------------------------------------------
-// Componente para la animación de escritura
+// Función para formatear tiempo
+// --------------------------------------------------------------------------------
+const formatTime = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
+
+// --------------------------------------------------------------------------------
+// Componente para la animación de escritura súper diferente
 // --------------------------------------------------------------------------------
 const TypingAnimation = () => {
   const [animation] = useState(new Animated.Value(0));
+  const [waveAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
+    // Animación de puntos ondulante
     Animated.loop(
       Animated.timing(animation, {
         toValue: 1,
-        duration: 1500,
+        duration: 1200,
+        useNativeDriver: true,
+      })
+    ).start();
+
+    // Animación de onda de fondo
+    Animated.loop(
+      Animated.timing(waveAnim, {
+        toValue: 1,
+        duration: 2000,
         useNativeDriver: true,
       })
     ).start();
   }, []);
 
-  const dotStyle = (delay) => {
-    return {
-      opacity: animation.interpolate({
-        inputRange: [0, 0.5, 1],
-        outputRange: [0.3, 1, 0.3],
-        extrapolate: "clamp",
-      }),
-      transform: [
-        {
-          scale: animation.interpolate({
-            inputRange: [0, 0.5, 1],
-            outputRange: [0.8, 1.2, 0.8],
-            extrapolate: "clamp",
-          }),
-        },
-      ],
-      marginLeft: 4,
-    };
-  };
-
   return (
     <View style={styles.typingContainer}>
-      <View style={styles.typingBubble}>
-        <Animated.View style={[styles.typingDot, dotStyle(0)]} />
-        <Animated.View style={[styles.typingDot, dotStyle(0.2)]} />
-        <Animated.View style={[styles.typingDot, dotStyle(0.4)]} />
+      <View style={styles.typingWrapper}>
+        <LinearGradient
+          colors={["#1E3A8A", "#3B82F6", "#60A5FA"]}
+          style={styles.typingBubble}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.typingContentLeft}>
+            <View style={styles.botAvatarSmall}>
+              <Image 
+                source={require("../ChatBot/images/bot.png")} 
+                style={styles.botImageSmall} 
+              />
+              <Animated.View 
+                style={[
+                  styles.avatarRing,
+                  {
+                    transform: [{
+                      rotate: waveAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '360deg'],
+                      })
+                    }]
+                  }
+                ]} 
+              />
+            </View>
+            
+            <View style={styles.typingDotsArea}>
+              {[0, 1, 2].map((index) => (
+                <Animated.View 
+                  key={index}
+                  style={[
+                    styles.typingDot, 
+                    { 
+                      opacity: animation.interpolate({
+                        inputRange: [0, 0.25, 0.5, 0.75, 1],
+                        outputRange: [0.3, index === 0 ? 1 : 0.3, index === 1 ? 1 : 0.3, index === 2 ? 1 : 0.3, 0.3],
+                        extrapolate: 'clamp',
+                      }),
+                      transform: [{
+                        translateY: animation.interpolate({
+                          inputRange: [0, 0.25, 0.5, 0.75, 1],
+                          outputRange: [0, index === 0 ? -8 : 0, index === 1 ? -8 : 0, index === 2 ? -8 : 0, 0],
+                          extrapolate: 'clamp',
+                        })
+                      }]
+                    }
+                  ]} 
+                />
+              ))}
+            </View>
+          </View>
+          
+          {/* <Text style={styles.typingLabel}>Escribiendo</Text> */}
+        </LinearGradient>
       </View>
     </View>
   );
@@ -302,42 +354,78 @@ export const Chatbot = () => {
   };
 
   // --------------------------------------------------------------------------------
-  // Renderizar un mensaje individual
+  // Renderizar mensaje completamente rediseñado
   // --------------------------------------------------------------------------------
-  const renderMessage = ({ item }) => (
+  const renderMessage = ({ item, index }) => (
     <Animatable.View
-      animation="fadeIn"
-      duration={500}
-      style={[
-        styles.messageBubble,
-        item.user._id === 1 ? styles.userBubble : styles.botBubble,
-      ]}>
-      {item.user._id === 2 && (
-        <Image source={item.user.avatar} style={styles.avatar} />
-      )}
-      <View style={styles.messageContent}>
-        <Text
-          style={[
-            styles.messageText,
-            item.user._id === 1
-              ? styles.userMessageText
-              : styles.botMessageText,
-          ]}>
-          {renderTextWithLinks(item.text)}
-        </Text>
-        <Text style={styles.timestamp}>
-          {new Date(item.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </Text>
-      </View>
-      {item.user._id === 2 && (
-        <TouchableOpacity
-          style={styles.copyButton}
-          onPress={() => copyToClipboard(item.text)}>
-          <FontAwesome name="copy" size={16} color="#4c669f" />
-        </TouchableOpacity>
+      animation="fadeInUp"
+      delay={index * 50}
+      duration={400}
+      style={styles.messageContainer}
+    >
+      {item.user._id === 1 ? (
+        // Mensaje del usuario - Diseño moderno
+        <View style={styles.userMessageWrapper}>
+          <LinearGradient
+            colors={["#1E40AF", "#3B82F6"]}
+            style={styles.userMessageBubble}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text style={styles.userMessageText}>
+              {renderTextWithLinks(item.text)}
+            </Text>
+            <View style={styles.messageInfo}>
+              <Text style={styles.messageTime}>
+                {formatTime(item.createdAt)}
+              </Text>
+              <View style={styles.messageStatus}>
+                <FontAwesome name="check-circle" size={14} color="#E8F4FD" />
+              </View>
+            </View>
+          </LinearGradient>
+          <View style={styles.messageTail} />
+        </View>
+      ) : (
+        // Mensaje del bot - Diseño card moderno
+        <View style={styles.botMessageWrapper}>
+          <View style={styles.botAvatarContainer}>
+            <LinearGradient
+              colors={["#3B82F6", "#1E40AF"]}
+              style={styles.botAvatarBg}
+            >
+              <Image source={item.user.avatar} style={styles.botAvatar} />
+            </LinearGradient>
+            <View style={styles.onlineDot} />
+          </View>
+          
+          <View style={styles.botMessageCard}>
+            <LinearGradient
+              colors={["#ffffff", "#fafbff"]}
+              style={styles.botMessageBubble}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.botMessageHeader}>
+                <Text style={styles.botName}>Asistente CUCEI</Text>
+                <TouchableOpacity
+                  style={styles.copyBtn}
+                  onPress={() => copyToClipboard(item.text)}
+                >
+                  <FontAwesome name="copy" size={12} color="#3B82F6" />
+                </TouchableOpacity>
+              </View>
+              
+              <Text style={styles.botMessageText}>
+                {renderTextWithLinks(item.text)}
+              </Text>
+              
+              <Text style={styles.botMessageTime}>
+                {formatTime(item.createdAt)}
+              </Text>
+            </LinearGradient>
+          </View>
+        </View>
       )}
     </Animatable.View>
   );
@@ -418,110 +506,238 @@ export const Chatbot = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="light-content" backgroundColor="#667eea" />
+
+      {/* Header completamente nuevo y hermoso */}
+      <View style={styles.headerContainer}>
+        <LinearGradient
+          colors={["#1E40AF", "#3B82F6", "#60A5FA"]}
+          style={styles.headerGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <View style={styles.headerBotAvatar}>
+                <Image 
+                  source={require("../ChatBot/images/bot.png")} 
+                  style={styles.headerBotImage} 
+                />
+                <View style={styles.headerOnlineBadge}>
+                  <View style={styles.onlinePulse} />
+                </View>
+              </View>
+              
+              <View style={styles.headerTextArea}>
+                <Text style={styles.headerTitle}>CUCEI Assistant</Text>
+                <View style={styles.headerStatus}>
+                  <View style={styles.statusDot} />
+                  <Text style={styles.headerSubtitle}>Siempre disponible</Text>
+                </View>
+              </View>
+            </View>
+            
+            <TouchableOpacity style={styles.headerAction}>
+              <LinearGradient
+                colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
+                style={styles.headerActionBg}
+              >
+                <FontAwesome name="ellipsis-v" size={16} color="#ffffff" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Decoración ondulada */}
+          <View style={styles.headerWave}>
+            <LinearGradient
+              colors={["#f8f9ff", "rgba(248, 249, 255, 0.9)"]}
+              style={styles.waveShape}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            />
+          </View>
+        </LinearGradient>
+      </View>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.chatContainer}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 150}>
+        style={styles.chatArea}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 60}
+      >
         <FlatList
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
           keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.messageList}
+          contentContainerStyle={styles.messagesList}
           inverted
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         />
+        
         {isTyping && <TypingAnimation />}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={inputMessage}
-            onChangeText={setInputMessage}
-            placeholder="Escribe tu mensaje aquí..."
-            placeholderTextColor="#999"
-            multiline
-          />
-          <TouchableOpacity
-            style={[
-              styles.sendButton,
-              !inputMessage.trim() && styles.sendButtonDisabled,
-            ]}
-            onPress={onSend}
-            disabled={!inputMessage.trim()}>
-            <FontAwesome
-              name="paper-plane"
-              size={24}
-              color={inputMessage.trim() ? "#4c669f" : "#999"}
-            />
-          </TouchableOpacity>
+        
+        {/* Input súper lindo y elevado para Android */}
+        <View style={styles.inputSection}>
+          <LinearGradient
+            colors={["#ffffff", "#f8fafc", "#e0f2fe"]}
+            style={styles.inputBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.inputContainer}>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.messageInput}
+                  value={inputMessage}
+                  onChangeText={setInputMessage}
+                  placeholder="Escribe tu mensaje aquí..."
+                  placeholderTextColor="#94A3B8"
+                  multiline={true}
+                  maxLength={1000}
+                  returnKeyType="send"
+                  onSubmitEditing={onSend}
+                  textAlignVertical="top"
+                />
+              </View>
+              
+              <TouchableOpacity
+                style={[
+                  styles.sendButtonContainer,
+                  !inputMessage.trim() && styles.sendDisabled
+                ]}
+                onPress={onSend}
+                disabled={!inputMessage.trim()}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={inputMessage.trim() 
+                    ? ["#3B82F6", "#1E40AF", "#1E3A8A"] 
+                    : ["#E5E7EB", "#D1D5DB", "#9CA3AF"]
+                  }
+                  style={styles.sendButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <FontAwesome
+                    name="paper-plane"
+                    size={16}
+                    color={inputMessage.trim() ? "#ffffff" : "#6B7280"}
+                  />
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </LinearGradient>
         </View>
       </KeyboardAvoidingView>
 
-      {/* Modal de Bienvenida */}
+      {/* Modal de bienvenida rediseñado */}
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={showWelcome}
-        onRequestClose={handleCloseWelcome}>
-        <BlurView intensity={100} style={styles.modalContainer}>
+        onRequestClose={handleCloseWelcome}
+      >
+        <BlurView intensity={100} style={styles.modalBackground}>
           <Animatable.View
-            animation="zoomIn"
-            duration={500}
-            style={styles.modalContent}>
-            <Text style={styles.modalTitle}>¡Bienvenido a CUCEI Ubicate!</Text>
-            <LottieView
-              ref={lottieRef}
-              source={require("../ChatBot/images/Bot_animation.json")}
-              autoPlay
-              loop
-              style={styles.lottieAnimation}
-            />
-            <Text style={styles.modalText}>
-              Este chatbot está diseñado para ayudarte a navegar por el campus
-              de CUCEI. Puedes preguntar sobre ubicaciones, horarios, eventos y
-              más.
-            </Text>
+            animation="bounceInUp"
+            duration={800}
+            style={styles.welcomeModal}
+          >
+            <LinearGradient
+              colors={["#1E40AF", "#3B82F6", "#60A5FA"]}
+              style={styles.modalHeaderGradient}
+            >
+              <View style={styles.modalIcon}>
+                <FontAwesome name="robot" size={32} color="#ffffff" />
+              </View>
+              <Text style={styles.modalWelcomeTitle}>¡Hola! Soy tu asistente</Text>
+              <Text style={styles.modalWelcomeSubtitle}>Estoy aquí para ayudarte</Text>
+            </LinearGradient>
+            
+            <View style={styles.modalBodyContent}>
+              <LottieView
+                ref={lottieRef}
+                source={require("../ChatBot/images/Bot_animation.json")}
+                autoPlay
+                loop
+                style={styles.modalAnimation}
+              />
+              <Text style={styles.modalDescription}>
+                Puedo ayudarte con información sobre CUCEI, horarios, eventos, ubicaciones y mucho más.
+              </Text>
+            </View>
+            
             <TouchableOpacity
-              style={styles.modalButton}
-              onPress={handleCloseWelcome}>
-              <Text style={styles.modalButtonText}>Comenzar</Text>
+              style={styles.startChatButton}
+              onPress={handleCloseWelcome}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={["#3B82F6", "#1E40AF"]}
+                style={styles.startButtonGradient}
+              >
+                <FontAwesome name="comments" size={18} color="#ffffff" />
+                <Text style={styles.startButtonText}>Comenzar conversación</Text>
+              </LinearGradient>
             </TouchableOpacity>
           </Animatable.View>
         </BlurView>
       </Modal>
 
-      {/* Modal de Inactividad (aparece solo en la pantalla de Chatbot) */}
+      {/* Modal de inactividad rediseñado */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={showInactivityModal}
-        onRequestClose={() => setShowInactivityModal(false)}>
-        <BlurView intensity={100} style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              ¿Deseas eliminar la conversación?
+        onRequestClose={() => setShowInactivityModal(false)}
+      >
+        <BlurView intensity={80} style={styles.modalBackground}>
+          <Animatable.View
+            animation="zoomIn"
+            duration={500}
+            style={styles.inactivityModal}
+          >
+            <View style={styles.inactivityIcon}>
+              <FontAwesome name="clock-o" size={48} color="#3B82F6" />
+            </View>
+            
+            <Text style={styles.inactivityTitle}>¿Aún estás ahí?</Text>
+            <Text style={styles.inactivityMessage}>
+              No he recibido mensajes en un tiempo. ¿Quieres mantener nuestra conversación?
             </Text>
-            <Text style={styles.modalText}>
-              Has estado inactivo por 5 minutos. La conversación se eliminará
-              automáticamente en 2 minutos.
-            </Text>
-            <View style={styles.modalButtonContainer}>
+            
+            <View style={styles.inactivityActions}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
+                style={styles.keepButton}
                 onPress={() => {
                   setShowInactivityModal(false);
                   resetInactivityTimer();
-                }}>
-                <Text style={styles.modalButtonText}>Cancelar</Text>
+                }}
+              >
+                <LinearGradient
+                  colors={["#10B981", "#059669"]}
+                  style={styles.keepButtonGradient}
+                >
+                  <FontAwesome name="check" size={16} color="#ffffff" />
+                  <Text style={styles.keepButtonText}>Continuar</Text>
+                </LinearGradient>
               </TouchableOpacity>
+              
               <TouchableOpacity
-                style={[styles.modalButton, styles.deleteButton]}
-                onPress={deleteConversation}>
-                <Text style={styles.modalButtonText}>Eliminar</Text>
+                style={styles.clearButton}
+                onPress={deleteConversation}
+              >
+                <LinearGradient
+                  colors={["#EF4444", "#DC2626"]}
+                  style={styles.clearButtonGradient}
+                >
+                  <FontAwesome name="trash" size={16} color="#ffffff" />
+                  <Text style={styles.clearButtonText}>Limpiar chat</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animatable.View>
         </BlurView>
       </Modal>
     </SafeAreaView>
@@ -529,120 +745,554 @@ export const Chatbot = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f5f5" },
-  chatContainer: { flex: 1 },
-  messageList: { paddingHorizontal: 10, paddingBottom: 10 },
-  messageBubble: {
-    padding: 12,
-    borderRadius: 20,
-    marginVertical: 6,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+  container: { 
+    flex: 1, 
+    backgroundColor: "#f8f9ff" 
+  },
+  
+  // Header hermoso y bien proporcionado
+  headerContainer: {
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 12,
+    // elevation: 10,
   },
-  userBubble: {
-    alignSelf: "flex-end",
-    backgroundColor: "#4c669f",
-    maxWidth: "80%",
+  headerGradient: {
+    paddingTop: Platform.OS === "ios" ? 50 : 20,
+    // paddingBottom: 10,
+    zIndex: 1000,
   },
-  botBubble: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f0f0f0",
-    maxWidth: "80%",
+  headerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    marginBottom: 12,
   },
-  avatar: { width: 30, height: 30, borderRadius: 15, marginRight: 10 },
-  messageContent: { flex: 1 },
-  messageText: { fontSize: 16, lineHeight: 22 },
-  userMessageText: { color: "#FFFFFF" },
-  botMessageText: { color: "#000000" },
-  timestamp: {
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  headerBotAvatar: {
+    position: "relative",
+    marginRight: 16,
+  },
+  headerBotImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.9)",
+  },
+  // headerOnlineBadge: {
+  //   position: "absolute",
+  //   bottom: -2,
+  //   right: -2,
+  //   width: 16,
+  //   height: 16,
+  //   borderRadius: 8,
+  //   backgroundColor: "#00E676",
+  //   borderWidth: 3,
+  //   borderColor: "#ffffff",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // onlinePulse: {
+  //   width: 8,
+  //   height: 8,
+  //   borderRadius: 4,
+  //   backgroundColor: "#ffffff",
+  // },
+  headerTextArea: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#ffffff",
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  headerStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#00E676",
+    marginRight: 6,
+  },
+  headerSubtitle: {
     fontSize: 12,
-    color: "#999",
-    alignSelf: "flex-end",
-    marginTop: 5,
+    color: "#E8F4FD",
+    fontWeight: "600",
   },
-  typingContainer: { padding: 10, alignItems: "flex-start" },
+  headerAction: {
+    marginLeft: 12,
+  },
+  headerActionBg: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerWave: {
+    height: 16,
+    marginTop: -4,
+  },
+  waveShape: {
+    flex: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  
+  // Chat area optimizado para Android
+  chatArea: { 
+    flex: 1,
+    backgroundColor: "#f8f9ff",
+  },
+  messagesList: { 
+    paddingHorizontal: 16, 
+    paddingVertical: 12,
+    flexGrow: 1,
+  },
+  
+  // Messages completamente rediseñados en azul
+  messageContainer: {
+    marginVertical: 6,
+  },
+  
+  // Usuario
+  userMessageWrapper: {
+    alignSelf: "flex-end",
+    maxWidth: "85%",
+    position: "relative",
+  },
+  userMessageBubble: {
+    borderRadius: 20,
+    borderBottomRightRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  userMessageText: { 
+    fontSize: 15,
+    lineHeight: 20,
+    color: "#ffffff",
+    fontWeight: "500",
+    marginBottom: 6,
+  },
+  messageInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  messageTime: {
+    fontSize: 10,
+    color: "rgba(255,255,255,0.8)",
+    marginRight: 4,
+    fontWeight: "600",
+  },
+  messageStatus: {
+    marginLeft: 3,
+  },
+  messageTail: {
+    position: "absolute",
+    bottom: 0,
+    right: -6,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 12,
+    borderLeftColor: "#1E40AF",
+    borderTopWidth: 12,
+    borderTopColor: "transparent",
+  },
+  
+  // Bot
+  botMessageWrapper: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    maxWidth: "88%",
+    marginBottom: 4,
+  },
+  botAvatarContainer: {
+    position: "relative",
+    marginRight: 10,
+    marginTop: 4,
+  },
+  botAvatarBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  botAvatar: { 
+    width: 24, 
+    height: 24, 
+    borderRadius: 12,
+  },
+  // onlineDot: {
+  //   position: "absolute",
+  //   bottom: 89,
+  //   right: -1,
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 6,
+  //   backgroundColor: "#00E676",
+  //   borderWidth: 2,
+  //   borderColor: "#ffffff",
+  // },
+  botMessageCard: {
+    flex: 1,
+  },
+  botMessageBubble: {
+    borderRadius: 18,
+    borderBottomLeftRadius: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    shadowColor: "#E0E7FF",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "rgba(59, 130, 246, 0.08)",
+  },
+  botMessageHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  botName: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#3B82F6",
+    letterSpacing: 0.3,
+  },
+  copyBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#3B82F615",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  botMessageText: { 
+    fontSize: 14,
+    lineHeight: 19,
+    color: "#2D3748",
+    fontWeight: "500",
+    marginBottom: 6,
+  },
+  botMessageTime: {
+    fontSize: 9,
+    color: "#9CA3AF",
+    fontWeight: "600",
+    textAlign: "right",
+  },
+  
+  // Typing animation optimizada
+  typingContainer: { 
+    paddingHorizontal: 16, 
+    paddingVertical: 10,
+    alignItems: "flex-start" 
+  },
+  typingWrapper: {
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
   typingBubble: {
     flexDirection: "row",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 20,
-    padding: 10,
     alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: 22,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    minWidth: 120,
+  },
+  typingContentLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  botAvatarSmall: {
+    position: "relative",
+    marginRight: 10,
+  },
+  botImageSmall: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+  avatarRing: {
+    position: "absolute",
+    top: -2,
+    left: -2,
+    right: -2,
+    bottom: -2,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.6)",
+  },
+  typingDotsArea: {
+    flexDirection: "row",
   },
   typingDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#000",
-    marginHorizontal: 2,
+    backgroundColor: "#ffffff",
+    marginHorizontal: 1.5,
+  },
+  typingLabel: {
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: "600",
+    fontStyle: "italic",
+  },
+  
+  // Input súper lindo y elevado perfectamente para Android
+  inputSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: Platform.OS === "android" ? 20 : 32,
+    backgroundColor: "#f8f9ff",
+  },
+  inputBackground: {
+    borderRadius: 28,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
+    borderWidth: 1,
+    borderColor: "rgba(59, 130, 246, 0.1)",
   },
   inputContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#e5e5e5",
+    alignItems: "flex-end",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    minHeight: 60,
   },
-  input: {
+  inputWrapper: {
     flex: 1,
-    fontSize: 16,
-    maxHeight: 100,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 20,
+    marginRight: 12,
+    minHeight: 40,
   },
-  sendButton: { marginLeft: 10, padding: 10 },
-  sendButtonDisabled: { opacity: 0.5 },
-  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  modalContent: {
+  messageInput: {
+    fontSize: 16,
+    color: "#2D3748",
+    fontWeight: "500",
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    textAlignVertical: "top",
+    minHeight: 40,
+    maxHeight: 120,
+    lineHeight: 22,
+  },
+  sendButtonContainer: {
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  sendDisabled: {
+    opacity: 0.6,
+  },
+  sendButtonGradient: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  // Modals rediseñados en azul
+  modalBackground: { 
+    flex: 1, 
+    justifyContent: "center", 
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  welcomeModal: {
     backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: width * 0.9,
-    maxHeight: height * 0.8,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#192f6a",
-  },
-  lottieAnimation: { width: 200, height: 200 },
-  modalText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#4c669f",
-  },
-  modalButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    borderRadius: 28,
+    overflow: "hidden",
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
     width: "100%",
+    maxWidth: 340,
   },
-  modalButton: {
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-    borderRadius: 20,
-    minWidth: 120,
+  modalHeaderGradient: {
+    paddingVertical: 28,
+    paddingHorizontal: 24,
     alignItems: "center",
   },
-  cancelButton: { backgroundColor: "#f0f0f0" },
-  deleteButton: { backgroundColor: "#4c669f" },
-  modalButtonText: { fontSize: 18, fontWeight: "bold" },
-  copyButton: { padding: 5, marginLeft: 5 },
-  link: { color: "#1e90ff", textDecorationLine: "underline" },
+  modalIcon: {
+    width: 65,
+    height: 65,
+    borderRadius: 32,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  modalWelcomeTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#ffffff",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  modalWelcomeSubtitle: {
+    fontSize: 13,
+    color: "#E8F4FD",
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  modalBodyContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 18,
+    alignItems: "center",
+  },
+  modalAnimation: { 
+    width: 100,
+    height: 100,
+    marginBottom: 12,
+  },
+  modalDescription: {
+    fontSize: 14,
+    textAlign: "center",
+    color: "#475569",
+    lineHeight: 20,
+    fontWeight: "500",
+  },
+  startChatButton: {
+    margin: 24,
+    marginTop: 12,
+  },
+  startButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 22,
+  },
+  startButtonText: { 
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginLeft: 8,
+  },
+  
+  // Inactivity modal
+  inactivityModal: {
+    backgroundColor: "white",
+    borderRadius: 22,
+    padding: 28,
+    alignItems: "center",
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    elevation: 12,
+    width: "100%",
+    maxWidth: 300,
+  },
+  inactivityIcon: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#3B82F615",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+  inactivityTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    marginBottom: 10,
+    color: "#2D3748",
+    textAlign: "center",
+  },
+  inactivityMessage: {
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 22,
+    color: "#64748B",
+    lineHeight: 19,
+    fontWeight: "500",
+  },
+  inactivityActions: {
+    flexDirection: "row",
+    width: "100%",
+    gap: 12,
+  },
+  keepButton: {
+    flex: 1,
+  },
+  keepButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  keepButtonText: { 
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginLeft: 8,
+  },
+  clearButton: {
+    flex: 1,
+  },
+  clearButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  clearButtonText: { 
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginLeft: 8,
+  },
+  
+  // Link styles
+  link: { 
+    color: "#3B82F6", 
+    textDecorationLine: "underline",
+    fontWeight: "600",
+  },
 });
 
 export default Chatbot;

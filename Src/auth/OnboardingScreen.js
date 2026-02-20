@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,32 +9,36 @@ import {
   SafeAreaView,
   Animated,
   Easing,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+  Platform,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 const onboardingData = [
   {
-    id: '1',
-    title: 'Bienvenido a CUCEI Ubícate!',
-    description: 'Descubre cómo navegar por el campus universitario con facilidad y encontrar todo lo que necesitas.',
-    animation: require('../assets/animations/Student.json'),
+    id: "1",
+    title: "Bienvenido a CUCEI Ubícate!",
+    description:
+      "Descubre cómo navegar por el campus universitario con facilidad y encontrar todo lo que necesitas.",
+    animation: require("../assets/animations/Student.json"),
   },
   {
-    id: '2',
-    title: 'Encuentra tu camino',
-    description: 'Localiza aulas, módulos y servicios rápidamente con nuestro sistema de navegación inteligente.',
-    animation: require('../assets/animations/Ubicacion.json'),
+    id: "2",
+    title: "Encuentra tu camino",
+    description:
+      "Localiza aulas, módulos y servicios rápidamente con nuestro sistema de navegación inteligente.",
+    animation: require("../assets/animations/Ubicacion.json"),
   },
   {
-    id: '3',
-    title: 'Mantente informado',
-    description: 'Recibe notificaciones importantes y accede a toda la información del campus en tiempo real.',
-    animation: require('../assets/animations/Camino.json'),
+    id: "3",
+    title: "Mantente informado",
+    description:
+      "Recibe notificaciones importantes y accede a toda la información del campus en tiempo real.",
+    animation: require("../assets/animations/Camino.json"),
   },
 ];
 
@@ -61,49 +65,18 @@ const OnboardingItem = ({ item, index }) => {
         useNativeDriver: true,
       }),
     ]).start();
-
-    // Animación flotante continua
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: 1,
-          duration: 3000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 3000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
   }, []);
 
-  const floatingTransform = floatAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -10],
-  });
-
   return (
-    <Animated.View 
+    <Animated.View
       style={[
         styles.itemContainer,
         {
           opacity: fadeAnim,
           transform: [{ translateY: slideAnim }],
         },
-      ]}
-    >
-      <Animated.View 
-        style={[
-          styles.animationContainer,
-          {
-            transform: [{ translateY: floatingTransform }],
-          },
-        ]}
-      >
+      ]}>
+      <Animated.View style={[styles.animationContainer]}>
         <LottieView
           source={item.animation}
           autoPlay
@@ -166,20 +139,24 @@ export const OnboardingScreen = () => {
       flatListRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
       try {
-        await AsyncStorage.setItem('@onboarding_completed', 'true');
-        navigation.replace('Login');
+        await AsyncStorage.setItem("@onboarding_completed", "true");
+        console.log('✅ Onboarding completado - navegando a Login');
+        // ✨ NAVEGACIÓN CORRECTA
+        navigation.replace("Login");
       } catch (err) {
-        console.log('Error al guardar el estado de onboarding', err);
+        console.log("Error al guardar el estado de onboarding", err);
       }
     }
   };
 
   const skip = async () => {
     try {
-      await AsyncStorage.setItem('@onboarding_completed', 'true');
-      navigation.replace('Login');
+      await AsyncStorage.setItem("@onboarding_completed", "true");
+      console.log('✅ Onboarding saltado - navegando a Login');
+      // ✨ NAVEGACIÓN CORRECTA
+      navigation.replace("Login");
     } catch (err) {
-      console.log('Error al guardar el estado de onboarding', err);
+      console.log("Error al guardar el estado de onboarding", err);
     }
   };
 
@@ -192,11 +169,15 @@ export const OnboardingScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Fondo animado con gradiente dinámico */}
-      <Animated.View style={[styles.animatedBg, { backgroundColor: bgColor }]} />
-      
+      <Animated.View
+        style={[styles.animatedBg, { backgroundColor: bgColor }]}
+      />
+
       <Animated.FlatList
         data={onboardingData}
-        renderItem={({ item, index }) => <OnboardingItem item={item} index={index} />}
+        renderItem={({ item, index }) => (
+          <OnboardingItem item={item} index={index} />
+        )}
         horizontal
         showsHorizontalScrollIndicator={false}
         pagingEnabled
@@ -212,10 +193,13 @@ export const OnboardingScreen = () => {
         ref={flatListRef}
       />
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.skipButton} onPress={skip} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.skipButton}
+          onPress={skip}
+          activeOpacity={0.7}>
           <Text style={styles.skipButtonText}>Saltar</Text>
         </TouchableOpacity>
-        
+
         <View style={styles.pagination}>
           {onboardingData.map((_, index) => {
             const inputRange = [
@@ -223,19 +207,19 @@ export const OnboardingScreen = () => {
               index * width,
               (index + 1) * width,
             ];
-            
+
             const dotWidth = scrollX.interpolate({
               inputRange,
               outputRange: [12, 30, 12],
-              extrapolate: 'clamp',
+              extrapolate: "clamp",
             });
-            
+
             const opacity = scrollX.interpolate({
               inputRange,
               outputRange: [0.4, 1, 0.4],
-              extrapolate: 'clamp',
+              extrapolate: "clamp",
             });
-            
+
             return (
               <Animated.View
                 style={[
@@ -248,12 +232,17 @@ export const OnboardingScreen = () => {
             );
           })}
         </View>
-        
+
         <Animated.View style={{ transform: [{ scale: buttonScaleAnim }] }}>
-          <TouchableOpacity style={styles.nextButton} onPress={scrollTo} activeOpacity={0.85}>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={scrollTo}
+            activeOpacity={0.85}>
             <View style={styles.nextButtonGradient}>
               <Text style={styles.nextButtonText}>
-                {currentIndex === onboardingData.length - 1 ? 'Comenzar' : 'Siguiente'}
+                {currentIndex === onboardingData.length - 1
+                  ? "Comenzar"
+                  : "Siguiente"}
               </Text>
             </View>
           </TouchableOpacity>
@@ -261,7 +250,31 @@ export const OnboardingScreen = () => {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+// Función helper para sombras que funciona en iOS y Android
+const getShadowStyle = (
+  elevation = 5,
+  shadowColor = "#0b34b0",
+  shadowOpacity = 0.15
+) => {
+  if (Platform.OS === "android") {
+    // En Android: elevation suave + border sutil para mejor efecto
+    return {
+      elevation: Math.min(elevation / 2, 4), // Elevation más suave
+      borderWidth: 0.5,
+      borderColor: "rgba(11, 52, 176, 0.05)",
+    };
+  } else {
+    // En iOS: sombras normales
+    return {
+      shadowColor,
+      shadowOffset: { width: 0, height: elevation / 2 },
+      shadowOpacity,
+      shadowRadius: elevation,
+    };
+  }
+};
 
 const styles = StyleSheet.create({
   // Fondo animado
@@ -269,150 +282,131 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: -1,
   },
-  
+
   // Container principal
   container: {
     flex: 1,
     backgroundColor: "transparent",
   },
-  
-  // Item container con animaciones mejoradas
+
+  // Item container con espaciado elegante
   itemContainer: {
     width,
     height,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
-  
-  // Contenedor de animación flotante más grande y centrado
+
+  // Contenedor de animación simple y limpio
   animationContainer: {
-    width: width * 0.85,
-    height: width * 0.85,
-    borderRadius: (width * 0.85) / 2,
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    justifyContent: 'center',
-    alignItems: 'center',
-    // marginBottom: 80,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.2,
-    shadowRadius: 25,
-    elevation: 20,
-    borderWidth: 1,
-    borderColor: "rgba(208, 216, 246, 0.3)",
-    alignSelf: 'center',
+    width: width * 0.9,
+    height: width * 0.75,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 40,
+    alignSelf: "center",
   },
-  
+
   lottieAnimation: {
-    width: width * 0.75,
+    width: width * 0.85,
     height: width * 0.75,
   },
-  
-  // Contenedor de texto con glassmorphism
+
+  // Contenedor de texto súper estirado y elegante para Android
   textContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
-    borderRadius: 24,
-    padding: isTablet ? 32 : 24,
-    marginHorizontal: 20,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 10,
-    marginBottom: 80,
-    borderWidth: 1,
-    borderColor: "rgba(208, 216, 246, 0.4)",
-    backdropFilter: "blur(10px)",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: Platform.OS === "android" ? 22 : 28,
+    paddingVertical:
+      Platform.OS === "android" ? (isTablet ? 24 : 20) : isTablet ? 36 : 28,
+    paddingHorizontal:
+      Platform.OS === "android" ? (isTablet ? 45 : 35) : isTablet ? 36 : 28,
+    marginHorizontal: Platform.OS === "android" ? 18 : 24,
+    ...getShadowStyle(Platform.OS === "android" ? 4 : 8, "#0b34b0", 0.08),
+    marginBottom: Platform.OS === "android" ? 50 : 60,
+    borderWidth: Platform.OS === "android" ? 0.5 : 1,
+    borderColor: "rgba(11, 52, 176, 0.06)",
+    minHeight: Platform.OS === "android" ? (isTablet ? 140 : 120) : undefined,
   },
-  
+
   title: {
-    fontSize: isTablet ? 32 : 26,
-    fontWeight: '800',
-    marginBottom: 12,
-    textAlign: 'center',
-    color: '#0b34b0',
-    letterSpacing: 1.2,
-    textShadowColor: "rgba(11, 52, 176, 0.15)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    fontSize:
+      Platform.OS === "android" ? (isTablet ? 26 : 22) : isTablet ? 34 : 28,
+    fontWeight: "800",
+    marginBottom: Platform.OS === "android" ? 12 : 16,
+    textAlign: "center",
+    color: "#0b34b0",
+    letterSpacing: Platform.OS === "android" ? 0.5 : 0.8,
+    lineHeight:
+      Platform.OS === "android" ? (isTablet ? 32 : 28) : isTablet ? 42 : 36,
   },
-  
+
   description: {
-    fontSize: isTablet ? 18 : 16,
-    textAlign: 'center',
-    color: '#64748b',
-    lineHeight: isTablet ? 28 : 24,
-    fontWeight: '500',
-    letterSpacing: 0.3,
+    fontSize:
+      Platform.OS === "android" ? (isTablet ? 15 : 14) : isTablet ? 18 : 16,
+    textAlign: "center",
+    color: "#64748b",
+    lineHeight:
+      Platform.OS === "android" ? (isTablet ? 22 : 20) : isTablet ? 28 : 26,
+    fontWeight: "500",
+    letterSpacing: Platform.OS === "android" ? 0.2 : 0.3,
   },
-  
+
   // Bottom container mejorado
   bottomContainer: {
-    position: 'absolute',
-    bottom: 80,
+    position: "absolute",
+    bottom: 50,
     left: 20,
     right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  
+
   pagination: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
   },
-  
+
   dot: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#0b34b0',
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "rgba(11, 52, 176, 0.6)",
     marginHorizontal: 6,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 6,
+    ...getShadowStyle(4, "#0b34b0", 0.3), // Sombra muy sutil
   },
-  
+
   dotActive: {
-    backgroundColor: '#0b34b0',
-    shadowOpacity: 0.5,
+    backgroundColor: "#0b34b0",
   },
-  
+
   // Botón siguiente con gradiente
   nextButton: {
     borderRadius: 16,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
-    overflow: 'hidden',
+    ...getShadowStyle(6, "#0b34b0", 0.25), // Sombra suave para el botón
+    overflow: "hidden",
   },
-  
+
   nextButtonGradient: {
     backgroundColor: "#0b34b0",
     paddingVertical: isTablet ? 16 : 14,
     paddingHorizontal: isTablet ? 32 : 24,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
+
   nextButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: isTablet ? 18 : 16,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1,
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
-  
+
   // Botón saltar mejorado
   skipButton: {
     paddingVertical: isTablet ? 16 : 14,
@@ -422,11 +416,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(11, 52, 176, 0.2)",
   },
-  
+
   skipButtonText: {
-    color: '#0b34b0',
+    color: "#0b34b0",
     fontSize: isTablet ? 16 : 14,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 0.5,
   },
 });

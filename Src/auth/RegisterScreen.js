@@ -28,10 +28,28 @@ import {
   faLock,
   faCheckCircle,
   faTimesCircle,
+  faExclamationCircle,
 } from "@fortawesome/free-solid-svg-icons"
 
 const { width } = Dimensions.get("window")
 const isTablet = width >= 768
+
+// Función para sombras optimizadas según plataforma
+const getShadowStyle = (elevation, color = "#000", opacity = 0.1) => {
+  if (Platform.OS === 'android') {
+    return {
+      elevation: Math.min(elevation, 6), // Limitamos elevation en Android
+      shadowColor: color,
+    };
+  } else {
+    return {
+      shadowColor: color,
+      shadowOffset: { width: 0, height: elevation / 2 },
+      shadowOpacity: opacity,
+      shadowRadius: elevation,
+    };
+  }
+};
 
 export const RegisterScreen = () => {
   const navigation = useNavigation()
@@ -90,6 +108,31 @@ export const RegisterScreen = () => {
     setShowPassword(!showPassword)
   }
 
+  // Funciones de validación directamente aquí
+  const validateEmail = (email) => {
+    if (!email) {
+      return { isValid: false, message: 'El email es requerido' };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { isValid: false, message: 'Formato de email inválido' };
+    }
+    return { isValid: true };
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return { isValid: false, message: 'La contraseña es requerida' };
+    }
+    if (password.length < 6) {
+      return { isValid: false, message: 'La contraseña debe tener al menos 6 caracteres' };
+    }
+    if (password.length > 50) {
+      return { isValid: false, message: 'La contraseña no puede tener más de 50 caracteres' };
+    }
+    return { isValid: true };
+  };
+
   // Función principal para validar y navegar
   const handleRegister = async () => {
     setEmailError(false)
@@ -105,18 +148,28 @@ export const RegisterScreen = () => {
         throw new Error("Campos incompletos")
       }
 
-      // Validar correo y dominio
-      if (!emailRegex.test(email) || !allowedDomains.includes(email.split("@")[1])) {
+      // Validar email usando las nuevas utilidades
+      const emailValidation = validateEmail(email);
+      if (!emailValidation.isValid) {
         setEmailError(true)
-        setErrorMsg("Correo electrónico no válido")
+        setErrorMsg(emailValidation.message)
         shakeForm()
-        throw new Error("Correo no válido")
+        throw new Error("Email no válido")
       }
 
-      // Validar contraseña con regex
-      if (!passwordRegex.test(password)) {
+      // Verificar dominio permitido
+      if (!allowedDomains.includes(email.split("@")[1])) {
+        setEmailError(true)
+        setErrorMsg("Usa tu correo institucional (@alumnos.udg.mx)")
+        shakeForm()
+        throw new Error("Dominio no permitido")
+      }
+
+      // Validar contraseña usando las nuevas utilidades
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
         setPasswordError(true)
-        setErrorMsg("La contraseña no es válida.")
+        setErrorMsg(passwordValidation.message)
         shakeForm()
         throw new Error("Contraseña no válida")
       }
@@ -228,7 +281,7 @@ export const RegisterScreen = () => {
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="Correo electrónico institucional"
+                  placeholder="Correo institucional"
                   placeholderTextColor="#a8b2c8"
                   value={email}
                   onChangeText={setEmail}
@@ -237,18 +290,28 @@ export const RegisterScreen = () => {
                   keyboardType="email-address"
                   selectionColor="#0b34b0"
                 />
-                {emailRegex.test(email) && allowedDomains.includes(email.split("@")[1]) && (
-                  <Animated.View style={styles.validIconWrapper}>
-                    <FontAwesomeIcon
-                      icon={faCheckCircle}
-                      style={styles.inputIconValid}
-                      size={22}
-                    />
-                  </Animated.View>
+                {email.length > 0 && (
+                  <>
+                    {emailRegex.test(email) && allowedDomains.includes(email.split("@")[1]) ? (
+                      <Animated.View style={styles.validIconWrapper}>
+                        <FontAwesomeIcon
+                          icon={faCheckCircle}
+                          style={styles.inputIconValid}
+                          size={22}
+                        />
+                      </Animated.View>
+                    ) : (
+                      <Animated.View style={styles.validIconWrapper}>
+                        <FontAwesomeIcon
+                          icon={faTimesCircle}
+                          style={styles.inputIconError}
+                          size={22}
+                        />
+                      </Animated.View>
+                    )}
+                  </>
                 )}
               </View>
-
-              {/* Input de Contraseña con icono limpio */}
               <View style={[styles.inputContainer, passwordError && styles.inputContainerError]}>
                 <FontAwesomeIcon
                   icon={faLock}
@@ -348,7 +411,9 @@ export const RegisterScreen = () => {
         <View style={styles.modalBlurBg}>
           <Animated.View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>✔️ Primer paso completado</Text>
+              {/* Icono bonito de check */}
+              <FontAwesomeIcon icon={faCheckCircle} size={64} color="#52c41a" style={{ marginBottom: 18 }} />
+              <Text style={styles.modalTitle}>Primer paso completado</Text>
               <Text style={styles.modalSubtitle}>Ahora completa tu perfil</Text>
             </View>
           </Animated.View>
@@ -392,39 +457,47 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 20,
+    // paddingTop: 20,
     paddingBottom: 30,
     maxWidth: 480,
   },
 
-  // Títulos
+  // Títulos optimizados para Android
   title: {
-    fontSize: isTablet ? 38 : 32,
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 30 : 26) 
+      : (isTablet ? 38 : 32),
     fontWeight: "800",
     color: "#0b34b0",
-    marginBottom: 8,
+    marginBottom: Platform.OS === 'android' ? 6 : 8,
     textAlign: "center",
-    letterSpacing: 1.5,
-    textShadowColor: "rgba(11, 52, 176, 0.15)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+    letterSpacing: Platform.OS === 'android' ? 1.0 : 1.5,
+    ...(Platform.OS === 'ios' && {
+      textShadowColor: "rgba(11, 52, 176, 0.1)",
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 4,
+    }),
   },
   subtitle: {
-    fontSize: isTablet ? 18 : 16,
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 16 : 15) 
+      : (isTablet ? 18 : 16),
     color: "#6b7280",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: Platform.OS === 'android' ? 18 : 24,
     fontWeight: "500",
   },
 
-  // Contenedor de Lottie
+  // Contenedor de Lottie optimizado para Android
   lottieOverlayContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: Platform.OS === 'android' ? 16 : 20,
     position: 'relative',
-    height: isTablet ? 200 : 160,
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 140 : 120) 
+      : (isTablet ? 200 : 160),
   },
   lottieOverlay: {
     position: 'absolute',
@@ -438,45 +511,47 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   animation: {
-    width: isTablet ? 320 : 240,
-    height: isTablet ? 320 : 240,
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 240 : 180) 
+      : (isTablet ? 320 : 240),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 240 : 180) 
+      : (isTablet ? 320 : 240),
     alignSelf: "center",
     zIndex: 2,
   },
 
-  // Contenedor del formulario
+  // Contenedor del formulario optimizado para Android
   formContainer: {
     width: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 28,
-    padding: isTablet ? 40 : 32,
+    borderRadius: Platform.OS === 'android' ? 20 : 28,
+    paddingVertical: Platform.OS === 'android' 
+      ? (isTablet ? 28 : 24) 
+      : (isTablet ? 40 : 32),
+    paddingHorizontal: Platform.OS === 'android' 
+      ? (isTablet ? 36 : 28) 
+      : (isTablet ? 40 : 32),
     alignItems: "center",
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.15,
-    shadowRadius: 30,
-    elevation: 20,
-    borderWidth: 1,
-    borderColor: "rgba(208, 216, 246, 0.6)",
-    backdropFilter: "blur(10px)",
+    ...getShadowStyle(Platform.OS === 'android' ? 4 : 8, "#0b34b0", 0.12),
+    borderWidth: Platform.OS === 'android' ? 0.5 : 1,
+    borderColor: "rgba(208, 216, 246, 0.4)",
   },
 
-  // Inputs
+  // Inputs optimizados y más estirados para Android
   inputContainer: {
   flexDirection: "row",
   alignItems: "center",
   backgroundColor: "rgba(255, 255, 255, 0.9)",
-  borderRadius: 20,
-  paddingHorizontal: 6,
-  marginBottom: 20,
-  borderWidth: 2,
-  borderColor: "#e5e9f5",
-  height: isTablet ? 68 : 58,
-  shadowColor: "#0b34b0",
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.08,
-  shadowRadius: 12,
-  elevation: 4,
+  borderRadius: Platform.OS === 'android' ? 16 : 20,
+  paddingHorizontal: Platform.OS === 'android' ? 4 : 6,
+  marginBottom: Platform.OS === 'android' ? 16 : 20,
+  borderWidth: Platform.OS === 'android' ? 1 : 2,
+  borderColor: Platform.OS === 'android' ? "rgba(229, 233, 245, 0.8)" : "#e5e9f5",
+  height: Platform.OS === 'android' 
+    ? (isTablet ? 52 : 48) 
+    : (isTablet ? 68 : 58),
+  ...getShadowStyle(Platform.OS === 'android' ? 2 : 4, "#0b34b0", 0.06),
   width: "100%",
   overflow: 'hidden',
   position: 'relative',
@@ -484,44 +559,46 @@ const styles = StyleSheet.create({
   inputContainerError: {
     borderColor: "#ff6b6b",
     backgroundColor: "rgba(255, 240, 240, 0.9)",
-    shadowColor: "#ff6b6b",
+    ...getShadowStyle(Platform.OS === 'android' ? 1 : 2, "#ff6b6b", 0.1),
   },
   iconWrapper: {
-    width: 50,
-    height: 50,
-    borderRadius: 15,
-    backgroundColor: "rgba(11, 52, 176, 0.08)",
+    width: Platform.OS === 'android' ? 40 : 50,
+    height: Platform.OS === 'android' ? 40 : 50,
+    borderRadius: Platform.OS === 'android' ? 12 : 15,
+    backgroundColor: "rgba(11, 52, 176, 0.06)",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: Platform.OS === 'android' ? 10 : 12,
   },
   input: {
     flex: 1,
-    fontSize: isTablet ? 18 : 16,
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 16 : 15) 
+      : (isTablet ? 18 : 16),
     color: "#2d3748",
     fontWeight: "500",
-    letterSpacing: 0.3,
-    paddingVertical: 12,
-    paddingRight: 12,
-    marginLeft: 8,
+    letterSpacing: Platform.OS === 'android' ? 0.2 : 0.3,
+    paddingVertical: Platform.OS === 'android' ? 8 : 12,
+    paddingRight: Platform.OS === 'android' ? 8 : 12,
+    marginLeft: Platform.OS === 'android' ? 6 : 8,
   },
   validIconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "rgba(82, 196, 26, 0.1)",
+    width: Platform.OS === 'android' ? 32 : 40,
+    height: Platform.OS === 'android' ? 32 : 40,
+    borderRadius: Platform.OS === 'android' ? 10 : 12,
+    backgroundColor: "rgba(82, 196, 26, 0.08)",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    marginRight: Platform.OS === 'android' ? 6 : 8,
   },
   eyeIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: "rgba(122, 137, 168, 0.1)",
+    width: Platform.OS === 'android' ? 36 : 44,
+    height: Platform.OS === 'android' ? 36 : 44,
+    borderRadius: Platform.OS === 'android' ? 10 : 12,
+    backgroundColor: "rgba(122, 137, 168, 0.08)",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 8,
+    marginRight: Platform.OS === 'android' ? 6 : 8,
   },
 
   // Iconos
@@ -542,77 +619,80 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
-  // Hint de contraseña
+  // Hint de contraseña optimizado para Android
   hintContainer: {
-    backgroundColor: "rgba(11, 52, 176, 0.05)",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
+    backgroundColor: "rgba(11, 52, 176, 0.04)",
+    borderRadius: Platform.OS === 'android' ? 12 : 16,
+    padding: Platform.OS === 'android' ? 12 : 16,
+    marginBottom: Platform.OS === 'android' ? 18 : 24,
     width: "100%",
+    borderWidth: Platform.OS === 'android' ? 0.5 : 1,
+    borderColor: "rgba(11, 52, 176, 0.1)",
   },
   passwordHint: {
-    fontSize: 14,
+    fontSize: Platform.OS === 'android' ? 13 : 14,
     color: "#64748b",
     textAlign: "center",
-    lineHeight: 20,
+    lineHeight: Platform.OS === 'android' ? 18 : 20,
   },
   hintTitle: {
     color: "#0b34b0",
     fontWeight: "700",
   },
 
-  // Botón
+  // Botón optimizado para Android
   button: {
-    borderRadius: 20,
+    borderRadius: Platform.OS === 'android' ? 16 : 20,
     width: "100%",
-    height: isTablet ? 68 : 58,
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
-    elevation: 12,
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 52 : 48) 
+      : (isTablet ? 68 : 58),
+    ...getShadowStyle(Platform.OS === 'android' ? 3 : 6, "#0b34b0", 0.2),
     overflow: 'hidden',
   },
   buttonGradient: {
     backgroundColor: "#0b34b0",
-    borderRadius: 20,
+    borderRadius: Platform.OS === 'android' ? 16 : 20,
     width: "100%",
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
   buttonLoading: {
-    shadowOpacity: 0.15,
+    opacity: Platform.OS === 'android' ? 0.8 : 0.9,
   },
   buttonText: {
     color: "white",
-    fontSize: isTablet ? 20 : 18,
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 17 : 16) 
+      : (isTablet ? 20 : 18),
     fontWeight: "700",
-    letterSpacing: 1.2,
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    letterSpacing: Platform.OS === 'android' ? 0.8 : 1.2,
+    ...(Platform.OS === 'ios' && {
+      textShadowColor: "rgba(0, 0, 0, 0.15)",
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 2,
+    }),
   },
 
-  // Error
+  // Error optimizado para Android
   errorContainer: {
-  flexDirection: "row",
-  alignItems: "center",
-  marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: Platform.OS === 'android' ? 6 : 8,
   },
   errorText: {
-  color: "#ff4d4f",
-  fontSize: isTablet ? 15 : 14,
-  fontWeight: "600",
-  marginLeft: 6,
-  flex: 1,
-  letterSpacing: 0.5,
-  fontWeight: "500",
-  marginLeft: 6,
-  flex: 1,
+    color: "#ff4d4f",
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 14 : 13) 
+      : (isTablet ? 15 : 14),
+    fontWeight: "500",
+    marginLeft: 6,
+    flex: 1,
+    letterSpacing: Platform.OS === 'android' ? 0.3 : 0.5,
   },
 
-  // Modal
+  // Modal optimizado para Android
   modalBlurBg: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',

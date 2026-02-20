@@ -4,10 +4,8 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1-rdjSOCO1WniPoEWqkTkwNKa-FWkRBcr&export=download",
   "Modulo X - Bibloteca":
     "https://drive.google.com/uc?id=1-rdjSOCO1WniPoEWqkTkwNKa-FWkRBcr&export=download",
-  "Biblioteca - Modulo V":
-    "https://drive.google.com/uc?id=12c0GrLVgw84gjcqA-fYZCpFiynvd24GP&export=download",
-  "Modulo O - Modulo G":
-    "https://drive.google.com/uc?id=1AGM5tCLLu83QS4TewcH95UHmIfdLUQrU&export=download",
+
+
   "Modulo O - Modulo V2":
     "https://drive.google.com/uc?id=19wDsW6XCooL4tqUGvHGKHYWnAVY_jji6&export=download",
   "Modulo O - Modulo V":
@@ -122,8 +120,7 @@ export const routeVideos = {
     "https://drive.google.com/uc?id=1272G27ZK_W-ZBbd3uWaVcD6CwYM4_atV&export=download",
   "Entrada Boulevard - Modulo V2":
     "https://drive.google.com/uc?id=12-GHcgA1zMfGghSM_z5MHOKZp6XtgW3O&export=download",
-  "Entrada Boulevard - Modulo K":
-    "https://drive.google.com/uc?id=11yNHsRJGY2OFyoKpsEKviing2U9XBwqp&export=download",
+
   "Entrada Boulevard - Modulo V":
     "https://drive.google.com/uc?id=11vtPj2gMDdhJ8895uiCv_NtyrkRG0xU7&export=download",
   "Entrada Revolución - Modulo N":

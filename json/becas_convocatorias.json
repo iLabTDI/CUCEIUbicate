@@ -1,352 +1,415 @@
 [
     {
-        "convocatoria": "Segundo Encuentro Internacional de Estudiantes de Pueblos Originarios",
+        "convocatoria": "Espacio Común de Educación Superior a Distancia (ECOESAD) 2025B",
         "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "02 Oct 2024a04 Oct 2024",
-        "resumen": "Invita la Unidad de Apoyo a las Comunidades Indígenas",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/segundo-encuentro-internacional-de-estudiantes-de-pueblos"
+        "fecha": "16 Jun 2025 a 22 Jun 2025",
+        "resumen": "Dirigido a estudiantes interesadas(os) en  la oportunidad de cursar un intercambio virtual en otra universidad del país participante.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/espacio-comun-de-educacion-superior-distancia-ecoesad-2025b"
     },
     {
-        "convocatoria": "Becas de Movilidad de la Universidad de Lleida 2025 A",
-        "beneficiados": "Todas las carreras",
-        "fecha": "17 Sep 2024 a 09 Oct 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de nivel licenciatura de la Universidad de Guadalajara (UdeG), que quieran realizar una movilidad en la Universidad de Lleida en España durante el calendario 2025-A",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-de-movilidad-de-la-universidad-de-lleida-2025"
-    },
-    {
-        "convocatoria": "Apoyos Complementarios para Madres Jefas de Familia 2024",
-        "beneficiados": "Todas las carreras",
-        "fecha": "17 Sep 2024a11 Oct 2024",
-        "resumen": "Dirigido a las Becarias de la Convocatoria 2024 para Madres Jefas de Familia de CONAHCYT .",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/apoyos-complementarios-para-madres-jefas-de-familia-2024"
-    },
-    {
-        "convocatoria": "Programa de Estímulos Económicos a Estudiantes Indígenas 2024-B",
-        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "09 Sep 2024a23 Sep 2024",
-        "resumen": "Dirigido a todos las y los estudiantes indígenas de los Centros Universitarios (CU)",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-indigenas-2024-b"
-    },
-    {
-        "convocatoria": "Programa de Estímulos Económicos a Estudiantes con Discapacidad 2024-B",
-        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "09 Sep 2024a23 Sep 2024",
-        "resumen": "Dirigido a todos las y los estudiantes con Discapacidad de los Centros Universitarios (CU)",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-con-discapacidad-2024-b"
-    },
-    {
-        "convocatoria": "Información de la Ficha Escolar 2024B en SUBES",
-        "beneficiados": "Todas las carreras",
-        "fecha": "03 Sep 2024a15 Ene 2025",
-        "resumen": "Consulta aquí mayor información de la ficha escolar 2024B, en la plataforma de SUBES.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/informacion-de-la-ficha-escolar-2024b-en-subes"
-    },
-    {
-        "convocatoria": "Juntas de orientación del Programa de Estancias Académicas PEA 2025A por región de interés",
-        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "29 Ago 2024a05 Sep 2024",
-        "resumen": "Si estás interesada(o) en participar en PEA 2025A, inscríbete en las sesiones informativas de las regiones de tu interés.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/juntas-de-orientacion-del-programa-de-estancias-academicas-pea-2025a"
-    },
-    {
-        "convocatoria": "Estancias Académicas Internacionales de Especialización 2024 - B   (ESACIES)",
-        "beneficiados": "Egresados, Egresadas, Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "19 Ago 2024a16 Sep 2024",
-        "resumen": "A estudiantes y egresados de licenciatura y posgrado de la UdeG, que deseen solicitar un apoyo económico para su participación en una estancia académica internacional de especialización en su área de estudio, menor a 4 meses, en 2024B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/estancias-academicas-internacionales-de-especializacion-2024-b"
-    },
-    {
-        "convocatoria": "Programa de Intercambio Universidad Autónoma de Madrid (UAM) Banco Santander 2025 A",
-        "beneficiados": "Todas las carreras",
-        "fecha": "05 Ago 2024a25 Ago 2024",
-        "resumen": "Dirigido a estudiantes activos de nivel licenciatura de la Universidad de Guadalajara (UDG), que deseen realizar una movilidad en la Universidad Autónoma de Madrid en el calendario 2025 A.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-universidad-autonoma-de-madrid-uam-banco-4"
-    },
-    {
-        "convocatoria": "Programa de Estancias Académicas (PEA) 2025 A",
-        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "16 Jul 2024a15 Oct 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de pregrado y posgrado de la Universidad de Guadalajara que deseen realizar una estancia académica durante el calendario 2025 A que cumplan con las bases y requisitos de PEA 2025 A.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estancias-academicas-pea-2025"
-    },
-    {
-        "convocatoria": "Apoyos de Movilidad Estudiantil Saliente (AMES) 2024 B",
-        "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "05 Jul 2024a12 Ago 2024",
-        "resumen": "Programa dirigido a estudiantes regulares previamente seleccionados en PEA saliente 2024-B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/apoyos-de-movilidad-estudiantil-saliente-ames-2024-b"
-    },
-    {
-        "convocatoria": "Convocatoria University Walking Community del Grupo Compostela de Universidades",
+        "convocatoria": "Curso Santander: Electromovilidad",
         "beneficiados": "Comunidad CUCEI",
-        "fecha": "04 Jun 2024a10 Jun 2024",
-        "resumen": "La convocatoria del programa University Walking Community 2024 está abierta a personas de entre 18 y 30 años, que estén vinculadas a alguna universidad socia del GCU por vínculos contractuales, de estudios o de investigación.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/convocatoria-university-walking-community-del-grupo-compostela-de"
+        "fecha": "30 Mayo 2025 a 31 Mayo 2025",
+        "resumen": "Dirigido a personas de nacionalidad mexicana mayores de 18 años.Esto incluye a la comunidad universitaria: profesores, personal administrativo, alumnos de todos los semestres y áreas de estudio, así como recién egresado",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-electromovilidad"
     },
     {
-        "convocatoria": "Beca Santander \"Movilidad Internacional 2024\"",
-        "beneficiados": "Investigadores, Personal Académico, Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "05 Jun 2024a14 Jul 2024",
-        "resumen": "Dirigido a estudiantes de licenciatura maestría, doctorado, así como al personal docente e investigador de todas las Instituciones de Educación Superior mexicanas públicas o privadas.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-movilidad-internacional-2024"
+        "convocatoria": "Beca Santander: Iniciativas para la equidad, diversidad e inclusión 2025",
+        "beneficiados": "Comunidad CUCEI",
+        "fecha": "29 Mayo 2025 a 01 Jun 2025",
+        "resumen": "Dirigido a estudiantes, docentes, personal administrativo o investigadores en activo de instituciones públicas o privadas de educación superior en México.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-iniciativas-para-la-equidad-diversidad-e-inclusion"
     },
     {
-        "convocatoria": "Curso Santander \"Inglés para todos - Slang 2024\"",
-        "beneficiados": "Egresados, Egresadas, Personal Administrativo, Personal Académico, Todo el personal Universitario, Todas las carreras, Todos los posgrados",
-        "fecha": "22 Mayo 2024a21 Jul 2024",
-        "resumen": "Dirigido a personas de nacionalidad mexicana mayores de 18 años, incluye a la comunidad universitaria en su totalidad: profesores, personal administrativo, alumnos de todos los semestres y áreas de estudio, así como recién egresadas(os) de universidades",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-ingles-para-todos-slang-2024"
-    },
-    {
-        "convocatoria": "Curso Santander \"I.A para todos - Ozaru 2024\"",
-        "beneficiados": "Egresados, Egresadas, Personal Administrativo, Personal Académico, Todo el personal Universitario, Todas las carreras, Todos los posgrados",
-        "fecha": "22 Mayo 2024a21 Jul 2024",
-        "resumen": "Dirigido a todas las personas de nacionalidad mexicana mayores de 18años, incluyendo a toda la comunidad universitaria: profesores, personal administrativo y alumnos de todos semestres y áreas de estudio, así como a recién egresadas(os) de universidades",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-ia-para-todos-ozaru-2024"
-    },
-    {
-        "convocatoria": "Beca Santander \"Apoyo a la manutención 2024\"",
-        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "07 Mayo 2024a21 Jul 2024",
-        "resumen": "Dirigido a estudiantes de educación superior técnica, licenciatura, maestría o doctorado en alguna Institución de Educación Superior pública o privada, que cuenten con el 30% de los créditos en sus estudios actuales, con promedio mínimo de 80",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-apoyo-la-manutencion-2024"
-    },
-    {
-        "convocatoria": "Convocatoria 2024 de las Becas y Apoyos Complementarios para Madres Jefas de Familia de CONAHCYT.",
-        "beneficiados": "Todas las carreras",
-        "fecha": "06 Mayo 2024a05 Jun 2024",
-        "resumen": "Dirigido a mujeres de nacionalidad mexicana que sean las principales o únicas aportadoras económicas de sus familias, siempre que estén a cargo de la manutención de sus hijas o hijos, para que terminen sus estudios de licenciatura en el que esté inscrita",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/convocatoria-2024-de-las-becas-y-apoyos-complementarios-para-madres"
-    },
-    {
-        "convocatoria": "Beca de Movilidad Universitaria en Canadá, Europa y Asia Pacífico (MANEA), ciclo 2024",
-        "beneficiados": "Todas las carreras, Todas las maestrías",
-        "fecha": "10 Mayo 2024a28 Mayo 2024",
-        "resumen": "Dirigido a estudiantes regulares de licenciatura o maestría de la UdeG que realicen una estancia de movilidad estudiantil, con duración de tres meses quince días a seis meses, en una universidad de Canadá, Europa y Asia Pacífico entre julio a octubre 2024",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-de-movilidad-universitaria-en-canada-europa-y-asia-pacifico-1"
-    },
-    {
-        "convocatoria": "Programa Iberoamericano de Movilidad de Intercambio Virtuales Académicos (PIMIVA)",
-        "beneficiados": "Todas las maestrías, Todos los doctorados",
-        "fecha": "09 Mayo 2024a24 Mayo 2024",
-        "resumen": "Dirigido a estudiantes de Posgrado (Especialidad, Maestría y Doctorado).",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-iberoamericano-de-movilidad-de-intercambio-virtuales"
-    },
-    {
-        "convocatoria": "XV Convocatoria de la Plataforma de Movilidad Estudiantil y Académica de la Alianza del Pacífico 2024-2 MOVILIDAD ESTUDIANTIL",
-        "beneficiados": "Todas las carreras",
-        "fecha": "09 Mayo 2024a02 Jun 2024",
-        "resumen": "Dirigido a estudiantes de licenciatura seleccionados en PEA 2024B, o en alguno de los programas de reciprocidad gestionados por CI:(PILA, PAME) interesados en realizar movilidad en Chile, Colombia o Perú participantes en la Plataforma Alianza del Pacífico",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/xv-convocatoria-de-la-plataforma-de-movilidad-estudiantil-y"
-    },
-    {
-        "convocatoria": "Becas Santander \"Iniciativas para la Equidad, Diversidad e Inclusión 2024\"",
-        "beneficiados": "Personal Administrativo, Personal Académico, Todas las carreras",
-        "fecha": "03 Mayo 2024a30 Mayo 2024",
-        "resumen": "El programa se dirige a docentes, personal administrativo y estudiantes de Instituciones públicas y privadas de Educación Superior, que desarrollen iniciativas universitarias en materia de igualdad y diversidad en las categorías",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-santander-iniciativas-para-la-equidad-diversidad-e-inclusion"
-    },
-    {
-        "convocatoria": "Curso Santander Mujeres líderes - Dalia Empower - UIN 2024",
-        "beneficiados": "Egresadas, Personal Administrativo, Personal Académico, Todas las carreras, Todos los posgrados",
-        "fecha": "03 Mayo 2024a26 Mayo 2024",
+        "convocatoria": "Curso Santander: Mujeres líderes - Dalia Empower - UIN 2025",
+        "beneficiados": "Comunidad CUCEI",
+        "fecha": "27 Mayo 2025 a 29 Mayo 2025",
         "resumen": "Dirigido a mujeres mayores de dieciocho años y sin límite de edad interesadas en herramientas de empoderamiento, educación e impulso para la formación de mujeres líderes y para convertirse en agentes de cambio de sus comunidades y la sociedad.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-mujeres-lideres-dalia-empower-uin-2024"
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-mujeres-lideres-dalia-empower-uin-2025"
     },
     {
-        "convocatoria": "\"Becas BBVA para Chavos con Discapacidad que Inspiran\"",
-        "beneficiados": "Todas las carreras",
-        "fecha": "26 Abr 2024a31 Mayo 2024",
-        "resumen": "Dirigido a estudiantes con discapacidad",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-bbva-para-chavos-con-discapacidad-que-inspiran"
-    },
-    {
-        "convocatoria": "Resultados del Programa de Estímulos Económicos a Estudiantes Indígenas 2024A",
-        "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "N/A",
-        "resumen": "Dirigido a estudiantes que participaron en este programa",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/resultados-del-programa-de-estimulos-economicos-estudiantes"
-    },
-    {
-        "convocatoria": "Resultados del Programa de Estímulos Económicos a Estudiantes con Discapacidad 2024A",
-        "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "N/A",
-        "resumen": "Dirigido a estudiantes que participaron en este programa",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/resultados-del-programa-de-estimulos-economicos-estudiantes-con"
-    },
-    {
-        "convocatoria": "Programa de Intercambio de Estudiantes Brasil-México (BRAMEX) 2024 B",
-        "beneficiados": "Todas las carreras",
-        "fecha": "18 Abr 2024a15 Mayo 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares, de nivel licenciatura de la Universidad de Guadalajara interesados en una movilidad a Brasil durante el calendario 2024 B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-de-estudiantes-brasil-mexico-bramex-2024-b"
-    },
-    {
-        "convocatoria": "Programa de Intercambio Académico Latinoamericano (PILA) 2024 B",
-        "beneficiados": "Todas las carreras",
-        "fecha": "16 Abr 2024a15 Mayo 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de nivel licenciatura de la Universidad de Guadalajara interesados en realizar una movilidad en América Latina en el calendario 2024 B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-academico-latinoamericano-pila-2024-b"
-    },
-    {
-        "convocatoria": "Estancias Académicas Internacionales de Especialización 2024 - A",
-        "beneficiados": "Egresados, Egresadas, Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "11 Abr 2024a19 Mayo 2024",
-        "resumen": "A estudiantes y egresados de licenciatura y posgrado de la UdeG, que deseen solicitar un apoyo económico para su participación en una estancia académica internacional de especialización en su área de estudio, menor a 4 meses.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/estancias-academicas-internacionales-de-especializacion-2024"
-    },
-    {
-        "convocatoria": "ACTUALIZACIÓN: Programa Académico de Movilidad Educativa (PAME) 2024 B",
-        "beneficiados": "Todas las carreras",
-        "fecha": "22 Mar 2024a03 Mayo 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de nivel licenciatura de la Universidad de Guadalajara interesadas(os) en realizar una movilidad en América Latina en el calendario 2024 B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/actualizacion-programa-academico-de-movilidad-educativa-pame-2024-b"
-    },
-    {
-        "convocatoria": "Resultados definitivos del PEEES 2024",
-        "beneficiados": "Todas las carreras",
-        "fecha": "N/A",
-        "resumen": "Consulta aquí los resultados definitivos del PEEES publicados el 08/abril/2024",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/resultados-definitivos-del-peees-2024"
-    },
-    {
-        "convocatoria": "Beca Santander de Excelencia Académica 2024",
-        "beneficiados": "Todas las carreras",
-        "fecha": "26 Feb 2024a28 Abr 2024",
-        "resumen": "Beca de manutención a estudiantes de excelencia académica con un apoyo en efectivo y de entrega única por $100,000 pesos. El objetivo es apoyar a los estudiantes mexicanos para que continúen de manera exitosa sus estudios en educación superior.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-de-excelencia-academica-2024"
-    },
-    {
-        "convocatoria": "Resultados preliminares del PEEES 2024",
-        "beneficiados": "Todas las carreras",
-        "fecha": "N/A",
-        "resumen": "Consulta aquí los resultados preliminares del PEEES publicados el 26/feb/2024",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/resultados-preliminares-del-peees-2024"
-    },
-    {
-        "convocatoria": "Conference “Humboldt meets Leibniz - Emerging Topics in Biomedical Engineering and Implant Research”.",
-        "beneficiados": "Todos los doctorados",
-        "fecha": "14 Feb 2024a25 Feb 2024",
-        "resumen": "Invita: Leibniz Universität Hannover",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/conference-humboldt-meets-leibniz-emerging-topics-biomedical"
-    },
-    {
-        "convocatoria": "Programa de Pregrado para la Investigación Climática Merced- México",
-        "beneficiados": "Licenciatura en Ciencia de Materiales, Licenciatura en Ingeniería Civil, Licenciatura en Ingeniería en Alimentos y Biotecnología, Licenciatura en Ingeniería en Topografía Geomática, Licenciatura en Ingeniería Industrial, Licenciatura en Ingeniería Mecánica Eléctrica, Licenciatura en Ingeniería Química, Licenciatura en Química",
-        "fecha": "16 Feb 2024a19 Feb 2024",
-        "resumen": "Dirigido a estudiantes de licenciatura de la Universidad de Guadalajara interesados en la investigación climática y considerando estudiar un posgrado",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-pregrado-para-la-investigacion-climatica-merced-mexico"
-    },
-    {
-        "convocatoria": "Programa Emerging Leaders in the Americas (ELAP) 2024",
-        "beneficiados": "Todas las carreras",
-        "fecha": "09 Feb 2024a01 Mar 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de licenciatura de la Universidad de Guadalajara que deseen realizar actividades de investigación y vinculación en Canadá en el marco del Programa ELAP (Emerging Leaders in the Americas).",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-emerging-leaders-americas-elap-2024"
-    },
-    {
-        "convocatoria": "Programa de Estancias Académicas (PEA) 2024 B",
+        "convocatoria": "Beca Santander: Apoyo a la manutención 2025",
         "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "30 Ene 2024a31 Mayo 2024",
-        "resumen": "Dirigido a estudiantes activos, regulares de pregrado y posgrado de la Universidad de Guadalajara que deseen realizar una estancia académica durante el calendario 2024 B que cumplan con las bases y requisitos de PEA 2024 B.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estancias-academicas-pea-2024-b"
+        "fecha": "21 Mayo 2025 a 21 Jul 2025",
+        "resumen": "Dirigido a jóvenes mayores de 16 años cumplidos que se encuentren inscritos en programas de educación superior técnica, licenciatura, maestría o doctorado, en instituciones públicas o privadas.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-apoyo-la-manutencion-2025"
     },
     {
-        "convocatoria": "Información de la Ficha Escolar 2024A en SUBES",
+        "convocatoria": "Curso Santander: CENTRO Creatividad e Innovación Educativa con IA",
+        "beneficiados": "Profesores, Personal Académico",
+        "fecha": "20 Mayo 2025 a 14 Jul 2025",
+        "resumen": "Dirigido a profesoras y profesores de instituciones públicas o privadas, interesados en el uso ético, estratégico y creativo de la IA en procesos educativos, investigación y diseño de soluciones innovadoras.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/curso-santander-centro-creatividad-e-innovacion-educativa-con-ia"
+    },
+    {
+        "convocatoria": "Programa Académico de Movilidad Educativa (PAME) 2025-2",
         "beneficiados": "Todas las carreras",
-        "fecha": "N/A",
-        "resumen": "Consulta aquí mayor información de la ficha escolar 2024A, en la plataforma de SUBES.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/informacion-de-la-ficha-escolar-2024a-en-subes"
+        "fecha": "14 Mayo 2025 a 30 Mayo 2025",
+        "resumen": "Dirigido a estudiantes activos de nivel licenciatura de la Universidad de Guadalajara interesados en realizar un intercambio académico presencial en América Latina en el calendario 2025 B.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-academico-de-movilidad-educativa-pame-2025-2"
     },
     {
-        "convocatoria": "Programa de Estímulos Económicos a Estudiantes Sobresalientes 2024",
+        "convocatoria": "XVI Convocatoria de la Plataforma de Movilidad Estudiantil y Académica de la Alianza del Pacífico 2025-B MOVILIDAD ESTUDIANTIL",
         "beneficiados": "Todas las carreras",
-        "fecha": "22 Ene 2024a26 Ene 2024",
-        "resumen": "Programa dirigido a estudiantes con situación de activo, ordinario regular, de nivel licenciatura de la Universidad de Guadalajara que cumplan con las bases y requisitos de la convocatoria 2024",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-sobresalientes-2024"
+        "fecha": "13 Mayo 2025 a 23 Mayo 2025",
+        "resumen": "Dirigido a alumnos pregrado seleccionados en PEA 2025B, o en programa de reciprocidad gestionado por la CI (PILA), interesados en realizar movilidad académica en una institución de Chile, Colombia, Perú participantes en la Plataforma Alianza del Pacífico.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/xvi-convocatoria-de-la-plataforma-de-movilidad-estudiantil-y"
     },
     {
-        "convocatoria": "Community College Initiative (CCI) 2024-2025",
+        "convocatoria": "Plática interactiva en inglés AI en acción: soluciones inteligentes para tiempos desafiantes.",
+        "beneficiados": "Personal Académico, Todas las carreras, Todas las maestrías, Todos los doctorados, Comunidad CUCEI",
+        "fecha": "13 Mayo 2025",
+        "resumen": "Impartida por un profesor de la Universidad de Indiana.  Invita Education USA.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/platica-interactiva-en-ingles-ai-en-accion-soluciones-inteligentes"
+    },
+    {
+        "convocatoria": "Beca de movilidad ExxonMobil México",
         "beneficiados": "Todas las carreras",
-        "fecha": "05 Ene 2024a19 Ene 2024",
-        "resumen": "Estudiantes activos de la Universidad de Guadalajara, que no hayan completado aun tres años de licenciatura, interesados en cursar un año de un programa académico en un Colegio Comunitario en los Estados Unidos.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/community-college-initiative-cci-2024-2025"
-    },
-    {
-        "convocatoria": "Apoyos de Movilidad Estudiantil Saliente (AMES) 2024 A",
-        "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "04 Ene 2024a04 Feb 2024",
-        "resumen": "Programa dirigido a estudiantes regulares previamente seleccionados en PEA saliente 2024-A.",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/apoyos-de-movilidad-estudiantil-saliente-ames-2024"
-    },
-    {
-        "convocatoria": "Becas Santander",
-        "beneficiados": "Comunidad CUCEI",
-        "fecha": "01 Ene 2024a31 Dic 2024",
-        "resumen": "Conoce algunos programas que oferta dicho organismo y que publica la Coordinación de Internacionalización de la UdeG por ser de interés para nuestra comunidad",
-        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-santander-1"
+        "fecha": "23 Abr 2025 a 23 Mayo 2025",
+        "resumen": "Dirigido al alumnado de nacionalidad mexicana, que radique en república mexicana, inscritos en institución de educación superior de México cursando el último año de Lic. en áreas de ciencia, tecnología, ingeniería, sustentabilidad, liderazgo, innovación",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-de-movilidad-exxonmobil-mexico"
     },
     {
         "convocatoria": "¿Cómo funciona el Sistema Único de Beneficiarios de Educación Superior (SUBES)?",
         "beneficiados": "Todas las carreras",
-        "fecha": "31 Ago 2022a31 Dic 2024",
+        "fecha": "31 Ago 2022 a 31 Dic 2024",
         "resumen": "Consulta aquí la guía de la plataforma federal SUBES",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/como-funciona-el-sistema-unico-de-beneficiarios-de-educacion"
     },
     {
         "convocatoria": "Consulta convocatorias y eventos que promueve la Coordinación de Internacionalización de la CGAI-UdeG",
         "beneficiados": "Egresados, Egresadas, Personal Administrativo, Personal Académico, Todas las carreras, Todas las maestrías, Todos los doctorados",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Información importante para la comunidad de nuestro Centro Universitario",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/consulta-convocatorias-y-eventos-que-promueve-la-coordinacion-de"
     },
     {
         "convocatoria": "¿Postulaste a alguna convocatoria oficial de la Coordinación de Internacionalización de la UdeG y deseas conocer los resultados oficiales??",
         "beneficiados": "Comunidad CUCEI",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Información importante para la comunidad de nuestro Centro Universitario",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/postulaste-alguna-convocatoria-oficial-de-la-coordinacion-de"
     },
     {
         "convocatoria": "Esquina Franklin Guadalajara",
         "beneficiados": "Comunidad CUCEI",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Conoce más del espacio cultural del programa American Spaces",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/esquina-franklin-guadalajara"
     },
     {
         "convocatoria": "Newsletter de la Coordinación de Internacionalización",
         "beneficiados": "Comunidad CUCEI",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Consulta algunos eventos o programas a los que puedes participar",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/newsletter-de-la-coordinacion-de-internacionalizacion"
     },
     {
         "convocatoria": "Convocatorias para Estudiantes",
         "beneficiados": "Todas las carreras",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Consulta aquí algunos programas que pueden ser de tu interés y, que podrían abrir en 2024, la información está sujeta a cambios",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/convocatorias-para-estudiantes-2"
     },
     {
         "convocatoria": "Convocatorias para Egresadas/os",
         "beneficiados": "Egresados, Egresadas",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Consulta aquí algunos programas que pueden ser de tu interés y que podrían abrir en 2024, la información está sujeta a cambios.",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/convocatorias-para-egresadasos-0"
     },
     {
         "convocatoria": "¿Interesada/o en postular a algún programa de becas o apoyos económicos?",
         "beneficiados": "Egresados, Egresadas, Todas las carreras",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2024 a 31 Dic 2024",
         "resumen": "Consulta aquí mayores informes, la información está sujeta a cambios.",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/interesadao-en-postular-algun-programa-de-becas-o-apoyos-0"
     },
     {
         "convocatoria": "¿Interesada/o en realizar un intercambio en alguna Institución socia?",
         "beneficiados": "Todas las carreras, Todos los posgrados",
-        "fecha": "01 Ene 2024a31 Dic 2024",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
         "resumen": "Consulta información general del Programa de Estancias Académicas para tu preparación previa antes de postular, en caso de en el futuro esté abierta alguna convocatoria oficial.",
         "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/interesadao-en-realizar-un-intercambio-en-alguna-institucion-socia"
+    },
+    {
+        "convocatoria": "Beca YLAI 2026  - Young Leaders of the Americas (YLAI) Fellowship Program",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "02 Mayo 2025 a 15 Mayo 2025",
+        "resumen": "Dirigido a jóvenes Líderes de las Américas\" (YLAI), interesados en impulsar su carrera y desarrollar sus habilidades de liderazgo.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-ylai-2026-young-leaders-americas-ylai-fellowship-program"
+    },
+    {
+        "convocatoria": "University Walking Community del Grupo Compostela de Universidades",
+        "beneficiados": "Todas las carreras",
+        "fecha": "02 Mayo 2025 a 12 Mayo 2025",
+        "resumen": "Dirigido a Estudiantes de universidades miembro del Grupo Compostela de Universidades entre 18 y 30 años.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/university-walking-community-del-grupo-compostela-de-universidades"
+    },
+    {
+        "convocatoria": "Fecha límite de registro: Beca CICM Gobierno Francés 2025",
+        "beneficiados": "Egresados, Egresadas, Licenciatura en Ingeniería Civil",
+        "fecha": "14 Abr 2025",
+        "resumen": "Invitan: Embajada de Francia en México y el Colegio de Ingenieros Civiles de México (CICM)",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/fecha-limite-de-registro-beca-cicm-gobierno-frances-2025"
+    },
+    {
+        "convocatoria": "XVI Edición del \"Programa para el Fortalecimiento de la Función Pública en América Latina\", Fundación Botín 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "03 Abr 2025 a 08 Mayo 2025",
+        "resumen": "Dirigido a estudiantes de licenciatura de la Universidad de Guadalajara, que cuenten con excelencia académica y compromiso con la transformación de lo público en sus países, capaces de trabajar en red por el bienestar de la región.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/xvi-edicion-del-programa-para-el-fortalecimiento-de-la-funcion"
+    },
+    {
+        "convocatoria": "Apoyos para Movilidad Nacional 2025 A en el Marco del Programa de Cooperación Académica Interinstitucional (PROCAI) de la ANUIES",
+        "beneficiados": "Todas las carreras",
+        "fecha": "11 Abr 2025 a 01 Mayo 2025",
+        "resumen": "Dirigido a estudiantes regulares que se encuentren realizando una estancia de intercambio en una institución de educación superior nacional en el calendario 2025A, en el marco del Programa de Estancias Académicas (PEA 2025 A).",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/apoyos-para-movilidad-nacional-2025-en-el-marco-del-programa-de"
+    },
+    {
+        "convocatoria": "Programa de Intercambio Académico Latinoamericano (PILA) 2025-2",
+        "beneficiados": "Todas las carreras",
+        "fecha": "11 Abr 2025 a 08 Mayo 2025",
+        "resumen": "Dirigido a estudiantes activos, regulares de nivel licenciatura de la UdeG a interesados en realizar un intercambio académico presencial en América Latina en el ciclo 2025B, a participar en el Programa de Intercambio Académico Latinoamericano (PILA)2025-2",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-academico-latinoamericano-pila-2025-2"
+    },
+    {
+        "convocatoria": "Programa Grodman de Becas de Excelencia Académica de la Universidad de Guadalajara 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "04 Abr 2025 a 07 Mayo 2025",
+        "resumen": "Dirigido a estudiantes de licenciatura de la UdeG a que participen como candidatos a la obtención de una “Beca de excelencia académica”, con el objetivo de apoyar a los estudiantes sobresalientes de escasos recursos, para mejorar su desempeño académico.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-grodman-de-becas-de-excelencia-academica-de-la-2"
+    },
+    {
+        "convocatoria": "Programa de Intercambio Universidad Autónoma de Madrid (UAM) Banco Santander 2025B",
+        "beneficiados": "Todas las carreras",
+        "fecha": "04 Abr 2025 a 27 Abr 2025",
+        "resumen": "Dirigido a estudiantes activos y regulares de nivel licenciatura de la Universidad de Guadalajara (UDG), que deseen realizar una movilidad en la Universidad Autónoma de Madrid (UAM) en el calendario 2025B.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-universidad-autonoma-de-madrid-uam-banco-5"
+    },
+    {
+        "convocatoria": "Charlas de Internacionalización 2025 - CUCEI",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados, Comunidad CUCEI",
+        "fecha": "03 Abr 2025 a 07 Abr 2025",
+        "resumen": "Consulta aquí el programa completo.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/charlas-de-internacionalizacion-2025-cucei-0"
+    },
+    {
+        "convocatoria": "\"Estudiar o investigar en Alemania a través de una beca del DAAD\"",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "07 Abr 2025",
+        "resumen": "Imparte:  DAAD - Servicio Alemán de Intercambio Académico.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/estudiar-o-investigar-en-alemania-traves-de-una-beca-del-daad"
+    },
+    {
+        "convocatoria": "“10 minutes abroad\"",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "04 Abr 2025",
+        "resumen": "Estudiantes de movilidad saliente presentan su experiencia en el intercambio",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/10-minutes-abroad"
+    },
+    {
+        "convocatoria": "\"Oportunidades de estudio en Estados Unidos\"",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "04 Abr 2025",
+        "resumen": "Imparten:  Education USA Guadalajara y Esquina Franklin Guadalajara",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/oportunidades-de-estudio-en-estados-unidos"
+    },
+    {
+        "convocatoria": "\"Oportunidades de estudio e investigación en Francia\"",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "03 Abr 2025",
+        "resumen": "Imparte: Espacio Campus France Guadalajara",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/oportunidades-de-estudio-e-investigacion-en-francia"
+    },
+    {
+        "convocatoria": "\"Becas BBVA para Chavos con Discapacidad que Inspiran\". Convocatoria 2025.",
+        "beneficiados": "Todas las carreras",
+        "fecha": "18 Mar 2025 a 04 Mayo 2025",
+        "resumen": "Dirigida a estudiantes con discapacidad, de nacionalidad mexicana que, en el ciclo escolar 2025-2026, cursarán estudios con validez oficial, en universidad en una institución pública que necesiten el apoyo económico",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-bbva-para-chavos-con-discapacidad-que-inspiran-convocatoria"
+    },
+    {
+        "convocatoria": "Invitación al \"Interculturality in Brazil: Language, Innovation and Entrepreneurship\"",
+        "beneficiados": "Todas las carreras",
+        "fecha": "27 Mar 2025 a 31 Mar 2025",
+        "resumen": "Este curso está dirigido a alumnos universitarios activos y se realizará del 21 de julio al 1 de agosto del 2025 en Fatec Sebrae en Sao Paulo, Brasil.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/invitacion-al-interculturality-brazil-language-innovation-and"
+    },
+    {
+        "convocatoria": "Programa de movilidad de University Mobility in Asia and Pacific (UMAP)  - 2025B",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "20 Mar 2025 a 31 Mar 2025",
+        "resumen": "Dirigido a estudiantes de pregrado y posgrado de la Universidad de Guadalajara que deseen realizar una estancia académica durante el calendario 2025B en una institución de educación superior miembro de la UMAP.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-movilidad-de-university-mobility-asia-and-pacific-umap-0"
+    },
+    {
+        "convocatoria": "Stella Junior 2025",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "04 Mar 2025 a 24 Mar 2025",
+        "resumen": "Dirigido a estudiantes de licenciatura y posgrado de la Universidad de Guadalajara que deseen realizar una estancia de formación profesional en alguno de los departamentos de las universidades socias que participan en la convocatoria Stella Junior 2025.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/stella-junior-2025"
+    },
+    {
+        "convocatoria": "Becas GREAT",
+        "beneficiados": "Egresados, Egresadas",
+        "fecha": "07 Mar 2025",
+        "resumen": "Invita el British Council",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-great"
+    },
+    {
+        "convocatoria": "Programa de becas para mujeres en STEM",
+        "beneficiados": "Egresadas, Todas las carreras",
+        "fecha": "07 Mar 2025 a 30 Abr 2025",
+        "resumen": "Invita el British Council",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-becas-para-mujeres-en-stem"
+    },
+    {
+        "convocatoria": "Estancias Académicas Internacionales de Especialización 2025 A",
+        "beneficiados": "Egresados, Egresadas, Todas las carreras, Todos los posgrados",
+        "fecha": "05 Feb 2025 a 02 Mar 2025",
+        "resumen": "Dirigido a estudiantes y egresados de licenciatura y posgrado de la Universidad de Guadalajara, que deseen enriquecer su proceso de formación a través de la participación en una estancia académica internacional de especialización menor a 4 meses en 2025A",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/estancias-academicas-internacionales-de-especializacion-2025"
+    },
+    {
+        "convocatoria": "Beca Santander de Excelencia Académica 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "03 Mar 2025 a 22 Abr 2025",
+        "resumen": "Dirigida a jóvenes que se encuentren realizando sus estudios en educación superior técnica, licenciatura, maestría o doctorado en alguna Institución de Educación Superior pública o privada y que cumplan con requisitos específicos",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/beca-santander-de-excelencia-academica-2025"
+    },
+    {
+        "convocatoria": "Programa de Estímulos Económicos a Estudiantes Indígenas 2025-A",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "24 Feb 2025 a 10 Mar 2025",
+        "resumen": "Dirigido a todos los y las estudiantes indígenas de los Centros Universitarios (CU) y Sistema de Educación Media Superior (SEMS) en cualquiera de las opciones y modalidades (presencial, en línea o virtual, escolarizada, no escolarizada, etc.)",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-indigenas-2025"
+    },
+    {
+        "convocatoria": "Programa de Estímulos Económicos a Estudiantes con Discapacidad 2025A",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "24 Feb 2025 a 10 Mar 2025",
+        "resumen": "Dirigido a todos las y los estudiantes con discapacidad de los Centros Universitarios (CU) y Sistema de Educación Media Superior (SEMS) en cualquiera de las opciones y modalidades (presencial, en línea o virtual, escolarizada, no escolarizada etc.),",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-con-discapacidad-2025a"
+    },
+    {
+        "convocatoria": "¿Tienes inquietudes sobre la beca Jóvenes Escribiendo el Futuro 2025-A?",
+        "beneficiados": "Todas las carreras",
+        "fecha": "10 Feb 2025 a 28 Feb 2025",
+        "resumen": "Consulta mayor información.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/tienes-inquietudes-sobre-la-beca-jovenes-escribiendo-el-futuro-2025"
+    },
+    {
+        "convocatoria": "Sesión informativa de la Fundación Carolina para becas de posgrado en España",
+        "beneficiados": "Egresados, Egresadas, Todas las carreras",
+        "fecha": "10 Feb 2025",
+        "resumen": "Invita Fundación Carolina. Se requiere realizar un registro previo.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/sesion-informativa-de-la-fundacion-carolina-para-becas-de-posgrado"
+    },
+    {
+        "convocatoria": "Tu maestría en Francia 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "13 Feb 2025 a 14 Feb 2025",
+        "resumen": "Invitan la Embajada de Francia en México y la Agencia Campus France.  Se requiere un registro previo.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/tu-maestria-en-francia-2025"
+    },
+    {
+        "convocatoria": "Programa Emerging Leaders in the Americas (ELAP) 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "28 Ene 2025 a 20 Feb 2025",
+        "resumen": "Dirigido a los estudiantes activos y regulares de licenciatura de la Universidad de Guadalajara que deseen realizar actividades de investigación y vinculación en Canadá en el marco del Programa ELAP",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-emerging-leaders-americas-elap-2025"
+    },
+    {
+        "convocatoria": "Programa de Estímulos Económicos a Estudiantes Sobresalientes (PEEES) 2025",
+        "beneficiados": "Todas las carreras",
+        "fecha": "27 Ene 2025 a 07 Feb 2025",
+        "resumen": "Consulta aquí mayor información del PEEES 2025. La convocatoria se publicó el 27/enero/2025, favor de leerla para conocer los detalles, ¡ya puedes recabar tu documentación!. El registro inicia el 03/febrero/2025.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estimulos-economicos-estudiantes-sobresalientes-peees-2"
+    },
+    {
+        "convocatoria": "Información de la Ficha Escolar 2025A en SUBES",
+        "beneficiados": "Todas las carreras",
+        "fecha": "20 Ene 2025 a 15 Jul 2025",
+        "resumen": "Consulta aquí mayor información de la ficha escolar 2025A en la plataforma de SUBES.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/informacion-de-la-ficha-escolar-2025a-en-subes"
+    },
+    {
+        "convocatoria": "Programa de Becas Víctor Hugo 2025-2026",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "16 Ene 2025 a 16 Feb 2025",
+        "resumen": "Dirigido a estudiantes de posgrado o del último semestre de licenciatura de la UdeG que deseen realizar una estancia académica de un año en el calendario 2025B-2026A, en La Universidad Marie y Louis Pasteur, para programas M1 o o M2.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-becas-victor-hugo-2025-2026"
+    },
+    {
+        "convocatoria": "Programas de Verano en Xi'an Jiaotong-Liverpool University (XJTLU)",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "15 Ene 2025 a 10 Mar 2025",
+        "resumen": "Dirigido a estudiantes activos de licenciatura y posgrado de la Universidad de Guadalajara, interesados en enriquecer su formación académica a través de la participación en una estancia de verano en la Xi’an Jiaotong-Liverpool University, China.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programas-de-verano-en-xian-jiaotong-liverpool-university-xjtlu"
+    },
+    {
+        "convocatoria": "Programa de Estancias Académicas (PEA) 2025 B",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "13 Ene 2025 a 01 Mayo 2025",
+        "resumen": "Dirigido a estudiantes activos, regulares de pregrado y posgrado de la Universidad de Guadalajara que deseen realizar una estancia académica durante el calendario 2025 B que cumplan con las bases y requisitos de PEA 2025B",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estancias-academicas-pea-2025-b"
+    },
+    {
+        "convocatoria": "Programa de movilidad de University Mobility in Asia and Pacific (UMAP) 2025B",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "10 Ene 2025 a 24 Ene 2025",
+        "resumen": "Dirigido a las y los estudiantes de pregrado y posgrado de la UdeG que deseen realizar una estancia académica durante el calendario 2025B en una institución de educación superior miembro de la University Mobility in Asia and Pacific.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-movilidad-de-university-mobility-asia-and-pacific-umap"
+    },
+    {
+        "convocatoria": "Sesión Informativa Apoyos de Movilidad Estudiantil Saliente (AMES) 2025 A",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "16 Ene 2025",
+        "resumen": "¿Fuiste seleccionada(o) en PEA 2025A y estas aplicando para la beca \"Apoyos a la Movilidad Saliente (AMES) 2025 A\" y tienes algunas dudas? Asiste a una de las sesiones informativas programadas. ¡Te ayudaremos a resolverlas!",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/sesion-informativa-apoyos-de-movilidad-estudiantil-saliente-ames"
+    },
+    {
+        "convocatoria": "Apoyos de Movilidad Estudiantil Saliente (AMES) 2025 A",
+        "beneficiados": "Todas las carreras, Todos los posgrados",
+        "fecha": "17 Dic 2024 a 26 Ene 2025",
+        "resumen": "Programa dirigido a estudiantes regulares previamente seleccionados en PEA saliente 2025-A.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/apoyos-de-movilidad-estudiantil-saliente-ames-2025"
+    },
+    {
+        "convocatoria": "Community College Initiative (CCI) 2025-2026",
+        "beneficiados": "Todas las carreras",
+        "fecha": "20 Nov 2024 a 06 Dic 2024",
+        "resumen": "Estudiantes activos de la Universidad de Guadalajara, que no hayan completado aun tres años de licenciatura, interesados en cursar un año de un programa académico en un Colegio Comunitario en los Estados Unidos.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/community-college-initiative-cci-2025-2026"
+    },
+    {
+        "convocatoria": "Becas de Movilidad de la Universidad de Lleida 2025 A",
+        "beneficiados": "Todas las carreras",
+        "fecha": "17 Sep 2024 a 17 Oct 2024",
+        "resumen": "Dirigido a estudiantes activos, regulares de nivel licenciatura de la Universidad de Guadalajara (UdeG), que quieran realizar una movilidad en la Universidad de Lleida en España durante el calendario 2025-A",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-de-movilidad-de-la-universidad-de-lleida-2025"
+    },
+    {
+        "convocatoria": "Programa de Intercambio Universidad Autónoma de Madrid (UAM) Banco Santander 2025 A",
+        "beneficiados": "Todas las carreras",
+        "fecha": "05 Ago 2024 a 25 Ago 2024",
+        "resumen": "Dirigido a estudiantes activos de nivel licenciatura de la Universidad de Guadalajara (UDG), que deseen realizar una movilidad en la Universidad Autónoma de Madrid en el calendario 2025 A.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-intercambio-universidad-autonoma-de-madrid-uam-banco-4"
+    },
+    {
+        "convocatoria": "Programa de Estancias Académicas (PEA) 2025 A",
+        "beneficiados": "Todas las carreras, Todas las maestrías, Todos los doctorados",
+        "fecha": "16 Jul 2024 a 15 Oct 2024",
+        "resumen": "Dirigido a estudiantes activos, regulares de pregrado y posgrado de la Universidad de Guadalajara que deseen realizar una estancia académica durante el calendario 2025 A que cumplan con las bases y requisitos de PEA 2025 A.",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/programa-de-estancias-academicas-pea-2025"
+    },
+    {
+        "convocatoria": "Becas Santander",
+        "beneficiados": "Comunidad CUCEI",
+        "fecha": "01 Ene 2025 a 31 Dic 2025",
+        "resumen": "Conoce algunos programas que oferta dicho organismo y que publica la Coordinación de Internacionalización de la UdeG por ser de interés para nuestra comunidad",
+        "hipervinculo": "https://www.cucei.udg.mx/es/servicios/becas-y-convocatorias/becas-santander-1"
     }
 ]

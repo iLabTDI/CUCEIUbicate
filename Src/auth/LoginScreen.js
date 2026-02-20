@@ -11,7 +11,6 @@ import {
   Platform,
   Dimensions,
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   Animated,
   Keyboard,
@@ -26,37 +25,37 @@ import {
   faLock,
   faEye,
   faEyeSlash,
+  faCheckCircle,
   faUser,
   faPhone,
   faIdCard,
   faChevronLeft,
   faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { login } from "../Api/login";
+import { login } from "../Api/login"; // ✨ ASEGÚRATE DE IMPORTAR EL .ts CORRECTO
 import { setSession, getSession } from "./SessionManager";
-import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
 
 export const LoginScreen = () => {
-  // Shake global: activa cuando showError es true
-  useEffect(() => {
-    if (showError) {
-      shakeForm();
-    }
-  }, [showError]);
   const navigation = useNavigation();
 
-  // Estado para alternar entre modo "Iniciar Sesión" y "Modo Invitado"
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  // ✨ MODO INVITADO - COMENTADO (descomenta cuando lo necesites)
+  // const [isGuestMode, setIsGuestMode] = useState(false);
+
+  // ✨ DATOS DEL FORMULARIO - SIN MODO INVITADO
   const [formData, setFormData] = useState({
+    // Para login normal:
     username: "",
     password: "",
-    fullName: "",
-    phone: "",
-    id: "",
+    // ✨ CAMPOS DE MODO INVITADO - COMENTADOS
+    // fullName: "",    // Nombre completo del invitado
+    // phone: "",       // Teléfono del invitado (10 dígitos)
+    // id: "",          // Identificación del invitado
   });
+
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
@@ -64,14 +63,19 @@ export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
-  const [isFocused, setIsFocused] = useState({});
 
   const shakeAnimation = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(1)).current;
   const loginBoxAnim = useRef(new Animated.Value(0)).current;
   const [bgAnim] = useState(new Animated.Value(0));
   const [floatingAnim] = useState(new Animated.Value(0));
   const logoPulseAnim = useRef(new Animated.Value(1)).current;
+
+  // Shake global: activa cuando showError es true
+  useEffect(() => {
+    if (showError) {
+      shakeForm();
+    }
+  }, [showError]);
 
   useEffect(() => {
     Animated.loop(
@@ -91,8 +95,11 @@ export const LoginScreen = () => {
       ])
     ).start();
   }, []);
+
   useEffect(() => {
-    checkExistingSession();
+    // ✨ CARGAR EMAIL GUARDADO SI EXISTE
+    loadSavedEmail();
+    
     // Animación de entrada para el loginBox
     Animated.spring(loginBoxAnim, {
       toValue: 1,
@@ -141,19 +148,28 @@ export const LoginScreen = () => {
         setKeyboardStatus(false);
       }
     );
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
   }, []);
 
-  const checkExistingSession = async () => {
-    const session = await getSession();
-    if (session) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Principal Home", params: { user: session } }],
-      });
+  // ✨ FUNCIÓN PARA CARGAR EMAIL GUARDADO
+  const loadSavedEmail = async () => {
+    try {
+      const savedEmail = await AsyncStorage.getItem("@saved_email");
+      if (savedEmail) {
+        console.log('📧 Email cargado automáticamente:', savedEmail);
+        setFormData(prev => ({
+          ...prev,
+          username: savedEmail
+        }));
+        // ✨ LIMPIAR EL EMAIL GUARDADO DESPUÉS DE USARLO
+        await AsyncStorage.removeItem("@saved_email");
+      }
+    } catch (error) {
+      console.error('Error cargando email guardado:', error);
     }
   };
 
@@ -162,10 +178,11 @@ export const LoginScreen = () => {
     return emailRegex.test(email);
   };
 
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
-  };
+  // ✨ VALIDACIÓN PARA TELÉFONO - COMENTADA (solo para modo invitado)
+  // const validatePhone = (phone) => {
+  //   const phoneRegex = /^[0-9]{10}$/; // Exactamente 10 dígitos
+  //   return phoneRegex.test(phone);
+  // };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -175,83 +192,109 @@ export const LoginScreen = () => {
     setShowError(false);
   };
 
+  // ✨ FUNCIÓN PRINCIPAL DE LOGIN CON DEBUG SÚPER DETALLADO
   const handleLogin = async () => {
+    console.log('🔍 === INICIANDO PROCESO DE LOGIN ===');
+    console.log('📅 Timestamp:', new Date().toLocaleString());
+    console.log('🌍 Timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
     setShowError(false);
     setErrorMessage("");
 
-    if (isGuestMode) {
-      // Validaciones para modo invitado
-      if (!formData.fullName || !formData.phone || !formData.id) {
-        setErrorMessage("Por favor, completa todos los campos.");
-        setShowError(true);
-        return;
-      }
-      if (!validatePhone(formData.phone)) {
-        setErrorMessage("Ingresa un número de teléfono válido (10 dígitos).");
-        setShowError(true);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const guestData = {
-          name: formData.fullName,
-          phone: formData.phone,
-          id: formData.id,
-          isGuest: true,
-        };
-        await setSession(guestData);
-        setShowSuccessAnimation(true);
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-          setShowSuccessAnimation(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Principal Home", params: { user: guestData } }],
-          });
-        }, 2000);
-      } catch (error) {
-        setErrorMessage("Error en modo invitado. Intenta de nuevo.");
-        setShowError(true);
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
-    // Validaciones para login normal
+    // ✨ LOGIN NORMAL (siempre activo)
     if (!formData.username || !formData.password) {
+      console.log('❌ Campos vacíos detectados');
       setErrorMessage("Por favor, completa todos los campos.");
       setShowError(true);
       return;
     }
+
     if (!validateEmail(formData.username)) {
+      console.log('❌ Email inválido:', formData.username);
       setErrorMessage("Ingresa un correo electrónico válido.");
       setShowError(true);
       return;
     }
+
+    console.log('📧 === DATOS DE LOGIN COMPLETOS ===');
+    console.log('Email exacto:', `"${formData.username}"`);
+    console.log('Email length:', formData.username.length);
+    console.log('Email trim:', `"${formData.username.trim()}"`);
+    console.log('Password length:', formData.password.length);
+    console.log('Password chars preview:', formData.password.split('').map(c => c.charCodeAt(0)).slice(0, 5));
+    
     setIsLoading(true);
+    
     try {
-      const result = await login(formData.username, formData.password);
-      if (result && result.isMatch && result.userData) {
+      console.log('🚀 Llamando función login con parámetros exactos...');
+      const result = await login(formData.username.trim(), formData.password);
+      
+      console.log("🔍 === RESULTADO COMPLETO DEL LOGIN ===");
+      console.log("📊 Tipo de resultado:", typeof result);
+      console.log("📊 Resultado completo:", result);
+      console.log("📊 isMatch:", result?.isMatch);
+      console.log("📊 isMatch tipo:", typeof result?.isMatch);
+      console.log("📊 userData existe:", !!result?.userData);
+      console.log("📊 userData tipo:", typeof result?.userData);
+      
+      if (result?.userData) {
+        console.log("👤 === USERDATA COMPLETO ===");
+        Object.keys(result.userData).forEach(key => {
+          console.log(`${key}:`, result.userData[key], `(${typeof result.userData[key]})`);
+        });
+      }
+
+      if (result && result.isMatch === true && result.userData) {
+        console.log("✅ === LOGIN SÚPER EXITOSO ===");
+        console.log("👤 Usuario logueado:", result.userData.username);
+        console.log("📧 Email confirmado:", result.userData.email);
+        console.log("🏷️ Nombre completo:", result.userData.name, result.userData.lastnames);
+        console.log("🎓 Código estudiantil:", result.userData.code);
+        
+        // ✨ GUARDAR SESIÓN PRIMERO
+        console.log("💾 === GUARDANDO SESIÓN ===");
         await setSession(result.userData);
+        console.log("💾 === SESIÓN GUARDADA CORRECTAMENTE ===");
+        
+        // ✨ MOSTRAR ANIMACIÓN DE ÉXITO
         setShowSuccessAnimation(true);
         setModalVisible(true);
+        
         setTimeout(() => {
           setModalVisible(false);
           setShowSuccessAnimation(false);
+          console.log("🏠 === NAVEGANDO AL HOME ===");
+          
+          // ✨ NAVEGACIÓN CORREGIDA
           navigation.reset({
             index: 0,
             routes: [
               { name: "Principal Home", params: { user: result.userData } },
             ],
           });
-        }, 2000);
+        }, 3000);
       } else {
+        console.log("❌ === LOGIN FALLIDO ===");
+        console.log("🔍 Análisis súper detallado del fallo:");
+        console.log("- Resultado existe:", !!result);
+        console.log("- Resultado tipo:", typeof result);
+        console.log("- isMatch value:", result?.isMatch);
+        console.log("- isMatch type:", typeof result?.isMatch);
+        console.log("- isMatch === true:", result?.isMatch === true);
+        console.log("- userData exists:", !!result?.userData);
+        console.log("- userData type:", typeof result?.userData);
+        console.log("- Condición completa:", result && result.isMatch === true && result.userData);
+        
         setErrorMessage("Correo o contraseña incorrectos.");
         setShowError(true);
       }
     } catch (error) {
+      console.error("🚨 === ERROR EN HANDLELOGIN ===");
+      console.error("Error completo:", error);
+      console.error("Error type:", typeof error);
+      console.error("Error message:", error?.message);
+      console.error("Error stack:", error?.stack);
+      console.error("Error name:", error?.name);
+      
       setErrorMessage("Error al iniciar sesión. Intenta de nuevo.");
       setShowError(true);
     } finally {
@@ -320,14 +363,13 @@ export const LoginScreen = () => {
           <Animated.View
             style={[
               styles.formWrapper,
-              // {
-              //   transform: [
-              //     { translateX: shakeAnimation },
-              //     { translateY: floatingTransform },
-              //   ],
-              // },
+              {
+                transform: [
+                  { translateX: shakeAnimation },
+                ],
+              },
             ]}>
-            {/* Logo con fondo circular, gradiente y animación de pulso */}
+            {/* ✨ LOGO CON IMAGEN CUCEI.PNG CORRECTA */}
             <Animated.View
               style={[
                 styles.logoCircle,
@@ -337,6 +379,7 @@ export const LoginScreen = () => {
                   shadowOpacity: 0.22,
                   shadowRadius: 24,
                   elevation: 16,
+                  transform: [{ scale: logoPulseAnim }],
                 },
               ]}>
               <Image
@@ -356,128 +399,75 @@ export const LoginScreen = () => {
                 />
               </View>
 
-              <Text style={styles.title}>
-                {isGuestMode ? "Modo Invitado" : "Iniciar Sesión"}
-              </Text>
+              <Text style={styles.title}>Iniciar Sesión</Text>
               <Text style={styles.subtitle}>
-                {isGuestMode
-                  ? "Ingresa tus datos para continuar"
-                  : "Ingresa tus credenciales para continuar"}
+                {/* ✨ MENSAJE PERSONALIZADO SI HAY EMAIL PRE-CARGADO */}
+                {formData.username ? 
+                  "Solo ingresa tu contraseña para continuar" : 
+                  "Ingresa tus credenciales para continuar"
+                }
               </Text>
 
-              {isGuestMode ? (
-                <>
-                  {/* Modo Invitado - Campo Nombre Completo */}
-                  <View style={styles.inputContainer}>
+              {/* ✨ CAMPO EMAIL CON INDICADOR VISUAL SI ESTÁ PRE-CARGADO */}
+              <View style={[
+                styles.inputContainer,
+                formData.username && styles.inputContainerPreFilled
+              ]}>
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  style={[
+                    styles.inputIconBlue,
+                    formData.username && styles.inputIconSuccess
+                  ]}
+                  size={22}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Correo electrónico"
+                  placeholderTextColor="#a8b2c8"
+                  value={formData.username}
+                  onChangeText={(text) => handleInputChange("username", text)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  selectionColor="#0b34b0"
+                />
+                {formData.username && (
+                  <View style={styles.preFilledIndicator}>
                     <FontAwesomeIcon
-                      icon={faUser}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Nombre Completo"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.fullName}
-                      onChangeText={(text) =>
-                        handleInputChange("fullName", text)
-                      }
-                      autoCapitalize="words"
-                      selectionColor="#0b34b0"
+                      icon={faCheckCircle}
+                      style={styles.checkIcon}
+                      size={20}
                     />
                   </View>
+                )}
+              </View>
 
-                  {/* Modo Invitado - Campo Teléfono */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faPhone}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Teléfono"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.phone}
-                      onChangeText={(text) => handleInputChange("phone", text)}
-                      keyboardType="phone-pad"
-                      maxLength={10}
-                      selectionColor="#0b34b0"
-                    />
-                  </View>
-
-                  {/* Modo Invitado - Campo Identificación */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faIdCard}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Identificación"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.id}
-                      onChangeText={(text) => handleInputChange("id", text)}
-                      autoCapitalize="characters"
-                      selectionColor="#0b34b0"
-                    />
-                  </View>
-                </>
-              ) : (
-                <>
-                  {/* Login Normal - Campo Email */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faEnvelope}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Correo electrónico"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.username}
-                      onChangeText={(text) =>
-                        handleInputChange("username", text)
-                      }
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      selectionColor="#0b34b0"
-                    />
-                  </View>
-
-                  {/* Login Normal - Campo Contraseña */}
-                  <View style={styles.inputContainer}>
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Contraseña"
-                      placeholderTextColor="#a8b2c8"
-                      value={formData.password}
-                      onChangeText={(text) =>
-                        handleInputChange("password", text)
-                      }
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      selectionColor="#0b34b0"
-                    />
-                    <TouchableOpacity
-                      onPress={() => setShowPassword(!showPassword)}
-                      style={styles.eyeIconContainer}>
-                      <FontAwesomeIcon
-                        icon={showPassword ? faEyeSlash : faEye}
-                        size={20}
-                        color="#7a89a8"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
+              <View style={styles.inputContainer}>
+                <FontAwesomeIcon
+                  icon={faLock}
+                  style={styles.inputIconBlue}
+                  size={22}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Contraseña"
+                  placeholderTextColor="#a8b2c8"
+                  value={formData.password}
+                  onChangeText={(text) => handleInputChange("password", text)}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  selectionColor="#0b34b0"
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIconContainer}>
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    size={20}
+                    color="#7a89a8"
+                  />
+                </TouchableOpacity>
+              </View>
 
               {/* Mensaje de error mejorado */}
               {showError && (
@@ -486,7 +476,7 @@ export const LoginScreen = () => {
                 </View>
               )}
 
-              {/* Botón principal con gradiente */}
+              {/* ✨ BOTÓN PRINCIPAL CON TEXTO DINÁMICO */}
               <TouchableOpacity
                 style={[styles.button, isLoading && styles.buttonLoading]}
                 onPress={handleLogin}
@@ -497,47 +487,70 @@ export const LoginScreen = () => {
                     <ActivityIndicator size={28} color="#fff" />
                   ) : (
                     <Text style={styles.buttonText}>
-                      {isGuestMode
-                        ? "Continuar como Invitado"
-                        : "Iniciar Sesión"}
+                      {formData.username ? "Iniciar Sesión" : "Iniciar Sesión"}
                     </Text>
                   )}
                 </View>
               </TouchableOpacity>
 
-              {/* Botón de registro */}
-              {!isGuestMode && (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Registro")}
-                  style={styles.registerButton}
-                  activeOpacity={0.7}>
-                  <Text style={styles.registerText}>
-                    ¿No tienes cuenta?{" "}
-                    <Text style={styles.registerTextBold}>¡Regístrate!</Text>
-                  </Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Registro")}
+                style={styles.registerButton}
+                activeOpacity={0.7}>
+                <Text style={styles.registerText}>
+                  ¿No tienes cuenta?{" "}
+                  <Text style={styles.registerTextBold}>¡Regístrate!</Text>
+                </Text>
+              </TouchableOpacity>
             </View>
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Modal de éxito mejorado */}
+      {/* ✨ MODAL CON DISEÑO SÚPER HERMOSO Y RESPONSIVO */}
       <Modal
-        animationType="fade"
-        transparent={true}
         visible={modalVisible}
+        transparent
+        animationType="fade"
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContentWrapper}>
-            {showSuccessAnimation && (
-              <LottieView
-                source={successAnimation}
-                autoPlay
-                loop={false}
-                style={styles.animation}
-              />
-            )}
+            
+            <View style={styles.modalMainContent}>
+              
+              {/* ✨ LOGO CON IMAGEN CUCEI.PNG CORRECTA */}
+              <View style={styles.modalLogoMain}>
+                <View style={styles.modalLogoOuterGlow} />
+                <View style={styles.modalLogoMiddleGlow} />
+                <View style={styles.modalLogoInnerGlow} />
+                <Image
+                  source={require("../../assets/images/Logo_Cucei.png")}
+                  style={styles.modalLogoImage}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              {/* ✨ ANIMACIÓN LOTTIE CON GLOW HERMOSO */}
+              {showSuccessAnimation && (
+                <View style={styles.modalLottieContainer}>
+                  <View style={styles.modalLottieGlow} />
+                  <LottieView
+                    source={require("../assets/animations/Map_loading.json")}
+                    autoPlay
+                    loop={false}
+                    style={styles.modalLottie}
+                  />
+                </View>
+              )}
+              
+              {/* ✨ TEXTO SÚPER ELEGANTE */}
+              <View style={styles.modalTextCentered}>
+                <Text style={styles.modalTitleCentered}>¡Bienvenido!</Text>
+                <Text style={styles.modalSubtitleCentered}>Preparando tu experiencia...</Text>
+              </View>
+              
+            </View>
+            
           </View>
         </View>
       </Modal>
@@ -618,7 +631,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
-    elevation: 6,
+    // elevation: 6,
     borderWidth: 2,
     borderColor: "rgba(208, 216, 246, 0.3)",
   },
@@ -761,27 +774,210 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // Modal mejorado
+  // ✨ MODAL SÚPER ELEGANTE Y RESPONSIVO
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
     justifyContent: "center",
     alignItems: "center",
-    backdropFilter: "blur(8px)",
+    paddingHorizontal: 20,
+    backdropFilter: "blur(15px)",
   },
+  
   modalContentWrapper: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 24,
-    padding: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.98)",
+    borderRadius: Platform.OS === 'android' ? 28 : 32,
+    padding: Platform.OS === 'android' 
+      ? (isTablet ? 30 : 25) 
+      : (isTablet ? 35 : 30),
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.25,
-    shadowRadius: 30,
-    elevation: 20,
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.3,
+    shadowRadius: 35,
+    elevation: 25,
+    borderWidth: 1,
+    borderColor: "rgba(208, 216, 246, 0.8)",
+    width: '100%',
+    maxWidth: Platform.OS === 'android' 
+      ? (isTablet ? 480 : 340) 
+      : (isTablet ? 500 : 360),
+    minHeight: Platform.OS === 'android' 
+      ? (isTablet ? 380 : 320) 
+      : (isTablet ? 400 : 350),
   },
-  animation: {
-    width: 220,
-    height: 220,
+  
+  // ✨ CONTENEDOR PRINCIPAL CENTRADO
+  modalMainContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  
+  // ✨ LOGO DEL MODAL CON TRIPLE GLOW HERMOSO
+  modalLogoMain: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Platform.OS === 'android' 
+      ? (isTablet ? 25 : 20) 
+      : (isTablet ? 30 : 25),
+    position: 'relative',
+  },
+  
+  modalLogoOuterGlow: {
+    position: 'absolute',
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 180 : 140) 
+      : (isTablet ? 200 : 160),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 125 : 95) 
+      : (isTablet ? 140 : 110),
+    borderRadius: Platform.OS === 'android' 
+      ? (isTablet ? 90 : 70) 
+      : (isTablet ? 100 : 80),
+    backgroundColor: 'rgba(11, 52, 176, 0.04)',
+    zIndex: 1,
+  },
+  
+  modalLogoMiddleGlow: {
+    position: 'absolute',
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 150 : 115) 
+      : (isTablet ? 170 : 130),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 105 : 80) 
+      : (isTablet ? 115 : 90),
+    borderRadius: Platform.OS === 'android' 
+      ? (isTablet ? 75 : 57.5) 
+      : (isTablet ? 85 : 65),
+    backgroundColor: 'rgba(11, 52, 176, 0.06)',
+    zIndex: 2,
+  },
+  
+  modalLogoInnerGlow: {
+    position: 'absolute',
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 120 : 95) 
+      : (isTablet ? 140 : 110),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 85 : 65) 
+      : (isTablet ? 95 : 75),
+    borderRadius: Platform.OS === 'android' 
+      ? (isTablet ? 60 : 47.5) 
+      : (isTablet ? 70 : 55),
+    backgroundColor: 'rgba(11, 52, 176, 0.08)',
+    zIndex: 3,
+  },
+  
+  modalLogoImage: {
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 110 : 85) 
+      : (isTablet ? 130 : 100),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 75 : 60) 
+      : (isTablet ? 90 : 70),
+    opacity: 0.95,
+    zIndex: 4,
+  },
+  
+  // ✨ CONTENEDOR LOTTIE CON GLOW
+  modalLottieContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Platform.OS === 'android' 
+      ? (isTablet ? 20 : 15) 
+      : (isTablet ? 25 : 20),
+    position: 'relative',
+  },
+  
+  modalLottieGlow: {
+    position: 'absolute',
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 200 : 160) 
+      : (isTablet ? 220 : 180),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 200 : 160) 
+      : (isTablet ? 220 : 180),
+    borderRadius: Platform.OS === 'android' 
+      ? (isTablet ? 100 : 80) 
+      : (isTablet ? 110 : 90),
+    backgroundColor: 'rgba(74, 144, 226, 0.05)',
+    zIndex: 1,
+  },
+  
+  modalLottie: {
+    width: Platform.OS === 'android' 
+      ? (isTablet ? 160 : 120) 
+      : (isTablet ? 180 : 140),
+    height: Platform.OS === 'android' 
+      ? (isTablet ? 160 : 120) 
+      : (isTablet ? 180 : 140),
+    zIndex: 2,
+  },
+  
+  // ✨ TEXTO SÚPER ELEGANTE Y CENTRADO
+  modalTextCentered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+  },
+  
+  modalTitleCentered: {
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 22 : 18) 
+      : (isTablet ? 24 : 20),
+    fontWeight: "800",
+    color: "#0b34b0",
+    textAlign: "center",
+    letterSpacing: Platform.OS === 'android' ? 0.8 : 1,
+    marginBottom: 8,
+    lineHeight: Platform.OS === 'android' 
+      ? (isTablet ? 28 : 24) 
+      : (isTablet ? 30 : 26),
+    textShadowColor: 'rgba(11, 52, 176, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  
+  modalSubtitleCentered: {
+    fontSize: Platform.OS === 'android' 
+      ? (isTablet ? 15 : 13) 
+      : (isTablet ? 16 : 14),
+    fontWeight: "600",
+    color: "#64748b",
+    textAlign: "center",
+    letterSpacing: 0.5,
+    opacity: 0.8,
+    lineHeight: Platform.OS === 'android' 
+      ? (isTablet ? 20 : 18) 
+      : (isTablet ? 22 : 19),
+  },
+
+  // ✨ ESTILOS PARA EMAIL PRE-CARGADO
+  inputContainerPreFilled: {
+    borderColor: "#52c41a",
+    backgroundColor: "rgba(240, 255, 240, 0.9)",
+    shadowColor: "#52c41a",
+    shadowOpacity: 0.1,
+  },
+
+  inputIconSuccess: {
+    color: "#52c41a",
+  },
+
+  preFilledIndicator: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(82, 196, 26, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+
+  checkIcon: {
+    color: "#52c41a",
   },
 });
 export default LoginScreen;

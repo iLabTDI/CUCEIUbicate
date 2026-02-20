@@ -11,14 +11,20 @@
         "simulator": true
       },
       "android": {
-        "image": "default"
+        "image": "latest",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "image": "default"
+        "image": "latest",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     },
     "production": {
@@ -27,7 +33,10 @@
         "simulator": false
       },
       "android": {
-        "image": "default"
+        "image": "latest",
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       }
     }
   }
