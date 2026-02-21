@@ -255,7 +255,7 @@ export const HomePage = () => {
     setShowSpecificSearch(false);
   };
 
-  
+
   /**
    * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
    * estableciendo los puntos, identificador de la ruta y video asociado.
@@ -299,7 +299,7 @@ export const HomePage = () => {
         backgroundColor="#f8fafc"
         animated={true}
       />
-      
+
       {/* ✨ CONTENIDO PRINCIPAL - SIEMPRE VISIBLE (YA VIMOS EL SPLASH) */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
         {/* Botón de menú */}
@@ -313,7 +313,7 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-        
+
         {/* Botón de perfil */}
         <TouchableOpacity
           style={[
@@ -332,7 +332,7 @@ export const HomePage = () => {
             />
           )}
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
           <FontAwesomeIcon
             icon={faRoute}
@@ -340,11 +340,11 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-        
+
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
-        
+
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -429,14 +429,14 @@ export const HomePage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     backgroundColor: '#f8fafc'
   },
-  content: { 
-    flex: 1 
+  content: {
+    flex: 1
   },
-  
+
   // Loading optimizado
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     color: "#64748b", // ✨ COLOR MÁS SUTIL
     letterSpacing: 0.3,
   },
-  
+
   // Overlay
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   search_icon: {
     position: "absolute",
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   profile_icon: {
     position: "absolute",
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
@@ -521,14 +521,14 @@ const styles = StyleSheet.create({
     width: Platform.OS === 'android' ? 56 : undefined,
     height: Platform.OS === 'android' ? 56 : undefined,
   },
-  
+
   profile_icon_selected: {
     padding: Platform.OS === 'android' ? 4 : 0,
     backgroundColor: "#ffffff",
     borderWidth: 3,
     borderColor: "#0b34b0",
   },
-  
+
   profileImage: {
     width: Platform.OS === 'android' ? 48 : width * 0.13,
     height: Platform.OS === 'android' ? 48 : width * 0.13,
@@ -536,20 +536,20 @@ const styles = StyleSheet.create({
   },
 
   // Mapa optimizado para Android
-  mapContainer: { 
+  mapContainer: {
     flex: 1,
     backgroundColor: '#ffffff'
   },
-  
-  zoomContainer: { 
-    width: 1600, 
-    height: 1400, 
+
+  zoomContainer: {
+    width: 1600,
+    height: 1400,
     position: "relative",
     backgroundColor: '#ffffff'
   },
-  
-  mapImage: { 
-    width: 1600, 
+
+  mapImage: {
+    width: 1600,
     height: 1400,
     backgroundColor: '#ffffff'
   },
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   finalizeButtonText: {
     color: "#FFFFFF",
     textAlign: "center",
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'android' ? 16 : 18,
     letterSpacing: 0.5,
   },
-  
+
   videoButton: {
     position: "absolute",
     bottom: Platform.OS === 'android' ? 96 : 80,
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'android' ? 56 : undefined,
     justifyContent: 'center',
   },
-  
+
   videoButtonText: {
     color: "#FFFFFF",
     marginLeft: Platform.OS === 'android' ? 8 : 8,

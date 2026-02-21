@@ -232,6 +232,13 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
+    const [routeOrigin, routeDestination] = found.name.split(" - ").map(p => p.trim());
+
+    if (routeOrigin === destinationInput && routeDestination === originInput) {
+      matchingRoute.coordinates = matchingRoute.coordinates.toReversed();
+      matchingRoute.name = `${routeDestination} - ${routeOrigin}`;
+    }
+
     onSearch(matchingRoute);
     console.log("onSearch:", matchingRoute);
 
