@@ -10,34 +10,34 @@ const secureHash = (password: string): string => {
     const staticSalt = 'CUCEI_UBICATE_2024_PRODUCTION_SECURE_SALT_V2';
     const timestamp = Date.now().toString(36);
     const combined = password + staticSalt + timestamp.slice(-6);
-    
+
     let hash1 = 0;
     let hash2 = 0;
     let hash3 = 0;
-    
+
     for (let i = 0; i < combined.length; i++) {
       const char = combined.charCodeAt(i);
       hash1 = ((hash1 << 5) - hash1) + char;
       hash1 = hash1 & hash1;
     }
-    
+
     for (let i = 0; i < combined.length; i++) {
       const char = combined.charCodeAt(i);
       hash2 = ((hash2 << 3) - hash2) + char + i;
       hash2 = hash2 & hash2;
     }
-    
+
     const mixed = password + staticSalt;
     for (let i = 0; i < mixed.length; i++) {
       const char = mixed.charCodeAt(i);
       hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
       hash3 = hash3 & hash3;
     }
-    
+
     const finalHash1 = Math.abs(hash1).toString(36).padStart(8, '0');
     const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
     const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
-    
+
     // ✨ FORMATO CON 6 PARTES - IDÉNTICO A TODOS
     return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
   } catch (error) {
@@ -122,7 +122,6 @@ export const register = async (userData: RegisterData): Promise<RegisterResponse
 
     // ✨ USAR LA FUNCIÓN DE HASH CONSISTENTE
     const hashedPassword = secureHash(userData.password);
-    console.log('📊 Hash generado en register:', hashedPassword.substring(0, 20) + '...');
 
     const userToInsert = {
       ...userData,

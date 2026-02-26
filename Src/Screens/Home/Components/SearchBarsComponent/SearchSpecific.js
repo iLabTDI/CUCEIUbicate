@@ -445,15 +445,13 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: isTablet ? height * 0.03 : height * 0.05,
-    right: isTablet ? width * 0.02 : width * 0.03,
+    top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
+    right: Platform.OS === 'android' ? width * 0.04 : width * 0.03,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 10,
   },
   search_icon: {
-    top: Platform.OS === "android" ? 12 : 5,
-    right: Platform.OS === "android" ? 10 : 0.2,
     backgroundColor: "#0b34b0",
     borderRadius: Platform.OS === "android" ? 50 : width * 0.1,
     padding: Platform.OS === "android" ? 14 : width * 0.04,
@@ -463,6 +461,10 @@ const styles = StyleSheet.create({
     shadowOffset: Platform.OS === "ios" ? { width: 0, height: 2 } : undefined,
     shadowOpacity: Platform.OS === "ios" ? 0.25 : undefined,
     shadowRadius: Platform.OS === "ios" ? 3.84 : undefined,
+    width: Platform.OS === 'android' ? 56 : undefined,
+    height: Platform.OS === 'android' ? 56 : undefined,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   overlay: {
     position: "absolute",
