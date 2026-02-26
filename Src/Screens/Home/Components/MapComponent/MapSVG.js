@@ -1,21 +1,21 @@
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Animated, Platform } from "react-native";
-import Svg, { 
-  Polyline, 
-  Defs, 
-  LinearGradient, 
-  Stop, 
-  Circle, 
+import Svg, {
+  Polyline,
+  Defs,
+  LinearGradient,
+  Stop,
+  Circle,
   RadialGradient,
   Filter,
   DropShadow,
   Marker
 } from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { 
-  faTimes, 
-  faMapMarkerAlt, 
-  faLocationArrow, 
+import {
+  faTimes,
+  faMapMarkerAlt,
+  faLocationArrow,
   faFlag,
   faRoute,
   faDotCircle
@@ -40,7 +40,7 @@ const MapSVG = ({
   const dashOffset = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
-  
+
   useEffect(() => {
     if (isRouteActive && activeRoutePoints.length > 1) {
       // Animación del dash offset para el efecto de flujo
@@ -119,9 +119,9 @@ const MapSVG = ({
       top: markedObject.top - 45,
     };
     return (
-      <Animated.View 
+      <Animated.View
         style={[
-          styles.markerContainer, 
+          styles.markerContainer,
           markerPosition,
           {
             transform: [{ scale: pulseAnim }],
@@ -156,7 +156,7 @@ const MapSVG = ({
             <Stop offset="75%" stopColor="#60A5FA" stopOpacity="1" />
             <Stop offset="100%" stopColor="#93C5FD" stopOpacity="1" />
           </LinearGradient>
-          
+
           {/* Gradiente de brillo para efecto glow */}
           <RadialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
             <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
@@ -252,7 +252,7 @@ const MapSVG = ({
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     const origin = activeRoutePoints[0];
     const destination = activeRoutePoints[activeRoutePoints.length - 1];
-    
+
     return (
       <>
         {/* Pin de origen sin animación */}
@@ -260,8 +260,8 @@ const MapSVG = ({
           style={[
             styles.routePin,
             styles.originPin,
-            { 
-              left: origin[0] - 15, 
+            {
+              left: origin[0] - 15,
               top: origin[1] - 20,
             },
           ]}
@@ -281,8 +281,8 @@ const MapSVG = ({
           style={[
             styles.routePin,
             styles.destinationPin,
-            { 
-              left: destination[0] - 17, 
+            {
+              left: destination[0] - 17,
               top: destination[1] - 20,
             },
           ]}

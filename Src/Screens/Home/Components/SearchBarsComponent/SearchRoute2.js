@@ -232,7 +232,7 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const [routeOrigin, routeDestination] = found.name.split(" - ").map(p => p.trim());
+    const [routeOrigin, routeDestination] = matchingRoute.name.split(" - ").map(p => p.trim());
 
     if (routeOrigin === destinationInput && routeDestination === originInput) {
       matchingRoute.coordinates = matchingRoute.coordinates.toReversed();

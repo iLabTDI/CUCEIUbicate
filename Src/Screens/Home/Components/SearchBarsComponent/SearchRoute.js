@@ -82,7 +82,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     // Preparar y ejecutar la búsqueda
     const searchKey = `${originText.trim()} - ${destinationText.trim()}`;
     const reverseSearchKey = `${destinationText.trim()} - ${originText.trim()}`;
-    
+
     // Llamar a la función de búsqueda proporcionada por el componente HomePage
     onSearch({ searchKey, reverseSearchKey });
     console.log('onSearch:', { searchKey, reverseSearchKey });
@@ -93,7 +93,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
       setSearchHistory((prevHistory) => {
         const newHistory = [
           search,
-          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)), 
+          ...prevHistory.filter((item) => JSON.stringify(item) !== JSON.stringify(search)),
         ];
         AsyncStorage.setItem("searchHistory", JSON.stringify(newHistory));
         return newHistory;
@@ -150,9 +150,9 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
 
     if (text.trim().length > 0) {
       const suggestions = points
-        .filter(point => 
-          point.name.toLowerCase().startsWith(text.toLowerCase()) || 
-          point.id.toLowerCase().includes(text.toLowerCase()) || 
+        .filter(point =>
+          point.name.toLowerCase().startsWith(text.toLowerCase()) ||
+          point.id.toLowerCase().includes(text.toLowerCase()) ||
           (point.aliases && point.aliases.some(alias => alias.toLowerCase().includes(text.toLowerCase())))
         )
         .map(point => point.name);
@@ -188,12 +188,12 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
     }
   };
 
-  
+
 
   return (
     <Animated.View style={[styles.overlay, { transform: [{ translateY: slideAnim }] }]}>
-      <KeyboardAvoidingView 
-        style={styles.container} 
+      <KeyboardAvoidingView
+        style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.searchBarContainer}>
@@ -285,7 +285,7 @@ export const SearchRoute = ({ onClose, onSearch, points }) => {
             </ScrollView>
             {searchHistory.length > 0 && (
               <TouchableOpacity style={styles.clearHistoryButton} onPress={clearSearchHistory}>
-              <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
+                <FontAwesomeIcon icon={faTrash} size={18} color="#FFFFFF" />
                 <Text style={styles.clearHistoryButtonText}>Limpiar Historial</Text>
               </TouchableOpacity>
             )}
