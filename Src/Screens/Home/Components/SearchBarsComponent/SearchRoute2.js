@@ -232,18 +232,18 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const [routeOrigin, routeDestination] = matchingRoute.name.split(" - ").map(p => p.trim().toUpperCase());
+    const [routeOrigin, routeDestination] = matchingRoute.name.split(" - ").map(p => p.trim());
 
     const updatedRoute = {
       ...matchingRoute,
       coordinates:
-        routeOrigin === destinationInput.toUpperCase() &&
-          routeDestination === originInput.toUpperCase()
+        routeOrigin === destinationInput &&
+          routeDestination === originInput
           ? matchingRoute.coordinates.toReversed()
           : matchingRoute.coordinates,
       name:
-        routeOrigin === destinationInput.toUpperCase() &&
-          routeDestination === originInput.toUpperCase()
+        routeOrigin.toUpperCase() === destinationInput.toUpperCase() &&
+          routeDestination.toUpperCase() === originInput.toUpperCase()
           ? `${routeDestination} - ${routeOrigin}`
           : matchingRoute.name,
     };
