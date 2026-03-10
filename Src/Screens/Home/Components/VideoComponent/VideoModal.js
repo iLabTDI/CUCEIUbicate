@@ -68,10 +68,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
   const fetchVideoFromJson = () => {
     try {
       // console.log("routeId:", routeId, "routeVideos:", routeVideos);
-      // let videoUriFromData = routeVideos[routeId];
-      const videoUriFromData = routeVideos[routeId];
-      console.log("routeId:", routeId);
-      console.log("video uri from data:", videoUriFromData);
+      let videoUriFromData = routeVideos[routeId];
       if (!videoUriFromData) {
         // Si no se encontró, intentamos invertir el orden
         const parts = routeId.split(" - ");

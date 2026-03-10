@@ -71,6 +71,14 @@ export const HomePage = () => {
   const loadingOpacity = useRef(new Animated.Value(0)).current;
   const contentOpacity = useRef(new Animated.Value(1)).current;
 
+  useEffect(() => {
+    if (isLoading) return;
+
+    const { width, height } = Image.resolveAssetSource(currentMapImage);
+
+    console.log("Imagen cargada con dimensiones:", width, height);
+  }, [currentMapImage])
+
   /**
    * Función para solicitar permisos de almacenamiento.
    * En Android se solicitan READ y WRITE del almacenamiento externo,
@@ -542,8 +550,7 @@ const styles = StyleSheet.create({
   },
 
   zoomContainer: {
-    width: 1600,
-    height: 1400,
+    flex: 1,
     position: "relative",
     backgroundColor: '#ffffff'
   },

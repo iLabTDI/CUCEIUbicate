@@ -99,7 +99,7 @@ export const LoginScreen = () => {
   useEffect(() => {
     // ✨ CARGAR EMAIL GUARDADO SI EXISTE
     loadSavedEmail();
-    
+
     // Animación de entrada para el loginBox
     Animated.spring(loginBoxAnim, {
       toValue: 1,
@@ -221,13 +221,13 @@ export const LoginScreen = () => {
     console.log('Email trim:', `"${formData.username.trim()}"`);
     console.log('Password length:', formData.password.length);
     console.log('Password chars preview:', formData.password.split('').map(c => c.charCodeAt(0)).slice(0, 5));
-    
+
     setIsLoading(true);
-    
+
     try {
       console.log('🚀 Llamando función login con parámetros exactos...');
       const result = await login(formData.username.trim(), formData.password);
-      
+
       console.log("🔍 === RESULTADO COMPLETO DEL LOGIN ===");
       console.log("📊 Tipo de resultado:", typeof result);
       console.log("📊 Resultado completo:", result);
@@ -235,7 +235,7 @@ export const LoginScreen = () => {
       console.log("📊 isMatch tipo:", typeof result?.isMatch);
       console.log("📊 userData existe:", !!result?.userData);
       console.log("📊 userData tipo:", typeof result?.userData);
-      
+
       if (result?.userData) {
         console.log("👤 === USERDATA COMPLETO ===");
         Object.keys(result.userData).forEach(key => {
@@ -249,21 +249,21 @@ export const LoginScreen = () => {
         console.log("📧 Email confirmado:", result.userData.email);
         console.log("🏷️ Nombre completo:", result.userData.name, result.userData.lastnames);
         console.log("🎓 Código estudiantil:", result.userData.code);
-        
+
         // ✨ GUARDAR SESIÓN PRIMERO
         console.log("💾 === GUARDANDO SESIÓN ===");
         await setSession(result.userData);
         console.log("💾 === SESIÓN GUARDADA CORRECTAMENTE ===");
-        
+
         // ✨ MOSTRAR ANIMACIÓN DE ÉXITO
         setShowSuccessAnimation(true);
         setModalVisible(true);
-        
+
         setTimeout(() => {
           setModalVisible(false);
           setShowSuccessAnimation(false);
           console.log("🏠 === NAVEGANDO AL HOME ===");
-          
+
           // ✨ NAVEGACIÓN CORREGIDA
           navigation.reset({
             index: 0,
@@ -283,7 +283,7 @@ export const LoginScreen = () => {
         console.log("- userData exists:", !!result?.userData);
         console.log("- userData type:", typeof result?.userData);
         console.log("- Condición completa:", result && result.isMatch === true && result.userData);
-        
+
         setErrorMessage("Correo o contraseña incorrectos.");
         setShowError(true);
       }
@@ -294,7 +294,7 @@ export const LoginScreen = () => {
       console.error("Error message:", error?.message);
       console.error("Error stack:", error?.stack);
       console.error("Error name:", error?.name);
-      
+
       setErrorMessage("Error al iniciar sesión. Intenta de nuevo.");
       setShowError(true);
     } finally {
@@ -402,8 +402,8 @@ export const LoginScreen = () => {
               <Text style={styles.title}>Iniciar Sesión</Text>
               <Text style={styles.subtitle}>
                 {/* ✨ MENSAJE PERSONALIZADO SI HAY EMAIL PRE-CARGADO */}
-                {formData.username ? 
-                  "Solo ingresa tu contraseña para continuar" : 
+                {formData.username ?
+                  "Solo ingresa tu contraseña para continuar" :
                   "Ingresa tus credenciales para continuar"
                 }
               </Text>
@@ -515,9 +515,9 @@ export const LoginScreen = () => {
         onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContentWrapper}>
-            
+
             <View style={styles.modalMainContent}>
-              
+
               {/* ✨ LOGO CON IMAGEN CUCEI.PNG CORRECTA */}
               <View style={styles.modalLogoMain}>
                 <View style={styles.modalLogoOuterGlow} />
@@ -529,7 +529,7 @@ export const LoginScreen = () => {
                   resizeMode="contain"
                 />
               </View>
-              
+
               {/* ✨ ANIMACIÓN LOTTIE CON GLOW HERMOSO */}
               {showSuccessAnimation && (
                 <View style={styles.modalLottieContainer}>
@@ -542,15 +542,15 @@ export const LoginScreen = () => {
                   />
                 </View>
               )}
-              
+
               {/* ✨ TEXTO SÚPER ELEGANTE */}
               <View style={styles.modalTextCentered}>
                 <Text style={styles.modalTitleCentered}>¡Bienvenido!</Text>
                 <Text style={styles.modalSubtitleCentered}>Preparando tu experiencia...</Text>
               </View>
-              
+
             </View>
-            
+
           </View>
         </View>
       </Modal>
@@ -783,12 +783,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backdropFilter: "blur(15px)",
   },
-  
+
   modalContentWrapper: {
     backgroundColor: "rgba(255, 255, 255, 0.98)",
     borderRadius: Platform.OS === 'android' ? 28 : 32,
-    padding: Platform.OS === 'android' 
-      ? (isTablet ? 30 : 25) 
+    padding: Platform.OS === 'android'
+      ? (isTablet ? 30 : 25)
       : (isTablet ? 35 : 30),
     alignItems: 'center',
     justifyContent: 'center',
@@ -800,157 +800,157 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(208, 216, 246, 0.8)",
     width: '100%',
-    maxWidth: Platform.OS === 'android' 
-      ? (isTablet ? 480 : 340) 
+    maxWidth: Platform.OS === 'android'
+      ? (isTablet ? 480 : 340)
       : (isTablet ? 500 : 360),
-    minHeight: Platform.OS === 'android' 
-      ? (isTablet ? 380 : 320) 
+    minHeight: Platform.OS === 'android'
+      ? (isTablet ? 380 : 320)
       : (isTablet ? 400 : 350),
   },
-  
+
   // ✨ CONTENEDOR PRINCIPAL CENTRADO
   modalMainContent: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
-  
+
   // ✨ LOGO DEL MODAL CON TRIPLE GLOW HERMOSO
   modalLogoMain: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Platform.OS === 'android' 
-      ? (isTablet ? 25 : 20) 
+    marginBottom: Platform.OS === 'android'
+      ? (isTablet ? 25 : 20)
       : (isTablet ? 30 : 25),
     position: 'relative',
   },
-  
+
   modalLogoOuterGlow: {
     position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 180 : 140) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 180 : 140)
       : (isTablet ? 200 : 160),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 125 : 95) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 125 : 95)
       : (isTablet ? 140 : 110),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? 90 : 70) 
+    borderRadius: Platform.OS === 'android'
+      ? (isTablet ? 90 : 70)
       : (isTablet ? 100 : 80),
     backgroundColor: 'rgba(11, 52, 176, 0.04)',
     zIndex: 1,
   },
-  
+
   modalLogoMiddleGlow: {
     position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 150 : 115) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 150 : 115)
       : (isTablet ? 170 : 130),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 105 : 80) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 105 : 80)
       : (isTablet ? 115 : 90),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? 75 : 57.5) 
+    borderRadius: Platform.OS === 'android'
+      ? (isTablet ? 75 : 57.5)
       : (isTablet ? 85 : 65),
     backgroundColor: 'rgba(11, 52, 176, 0.06)',
     zIndex: 2,
   },
-  
+
   modalLogoInnerGlow: {
     position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 120 : 95) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 120 : 95)
       : (isTablet ? 140 : 110),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 85 : 65) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 85 : 65)
       : (isTablet ? 95 : 75),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? 60 : 47.5) 
+    borderRadius: Platform.OS === 'android'
+      ? (isTablet ? 60 : 47.5)
       : (isTablet ? 70 : 55),
     backgroundColor: 'rgba(11, 52, 176, 0.08)',
     zIndex: 3,
   },
-  
+
   modalLogoImage: {
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 110 : 85) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 110 : 85)
       : (isTablet ? 130 : 100),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 75 : 60) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 75 : 60)
       : (isTablet ? 90 : 70),
     opacity: 0.95,
     zIndex: 4,
   },
-  
+
   // ✨ CONTENEDOR LOTTIE CON GLOW
   modalLottieContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Platform.OS === 'android' 
-      ? (isTablet ? 20 : 15) 
+    marginBottom: Platform.OS === 'android'
+      ? (isTablet ? 20 : 15)
       : (isTablet ? 25 : 20),
     position: 'relative',
   },
-  
+
   modalLottieGlow: {
     position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 200 : 160) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 200 : 160)
       : (isTablet ? 220 : 180),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 200 : 160) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 200 : 160)
       : (isTablet ? 220 : 180),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? 100 : 80) 
+    borderRadius: Platform.OS === 'android'
+      ? (isTablet ? 100 : 80)
       : (isTablet ? 110 : 90),
     backgroundColor: 'rgba(74, 144, 226, 0.05)',
     zIndex: 1,
   },
-  
+
   modalLottie: {
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 160 : 120) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 160 : 120)
       : (isTablet ? 180 : 140),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 160 : 120) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 160 : 120)
       : (isTablet ? 180 : 140),
     zIndex: 2,
   },
-  
+
   // ✨ TEXTO SÚPER ELEGANTE Y CENTRADO
   modalTextCentered: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
-  
+
   modalTitleCentered: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 22 : 18) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 22 : 18)
       : (isTablet ? 24 : 20),
     fontWeight: "800",
     color: "#0b34b0",
     textAlign: "center",
     letterSpacing: Platform.OS === 'android' ? 0.8 : 1,
     marginBottom: 8,
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? 28 : 24) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? 28 : 24)
       : (isTablet ? 30 : 26),
     textShadowColor: 'rgba(11, 52, 176, 0.1)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  
+
   modalSubtitleCentered: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 15 : 13) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 15 : 13)
       : (isTablet ? 16 : 14),
     fontWeight: "600",
     color: "#64748b",
     textAlign: "center",
     letterSpacing: 0.5,
     opacity: 0.8,
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? 20 : 18) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? 20 : 18)
       : (isTablet ? 22 : 19),
   },
 

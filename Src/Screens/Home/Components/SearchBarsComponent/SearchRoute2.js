@@ -38,6 +38,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import routesData from "../MapComponent/data/routes.json";
 import { points } from "../MapComponent/data";
+import { getRoute } from "../../utils/get-route.util";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -212,19 +213,22 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const matchingRoute = routesData.routes.find((route) => {
-      const parts = route.name.split(" - ");
-      if (parts.length < 2) return false;
-      const routeOrigin = normalizeText(parts[0].trim());
-      const routeDestination = normalizeText(parts[1].trim());
-      return (
-        (routeOrigin === originInput &&
-          routeDestination === destinationInput) ||
-        (routeOrigin === destinationInput && routeDestination === originInput)
-      );
-    });
+    const startNode = points.find(
+      (point) => normalizeText(point.name) === originInput
+    )?.node;
 
-    if (!matchingRoute) {
+    const endNode = points.find(
+      (point) => normalizeText(point.name) === destinationInput
+    )?.node;
+
+    let start = performance.now();
+
+    const route = getRoute(startNode, endNode);
+
+    let end = performance.now();
+    console.log('Tiempo empleado:', (end - start), 'milisegundos', 'para la ruta: ', originText.trim(), '->', destinationText.trim());
+
+    if (route.coordinates.length === 0) {
       Alert.alert(
         "Error",
         "No se encontró ruta que coincida con origen y destino."
@@ -232,23 +236,12 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const [routeOrigin, routeDestination] = matchingRoute.name.split(" - ").map(p => p.trim());
-
-    const updatedRoute = {
-      ...matchingRoute,
-      coordinates:
-        routeOrigin === destinationInput &&
-          routeDestination === originInput
-          ? matchingRoute.coordinates.toReversed()
-          : matchingRoute.coordinates,
-      name:
-        routeOrigin.toUpperCase() === destinationInput.toUpperCase() &&
-          routeDestination.toUpperCase() === originInput.toUpperCase()
-          ? `${routeDestination} - ${routeOrigin}`
-          : matchingRoute.name,
+    const matchedRoute = {
+      name: `${originText.trim()} - ${destinationText.trim()}`,
+      coordinates: route.coordinates
     };
 
-    onSearch(updatedRoute);
+    onSearch(matchedRoute);
 
     const search = {
       origin: originText.trim(),
