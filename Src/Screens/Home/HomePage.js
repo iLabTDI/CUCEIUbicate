@@ -8,7 +8,6 @@ import {
   Text,
   Animated,
   Alert,
-  PermissionsAndroid,
   Platform,
   StatusBar,
 } from "react-native";
@@ -22,7 +21,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
-import LottieView from "lottie-react-native";
 import { SearchRoute2 } from "./Components/SearchBarsComponent/SearchRoute2";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";

@@ -17,18 +17,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faTimes,
   faExchangeAlt,
-  faSearch,
   faTrash,
   faMapMarkerAlt,
   faHistory,
-  faArrowUp,
   faRoute,
   faLocationArrow,
   faFlag,
-  faDirections,
-  faCompass,
-  faBus,
-  faWalking,
   faBuilding,
   faBookBookmark,
   faFlask,
@@ -36,7 +30,6 @@ import {
   faUtensils,
   faCoffee,
 } from "@fortawesome/free-solid-svg-icons";
-import routesData from "../MapComponent/data/routes.json";
 import { points } from "../MapComponent/data";
 import { getRoute } from "../../utils/get-route.util";
 
@@ -48,7 +41,7 @@ const isAndroid = Platform.OS === "android";
 const normalize = (s = "") =>
   s
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replaceAll(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
 const getIconForLocation = (text = "") => {

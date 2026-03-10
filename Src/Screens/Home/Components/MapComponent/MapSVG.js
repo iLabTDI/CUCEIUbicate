@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Animated, Platform } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
 import Svg, {
   Polyline,
   Defs,
@@ -7,9 +7,6 @@ import Svg, {
   Stop,
   Circle,
   RadialGradient,
-  Filter,
-  DropShadow,
-  Marker
 } from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -17,8 +14,6 @@ import {
   faMapMarkerAlt,
   faLocationArrow,
   faFlag,
-  faRoute,
-  faDotCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
