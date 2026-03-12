@@ -1,5 +1,5 @@
 // BottomSheetComponent.js
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useRef, useCallback, useEffect, useState, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -10,9 +10,9 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
   Animated,
 } from "react-native";
+import { Image } from 'expo-image';
 import BottomSheet from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -80,6 +80,8 @@ export const BottomSheetComponent = React.forwardRef(
       } else {
         bottomSheetRef.current?.close();
         headerAnimation.setValue(0);
+        setLoadedImages([]);
+        setCurrentImageIndex(0);
       }
     }, [isVisible]);
 
@@ -155,7 +157,6 @@ export const BottomSheetComponent = React.forwardRef(
                   <Image
                     source={image}
                     style={styles.carouselImagePerfect}
-                    resizeMode="contain"
                     onLoad={() => setLoadedImages((prev) => [...prev, index])}
                   />
                   <LinearGradient
@@ -794,6 +795,7 @@ const styles = StyleSheet.create({
     borderRadius: Platform.OS === 'android' ? 12 : 16,
     backgroundColor: '#e5e7eb',
     overflow: 'hidden',
+    resizeMode: 'container',
     borderWidth: 1,
     borderColor: '#f1f5f9',
     ...getShadowStyle(2, "#000", 0.05),
@@ -1099,4 +1101,4 @@ const styles = StyleSheet.create({
   // ...existing modal styles...
 });
 
-export default BottomSheetComponent;
+export default memo(BottomSheetComponent);

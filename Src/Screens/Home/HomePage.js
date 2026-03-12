@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Dimensions,
   Text,
   Animated,
@@ -11,6 +10,7 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
+import { Image } from 'expo-image';
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -68,14 +68,6 @@ export const HomePage = () => {
   // ✨ CONTENIDO VISIBLE DESDE EL INICIO
   const loadingOpacity = useRef(new Animated.Value(0)).current;
   const contentOpacity = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    const { width, height } = Image.resolveAssetSource(currentMapImage);
-
-    console.log("Imagen cargada con dimensiones:", width, height);
-  }, [currentMapImage])
 
   /**
    * Función para solicitar permisos de almacenamiento.
@@ -226,6 +218,8 @@ export const HomePage = () => {
     bottomSheetRef.current?.expand();
   }, []);
 
+
+
   /**
    * Función para alternar la visibilidad de la barra de búsqueda.
    */
@@ -247,6 +241,7 @@ export const HomePage = () => {
    */
   const handleCloseBottomSheet = useCallback(() => {
     setIsBottomSheetVisible(false);
+    setSelectedPoint(null);
     bottomSheetRef.current?.close();
   }, []);
 
