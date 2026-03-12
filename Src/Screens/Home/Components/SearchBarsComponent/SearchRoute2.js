@@ -126,16 +126,23 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
   const normalizeText = (text) => {
     return text
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replaceAll(/[\u0300-\u036f]/g, "")
       .toLowerCase();
   };
 
   const filterSuggestions = (text, isOrigin) => {
     const normalizedText = normalizeText(text);
+
     if (normalizedText.length > 0) {
-      const suggestions = points.filter((point) =>
-        normalizeText(point.name).includes(normalizedText)
-      );
+      const suggestions = points.filter((point) => {
+        const normalizedName = normalizeText(point.name);
+        const normalizedId = normalizeText(point.id);
+        const matchesNameOrId = normalizedName.includes(normalizedText) || normalizedId.includes(normalizedText);
+        const matchesAlias = point.aliases?.some(alias => normalizeText(alias).includes(normalizedText));
+
+        return matchesNameOrId || matchesAlias;
+      });
+
       if (isOrigin) {
         setOriginData(suggestions);
         setShowOriginSuggestions(true);
@@ -143,14 +150,12 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
         setDestinationData(suggestions);
         setShowDestinationSuggestions(true);
       }
+    } else if (isOrigin) {
+      setOriginData([]);
+      setShowOriginSuggestions(false);
     } else {
-      if (isOrigin) {
-        setOriginData([]);
-        setShowOriginSuggestions(false);
-      } else {
-        setDestinationData([]);
-        setShowDestinationSuggestions(false);
-      }
+      setDestinationData([]);
+      setShowDestinationSuggestions(false);
     }
   };
 

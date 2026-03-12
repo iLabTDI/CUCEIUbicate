@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -220,53 +220,53 @@ export const HomePage = () => {
    * Función para manejar la pulsación en un punto del mapa.
    * Muestra el BottomSheet con la información del punto seleccionado.
    */
-  const handlePointPress = (pointId) => {
+  const handlePointPress = useCallback((pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
-  };
+  }, []);
 
   /**
    * Función para alternar la visibilidad de la barra de búsqueda.
    */
-  const toggleSearchBar = () => {
+  const toggleSearchBar = useCallback(() => {
     console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
-  };
+  }, []);
 
   /**
    * Función para cerrar la barra de búsqueda.
    */
-  const closeSearchBar = () => {
+  const closeSearchBar = useCallback(() => {
     console.log("Cerrando barra de búsqueda...");
     setShowSearchBar(false);
-  };
+  }, []);
 
   /**
    * Función para cerrar el BottomSheet.
    */
-  const handleCloseBottomSheet = () => {
+  const handleCloseBottomSheet = useCallback(() => {
     setIsBottomSheetVisible(false);
     bottomSheetRef.current?.close();
-  };
+  }, []);
 
   /**
    * Función para realizar una búsqueda específica en los puntos del mapa.
    */
-  const handleSpecificSearch = (pointId) => {
+  const handleSpecificSearch = useCallback((pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
       setMarkedObject(selectedObject);
     }
     setShowSpecificSearch(false);
-  };
+  }, [points, setMarkedObject, setShowSpecificSearch]);
 
 
   /**
    * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
    * estableciendo los puntos, identificador de la ruta y video asociado.
    */
-  const handleSearch = async (routeObject) => {
+  const handleSearch = useCallback((routeObject) => {
     console.log("onSearch:", routeObject);
     if (routeObject) {
       setActiveRoutePoints(routeObject.coordinates);
@@ -278,25 +278,25 @@ export const HomePage = () => {
     } else {
       Alert.alert("Error", "No se encontró la ruta en el JSON.");
     }
-  };
+  }, []);
 
   /**
    * Función para limpiar la ruta activa y reiniciar los estados relacionados.
    */
-  const clearRoute = () => {
+  const clearRoute = useCallback(() => {
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
     setCurrentMapImage(require("./assets/images/mapa.webp"));
-  };
+  }, []);
 
   /**
    * Función para alternar la visibilidad del modal de video.
    */
-  const toggleVideoModal = () => {
+  const toggleVideoModal = useCallback(() => {
     setIsVideoModalVisible(!isVideoModalVisible);
-  };
+  }, [isVideoModalVisible]);
 
   return (
     <View style={styles.container}>

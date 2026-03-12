@@ -548,14 +548,4 @@ export const points = [
     height: 13,
     width: 28,
   },
-  {
-    id: "Matute",
-    name: "Matute",
-    aliases: ["Matute", "Matute remus", "Matute"],
-    node: 'n191',
-    left: 525,
-    top: 753,
-    height: 7,
-    width: 35,
-  },
 ]

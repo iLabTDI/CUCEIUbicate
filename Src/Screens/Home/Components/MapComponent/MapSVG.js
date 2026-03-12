@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
 import Svg, {
   Polyline,
@@ -27,9 +27,11 @@ const MapSVG = ({
   setMarkedObject,
 }) => {
   // Convierte las coordenadas de la ruta a "x1,y1 x2,y2 ..."
-  const pointsString = activeRoutePoints
-    .map(([x, y]) => `${x},${y}`)
-    .join(" ");
+  const pointsString = useMemo(() => {
+    return activeRoutePoints
+      .map(([x, y]) => `${x},${y}`)
+      .join(" ");
+  }, [activeRoutePoints]);
 
   // Animaciones múltiples para efectos más sofisticados
   const dashOffset = useRef(new Animated.Value(0)).current;
@@ -81,11 +83,11 @@ const MapSVG = ({
     }
   }, [isRouteActive, activeRoutePoints]);
 
-  const handlePointPress = (point) => {
+  const handlePointPress = useCallback((point) => {
     onPointPress(point.id);
-  };
+  }, [onPointPress]);
 
-  const renderPoints = () => {
+  const renderPoints = useCallback(() => {
     return points.map((point) => (
       <TouchableOpacity
         key={point.id}
@@ -105,9 +107,9 @@ const MapSVG = ({
         }}
       />
     ));
-  };
+  }, [points, handlePointPress]);
 
-  const renderMarker = () => {
+  const renderMarker = useCallback(() => {
     if (!markedObject) return null;
     const markerPosition = {
       left: markedObject.left + markedObject.width / 2 - 60,
@@ -135,10 +137,10 @@ const MapSVG = ({
         </TouchableOpacity>
       </Animated.View>
     );
-  };
+  }, [markedObject, setMarkedObject, pulseAnim]);
 
   // Renderiza la línea de la ruta con múltiples capas para un efecto premium
-  const renderRouteLine = () => {
+  const renderRouteLine = useCallback(() => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     return (
       <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -240,13 +242,13 @@ const MapSVG = ({
         })}
       </Svg>
     );
-  };
+  }, [isRouteActive, activeRoutePoints, dashOffset, glowAnim]);
 
   // Renderiza pines de origen y destino con efectos premium
-  const renderRoutePins = () => {
+  const renderRoutePins = useCallback(() => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     const origin = activeRoutePoints[0];
-    const destination = activeRoutePoints[activeRoutePoints.length - 1];
+    const destination = activeRoutePoints.at(-1);
 
     return (
       <>
@@ -293,7 +295,7 @@ const MapSVG = ({
         </View>
       </>
     );
-  };
+  }, [isRouteActive, activeRoutePoints]);
 
   return (
     <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
@@ -305,7 +307,7 @@ const MapSVG = ({
   );
 };
 
-export default MapSVG;
+export default memo(MapSVG);
 
 const styles = StyleSheet.create({
   point: {
