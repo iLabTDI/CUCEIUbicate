@@ -299,7 +299,7 @@ export const points = [
   {
     id: "Modulo Q2",
     name: "Módulo Q2",
-    aliases: ["modulo q2", "Edificio Q2", "edificio q2"],
+    aliases: ["modulo q2", "MQ2", "Edificio Q2", "edificio q2"],
     node: 'n183',
     left: 685,
     top: 698,
@@ -398,7 +398,7 @@ export const points = [
   {
     id: "Modulo X",
     name: "Módulo X",
-    aliases: ["modulo x", "Edificio X", "edificio x"],
+    aliases: ["modulo x", "MX", "Edificio X", "edificio x"],
     node: 'n199',
     left: 317,
     top: 496,
@@ -420,7 +420,7 @@ export const points = [
   {
     id: "Modulo Z",
     name: "Módulo Z",
-    aliases: ["modulo z", "Edificio Z", "edificio z"],
+    aliases: ["modulo z", "MZ", "Edificio Z", "edificio z"],
     node: 'n170',
     left: 253,
     top: 653,
@@ -431,7 +431,7 @@ export const points = [
   {
     id: "Modulo Z1",
     name: "Módulo Z1",
-    aliases: ["modulo z1", "Edificio Z1", "edificio z1"],
+    aliases: ["modulo z1", "MZ1", "Edificio Z1", "edificio z1"],
     node: 'n169',
     left: 225,
     top: 642,
@@ -475,7 +475,7 @@ export const points = [
   {
     id: "comida",
     name: "Comida",
-    aliases: ["Revolucion", "Entrada", "Entrada Revolucion"],
+    aliases: ["comida V", "comida T"],
     node: 'n201',
     left: 410,
     top: 444,
@@ -486,7 +486,7 @@ export const points = [
   {
     id: "Comida15",
     name: "Comida15",
-    aliases: ["comida T", "Entrada", "Entrada Revolucion"],
+    aliases: ["comida T",],
     node: 'n202',
     left: 632,
     top: 540,
@@ -547,5 +547,5 @@ export const points = [
     top: 737,
     height: 13,
     width: 28,
-  },
+  }
 ]
