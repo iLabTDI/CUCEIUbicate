@@ -38,6 +38,50 @@ const MapSVG = ({
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
 
+  // const dash = () => {
+  //   Animated.loop(
+  //     Animated.timing(dashOffset, {
+  //       toValue: 30,
+  //       duration: 2000,
+  //       useNativeDriver: true,
+  //     })
+  //   ).start();
+  // }
+
+  // const pulse = () => {
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1.3,
+  //         duration: 800,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(pulseAnim, {
+  //         toValue: 1,
+  //         duration: 800,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
+  // }
+
+  // const glow = () => {
+  //   Animated.loop(
+  //     Animated.sequence([
+  //       Animated.timing(glowAnim, {
+  //         toValue: 1,
+  //         duration: 1500,
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(glowAnim, {
+  //         toValue: 0,
+  //         duration: 1500,
+  //         useNativeDriver: true,
+  //       }),
+  //     ])
+  //   ).start();
+  // }
+
   useEffect(() => {
     if (isRouteActive && activeRoutePoints.length > 1) {
       // Animación del dash offset para el efecto de flujo
@@ -124,6 +168,7 @@ const MapSVG = ({
             transform: [{ scale: pulseAnim }],
           }
         ]}
+
       >
         <View style={styles.markerIconContainer}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color="#0033A0" />
@@ -142,6 +187,7 @@ const MapSVG = ({
   // Renderiza la línea de la ruta con múltiples capas para un efecto premium
   const renderRouteLine = useCallback(() => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
+
     return (
       <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
         <Defs>
@@ -223,23 +269,6 @@ const MapSVG = ({
             opacity: glowAnim,
           }}
         />
-
-        {/* Puntos decorativos a lo largo de la ruta */}
-        {activeRoutePoints.map((point, index) => {
-          if (index === 0 || index === activeRoutePoints.length - 1) return null;
-          return (
-            <Circle
-              key={index}
-              cx={point[0]}
-              cy={point[1]}
-              r={3}
-              fill="#FFFFFF"
-              stroke="#0033A0"
-              strokeWidth={2}
-              opacity={0.8}
-            />
-          );
-        })}
       </Svg>
     );
   }, [isRouteActive, activeRoutePoints, dashOffset, glowAnim]);

@@ -90,7 +90,7 @@ export const points = [
   {
     id: "Modulo A",
     name: "Módulo A",
-    aliases: ["Modulo A", "modulo a", "MA", "edificio a"],
+    aliases: ["Modulo A", "modulo a", "MA", "edificio a", "M A"],
     node: 'n99',
     left: 493,
     top: 1130,
@@ -101,7 +101,7 @@ export const points = [
   {
     id: "Modulo B",
     name: "Módulo B",
-    aliases: ["Modulo B", "modulo b", "MB", "edificio b"],
+    aliases: ["Modulo B", "modulo b", "MB", "edificio b", "M B"],
     node: 'n109',
     left: 615,
     top: 1198,
@@ -112,7 +112,7 @@ export const points = [
   {
     id: "Modulo C",
     name: "Módulo C",
-    aliases: ["Modulo C", "modulo c", "MC", "edificio c"],
+    aliases: ["Modulo C", "modulo c", "MC", "edificio c", "M C"],
     node: 'n176',
     left: 603,
     top: 1168,
@@ -123,7 +123,7 @@ export const points = [
   {
     id: "Modulo D",
     name: "Módulo D",
-    aliases: ["Modulo D", "modulo d", "MD", "edificio d"],
+    aliases: ["Modulo D", "modulo d", "MD", "edificio d", "M D"],
     node: 'n104',
     left: 560,
     top: 1119,
@@ -134,7 +134,7 @@ export const points = [
   {
     id: "Modulo E",
     name: "Módulo E",
-    aliases: ["Modulo E", "ME", "Edificio E", "edificio e"],
+    aliases: ["Modulo E", "ME", "Edificio E", "edificio e", "M E"],
     node: 'n132',
     left: 326,
     top: 939,
@@ -145,7 +145,7 @@ export const points = [
   {
     id: "Modulo F",
     name: "Módulo F",
-    aliases: ["Modulo F", "MF", "Edificio F", "edificio f"],
+    aliases: ["Modulo F", "MF", "Edificio F", "edificio f", "M F"],
     node: 'n177',
     left: 479,
     top: 878,
@@ -156,7 +156,7 @@ export const points = [
   {
     id: "Modulo G",
     name: "Módulo G",
-    aliases: ["Modulo G", "MG", "Edificio G", "edificio g"],
+    aliases: ["Modulo G", "MG", "Edificio G", "edificio g", "M G"],
     node: 'n136',
     left: 313,
     top: 883,
@@ -167,7 +167,7 @@ export const points = [
   {
     id: "Modulo H",
     name: "Módulo H",
-    aliases: ["Modulo H", "MH", "Edificio H", "edificio h"],
+    aliases: ["Modulo H", "MH", "Edificio H", "edificio h", "M H"],
     node: 'n184',
     left: 415,
     top: 858,
@@ -178,7 +178,7 @@ export const points = [
   {
     id: "Modulo I",
     name: "Módulo I",
-    aliases: ["Modulo I", "MI", "Edificio I", "edificio i"],
+    aliases: ["Modulo I", "MI", "Edificio I", "edificio i", "M I"],
     node: 'n185',
     left: 520,
     top: 858,
@@ -189,7 +189,7 @@ export const points = [
   {
     id: "Modulo J",
     name: "Módulo J",
-    aliases: ["Modulo J", "MJ", "Edificio J", "edificio j"],
+    aliases: ["Modulo J", "MJ", "Edificio J", "edificio j", "M J"],
     node: 'n186',
     left: 460,
     top: 832,
@@ -200,7 +200,7 @@ export const points = [
   {
     id: "Modulo K",
     name: "Módulo K",
-    aliases: ["Modulo K", "MK", "Edificio K", "edificio k"],
+    aliases: ["Modulo K", "MK", "Edificio K", "edificio k", "M K"],
     node: 'n30',
     left: 449,
     top: 809,
@@ -211,7 +211,7 @@ export const points = [
   {
     id: "Modulo L",
     name: "Módulo L",
-    aliases: ["Modulo L", "ML", "Edificio L", "edificio l"],
+    aliases: ["Modulo L", "ML", "Edificio L", "edificio l", "M L"],
     node: 'n188',
     left: 570,
     top: 715,
@@ -222,7 +222,7 @@ export const points = [
   {
     id: "Modulo L2",
     name: "Módulo L2",
-    aliases: ["Modulo L2", "ML2", "Edificio L2", "edificio l2"],
+    aliases: ["Modulo L2", "ML2", "Edificio L2", "edificio l2", "M L2"],
     node: 'n192',
     left: 533,
     top: 707,
@@ -233,7 +233,7 @@ export const points = [
   {
     id: "Modulo M",
     name: "Módulo M",
-    aliases: ["Modulo M", "MM", "Edificio M", "edificio m"],
+    aliases: ["Modulo M", "MM", "Edificio M", "edificio m", "M M"],
     node: 'n196',
     left: 431,
     top: 752,
@@ -244,7 +244,7 @@ export const points = [
   {
     id: "Modulo N",
     name: "Módulo N",
-    aliases: ["Modulo N", "MN", "Edificio N", "edificio n"],
+    aliases: ["Modulo N", "MN", "Edificio N", "edificio n", "M N"],
     node: 'n195',
     left: 430,
     top: 710,
@@ -266,7 +266,7 @@ export const points = [
   {
     id: "Modulo O",
     name: "Módulo O",
-    aliases: ["Modulo O", "MO", "Edificio O", "edificio o"],
+    aliases: ["Modulo O", "MO", "Edificio O", "edificio o", "M O"],
     node: 'n198',
     left: 425,
     top: 637,
@@ -277,7 +277,7 @@ export const points = [
   {
     id: "Modulo P",
     name: "Módulo P",
-    aliases: ["Edificio P", "MP", "Edificio P", "edificio p"],
+    aliases: ["Edificio P", "MP", "Edificio P", "edificio p", "M P"],
     node: 'n189',
     left: 520,
     top: 645,
@@ -288,7 +288,7 @@ export const points = [
   {
     id: "Modulo Q",
     name: "Módulo Q",
-    aliases: ["Edificio Q", "MQ", "Edificio Q", "edificio q"],
+    aliases: ["Edificio Q", "MQ", "Edificio Q", "edificio q", "M Q"],
     node: 'n44',
     left: 581,
     top: 598,
@@ -299,7 +299,7 @@ export const points = [
   {
     id: "Modulo Q2",
     name: "Módulo Q2",
-    aliases: ["modulo q2", "MQ2", "Edificio Q2", "edificio q2"],
+    aliases: ["modulo q2", "MQ2", "Edificio Q2", "edificio q2", "M Q2"],
     node: 'n183',
     left: 685,
     top: 698,
@@ -310,7 +310,7 @@ export const points = [
   {
     id: "Modulo R",
     name: "Módulo R",
-    aliases: ["Edificio R", "MR", "Edificio R", "edificio r"],
+    aliases: ["Edificio R", "MR", "Edificio R", "edificio r", "M R"],
     node: 'n142',
     left: 517,
     top: 585,
@@ -321,7 +321,7 @@ export const points = [
   {
     id: "Modulo S",
     name: "Módulo S",
-    aliases: ["Modulo S", "MS", "Edificio S", "edificio s"],
+    aliases: ["Modulo S", "MS", "Edificio S", "edificio s", "M S"],
     node: 'n182',
     left: 423,
     top: 598,
@@ -332,7 +332,7 @@ export const points = [
   {
     id: "Modulo S2",
     name: "Módulo S2",
-    aliases: ["Edificio S2", "MS2", "Edificio S2", "edificio s2"],
+    aliases: ["Edificio S2", "MS2", "Edificio S2", "edificio s2", "M S2"],
     node: 'n180',
     left: 410,
     top: 549,
@@ -343,7 +343,7 @@ export const points = [
   {
     id: "Modulo T",
     name: "Módulo T",
-    aliases: ["Edificio T", "MT", "Edificio T", "edificio t"],
+    aliases: ["Edificio T", "MT", "Edificio T", "edificio t", "M T"],
     node: 'n46',
     left: 522,
     top: 550,
@@ -354,7 +354,7 @@ export const points = [
   {
     id: "Modulo U",
     name: "Módulo U",
-    aliases: ["Edificio U", "MU", "Edificio U", "edificio u"],
+    aliases: ["Edificio U", "MU", "Edificio U", "edificio u", "M E"],
     node: 'n47',
     left: 523,
     top: 516,
@@ -365,7 +365,7 @@ export const points = [
   {
     id: "Modulo V",
     name: "Módulo V",
-    aliases: ["Edificio V", "MV", "Edificio V", "edificio v"],
+    aliases: ["Edificio V", "MV", "Edificio V", "edificio v", "M V"],
     node: 'n178',
     left: 413,
     top: 479,
@@ -376,7 +376,7 @@ export const points = [
   {
     id: "Modulo V2",
     name: "Módulo V2",
-    aliases: ["Edificio V2", "MV2", "Edificio V2", "edificio v2"],
+    aliases: ["Edificio V2", "MV2", "Edificio V2", "edificio v2", "M V2"],
     node: 'n147',
     left: 413,
     top: 515,
@@ -387,7 +387,7 @@ export const points = [
   {
     id: "Modulo W",
     name: "Módulo Doble V",
-    aliases: ["Módulo Doble V", "MW", "Edificio W", "edificio w"],
+    aliases: ["Módulo Doble V", "MW", "Edificio W", "edificio w", "M W"],
     node: 'n200',
     left: 317,
     top: 530,
@@ -398,7 +398,7 @@ export const points = [
   {
     id: "Modulo X",
     name: "Módulo X",
-    aliases: ["modulo x", "MX", "Edificio X", "edificio x"],
+    aliases: ["modulo x", "MX", "Edificio X", "edificio x", "M X"],
     node: 'n199',
     left: 317,
     top: 496,
@@ -409,7 +409,7 @@ export const points = [
   {
     id: "Modulo Y",
     name: "Módulo Y",
-    aliases: ["Modulo Y", "MY", "Edificio Y", "edificio y"],
+    aliases: ["Modulo Y", "MY", "Edificio Y", "edificio y", "M Y"],
     node: 'n153',
     left: 280,
     top: 646,
@@ -420,7 +420,7 @@ export const points = [
   {
     id: "Modulo Z",
     name: "Módulo Z",
-    aliases: ["modulo z", "MZ", "Edificio Z", "edificio z"],
+    aliases: ["modulo z", "MZ", "Edificio Z", "edificio z", "M Z"],
     node: 'n170',
     left: 253,
     top: 653,
@@ -431,7 +431,7 @@ export const points = [
   {
     id: "Modulo Z1",
     name: "Módulo Z1",
-    aliases: ["modulo z1", "MZ1", "Edificio Z1", "edificio z1"],
+    aliases: ["modulo z1", "MZ1", "Edificio Z1", "edificio z1", "M Z1"],
     node: 'n169',
     left: 225,
     top: 642,
@@ -442,7 +442,7 @@ export const points = [
   {
     id: "Modulo Z2",
     name: "Módulo Z2",
-    aliases: ["Modulo Z2", "MZ2", "Edificio Z2", "edificio z2"],
+    aliases: ["Modulo Z2", "MZ2", "Edificio Z2", "edificio z2", "M Z2"],
     node: 'n155',
     left: 255,
     top: 600,
@@ -538,6 +538,7 @@ export const points = [
     width: 28,
     rotate: -0.5,
   },
+  // Auditorios 
   {
     id: "Auditorio Matute Remus",
     name: "Auditorio Matute Remus",
@@ -547,5 +548,60 @@ export const points = [
     top: 737,
     height: 13,
     width: 28,
+  },
+  {
+    id: "Auditorio Enrique Díaz de León",
+    name: "Auditorio Enrique Díaz de León",
+    aliases: ["Auditorio", "Enrique Díaz de León", "Modulo A", "MA", "Auditorio MA", "Auditorio Modulo A", "M A"],
+    node: 'n99',
+    left: 496,
+    top: 1144,
+    height: 0,
+    width: 0,
+    rotate: 0,
+  },
+  {
+    id: " Auditorio Antonio Rodríguez Sánchez",
+    name: "Auditorio Antonio Rodríguez Sánchez",
+    aliases: ["Auditorio", "Antonio Rodríguez Sánchez", "Modulo E", "ME", "Auditorio Modulo E", "Auditorio ME", "M E", "edificio e"],
+    node: 'n134',
+    left: 484,
+    top: 663,
+    height: 0,
+    width: 0,
+    rotate: 0,
+  },
+  {
+    id: "Auditorio Antonio Alatorre",
+    name: "Auditorio Antonio Alatorre",
+    aliases: ["Auditorio", "Antonio Alatorre", "Modulo O", "MO", "Auditorio Modulo O", "Auditorio MO", "M O", "edificio o"],
+    node: 'n198',
+    left: 352,
+    top: 940,
+    height: 0,
+    width: 0,
+    rotate: 0,
+  },
+  {
+    id: "Auditorio Nikola Mitshievich",
+    name: "Auditorio Nikola Mitshievich",
+    aliases: ["Auditorio", "Nikola Mitshievich", "Modulo Y", "MY", "Auditorio Modulo Y", "Auditorio MY", "M Y", "edificio y"],
+    node: 'n153',
+    left: 325,
+    top: 638,
+    height: 0,
+    width: 0,
+    rotate: 0,
+  },
+  {
+    id: "Auditorio Modulo Z",
+    name: "Auditorio Módulo Z",
+    aliases: ["Auditorio", "Módulo Z", "Modulo Z", "MZ", "Auditorio Modulo Z", "Auditorio MZ", "M Z", "edificio z"],
+    node: 'n170',
+    left: 275,
+    top: 673,
+    height: 0,
+    width: 0,
+    rotate: 0,
   }
 ]
