@@ -211,17 +211,17 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const startNode = points.find(
+    const startPoint = points.find(
       (point) => normalizeText(point.name) === originInput
-    )?.node;
+    );
 
-    const endNode = points.find(
+    const endPoint = points.find(
       (point) => normalizeText(point.name) === destinationInput
-    )?.node;
+    );
 
     let start = performance.now();
 
-    const route = getRoute(startNode, endNode);
+    const route = getRoute(startPoint.node, endPoint.node);
 
     let end = performance.now();
     console.log('Tiempo empleado:', (end - start), 'milisegundos', 'para la ruta: ', originText.trim(), '->', destinationText.trim());
@@ -235,7 +235,7 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
     }
 
     const matchedRoute = {
-      name: `${originText.trim()} - ${destinationText.trim()}`,
+      name: `${startPoint.id} - ${endPoint.id}`,
       coordinates: route.coordinates
     };
 
