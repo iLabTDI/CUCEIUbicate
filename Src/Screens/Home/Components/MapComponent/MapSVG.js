@@ -1,11 +1,10 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
 import Svg, {
   Polyline,
   Defs,
   LinearGradient,
   Stop,
-  Circle,
   RadialGradient,
 } from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -34,97 +33,48 @@ const MapSVG = ({
   }, [activeRoutePoints]);
 
   // Animaciones múltiples para efectos más sofisticados
-  const dashOffset = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
-
-  // const dash = () => {
-  //   Animated.loop(
-  //     Animated.timing(dashOffset, {
-  //       toValue: 30,
-  //       duration: 2000,
-  //       useNativeDriver: true,
-  //     })
-  //   ).start();
-  // }
-
-  // const pulse = () => {
-  //   Animated.loop(
-  //     Animated.sequence([
-  //       Animated.timing(pulseAnim, {
-  //         toValue: 1.3,
-  //         duration: 800,
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(pulseAnim, {
-  //         toValue: 1,
-  //         duration: 800,
-  //         useNativeDriver: true,
-  //       }),
-  //     ])
-  //   ).start();
-  // }
-
-  // const glow = () => {
-  //   Animated.loop(
-  //     Animated.sequence([
-  //       Animated.timing(glowAnim, {
-  //         toValue: 1,
-  //         duration: 1500,
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(glowAnim, {
-  //         toValue: 0,
-  //         duration: 1500,
-  //         useNativeDriver: true,
-  //       }),
-  //     ])
-  //   ).start();
-  // }
+  const dashOffset = new Animated.Value(0);
+  const pulseAnim = new Animated.Value(1);
+  const glowAnim = new Animated.Value(0);
 
   useEffect(() => {
+    let animationGroup;
+
     if (isRouteActive && activeRoutePoints.length > 1) {
-      // Animación del dash offset para el efecto de flujo
-      Animated.loop(
-        Animated.timing(dashOffset, {
-          toValue: 30,
-          duration: 2000,
-          useNativeDriver: true,
-        })
-      ).start();
+      animationGroup = Animated.parallel([
+        // Dash Offset
+        Animated.loop(
+          Animated.timing(dashOffset, {
+            toValue: 30,
+            duration: 2000,
+            useNativeDriver: true,
+          })
+        ),
+        // Pulse (Escala)
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(pulseAnim, { toValue: 1.3, duration: 800, useNativeDriver: true }),
+            Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          ])
+        ),
+        // Glow (Opacidad/Brillo)
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(glowAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+            Animated.timing(glowAnim, { toValue: 0, duration: 1500, useNativeDriver: true }),
+          ])
+        )
+      ]);
 
-      // Animación de pulso para los pines
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.3,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-
-      // Animación de brillo para la línea
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
+      animationGroup.start();
+    } else {
+      dashOffset.setValue(0);
+      pulseAnim.setValue(1);
+      glowAnim.setValue(0);
     }
+    return () => {
+      if (animationGroup) animationGroup.stop();
+    };
   }, [isRouteActive, activeRoutePoints]);
 
   const handlePointPress = useCallback((point) => {

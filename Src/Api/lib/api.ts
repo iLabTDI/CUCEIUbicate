@@ -7,7 +7,7 @@ const url = (p: string) => `${BASE}${USE_INDEX_PHP ? '/index.php' : ''}${p}`;
 // Función para limpiar strings y evitar problemas de collation
 const cleanString = (str: string): string => {
   if (!str) return '';
-  
+
   // Normalizar y limpiar caracteres especiales
   return str
     .normalize('NFD') // Descomponer caracteres acentuados
@@ -17,34 +17,35 @@ const cleanString = (str: string): string => {
 };
 
 async function http(path: string, init: RequestInit = {}) {
+  console.log(`🚀 Petición HTTP: ${init.method || 'GET'} ${url(path)}`);
   try {
     const res = await fetch(url(path), {
       ...init,
-      headers: { 
-        'Content-Type': 'application/json', 
+      headers: {
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(init.headers || {}) 
+        ...(init.headers || {})
       },
     });
-    
+
     if (!res.ok) {
       const errorText = await res.text();
       console.error('Error del servidor:', errorText);
       throw new Error(`HTTP ${res.status}: ${errorText}`);
     }
-    
+
     const responseText = await res.text();
-    
+
     if (!responseText.trim()) {
       return null;
     }
-    
+
     // Limpiar respuesta
     let cleanedResponse = responseText;
-    
+
     const jsonStartArray = responseText.indexOf('[');
     const jsonStartObject = responseText.indexOf('{');
-    
+
     let jsonStart = -1;
     if (jsonStartArray !== -1 && jsonStartObject !== -1) {
       jsonStart = Math.min(jsonStartArray, jsonStartObject);
@@ -53,24 +54,24 @@ async function http(path: string, init: RequestInit = {}) {
     } else if (jsonStartObject !== -1) {
       jsonStart = jsonStartObject;
     }
-    
+
     if (jsonStart > 0) {
       cleanedResponse = responseText.substring(jsonStart);
     }
-    
+
     try {
       const jsonData = JSON.parse(cleanedResponse);
       return jsonData;
     } catch (parseError) {
       console.error('Error parseando JSON:', parseError);
-      
+
       if (cleanedResponse.includes('<html>') || cleanedResponse.includes('<!DOCTYPE')) {
         throw new Error('El servidor devolvió HTML en lugar de JSON. Verifica la URL y el endpoint.');
       }
-      
+
       throw new Error(`Respuesta no válida del servidor: ${cleanedResponse.substring(0, 100)}...`);
     }
-    
+
   } catch (error) {
     console.error('Error en petición HTTP:', error);
     throw error;
@@ -87,31 +88,33 @@ export type UserRow = {
   var_name: string;
   var_lastnames: string;
   var_username: string;
+  // control de acceso (alumnos, academicos, externos )
+  var_user_type: string;
 }
 
 // ---- CARRERAS ---- (Alineado exactamente con tu PHP)
-export type DegreeRow = { 
+export type DegreeRow = {
   var_code: string;      // PK 
-  var_name: string; 
+  var_name: string;
 };
 
 // ---- CARRERAS ----
 export const listDegrees = async (): Promise<DegreeRow[]> => {
   try {
     const result = await http('/CUB_degrees?order=var_name&dir=ASC');
-    
+    console.log('📊 Resultado de listDegrees:', result);
     // Si no hay resultado o es null, devolver array vacío
     if (!result) return [];
-    
+
     // Si es un array, devolverlo directamente
     if (Array.isArray(result)) return result;
-    
+
     // Si es un objeto con propiedad data, usar esa
     if (result.data && Array.isArray(result.data)) return result.data;
-    
+
     // Si es un objeto con propiedades, convertirlo a array
     if (typeof result === 'object') return [result];
-    
+
     return [];
   } catch (error) {
     console.error('❌ Error en listDegrees:', error);
@@ -124,14 +127,14 @@ export const findUserByEmail = async (email: string): Promise<UserRow[]> => {
   try {
     const cleanEmail = cleanString(email.toLowerCase());
     const encodedEmail = encodeURIComponent(cleanEmail);
-    
+
     const result = await http(`/CUB_users?var_email=${encodedEmail}`);
-    
+
     if (!result) return [];
     if (Array.isArray(result)) return result;
     if (result.data && Array.isArray(result.data)) return result.data;
     if (typeof result === 'object') return [result];
-    
+
     return [];
   } catch (error) {
     console.error('Error buscando usuario por email:', error);
@@ -144,14 +147,14 @@ export const findUserByUsername = async (username: string): Promise<UserRow[]> =
   try {
     const cleanUsername = cleanString(username.toLowerCase());
     const encodedUsername = encodeURIComponent(cleanUsername);
-    
+
     const result = await http(`/CUB_users?var_username=${encodedUsername}`);
-    
+
     if (!result) return [];
     if (Array.isArray(result)) return result;
     if (result.data && Array.isArray(result.data)) return result.data;
     if (typeof result === 'object') return [result];
-    
+
     return [];
   } catch (error) {
     console.error('Error buscando usuario por username:', error);
@@ -163,18 +166,18 @@ export const findUserByUsername = async (username: string): Promise<UserRow[]> =
 export const findUserByCode = async (code: string | number): Promise<UserRow[]> => {
   try {
     console.log('🔍 Buscando usuario por código:', code);
-    
+
     // Convertir a string y limpiar
     const codeString = String(code).replace(/[^\d]/g, ''); // Solo números
     const encodedCode = encodeURIComponent(codeString);
-    
+
     const result = await http(`/CUB_users?int_user_code=${encodedCode}`);
-    
+
     if (!result) return [];
     if (Array.isArray(result)) return result;
     if (result.data && Array.isArray(result.data)) return result.data;
     if (typeof result === 'object') return [result];
-    
+
     return [];
   } catch (error) {
     console.error('❌ Error buscando usuario por código:', error);
@@ -187,10 +190,10 @@ export const findUserById = async (userId: number): Promise<UserRow | null> => {
   try {
     console.log('🔍 Buscando usuario por ID:', userId);
     const result = await http(`/CUB_users/${userId}`); // Usar /{id} para PK
-    
+
     if (!result) return null;
     if (typeof result === 'object') return result;
-    
+
     return null;
   } catch (error) {
     console.error('❌ Error buscando usuario por ID:', error);
@@ -208,9 +211,12 @@ export const createUser = async (userData: any): Promise<any> => {
       var_degree_code: cleanString(userData.var_degree_code?.toUpperCase() || ''),
       var_name: cleanString(userData.var_name || ''),
       var_lastnames: cleanString(userData.var_lastnames || ''),
-      var_username: cleanString(userData.var_username?.toLowerCase() || '')
+      var_username: cleanString(userData.var_username?.toLowerCase() || ''),
+      var_user_type: cleanString(userData.var_user_type || '')
     };
-    
+
+    console.log('Payload limpio para createUser:', cleanPayload);
+
     const result = await http('/CUB_users', {
       method: 'POST',
       body: JSON.stringify(cleanPayload)
@@ -233,34 +239,34 @@ const secureHash = (password: string): string => {
     const staticSalt = 'CUCEI_UBICATE_2024_PRODUCTION_SECURE_SALT_V2';
     const timestamp = Date.now().toString(36);
     const combined = password + staticSalt + timestamp.slice(-6);
-    
+
     let hash1 = 0;
     let hash2 = 0;
     let hash3 = 0;
-    
+
     for (let i = 0; i < combined.length; i++) {
       const char = combined.charCodeAt(i);
       hash1 = ((hash1 << 5) - hash1) + char;
       hash1 = hash1 & hash1;
     }
-    
+
     for (let i = 0; i < combined.length; i++) {
       const char = combined.charCodeAt(i);
       hash2 = ((hash2 << 3) - hash2) + char + i;
       hash2 = hash2 & hash2;
     }
-    
+
     const mixed = password + staticSalt;
     for (let i = 0; i < mixed.length; i++) {
       const char = mixed.charCodeAt(i);
       hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
       hash3 = hash3 & hash3;
     }
-    
+
     const finalHash1 = Math.abs(hash1).toString(36).padStart(8, '0');
     const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
     const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
-    
+
     return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
   } catch (error) {
     console.error('Error generando hash:', error);
@@ -281,7 +287,7 @@ export const insertUser = async (userData: {
     // ✨ USAR HASH CONSISTENTE AQUÍ TAMBIÉN
     const hashedPassword = secureHash(userData.password);
     console.log('📊 Hash en insertUser:', hashedPassword.substring(0, 20) + '...');
-    
+
     const payload = {
       var_email: cleanString(userData.email.toLowerCase()),
       var_password: hashedPassword, // ✨ USAR EL HASH CONSISTENTE
@@ -299,7 +305,7 @@ export const insertUser = async (userData: {
     if (typeof result === 'number') return result;
     if (result && result.id) return result.id;
     if (result && result.insertId) return result.insertId;
-    
+
     if (result && (result.success || result.status === 'success')) {
       const newUser = await findUserByUsername(userData.username);
       if (newUser.length > 0 && newUser[0].id) {
@@ -318,14 +324,14 @@ export const insertUser = async (userData: {
 export const updateUser = async (userId: number, userData: Partial<UserRow>): Promise<boolean> => {
   try {
     console.log('📝 Actualizando usuario:', userId);
-    
+
     const result = await http(`/CUB_users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(userData)
     });
 
     console.log('✅ Usuario actualizado, respuesta:', result);
-    
+
     // Tu PHP devuelve el objeto actualizado si es exitoso
     return result && typeof result === 'object';
   } catch (error) {
@@ -349,11 +355,11 @@ export const getAllUsers = async (): Promise<UserRow[]> => {
   try {
     console.log('📋 Obteniendo todos los usuarios');
     const result = await http('/CUB_users?order=var_name&dir=ASC');
-    
+
     if (!result) return [];
     if (Array.isArray(result)) return result;
     if (result.data && Array.isArray(result.data)) return result.data;
-    
+
     return [];
   } catch (error) {
     console.error('❌ Error obteniendo usuarios:', error);
@@ -365,13 +371,13 @@ export const getAllUsers = async (): Promise<UserRow[]> => {
 export const deleteUser = async (userId: number): Promise<boolean> => {
   try {
     console.log('🗑️ Eliminando usuario:', userId);
-    
+
     const result = await http(`/CUB_users/${userId}`, {
       method: 'DELETE'
     });
 
     console.log('✅ Usuario eliminado, respuesta:', result);
-    
+
     return result && result.ok === true;
   } catch (error) {
     console.error('❌ Error eliminando usuario:', error);
@@ -473,7 +479,7 @@ export const registerUser = async (userData: {
 
     // Insertar usuario
     const userId = await insertUser(userData);
-    
+
     return {
       success: true,
       message: 'Usuario registrado exitosamente',

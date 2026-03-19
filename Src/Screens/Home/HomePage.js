@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -293,6 +293,8 @@ export const HomePage = () => {
     setIsVideoModalVisible(!isVideoModalVisible);
   }, [isVideoModalVisible]);
 
+
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -372,7 +374,6 @@ export const HomePage = () => {
               <Image
                 source={currentMapImage}
                 style={styles.mapImage}
-                resizeMode="stretch"
               />
               <MapSVG
                 isRouteActive={isRouteActive}
@@ -551,7 +552,8 @@ const styles = StyleSheet.create({
   mapImage: {
     width: 1600,
     height: 1400,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    resizeMode: "stretch"
   },
 
   // Botones de acción mejorados

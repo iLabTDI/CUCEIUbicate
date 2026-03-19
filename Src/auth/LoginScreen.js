@@ -18,7 +18,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
-import successAnimation from "../assets/animations/complete.json";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faEnvelope,
@@ -26,11 +25,6 @@ import {
   faEye,
   faEyeSlash,
   faCheckCircle,
-  faUser,
-  faPhone,
-  faIdCard,
-  faChevronLeft,
-  faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { login } from "../Api/login"; // ✨ ASEGÚRATE DE IMPORTAR EL .ts CORRECTO
 import { setSession, getSession } from "./SessionManager";

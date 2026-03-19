@@ -239,6 +239,8 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       coordinates: route.coordinates
     };
 
+    console.log('[SearchRoute2] Ruta encontrada:', matchedRoute);
+
     onSearch(matchedRoute);
 
     const search = {

@@ -101,16 +101,15 @@ export const ProfileScreen = ({ route }) => {
   console.log('📊 ProfileScreen - user desde route.params:', user);
   console.log('📊 ProfileScreen - userData procesado:', userData);
   console.log('📊 ProfileScreen - código específico:', userData?.code || userData?.user_code || userData?.codigo || userData?.int_user_code);
-
   // Función para extraer el código de carrera del string completo
   const extractCareerCode = (degreeString) => {
     if (!degreeString) return null;
-    
+
     // Si ya es solo el código (4-5 letras mayúsculas), devolverlo tal como está
     if (/^[A-Z]{3,5}$/.test(degreeString.trim())) {
       return degreeString.trim();
     }
-    
+
     // Si contiene un string largo, extraer el código del final
     const match = degreeString.match(/\b([A-Z]{3,5})\b$/);
     return match ? match[1] : null;
@@ -118,12 +117,12 @@ export const ProfileScreen = ({ route }) => {
 
   // ✨ FUNCIÓN HELPER PARA OBTENER EL CÓDIGO
   const getUserCode = (userData) => {
-    return userData?.code || 
-           userData?.user_code || 
-           userData?.codigo || 
-           userData?.int_user_code || 
-           userData?.id || 
-           'Sin código';
+    return userData?.code ||
+      userData?.user_code ||
+      userData?.codigo ||
+      userData?.int_user_code ||
+      userData?.id ||
+      'Sin código';
   };
 
   const [selectedIcon, setSelectedIcon] = useState(userData.avatar || defaultAvatar);
@@ -237,13 +236,13 @@ export const ProfileScreen = ({ route }) => {
                   <FontAwesomeIcon icon={faCamera} size={16} color="#FFFFFF" />
                 </TouchableOpacity>
               </View>
-              
+
               <View style={styles.userInfo}>
                 <Text style={styles.userName}>
                   {userData.name} {userData.lastnames}
                 </Text>
                 <Text style={styles.userUsername}>@{userData.username}</Text>
-                
+
                 <View style={styles.statusBadge}>
                   <FontAwesomeIcon icon={faCheckCircle} size={14} color="#10b981" />
                   <Text style={styles.statusText}>Activo</Text>
@@ -262,7 +261,7 @@ export const ProfileScreen = ({ route }) => {
                   <Text style={styles.centerName}>Centro Universitario de Ciencias Exactas e Ingenierías</Text>
                 </View>
               </View>
-              
+
               <View style={styles.universityStats}>
                 <View style={styles.universityStatItem}>
                   <View style={styles.statIconContainer}>
@@ -273,7 +272,7 @@ export const ProfileScreen = ({ route }) => {
                     <Text style={styles.statLabelNew}>Centro Universitario</Text>
                   </View>
                 </View>
-                
+
                 <View style={styles.universityStatItem}>
                   <View style={styles.statIconContainer}>
                     <FontAwesomeIcon icon={faUniversity} size={16} color="#1e40af" />
@@ -283,7 +282,7 @@ export const ProfileScreen = ({ route }) => {
                     <Text style={styles.statLabelNew}>Universidad</Text>
                   </View>
                 </View>
-                
+
                 <View style={styles.universityStatItem}>
                   <View style={styles.statIconContainer}>
                     <FontAwesomeIcon icon={faCalendarAlt} size={16} color="#1e40af" />
@@ -306,7 +305,7 @@ export const ProfileScreen = ({ route }) => {
               <FontAwesomeIcon icon={faUser} size={20} color="#1e40af" />
               <Text style={styles.sectionTitle}>Mi Información</Text>
             </View>
-            
+
             <View style={styles.card}>
               <InfoCard
                 icon={faUser}
@@ -499,7 +498,7 @@ export const ProfileScreen = ({ route }) => {
                         fadeDuration={300}
                       />
                     </ImageZoom>
-                    
+
                     {/* Indicador de Zoom */}
                     <View style={styles.zoomIndicator}>
                       <FontAwesomeIcon icon={faImage} size={14} color="#6b7280" />
@@ -544,9 +543,9 @@ export const ProfileScreen = ({ route }) => {
                       <FontAwesomeIcon icon={faBookOpen} size={16} color="#3b82f6" />
                       <Text style={styles.footerActionText}>Detalles</Text>
                     </TouchableOpacity>
-                    
+
                     <View style={styles.footerDivider} />
-                    
+
                     <TouchableOpacity
                       style={styles.footerCloseButton}
                       onPress={() => setCurriculumModalVisible(false)}
