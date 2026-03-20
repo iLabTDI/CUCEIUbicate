@@ -200,18 +200,19 @@ export const CompleteProfile = () => {
       valid = false;
     }
 
-    // Validar que el código tenga exactamente 9 dígitos
-    if (Codigo.length === CODE_LENGTH) {
-      setCodigoError(false);
-    } else {
-      setCodigoError(true);
-      valid = false;
-    }
-
-    // Validar que se haya seleccionado una carrera
-    if (!selectedCareer) {
-      alert("Seleccione una carrera.");
-      valid = false;
+    if (userType !== "externo") {
+      // Validar que el código tenga exactamente 9 dígitos
+      if (Codigo.length === CODE_LENGTH) {
+        setCodigoError(false);
+      } else {
+        setCodigoError(true);
+        valid = false;
+      }
+      // Validar que se haya seleccionado una carrera
+      if (userType === "estudiante" && !selectedCareer) {
+        alert("Seleccione una carrera.");
+        valid = false;
+      }
     }
 
     return valid;
@@ -236,12 +237,14 @@ export const CompleteProfile = () => {
         return;
       }
 
-      const codigoValido = await validar_codigo(Codigo);
-      if (!codigoValido) {
-        setCodigoError(true);
-        setIsLoading(false);
-        shakeForm();
-        return;
+      if (userType !== "externo") {
+        const codigoValido = await validar_codigo(Codigo);
+        if (!codigoValido) {
+          setCodigoError(true);
+          setIsLoading(false);
+          shakeForm();
+          return;
+        }
       }
 
       await alta_usuario(

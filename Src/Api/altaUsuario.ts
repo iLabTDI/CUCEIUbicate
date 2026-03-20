@@ -60,16 +60,15 @@ export const alta_usuario = async (
   try {
     // Validar código
     const codigoNumerico = Number(Codigo);
-    if (isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9) {
+    if (userType !== "externo" && (isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9)) {
       throw new Error(`Código inválido: ${Codigo}. Debe tener exactamente 9 dígitos.`);
     }
-
     console.log('📊 === CREANDO USUARIO CON HASH CONSISTENTE ===');
     console.log('📊 Código:', codigoNumerico);
     console.log('📊 Email:', correo);
     console.log('📊 Password preview:', contraseña.substring(0, 3) + '***');
 
-    // ✨ GENERAR HASH CON LA FUNCIÓN IDÉNTICA
+    // ✨ GENERAR HASH CON LA FUNCIÓwN IDÉNTICA
     const hashed = secureHash(contraseña);
     console.log('📊 Hash generado formato:', hashed.substring(0, 20) + '...');
     console.log('📊 Hash longitud:', hashed.length);
