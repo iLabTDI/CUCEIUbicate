@@ -257,16 +257,16 @@ export const CompleteProfile = () => {
         userType
       });
 
-      await alta_usuario(
-        Codigo,
-        correo,
-        contraseña,
+      await alta_usuario({
+        code: Codigo,
+        email: correo,
+        password: contraseña,
         selectedCareer,
         name,
         lastName,
         username,
         userType
-      );
+      });
 
       // ✨ GUARDAR EMAIL PARA AUTO-LOGIN
       try {

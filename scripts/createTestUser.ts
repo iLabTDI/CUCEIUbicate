@@ -22,15 +22,16 @@ const crearUsuarioPrueba = async () => {
     console.log("🚀 Creando usuario de prueba con datos random...");
     console.log("📋 Datos:", datos);
 
-    const resultado = await alta_usuario(
-      datos.codigo,
-      datos.correo,
-      datos.password,
-      datos.carrera,
-      datos.nombre,
-      datos.apellido,
-      datos.username,
-    );
+    const resultado = await alta_usuario({
+      code: datos.codigo,
+      email: datos.correo,
+      password: datos.password,
+      selectedCareer: datos.carrera,
+      name: datos.nombre,
+      lastName: datos.apellido,
+      username: datos.username,
+      userType: "estudiante",
+    });
 
     console.log("✅ Usuario creado exitosamente:", resultado);
   } catch (error) {

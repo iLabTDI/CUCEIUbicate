@@ -1,82 +1,39 @@
 // Api/altaUsuario.ts
 import { createUser, UserType } from './lib/api';
+import { secureHash } from './utils/secureHash';
 
-// ✨ FUNCIÓN DE HASH EXACTAMENTE IDÉNTICA A LOGIN
-const secureHash = (password: string): string => {
-  try {
-    if (!password || password.trim() === '') {
-      throw new Error('La contraseña no puede estar vacía');
-    }
+interface AltaUsuarioParams {
+  code: string;
+  email: string;
+  password: string;
+  selectedCareer: string;
+  name: string;
+  lastName: string;
+  username: string;
+  userType: UserType;
+}
 
-    const staticSalt = 'CUCEI_UBICATE_2024_PRODUCTION_SECURE_SALT_V2';
-    const timestamp = Date.now().toString(36);
-    const combined = password + staticSalt + timestamp.slice(-6);
-
-    let hash1 = 0;
-    let hash2 = 0;
-    let hash3 = 0;
-
-    for (let i = 0; i < combined.length; i++) {
-      const char = combined.codePointAt(i);
-      hash1 = ((hash1 << 5) - hash1) + char;
-      hash1 = hash1 & hash1;
-    }
-
-    for (let i = 0; i < combined.length; i++) {
-      const char = combined.codePointAt(i);
-      hash2 = ((hash2 << 3) - hash2) + char + i;
-      hash2 = hash2 & hash2;
-    }
-
-    const mixed = password + staticSalt;
-    for (let i = 0; i < mixed.length; i++) {
-      const char = mixed.codePointAt(i);
-      hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
-      hash3 = hash3 & hash3;
-    }
-
-    const finalHash1 = Math.abs(hash1).toString(36).padStart(8, '0');
-    const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
-    const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
-
-    // ✨ FORMATO CON 6 PARTES - IDÉNTICO A LOGIN
-    return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
-  } catch (error) {
-    console.error('Error generando hash:', error);
-    throw new Error('Error al procesar la contraseña');
-  }
-};
-
-export const alta_usuario = async (
-  Codigo: string,
-  correo: string,
-  contraseña: string,
-  selectedCareer: string,
-  name: string,
-  lastName: string,
-  username: string,
-  userType: UserType
-) => {
+export const alta_usuario = async ({ code, email, password, selectedCareer, name, lastName, username, userType }: AltaUsuarioParams) => {
   try {
     // Validar código
-    const codigoNumerico = Number(Codigo);
-    if (userType !== "externo" && (Number.isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9)) {
-      throw new Error(`Código inválido: ${Codigo}. Debe tener exactamente 9 dígitos.`);
+    const codigoNumerico = Number(code);
+    if (userType !== "externo" && (Number.isNaN(codigoNumerico) || codigoNumerico <= 0 || code.length !== 9)) {
+      throw new Error(`Código inválido: ${code}. Debe tener exactamente 9 dígitos.`);
     }
     console.log('📊 === CREANDO USUARIO CON HASH CONSISTENTE ===');
     console.log('📊 Código:', codigoNumerico);
-    console.log('📊 Email:', correo);
-    console.log('📊 Password preview:', contraseña.substring(0, 3) + '***');
+    console.log('📊 Email:', email);
+    console.log('📊 Password preview:', password.substring(0, 3) + '***');
 
     // ✨ GENERAR HASH CON LA FUNCIÓwN IDÉNTICA
-    const hashed = secureHash(contraseña);
+    const hashed = secureHash(password);
     console.log('📊 Hash generado formato:', hashed.substring(0, 20) + '...');
     console.log('📊 Hash longitud:', hashed.length);
     console.log('📊 Hash partes:', hashed.split('$').length);
 
     const payload = {
       int_user_code: codigoNumerico,
-      var_email: correo,
+      var_email: email,
       var_password: hashed,
       var_degree_code: selectedCareer,
       var_name: name,

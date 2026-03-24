@@ -1,20 +1,13 @@
 // Api/api.ts
+import { cleanString } from "../utils/cleanString";
+import { secureHash } from "../utils/secureHash";
+import { DegreeRow } from "./types/DegreeRow";
+import { UserRow } from "./types/UserRow";
+
 const BASE = 'https://ilabtdi.com/api_ubicate';
 const USE_INDEX_PHP = true; // pon true si usas las URLs con index.php
 
 const url = (p: string) => `${BASE}${USE_INDEX_PHP ? '/index.php' : ''}${p}`;
-
-// Función para limpiar strings y evitar problemas de collation
-const cleanString = (str: string): string => {
-  if (!str) return '';
-
-  // Normalizar y limpiar caracteres especiales
-  return str
-    .normalize('NFD') // Descomponer caracteres acentuados
-    .replaceAll(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
-    .replaceAll(/[^\w\s@.-]/g, '') // Solo permitir caracteres seguros
-    .trim();
-};
 
 async function http(path: string, init: RequestInit = {}) {
   console.log(`🚀 Petición HTTP: ${init.method || 'GET'} ${url(path)}`);
@@ -77,26 +70,6 @@ async function http(path: string, init: RequestInit = {}) {
     throw error;
   }
 }
-
-// ---- USUARIOS ---- (Alineado exactamente con tu PHP)
-export type UserRow = {
-  id: number;                    // PK auto-increment (manejado por PHP)
-  int_user_code: number;         // Código estudiantil (555555555)
-  var_email: string;
-  var_password: string;
-  var_degree_code: string;
-  var_name: string;
-  var_lastnames: string;
-  var_username: string;
-  // control de acceso (alumnos, academicos, externos )
-  var_user_type: string;
-}
-
-// ---- CARRERAS ---- (Alineado exactamente con tu PHP)
-export type DegreeRow = {
-  var_code: string;      // PK 
-  var_name: string;
-};
 
 // ---- CARRERAS ----
 export const listDegrees = async (): Promise<DegreeRow[]> => {
@@ -229,52 +202,7 @@ export const createUser = async (userData: any): Promise<any> => {
   }
 };
 
-// ✨ FUNCIÓN DE HASH CONSISTENTE EN API.TS TAMBIÉN
-const secureHash = (password: string): string => {
-  try {
-    if (!password || password.trim() === '') {
-      throw new Error('La contraseña no puede estar vacía');
-    }
-
-    const staticSalt = 'CUCEI_UBICATE_2024_PRODUCTION_SECURE_SALT_V2';
-    const timestamp = Date.now().toString(36);
-    const combined = password + staticSalt + timestamp.slice(-6);
-
-    let hash1 = 0;
-    let hash2 = 0;
-    let hash3 = 0;
-
-    for (let i = 0; i < combined.length; i++) {
-      const char = combined.codePointAt(i);
-      hash1 = ((hash1 << 5) - hash1) + char;
-      hash1 = hash1 & hash1;
-    }
-
-    for (let i = 0; i < combined.length; i++) {
-      const char = combined.codePointAt(i);
-      hash2 = ((hash2 << 3) - hash2) + char + i;
-      hash2 = hash2 & hash2;
-    }
-
-    const mixed = password + staticSalt;
-    for (let i = 0; i < mixed.length; i++) {
-      const char = mixed.codePointAt(i);
-      hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
-      hash3 = hash3 & hash3;
-    }
-
-    const finalHash1 = Math.abs(hash1).toString(36).padStart(8, '0');
-    const finalHash2 = Math.abs(hash2).toString(36).padStart(8, '0');
-    const finalHash3 = Math.abs(hash3).toString(36).padStart(6, '0');
-
-    return `$secure$${finalHash1}$${finalHash2}$${finalHash3}$${timestamp.slice(-6)}`;
-  } catch (error) {
-    console.error('Error generando hash:', error);
-    throw new Error('Error al procesar la contraseña');
-  }
-};
-
-export type UserType = 'alumno' | 'academico' | 'externo';
+export type UserType = 'estudiante' | 'academico' | 'externo';
 // Insertar nuevo usuario (usado en register)
 export const insertUser = async (userData: {
   email: string;
