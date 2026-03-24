@@ -5,7 +5,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import { SCREEN_DIMENSIONS } from '../constants/screen-dimentions';
 
-const { isTablet, SCREEN_HEIGHT } = SCREEN_DIMENSIONS;
+const { isTablet } = SCREEN_DIMENSIONS;
 
 export const UniversityInfoCard = () => {
     return (

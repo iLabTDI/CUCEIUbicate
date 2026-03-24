@@ -1,5 +1,5 @@
 // Api/altaUsuario.ts
-import { createUser, UserRow } from './lib/api';
+import { createUser, UserType } from './lib/api';
 
 // ✨ FUNCIÓN DE HASH EXACTAMENTE IDÉNTICA A LOGIN
 const secureHash = (password: string): string => {
@@ -17,20 +17,20 @@ const secureHash = (password: string): string => {
     let hash3 = 0;
 
     for (let i = 0; i < combined.length; i++) {
-      const char = combined.charCodeAt(i);
+      const char = combined.codePointAt(i);
       hash1 = ((hash1 << 5) - hash1) + char;
       hash1 = hash1 & hash1;
     }
 
     for (let i = 0; i < combined.length; i++) {
-      const char = combined.charCodeAt(i);
+      const char = combined.codePointAt(i);
       hash2 = ((hash2 << 3) - hash2) + char + i;
       hash2 = hash2 & hash2;
     }
 
     const mixed = password + staticSalt;
     for (let i = 0; i < mixed.length; i++) {
-      const char = mixed.charCodeAt(i);
+      const char = mixed.codePointAt(i);
       hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
       hash3 = hash3 & hash3;
     }
@@ -55,12 +55,12 @@ export const alta_usuario = async (
   name: string,
   lastName: string,
   username: string,
-  userType: string
+  userType: UserType
 ) => {
   try {
     // Validar código
     const codigoNumerico = Number(Codigo);
-    if (userType !== "externo" && (isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9)) {
+    if (userType !== "externo" && (Number.isNaN(codigoNumerico) || codigoNumerico <= 0 || Codigo.length !== 9)) {
       throw new Error(`Código inválido: ${Codigo}. Debe tener exactamente 9 dígitos.`);
     }
     console.log('📊 === CREANDO USUARIO CON HASH CONSISTENTE ===');

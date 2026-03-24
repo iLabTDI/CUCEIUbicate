@@ -11,8 +11,8 @@ const cleanString = (str: string): string => {
   // Normalizar y limpiar caracteres especiales
   return str
     .normalize('NFD') // Descomponer caracteres acentuados
-    .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
-    .replace(/[^\w\s@.-]/g, '') // Solo permitir caracteres seguros
+    .replaceAll(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
+    .replaceAll(/[^\w\s@.-]/g, '') // Solo permitir caracteres seguros
     .trim();
 };
 
@@ -24,7 +24,7 @@ async function http(path: string, init: RequestInit = {}) {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(init.headers || {})
+        ...init.headers
       },
     });
 
@@ -168,7 +168,7 @@ export const findUserByCode = async (code: string | number): Promise<UserRow[]> 
     console.log('🔍 Buscando usuario por código:', code);
 
     // Convertir a string y limpiar
-    const codeString = String(code).replace(/[^\d]/g, ''); // Solo números
+    const codeString = String(code).replaceAll(/[^\d]/g, ''); // Solo números
     const encodedCode = encodeURIComponent(codeString);
 
     const result = await http(`/CUB_users?int_user_code=${encodedCode}`);
@@ -245,20 +245,20 @@ const secureHash = (password: string): string => {
     let hash3 = 0;
 
     for (let i = 0; i < combined.length; i++) {
-      const char = combined.charCodeAt(i);
+      const char = combined.codePointAt(i);
       hash1 = ((hash1 << 5) - hash1) + char;
       hash1 = hash1 & hash1;
     }
 
     for (let i = 0; i < combined.length; i++) {
-      const char = combined.charCodeAt(i);
+      const char = combined.codePointAt(i);
       hash2 = ((hash2 << 3) - hash2) + char + i;
       hash2 = hash2 & hash2;
     }
 
     const mixed = password + staticSalt;
     for (let i = 0; i < mixed.length; i++) {
-      const char = mixed.charCodeAt(i);
+      const char = mixed.codePointAt(i);
       hash3 = ((hash3 << 7) - hash3) + char * (i + 1);
       hash3 = hash3 & hash3;
     }
@@ -274,6 +274,7 @@ const secureHash = (password: string): string => {
   }
 };
 
+export type UserType = 'alumno' | 'academico' | 'externo';
 // Insertar nuevo usuario (usado en register)
 export const insertUser = async (userData: {
   email: string;
@@ -282,6 +283,7 @@ export const insertUser = async (userData: {
   name: string;
   lastnames: string;
   degree_code: string;
+  userType: UserType;
 }): Promise<number> => {
   try {
     // ✨ USAR HASH CONSISTENTE AQUÍ TAMBIÉN
@@ -294,7 +296,8 @@ export const insertUser = async (userData: {
       var_degree_code: cleanString(userData.degree_code.toUpperCase()),
       var_name: cleanString(userData.name),
       var_lastnames: cleanString(userData.lastnames),
-      var_username: cleanString(userData.username.toLowerCase())
+      var_username: cleanString(userData.username.toLowerCase()),
+      var_user_type: cleanString(userData.userType)
     };
 
     const result = await http('/CUB_users', {
@@ -303,8 +306,8 @@ export const insertUser = async (userData: {
     });
 
     if (typeof result === 'number') return result;
-    if (result && result.id) return result.id;
-    if (result && result.insertId) return result.insertId;
+    if (result?.id) return result.id;
+    if (result?.insertId) return result.insertId;
 
     if (result && (result.success || result.status === 'success')) {
       const newUser = await findUserByUsername(userData.username);
@@ -378,7 +381,7 @@ export const deleteUser = async (userId: number): Promise<boolean> => {
 
     console.log('✅ Usuario eliminado, respuesta:', result);
 
-    return result && result.ok === true;
+    return result?.ok === true;
   } catch (error) {
     console.error('❌ Error eliminando usuario:', error);
     return false;
@@ -433,64 +436,4 @@ export const validatePassword = (password: string): { isValid: boolean; message?
   }
 
   return { isValid: true };
-};
-
-// ---- REGISTRO DE USUARIO ---- (Solo una vez)
-export const registerUser = async (userData: {
-  email: string;
-  username: string;
-  password: string;
-  name: string;
-  lastnames: string;
-  degree_code: string;
-}): Promise<{ success: boolean; message: string; userId?: number }> => {
-  try {
-    console.log('🔍 Iniciando registro para usuario:', userData.username);
-
-    // Validar email
-    const emailValidation = validateEmail(userData.email);
-    if (!emailValidation.isValid) {
-      return { success: false, message: emailValidation.message! };
-    }
-
-    // Validar username
-    const usernameValidation = validateUsername(userData.username);
-    if (!usernameValidation.isValid) {
-      return { success: false, message: usernameValidation.message! };
-    }
-
-    // Validar password
-    const passwordValidation = validatePassword(userData.password);
-    if (!passwordValidation.isValid) {
-      return { success: false, message: passwordValidation.message! };
-    }
-
-    // Verificar si el email ya existe
-    const existingEmail = await findUserByEmail(userData.email);
-    if (existingEmail && existingEmail.length > 0) {
-      return { success: false, message: 'El email ya está registrado' };
-    }
-
-    // Verificar si el username ya existe
-    const existingUsername = await findUserByUsername(userData.username);
-    if (existingUsername && existingUsername.length > 0) {
-      return { success: false, message: 'El nombre de usuario ya está en uso' };
-    }
-
-    // Insertar usuario
-    const userId = await insertUser(userData);
-
-    return {
-      success: true,
-      message: 'Usuario registrado exitosamente',
-      userId: userId
-    };
-
-  } catch (error) {
-    console.error('🚨 Error en registro:', error);
-    return {
-      success: false,
-      message: 'Error interno del servidor. Por favor intenta de nuevo.'
-    };
-  }
 };

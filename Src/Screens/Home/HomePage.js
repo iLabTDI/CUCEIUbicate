@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -31,8 +31,6 @@ import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 import MapSVG from "./Components/MapComponent/MapSVG";
-// Para iOS, usamos expo-media-library
-// import * as MediaLibrary from "expo-media-library";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;

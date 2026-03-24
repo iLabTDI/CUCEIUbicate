@@ -246,6 +246,16 @@ export const CompleteProfile = () => {
           return;
         }
       }
+      console.log('usuario registrandoce con los datos: ', {
+        Codigo,
+        correo,
+        contraseña,
+        selectedCareer,
+        name,
+        lastName,
+        username,
+        userType
+      });
 
       await alta_usuario(
         Codigo,
