@@ -17,18 +17,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faTimes,
   faExchangeAlt,
-  faSearch,
   faTrash,
   faMapMarkerAlt,
   faHistory,
-  faArrowUp,
   faRoute,
   faLocationArrow,
   faFlag,
-  faDirections,
-  faCompass,
-  faBus,
-  faWalking,
   faBuilding,
   faBookBookmark,
   faFlask,
@@ -36,8 +30,8 @@ import {
   faUtensils,
   faCoffee,
 } from "@fortawesome/free-solid-svg-icons";
-import routesData from "../MapComponent/data/routes.json";
 import { points } from "../MapComponent/data";
+import { getRoute } from "../../utils/get-route.util";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -47,7 +41,7 @@ const isAndroid = Platform.OS === "android";
 const normalize = (s = "") =>
   s
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replaceAll(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
 const getIconForLocation = (text = "") => {
@@ -132,16 +126,23 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
   const normalizeText = (text) => {
     return text
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replaceAll(/[\u0300-\u036f]/g, "")
       .toLowerCase();
   };
 
   const filterSuggestions = (text, isOrigin) => {
     const normalizedText = normalizeText(text);
+
     if (normalizedText.length > 0) {
-      const suggestions = points.filter((point) =>
-        normalizeText(point.name).includes(normalizedText)
-      );
+      const suggestions = points.filter((point) => {
+        const normalizedName = normalizeText(point.name);
+        const normalizedId = normalizeText(point.id);
+        const matchesNameOrId = normalizedName.includes(normalizedText) || normalizedId.includes(normalizedText);
+        const matchesAlias = point.aliases?.some(alias => normalizeText(alias).includes(normalizedText));
+
+        return matchesNameOrId || matchesAlias;
+      });
+
       if (isOrigin) {
         setOriginData(suggestions);
         setShowOriginSuggestions(true);
@@ -149,14 +150,12 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
         setDestinationData(suggestions);
         setShowDestinationSuggestions(true);
       }
+    } else if (isOrigin) {
+      setOriginData([]);
+      setShowOriginSuggestions(false);
     } else {
-      if (isOrigin) {
-        setOriginData([]);
-        setShowOriginSuggestions(false);
-      } else {
-        setDestinationData([]);
-        setShowDestinationSuggestions(false);
-      }
+      setDestinationData([]);
+      setShowDestinationSuggestions(false);
     }
   };
 
@@ -212,19 +211,22 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    const matchingRoute = routesData.routes.find((route) => {
-      const parts = route.name.split(" - ");
-      if (parts.length < 2) return false;
-      const routeOrigin = normalizeText(parts[0].trim());
-      const routeDestination = normalizeText(parts[1].trim());
-      return (
-        (routeOrigin === originInput &&
-          routeDestination === destinationInput) ||
-        (routeOrigin === destinationInput && routeDestination === originInput)
-      );
-    });
+    const startPoint = points.find(
+      (point) => normalizeText(point.name) === originInput
+    );
 
-    if (!matchingRoute) {
+    const endPoint = points.find(
+      (point) => normalizeText(point.name) === destinationInput
+    );
+
+    let start = performance.now();
+
+    const route = getRoute(startPoint.node, endPoint.node);
+
+    let end = performance.now();
+    console.log('Tiempo empleado:', (end - start), 'milisegundos', 'para la ruta: ', originText.trim(), '->', destinationText.trim());
+
+    if (route.coordinates.length === 0) {
       Alert.alert(
         "Error",
         "No se encontró ruta que coincida con origen y destino."
@@ -232,8 +234,14 @@ export const SearchRoute2 = ({ onClose, onSearch }) => {
       return;
     }
 
-    onSearch(matchingRoute);
-    console.log("onSearch:", matchingRoute);
+    const matchedRoute = {
+      name: `${startPoint.id} - ${endPoint.id}`,
+      coordinates: route.coordinates
+    };
+
+    console.log('[SearchRoute2] Ruta encontrada:', matchedRoute);
+
+    onSearch(matchedRoute);
 
     const search = {
       origin: originText.trim(),

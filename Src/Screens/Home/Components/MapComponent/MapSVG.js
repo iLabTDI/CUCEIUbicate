@@ -1,24 +1,18 @@
-import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Animated, Platform } from "react-native";
-import Svg, { 
-  Polyline, 
-  Defs, 
-  LinearGradient, 
-  Stop, 
-  Circle, 
+import React, { memo, useCallback, useEffect, useMemo } from "react";
+import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
+import Svg, {
+  Polyline,
+  Defs,
+  LinearGradient,
+  Stop,
   RadialGradient,
-  Filter,
-  DropShadow,
-  Marker
 } from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { 
-  faTimes, 
-  faMapMarkerAlt, 
-  faLocationArrow, 
+import {
+  faTimes,
+  faMapMarkerAlt,
+  faLocationArrow,
   faFlag,
-  faRoute,
-  faDotCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
@@ -32,65 +26,62 @@ const MapSVG = ({
   setMarkedObject,
 }) => {
   // Convierte las coordenadas de la ruta a "x1,y1 x2,y2 ..."
-  const pointsString = activeRoutePoints
-    .map(([x, y]) => `${x},${y}`)
-    .join(" ");
+  const pointsString = useMemo(() => {
+    return activeRoutePoints
+      .map(([x, y]) => `${x},${y}`)
+      .join(" ");
+  }, [activeRoutePoints]);
 
   // Animaciones múltiples para efectos más sofisticados
-  const dashOffset = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const glowAnim = useRef(new Animated.Value(0)).current;
-  
+  const dashOffset = new Animated.Value(0);
+  const pulseAnim = new Animated.Value(1);
+  const glowAnim = new Animated.Value(0);
+
   useEffect(() => {
+    let animationGroup;
+
     if (isRouteActive && activeRoutePoints.length > 1) {
-      // Animación del dash offset para el efecto de flujo
-      Animated.loop(
-        Animated.timing(dashOffset, {
-          toValue: 30,
-          duration: 2000,
-          useNativeDriver: true,
-        })
-      ).start();
+      animationGroup = Animated.parallel([
+        // Dash Offset
+        Animated.loop(
+          Animated.timing(dashOffset, {
+            toValue: 30,
+            duration: 2000,
+            useNativeDriver: true,
+          })
+        ),
+        // Pulse (Escala)
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(pulseAnim, { toValue: 1.3, duration: 800, useNativeDriver: true }),
+            Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+          ])
+        ),
+        // Glow (Opacidad/Brillo)
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(glowAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+            Animated.timing(glowAnim, { toValue: 0, duration: 1500, useNativeDriver: true }),
+          ])
+        )
+      ]);
 
-      // Animación de pulso para los pines
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, {
-            toValue: 1.3,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-          Animated.timing(pulseAnim, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-
-      // Animación de brillo para la línea
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: 1,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: 1500,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
+      animationGroup.start();
+    } else {
+      dashOffset.setValue(0);
+      pulseAnim.setValue(1);
+      glowAnim.setValue(0);
     }
+    return () => {
+      if (animationGroup) animationGroup.stop();
+    };
   }, [isRouteActive, activeRoutePoints]);
 
-  const handlePointPress = (point) => {
+  const handlePointPress = useCallback((point) => {
     onPointPress(point.id);
-  };
+  }, [onPointPress]);
 
-  const renderPoints = () => {
+  const renderPoints = useCallback(() => {
     return points.map((point) => (
       <TouchableOpacity
         key={point.id}
@@ -110,23 +101,24 @@ const MapSVG = ({
         }}
       />
     ));
-  };
+  }, [points, handlePointPress]);
 
-  const renderMarker = () => {
+  const renderMarker = useCallback(() => {
     if (!markedObject) return null;
     const markerPosition = {
       left: markedObject.left + markedObject.width / 2 - 60,
       top: markedObject.top - 45,
     };
     return (
-      <Animated.View 
+      <Animated.View
         style={[
-          styles.markerContainer, 
+          styles.markerContainer,
           markerPosition,
           {
             transform: [{ scale: pulseAnim }],
           }
         ]}
+
       >
         <View style={styles.markerIconContainer}>
           <FontAwesomeIcon icon={faMapMarkerAlt} size={18} color="#0033A0" />
@@ -140,11 +132,12 @@ const MapSVG = ({
         </TouchableOpacity>
       </Animated.View>
     );
-  };
+  }, [markedObject, setMarkedObject, pulseAnim]);
 
   // Renderiza la línea de la ruta con múltiples capas para un efecto premium
-  const renderRouteLine = () => {
+  const renderRouteLine = useCallback(() => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
+
     return (
       <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
         <Defs>
@@ -156,7 +149,7 @@ const MapSVG = ({
             <Stop offset="75%" stopColor="#60A5FA" stopOpacity="1" />
             <Stop offset="100%" stopColor="#93C5FD" stopOpacity="1" />
           </LinearGradient>
-          
+
           {/* Gradiente de brillo para efecto glow */}
           <RadialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
             <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
@@ -226,33 +219,16 @@ const MapSVG = ({
             opacity: glowAnim,
           }}
         />
-
-        {/* Puntos decorativos a lo largo de la ruta */}
-        {activeRoutePoints.map((point, index) => {
-          if (index === 0 || index === activeRoutePoints.length - 1) return null;
-          return (
-            <Circle
-              key={index}
-              cx={point[0]}
-              cy={point[1]}
-              r={3}
-              fill="#FFFFFF"
-              stroke="#0033A0"
-              strokeWidth={2}
-              opacity={0.8}
-            />
-          );
-        })}
       </Svg>
     );
-  };
+  }, [isRouteActive, activeRoutePoints, dashOffset, glowAnim]);
 
   // Renderiza pines de origen y destino con efectos premium
-  const renderRoutePins = () => {
+  const renderRoutePins = useCallback(() => {
     if (!isRouteActive || activeRoutePoints.length < 2) return null;
     const origin = activeRoutePoints[0];
-    const destination = activeRoutePoints[activeRoutePoints.length - 1];
-    
+    const destination = activeRoutePoints.at(-1);
+
     return (
       <>
         {/* Pin de origen sin animación */}
@@ -260,8 +236,8 @@ const MapSVG = ({
           style={[
             styles.routePin,
             styles.originPin,
-            { 
-              left: origin[0] - 15, 
+            {
+              left: origin[0] - 15,
               top: origin[1] - 20,
             },
           ]}
@@ -281,8 +257,8 @@ const MapSVG = ({
           style={[
             styles.routePin,
             styles.destinationPin,
-            { 
-              left: destination[0] - 17, 
+            {
+              left: destination[0] - 17,
               top: destination[1] - 20,
             },
           ]}
@@ -298,7 +274,7 @@ const MapSVG = ({
         </View>
       </>
     );
-  };
+  }, [isRouteActive, activeRoutePoints]);
 
   return (
     <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
@@ -310,7 +286,7 @@ const MapSVG = ({
   );
 };
 
-export default MapSVG;
+export default memo(MapSVG);
 
 const styles = StyleSheet.create({
   point: {
