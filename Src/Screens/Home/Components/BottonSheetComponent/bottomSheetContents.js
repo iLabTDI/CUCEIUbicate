@@ -544,19 +544,19 @@ export const bottomSheetContents = {
     description:
       "La Biblioteca CUCEI ofrece espacios de estudio y coworking. En el segundo piso se encuentra el Programa de Intercambios y una papelería para apoyo estudiantil.",
   },
-    "Entrada Revolucion": {
-      name: "Entrada Revolucion",
-      classrooms: "",
-      "relevant-places": ["-"],
-      bathrooms:[ "-"],
-      "images-path": [require ("./Modulos/Entradas/Entrada-Revolucion1.png")],
-      description:
-        "La entrada por Revolución es una de las más concurridas por los estudiantes, ya que es la entrada principal al campus.",
-    },
+  "Entrada Revolucion": {
+    name: "Entrada Revolucion",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: ["-"],
+    "images-path": [require("./Modulos/Entradas/Entrada-Revolucion1.png")],
+    description:
+      "La entrada por Revolución es una de las más concurridas por los estudiantes, ya que es la entrada principal al campus.",
+  },
   "Entrada Olimpica": {
     name: "Entrada Olimpica",
     classrooms: "",
-    "relevant-places":[ "-"],
+    "relevant-places": ["-"],
     bathrooms: ["-"],
     "images-path": [
       require("./Modulos/Entradas/Entrada-Olimpica1.png"),

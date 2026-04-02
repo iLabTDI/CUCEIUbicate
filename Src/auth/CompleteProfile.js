@@ -11,13 +11,11 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   Animated,
   ActivityIndicator,
   Easing,
 } from "react-native";
 import LottieView from "lottie-react-native";
-import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { validar_codigo, validar_usuario } from "../Api/validaciones";
@@ -27,39 +25,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   faUser,
-  faEnvelope,
   faIdCard,
   faGraduationCap,
   faChevronDown,
-  faLaptopCode,
   faFlask,
-  faCog,
   faIndustry,
-  faCalculator,
-  faMicrochip,
-  faNetworkWired,
-  faAtom,
   faRobot,
-  faBuilding,
-  faStethoscope,
   faMapMarkedAlt,
   faTruck,
-  faUtensils,
   faBroadcastTower,
   faDesktop,
   faServer,
   faCogs,
-  faBomb,
   faLightbulb,
   faUserDoctor,
   faAppleAlt,
   faSquareRootVariable,
-  faBriefcaseMedical,
   faRadiation,
-  faFaceGrimace,
-  faPersonHarassing,
-  faMedkit,
-  faHouseChimneyMedical,
 } from "@fortawesome/free-solid-svg-icons";
 
 const { width, height } = Dimensions.get("window");
@@ -130,7 +112,7 @@ export const CompleteProfile = () => {
 
   const navigation = useNavigation();
   const route = useRoute();
-  const { mail, pass } = route.params;
+  const { mail, pass, userType } = route.params;
   const correo = mail;
   const contraseña = pass;
 
@@ -192,7 +174,7 @@ export const CompleteProfile = () => {
 
   const validateForm = () => {
     let valid = true;
-    
+
     // Validar que el nombre no esté vacío y solo contenga letras y espacios
     if (!name.trim() || !NAME_REGEX.test(name)) {
       setNameError(true);
@@ -200,7 +182,7 @@ export const CompleteProfile = () => {
     } else {
       setNameError(false);
     }
-    
+
     // Validar que el apellido no esté vacío y solo contenga letras y espacios
     if (!lastName.trim() || !NAME_REGEX.test(lastName)) {
       setLastNameError(true);
@@ -208,30 +190,31 @@ export const CompleteProfile = () => {
     } else {
       setLastNameError(false);
     }
-    
+
     // Validar username usando las utilidades
     const usernameValidation = validateUsername(username);
-    if (!usernameValidation.isValid) {
+    if (usernameValidation.isValid) {
+      setUsernameError(false);
+    } else {
       setUsernameError(true);
       valid = false;
-    } else {
-      setUsernameError(false);
     }
-    
-    // Validar que el código tenga exactamente 9 dígitos
-    if (Codigo.length !== CODE_LENGTH) {
-      setCodigoError(true);
-      valid = false;
-    } else {
-      setCodigoError(false);
+
+    if (userType !== "externo") {
+      // Validar que el código tenga exactamente 9 dígitos
+      if (Codigo.length === CODE_LENGTH) {
+        setCodigoError(false);
+      } else {
+        setCodigoError(true);
+        valid = false;
+      }
+      // Validar que se haya seleccionado una carrera
+      if (userType === "estudiante" && !selectedCareer) {
+        alert("Seleccione una carrera.");
+        valid = false;
+      }
     }
-    
-    // Validar que se haya seleccionado una carrera
-    if (!selectedCareer) {
-      alert("Seleccione una carrera.");
-      valid = false;
-    }
-    
+
     return valid;
   };
 
@@ -254,23 +237,36 @@ export const CompleteProfile = () => {
         return;
       }
 
-      const codigoValido = await validar_codigo(Codigo);
-      if (!codigoValido) {
-        setCodigoError(true);
-        setIsLoading(false);
-        shakeForm();
-        return;
+      if (userType !== "externo") {
+        const codigoValido = await validar_codigo(Codigo);
+        if (!codigoValido) {
+          setCodigoError(true);
+          setIsLoading(false);
+          shakeForm();
+          return;
+        }
       }
-
-      await alta_usuario(
+      console.log('usuario registrandoce con los datos: ', {
         Codigo,
         correo,
         contraseña,
         selectedCareer,
         name,
         lastName,
-        username
-      );
+        username,
+        userType
+      });
+
+      await alta_usuario({
+        code: Codigo,
+        email: correo,
+        password: contraseña,
+        selectedCareer,
+        name,
+        lastName,
+        username,
+        userType
+      });
 
       // ✨ GUARDAR EMAIL PARA AUTO-LOGIN
       try {
@@ -408,9 +404,9 @@ export const CompleteProfile = () => {
                   {nameError && (
                     <Animated.View style={styles.errorContainer}>
                       <Text style={styles.errorText}>
-                        {!name.trim()
-                          ? "Campo requerido"
-                          : "Solo se permiten letras y espacios"}
+                        {name.trim()
+                          ? "Solo se permiten letras y espacios"
+                          : "Campo requerido"}
                       </Text>
                     </Animated.View>
                   )}
@@ -449,9 +445,9 @@ export const CompleteProfile = () => {
                   {lastNameError && (
                     <Animated.View style={styles.errorContainer}>
                       <Text style={styles.errorText}>
-                        {!lastName.trim()
-                          ? "Campo requerido"
-                          : "Solo se permiten letras y espacios"}
+                        {lastName.trim()
+                          ? "Solo se permiten letras y espacios"
+                          : "Campo requerido"}
                       </Text>
                     </Animated.View>
                   )}
@@ -487,74 +483,80 @@ export const CompleteProfile = () => {
                   {usernameError && (
                     <Animated.View style={styles.errorContainer}>
                       <Text style={styles.errorText}>
-                        {!username
-                          ? "Campo requerido"
-                          : "Este usuario ya ha sido registrado"}
+                        {username
+                          ? "Este usuario ya ha sido registrado"
+                          : "Campo requerido"}
                       </Text>
                     </Animated.View>
                   )}
 
-                  {/* Campo Código de Estudiante */}
-                  <View
-                    style={[
-                      styles.inputContainer,
-                      CodigoError && styles.inputContainerError,
-                    ]}>
-                    <FontAwesomeIcon
-                      icon={faIdCard}
-                      style={
-                        CodigoError
-                          ? styles.inputIconError
-                          : styles.inputIconBlue
-                      }
-                      size={22}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Código (9 dígitos)"
-                      placeholderTextColor="#a8b2c8"
-                      value={Codigo}
-                      maxLength={9}
-                      keyboardType="number-pad"
-                      onChangeText={(text) => {
-                        const numericText = text.replace(/[^0-9]/g, "");
-                        setCodigo(numericText);
-                        setCodigoError(false);
-                      }}
-                      selectionColor="#0b34b0"
-                    />
-                  </View>
-                  {CodigoError && (
-                    <Animated.View style={styles.errorContainer}>
-                      <Text style={styles.errorText}>
-                        {!Codigo
-                          ? "Campo requerido"
-                          : "El código debe tener exactamente 9 dígitos"}
-                      </Text>
-                    </Animated.View>
+                  {/* Campo Código de Udg */}
+                  {userType === "externo" || (
+                    <>
+                      <View
+                        style={[
+                          styles.inputContainer,
+                          CodigoError && styles.inputContainerError,
+                        ]}>
+                        <FontAwesomeIcon
+                          icon={faIdCard}
+                          style={
+                            CodigoError
+                              ? styles.inputIconError
+                              : styles.inputIconBlue
+                          }
+                          size={22}
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Código (9 dígitos)"
+                          placeholderTextColor="#a8b2c8"
+                          value={Codigo}
+                          maxLength={9}
+                          keyboardType="number-pad"
+                          onChangeText={(text) => {
+                            const numericText = text.replaceAll(/[^0-9]/g, "");
+                            setCodigo(numericText);
+                            setCodigoError(false);
+                          }}
+                          selectionColor="#0b34b0"
+                        />
+                      </View>
+                      {CodigoError && (
+                        <Animated.View style={styles.errorContainer}>
+                          <Text style={styles.errorText}>
+                            {Codigo
+                              ? "El código debe tener exactamente 9 dígitos"
+                              : "Campo requerido"}
+                          </Text>
+                        </Animated.View>
+                      )}
+                    </>
                   )}
 
                   {/* Selector de Carrera */}
-                  <TouchableOpacity
-                    style={styles.pickerContainer}
-                    onPress={toggleModal}>
-                    <FontAwesomeIcon
-                      icon={faGraduationCap}
-                      style={styles.inputIconBlue}
-                      size={22}
-                    />
-                    <Text style={styles.pickerText}>
-                      {selectedCareer 
-                        ? careerOptions.find(career => career.code === selectedCareer)?.name || "Seleccione una carrera"
-                        : "Seleccione una carrera"}
-                    </Text>
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      style={styles.pickerIcon}
-                      size={20}
-                    />
-                  </TouchableOpacity>
+                  {userType === 'estudiante' && (
+                    <TouchableOpacity
+                      style={styles.pickerContainer}
+                      onPress={toggleModal}>
+                      <FontAwesomeIcon
+                        icon={faGraduationCap}
+                        style={styles.inputIconBlue}
+                        size={22}
+                      />
+                      <Text style={styles.pickerText}>
+                        {selectedCareer
+                          ? careerOptions.find(career => career.code === selectedCareer)?.name || "Seleccione una carrera"
+                          : "Seleccione una carrera"}
+                      </Text>
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        style={styles.pickerIcon}
+                        size={20}
+                      />
+                    </TouchableOpacity>
 
+                  )}
                   {/* Botón para Continuar con gradiente */}
                   <TouchableOpacity
                     style={[styles.button, isLoading && styles.buttonLoading]}
@@ -577,7 +579,7 @@ export const CompleteProfile = () => {
       ) : (
         <Animated.View
           style={[styles.completedContainer, { opacity: fadeAnim }]}>
-          
+
           {/* Confetis mágicos */}
           <LottieView
             source={require("../assets/animations/Confetti-2.json")}
@@ -585,37 +587,22 @@ export const CompleteProfile = () => {
             loop={false}
             style={styles.confetti}
           />
-          
+
           {/* Gradiente de fondo hermoso */}
           <Animated.View style={styles.gradientBackground} />
-          
+
           {/* Contenido principal con diseño espectacular */}
           <View style={styles.completedContent}>
-            
-            {/* Círculo decorativo con animación */}
-            {/* <Animated.View 
-              style={[
-                styles.decorativeCircle,
-                {
-                  transform: [{
-                    scale: floatingAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.95, 1.05]
-                    })
-                  }]
-                }
-              ]}
-            />
-             */}
+
             {/* Título principal súper hermoso */}
             <View style={styles.titleContainer}>
               <Text style={styles.profileCompleteTitle}>¡PERFIL</Text>
               <Text style={styles.profileCompleteSubtitle}>COMPLETADO!</Text>
               <View style={styles.titleUnderline} />
             </View>
-            
+
             {/* Logo con contenedor elegante y efectos súper hermosos */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.logoContainer,
                 {
@@ -635,9 +622,9 @@ export const CompleteProfile = () => {
                 style={styles.logo}
               />
             </Animated.View>
-            
+
             {/* Mensaje de bienvenida súper lindo y elegante */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.welcomeContainer,
                 {
@@ -658,10 +645,10 @@ export const CompleteProfile = () => {
                 Hola @{username}, tu perfil ha sido configurado exitosamente.
               </Text>
             </Animated.View>
-            
-            
+
+
             {/* Elementos flotantes súper lindos */}
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.floatingElement,
                 styles.floatingElement1,
@@ -673,9 +660,9 @@ export const CompleteProfile = () => {
                     })
                   }]
                 }
-              ]} 
+              ]}
             />
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.floatingElement,
                 styles.floatingElement2,
@@ -687,9 +674,9 @@ export const CompleteProfile = () => {
                     })
                   }]
                 }
-              ]} 
+              ]}
             />
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.floatingElement,
                 styles.floatingElement3,
@@ -701,9 +688,9 @@ export const CompleteProfile = () => {
                     })
                   }]
                 }
-              ]} 
+              ]}
             />
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.floatingElement,
                 styles.floatingElement4,
@@ -715,9 +702,9 @@ export const CompleteProfile = () => {
                     })
                   }]
                 }
-              ]} 
+              ]}
             />
-            
+
           </View>
         </Animated.View>
       )}
@@ -732,9 +719,9 @@ export const CompleteProfile = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Seleccione una carrera</Text>
             <ScrollView style={styles.careerOptionsContainer}>
-                            {careerOptions.map((option, index) => (
+              {careerOptions.map((option, index) => (
                 <TouchableOpacity
-                  key={index}
+                  key={option.code}
                   style={styles.careerOption}
                   onPress={() => {
                     setSelectedCareer(option.code); // Solo guardar el código
@@ -791,14 +778,14 @@ const styles = StyleSheet.create({
 
   // Títulos optimizados para Android
   title: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 30 : 26) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 30 : 26)
       : (isTablet ? 38 : 32),
     fontWeight: "800",
     color: "#0b34b0",
     marginBottom: Platform.OS === 'android' ? 6 : 8,
     textAlign: "center",
-    letterSpacing: Platform.OS === 'android' ? 1.0 : 1.5,
+    letterSpacing: Platform.OS === 'android' ? 1 : 1.5,
     ...(Platform.OS === 'ios' && {
       textShadowColor: "rgba(11, 52, 176, 0.1)",
       textShadowOffset: { width: 0, height: 1 },
@@ -806,8 +793,8 @@ const styles = StyleSheet.create({
     }),
   },
   subtitle: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 15) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 15)
       : (isTablet ? 18 : 16),
     color: "#6b7280",
     textAlign: "center",
@@ -822,16 +809,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: Platform.OS === 'android' ? 16 : 20,
     position: "relative",
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 140 : 120) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 140 : 120)
       : (isTablet ? 200 : 160),
   },
   animation: {
-    width: Platform.OS === 'android' 
-      ? (isTablet ? 240 : 180) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? 240 : 180)
       : (isTablet ? 320 : 240),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 240 : 180) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 240 : 180)
       : (isTablet ? 320 : 240),
     alignSelf: "center",
     zIndex: 2,
@@ -842,11 +829,11 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: Platform.OS === 'android' ? 20 : 28,
-    paddingVertical: Platform.OS === 'android' 
-      ? (isTablet ? 28 : 24) 
+    paddingVertical: Platform.OS === 'android'
+      ? (isTablet ? 28 : 24)
       : (isTablet ? 40 : 32),
-    paddingHorizontal: Platform.OS === 'android' 
-      ? (isTablet ? 36 : 28) 
+    paddingHorizontal: Platform.OS === 'android'
+      ? (isTablet ? 36 : 28)
       : (isTablet ? 40 : 32),
     alignItems: "center",
     ...getShadowStyle(Platform.OS === 'android' ? 4 : 8, "#0b34b0", 0.12),
@@ -864,8 +851,8 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'android' ? 16 : 20,
     borderWidth: Platform.OS === 'android' ? 1 : 2,
     borderColor: Platform.OS === 'android' ? "rgba(229, 233, 245, 0.8)" : "#e5e9f5",
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 52 : 48) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 52 : 48)
       : (isTablet ? 68 : 58),
     ...getShadowStyle(Platform.OS === 'android' ? 2 : 4, "#0b34b0", 0.06),
     width: "100%",
@@ -879,8 +866,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 15) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 15)
       : (isTablet ? 18 : 16),
     color: "#2d3748",
     fontWeight: "500",
@@ -900,8 +887,8 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'android' ? 16 : 20,
     borderWidth: Platform.OS === 'android' ? 1 : 2,
     borderColor: Platform.OS === 'android' ? "rgba(229, 233, 245, 0.8)" : "#e5e9f5",
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 52 : 48) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 52 : 48)
       : (isTablet ? 68 : 58),
     ...getShadowStyle(Platform.OS === 'android' ? 2 : 4, "#0b34b0", 0.06),
     width: "100%",
@@ -910,8 +897,8 @@ const styles = StyleSheet.create({
   },
   pickerText: {
     flex: 1,
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 15) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 15)
       : (isTablet ? 18 : 16),
     color: "#2d3748",
     fontWeight: "500",
@@ -943,8 +930,8 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: Platform.OS === 'android' ? 16 : 20,
     width: "100%",
-    height: Platform.OS === 'android' 
-      ? (isTablet ? 52 : 48) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? 52 : 48)
       : (isTablet ? 68 : 58),
     ...getShadowStyle(Platform.OS === 'android' ? 3 : 6, "#0b34b0", 0.2),
     overflow: "hidden",
@@ -962,8 +949,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 17 : 16) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 17 : 16)
       : (isTablet ? 20 : 18),
     fontWeight: "700",
     letterSpacing: Platform.OS === 'android' ? 0.8 : 1.2,
@@ -981,8 +968,8 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#ff4d4f",
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 12 : 11) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 12 : 11)
       : (isTablet ? 13 : 12),
     fontWeight: "400",
     textAlign: "left",
@@ -1000,7 +987,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  
+
   gradientBackground: {
     position: 'absolute',
     top: 0,
@@ -1010,7 +997,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     opacity: 0.05,
   },
-  
+
   completedContent: {
     alignItems: "center",
     justifyContent: "center",
@@ -1018,17 +1005,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Platform.OS === 'android' ? 20 : 24,
     maxWidth: isTablet ? width * 0.8 : width * 0.9,
   },
-  
+
   decorativeCircle: {
     position: 'absolute',
-    width: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.7 : width * 0.8) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? width * 0.7 : width * 0.8)
       : (isTablet ? width * 0.75 : width * 0.85),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.7 : width * 0.8) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? width * 0.7 : width * 0.8)
       : (isTablet ? width * 0.75 : width * 0.85),
-    borderRadius: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.35 : width * 0.4) 
+    borderRadius: Platform.OS === 'android'
+      ? (isTablet ? width * 0.35 : width * 0.4)
       : (isTablet ? width * 0.375 : width * 0.425),
     backgroundColor: 'rgba(11, 52, 176, 0.05)',
     borderWidth: 2,
@@ -1036,16 +1023,16 @@ const styles = StyleSheet.create({
     top: '20%',
     ...getShadowStyle(Platform.OS === 'android' ? 3 : 8, "#0b34b0", 0.08),
   },
-  
+
   titleContainer: {
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 30 : 40,
     zIndex: 3,
   },
-  
+
   profileCompleteTitle: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.08 : width * 0.12) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? width * 0.08 : width * 0.12)
       : (isTablet ? width * 0.09 : width * 0.13),
     fontWeight: "900",
     color: "#0b34b0",
@@ -1058,10 +1045,10 @@ const styles = StyleSheet.create({
       textShadowRadius: 8,
     }),
   },
-  
+
   profileCompleteSubtitle: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.06 : width * 0.09) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? width * 0.06 : width * 0.09)
       : (isTablet ? width * 0.065 : width * 0.095),
     fontWeight: "800",
     color: "#4a90e2",
@@ -1069,26 +1056,26 @@ const styles = StyleSheet.create({
     letterSpacing: Platform.OS === 'android' ? 1.5 : 2,
     marginBottom: Platform.OS === 'android' ? 12 : 16,
   },
-  
+
   logoContainer: {
 
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 25 : 35,
     zIndex: 3,
   },
-  
+
   logo: {
-    width: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.30 : width * 0.45) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? width * 0.3 : width * 0.45)
       : (isTablet ? width * 0.4 : width * 0.5),
-    height: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.35 : width * 0.45) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? width * 0.35 : width * 0.45)
       : (isTablet ? width * 0.4 : width * 0.5),
     resizeMode: "contain",
     opacity: 0.95,
     ...getShadowStyle(Platform.OS === 'android' ? 4 : 10, "#0b34b0", 0.15),
   },
-  
+
   // logoGlow: {
   //   position: 'absolute',
   //   width: Platform.OS === 'android' 
@@ -1103,41 +1090,41 @@ const styles = StyleSheet.create({
   //   backgroundColor: 'rgba(11, 52, 176, 0.08)',
   //   zIndex: 1,
   // },
-  
+
   welcomeContainer: {
     alignItems: 'center',
     marginBottom: Platform.OS === 'android' ? 20 : 30,
     paddingHorizontal: Platform.OS === 'android' ? 16 : 20,
     zIndex: 3,
   },
-  
+
   welcomeText: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.05 : width * 0.07) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? width * 0.05 : width * 0.07)
       : (isTablet ? width * 0.055 : width * 0.075),
     fontWeight: "700",
     textAlign: "center",
     color: "#2c3e50",
     marginBottom: Platform.OS === 'android' ? 8 : 12,
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.065 : width * 0.085) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? width * 0.065 : width * 0.085)
       : (isTablet ? width * 0.07 : width * 0.09),
   },
-  
+
   welcomeSubtext: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.035 : width * 0.045) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? width * 0.035 : width * 0.045)
       : (isTablet ? width * 0.04 : width * 0.05),
     fontWeight: "500",
     textAlign: "center",
     color: "#7f8c8d",
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.05 : width * 0.065) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? width * 0.05 : width * 0.065)
       : (isTablet ? width * 0.055 : width * 0.07),
     marginBottom: Platform.OS === 'android' ? 4 : 8,
   },
-  
-    successIndicators: {
+
+  successIndicators: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1145,7 +1132,7 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'android' ? 15 : 20,
     zIndex: 3,
   },
-  
+
   successIcon: {
     marginHorizontal: Platform.OS === 'android' ? 8 : 12,
     padding: Platform.OS === 'android' ? 10 : 12,
@@ -1155,7 +1142,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(76, 175, 80, 0.3)',
     ...getShadowStyle(Platform.OS === 'android' ? 2 : 6, "#4caf50", 0.2),
   },
-  
+
   confettiContainer: {
     position: 'absolute',
     top: 0,
@@ -1165,18 +1152,18 @@ const styles = StyleSheet.create({
     zIndex: 1,
     pointerEvents: 'none',
   },
-  
+
   confettiAnimation: {
     width: width,
     height: height,
     opacity: Platform.OS === 'android' ? 0.7 : 0.9,
   },
-  
+
   floatingElement: {
     position: 'absolute',
     zIndex: 1,
   },
-  
+
   floatingElement1: {
     top: '15%',
     left: '10%',
@@ -1186,7 +1173,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 193, 7, 0.2)',
     ...getShadowStyle(Platform.OS === 'android' ? 1 : 3, "#ffc107", 0.3),
   },
-  
+
   floatingElement2: {
     top: '25%',
     right: '15%',
@@ -1196,7 +1183,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(233, 30, 99, 0.2)',
     ...getShadowStyle(Platform.OS === 'android' ? 1 : 3, "#e91e63", 0.3),
   },
-  
+
   floatingElement3: {
     bottom: '30%',
     left: '20%',
@@ -1206,7 +1193,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(156, 39, 176, 0.2)',
     ...getShadowStyle(Platform.OS === 'android' ? 1 : 3, "#9c27b0", 0.3),
   },
-  
+
   floatingElement4: {
     bottom: '20%',
     right: '10%',
@@ -1216,7 +1203,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(33, 150, 243, 0.2)',
     ...getShadowStyle(Platform.OS === 'android' ? 1 : 3, "#2196f3", 0.3),
   },
-  
+
   // Confetti optimizado para Android
   confetti: {
     position: "absolute",
@@ -1238,11 +1225,11 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "rgba(255, 255, 255, 0.98)",
     borderRadius: Platform.OS === 'android' ? 24 : 32,
-    padding: Platform.OS === 'android' 
-      ? (isTablet ? 32 : 28) 
+    padding: Platform.OS === 'android'
+      ? (isTablet ? 32 : 28)
       : 40,
-    width: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.75 : width * 0.92) 
+    width: Platform.OS === 'android'
+      ? (isTablet ? width * 0.75 : width * 0.92)
       : (isTablet ? width * 0.7 : width * 0.9),
     maxHeight: height * 0.8,
     ...getShadowStyle(Platform.OS === 'android' ? 6 : 10, "#0b34b0", 0.2),
@@ -1250,14 +1237,14 @@ const styles = StyleSheet.create({
     borderColor: "rgba(208, 216, 246, 0.6)",
   },
   modalTitle: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 24 : 20) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 24 : 20)
       : (isTablet ? 26 : 22),
     color: "#0b34b0",
     fontWeight: "800",
     textAlign: "center",
     marginBottom: Platform.OS === 'android' ? 16 : 20,
-    letterSpacing: Platform.OS === 'android' ? 1.0 : 1.2,
+    letterSpacing: Platform.OS === 'android' ? 1 : 1.2,
   },
   careerOptionsContainer: {
     maxHeight: height * 0.5,
@@ -1278,8 +1265,8 @@ const styles = StyleSheet.create({
     color: "#0b34b0",
   },
   careerOptionText: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 15 : 13) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 15 : 13)
       : (isTablet ? 16 : 14),
     color: "#2d3748",
     fontWeight: "500",
@@ -1296,8 +1283,8 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: "white",
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 15) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 15)
       : (isTablet ? 18 : 16),
     fontWeight: "700",
     letterSpacing: Platform.OS === 'android' ? 0.8 : 1,

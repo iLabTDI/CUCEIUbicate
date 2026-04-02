@@ -144,7 +144,7 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
     const sanitizedRouteId = getSanitizedRouteId(routeId);
     const fileUri = `${FileSystem.cacheDirectory}video_${sanitizedRouteId}.mp4`;
     // console.log("Ruta de cache:", fileUri);
-    
+
     try {
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
       if (fileInfo.exists) {
@@ -271,8 +271,8 @@ export const VideoModal = ({ isVisible, onClose, videoUri, routeId }) => {
                   onLoad={handleVideoLoad}
                   shouldPlay
                 />
-                <TouchableOpacity 
-                  style={styles.downloadButton} 
+                <TouchableOpacity
+                  style={styles.downloadButton}
                   onPress={handleDownloadRequest}
                   disabled={isDownloading}
                 >

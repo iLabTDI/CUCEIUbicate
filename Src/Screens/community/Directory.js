@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useCallback, useEffect, useMemo, useRef } from "react"
+import React, { useState, useCallback, useEffect, useMemo } from "react"
 import {
   View,
   Text,
@@ -12,19 +12,19 @@ import {
   Linking,
   RefreshControl,
   TextInput,
+  ActivityIndicator,
   StatusBar,
-  Animated,
-  Platform,
 } from "react-native"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import {
-  faBuilding,
-  faMapMarkerAlt,
-  faPhone,
-  faEnvelope,
+import { 
+  faBuilding, 
+  faMapMarkerAlt, 
+  faPhone, 
+  faEnvelope, 
+  faUser, 
   faSearch,
   faGraduationCap,
-  faChevronRight
+  faHeart
 } from "@fortawesome/free-solid-svg-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -37,113 +37,99 @@ const isTablet = width >= 768
 const STORAGE_KEY = "directory_data"
 const FIRST_LOAD_KEY = "directory_first_load"
 
-// --- Premium Skeleton (Glassmorphic & Rounded) ---
-const SkeletonCard = () => {
-  const animatedValue = useRef(new Animated.Value(0)).current
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(animatedValue, { toValue: 1, duration: 1200, useNativeDriver: true }),
-        Animated.timing(animatedValue, { toValue: 0, duration: 1200, useNativeDriver: true })
-      ])
-    ).start()
-  }, [])
-
-  const opacity = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.4, 0.8]
-  })
-
-  return (
-    <View style={styles.skeletonWrapper}>
-      <Animated.View style={[styles.skeletonImage, { opacity }]} />
-      <View style={styles.skeletonContent}>
-        <Animated.View style={[styles.skeletonLine, { width: "70%", height: 22, opacity }]} />
-        <Animated.View style={[styles.skeletonLine, { width: "45%", height: 16, marginTop: 8, opacity }]} />
-
-        <View style={{ marginTop: 20 }}>
-          <Animated.View style={[styles.skeletonLine, { width: "95%", height: 14, marginBottom: 10, opacity }]} />
-          <Animated.View style={[styles.skeletonLine, { width: "65%", height: 14, marginBottom: 10, opacity }]} />
-          <Animated.View style={[styles.skeletonLine, { width: "85%", height: 14, opacity }]} />
-        </View>
-      </View>
-    </View>
-  )
-}
-
-// --- Modern & Beautiful Contact Card ---
+// Componente para cada tarjeta de contacto
 const ContactCard = React.memo(({ contact, openEmail, openPhone }) => {
   return (
     <View style={styles.cardContainer}>
-      <View style={styles.cardInner}>
-
-        {/* Superior: Glass/Gradient Background header part */}
-        <LinearGradient
-          colors={["rgba(11, 52, 176, 0.03)", "rgba(255, 255, 255, 0)"]}
-          style={styles.cardHeaderBackground}
-        />
-
-        <View style={styles.cardHeader}>
-          <View style={styles.imageOuterWrapper}>
-            <Image source={getImageSource(contact.imagen)} style={styles.premiumImage} resizeMode="cover" />
+      <LinearGradient 
+        colors={["#ffffff", "#f8f9ff"]} 
+        style={styles.card}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        {/* Header de la tarjeta */}
+        <LinearGradient 
+          colors={["#4A90E2", "#357ABD", "#2E5BBA"]} 
+          style={styles.cardHeader}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.imageContainer}>
+            <Image source={getImageSource(contact.imagen)} style={styles.image} resizeMode="cover" />
           </View>
-          <View style={styles.headerInfo}>
-            <Text style={styles.contactName} numberOfLines={2}>{contact.nombre}</Text>
-            <View style={styles.badgeWrapper}>
-              <View style={styles.badgeDot} />
-              <Text style={styles.contactPosition} numberOfLines={2}>{contact.puesto}</Text>
+          <View style={styles.headerText}>
+            <Text style={styles.name} numberOfLines={2}>{contact.nombre}</Text>
+            <View style={styles.positionContainer}>
+              <FontAwesomeIcon icon={faGraduationCap} size={12} color="#E3F2FD" />
+              <Text style={styles.position} numberOfLines={2}>{contact.puesto}</Text>
             </View>
           </View>
-        </View>
+        </LinearGradient>
 
-        {/* Separador sutil */}
-        <View style={styles.divider} />
-
-        {/* Inferior: Detalles de Contacto */}
+        {/* Cuerpo de la tarjeta */}
         <View style={styles.cardBody}>
-          <View style={styles.infoStaticRow}>
-            <View style={[styles.iconCircle, { backgroundColor: "#fdf4ff" }]}>
-              <FontAwesomeIcon icon={faBuilding} size={14} color="#db2777" />
-            </View>
-            <Text style={styles.infoStaticText} numberOfLines={2}>{contact.departamento}</Text>
-          </View>
-
-          <View style={styles.infoStaticRow}>
-            <View style={[styles.iconCircle, { backgroundColor: "#f0fdf4" }]}>
-              <FontAwesomeIcon icon={faMapMarkerAlt} size={14} color="#16a34a" />
-            </View>
-            <Text style={styles.infoStaticText}>{contact.direccion}</Text>
-          </View>
-
-          {/* Botones de acción súper limpios (Apilados verticalmente para números largos) */}
-          <View style={styles.actionButtonsRow}>
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.btnCall]}
-              onPress={() => openPhone(contact.conmutador)}
-              activeOpacity={0.7}
-            >
-              <FontAwesomeIcon icon={faPhone} size={13} color="#ffffff" style={{ marginRight: 10 }} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.btnCallTitle}>Llamar extensión</Text>
-                <Text style={styles.btnCallText} numberOfLines={1}>{contact.conmutador}</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.actionBtn, styles.btnEmail]}
-              onPress={() => openEmail(contact.correo_electronico)}
-              activeOpacity={0.7}
-            >
-              <FontAwesomeIcon icon={faEnvelope} size={13} color="#0f172a" style={{ marginRight: 10 }} />
-              <Text style={styles.btnEmailText} numberOfLines={1}>Enviar Correo</Text>
-              <FontAwesomeIcon icon={faChevronRight} size={10} color="#0f172a" style={{ marginLeft: "auto", opacity: 0.5 }} />
-            </TouchableOpacity>
-          </View>
+          <InfoRow 
+            icon={faBuilding} 
+            text={contact.departamento} 
+            iconColor="#8B5A96"
+            isImportant={true}
+          />
+          <InfoRow 
+            icon={faMapMarkerAlt} 
+            text={contact.direccion} 
+            iconColor="#2ECC71"
+          />
+          <InfoRow 
+            icon={faPhone} 
+            text={contact.conmutador} 
+            onPress={() => openPhone(contact.conmutador)} 
+            isLink 
+            iconColor="#3498DB"
+          />
+          <InfoRow 
+            icon={faEnvelope} 
+            text={contact.correo_electronico} 
+            onPress={() => openEmail(contact.correo_electronico)} 
+            isLink 
+            iconColor="#E74C3C"
+          />
         </View>
-      </View>
+
+        {/* Decoración inferior */}
+        <View style={styles.cardFooter}>
+          <LinearGradient 
+            colors={["#74b9ff", "#0984e3"]} 
+            style={styles.footerGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          />
+        </View>
+      </LinearGradient>
     </View>
   )
+})
+
+// Componente para mostrar cada fila de información
+const InfoRow = React.memo(({ icon, text, onPress, isLink, iconColor = "#4A90E2", isImportant = false }) => {
+  const content = (
+    <View style={[styles.infoRow, isImportant && styles.importantRow]}>
+      <View style={[styles.iconContainer, { backgroundColor: iconColor + "15" }]}>
+        <FontAwesomeIcon icon={icon} style={[styles.icon, { color: iconColor }]} />
+      </View>
+      <Text style={[
+        styles.infoText, 
+        isLink && styles.linkText,
+        isImportant && styles.importantText
+      ]} numberOfLines={isImportant ? 2 : 3}>
+        {text}
+      </Text>
+    </View>
+  )
+  return isLink ? (
+    <TouchableOpacity onPress={onPress} style={styles.linkContainer}>
+      {content}
+    </TouchableOpacity>
+  ) : content
 })
 
 // Función para obtener la imagen asignada al contacto
@@ -166,14 +152,14 @@ export const Directory = () => {
     try {
       const hasLoadedBefore = await AsyncStorage.getItem(FIRST_LOAD_KEY)
       if (!hasLoadedBefore) {
-        // Simula retardo para la primera carga para mostrar los skeletons
+        // Simula retardo para la primera carga
         setTimeout(async () => {
           setJsonData(staticJsonData)
           await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(staticJsonData))
           await AsyncStorage.setItem(FIRST_LOAD_KEY, "true")
           setLoading(false)
           setIsFirstLoad(false)
-        }, 1500)
+        }, 2000)
       } else {
         const storedData = await AsyncStorage.getItem(STORAGE_KEY)
         if (storedData) {
@@ -222,76 +208,103 @@ export const Directory = () => {
     )
   }, [jsonData, searchText])
 
-  // Mostrar Skeletons si está cargando
+  // getItemLayout para FlatList (asumiendo que cada tarjeta tiene una altura fija)
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: isTablet ? 300 : 200, // Ajusta según el tamaño real de tus tarjetas
+      offset: (isTablet ? 300 : 200) * index,
+      index,
+    }),
+    [isTablet]
+  )
+
   if (loading && isFirstLoad) {
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
-
-        {/* Cabecera Limpia */}
-        <View style={styles.topHeader}>
-          <Text style={styles.screenTitle}>Directorio</Text>
-          <Text style={styles.screenSubtitle}>Contactos académicos e institucionales</Text>
+      <LinearGradient 
+        colors={["#667eea", "#764ba2"]} 
+        style={styles.loadingContainer}
+      >
+        <StatusBar barStyle="light-content" backgroundColor="#667eea" />
+        <View style={styles.loadingContent}>
+          <ActivityIndicator size={40} color="#ffffff" />
+          <Text style={styles.loadingText}>Cargando directorio...</Text>
+          <Text style={styles.loadingSubtext}>Preparando información de contactos</Text>
         </View>
-
-        <View style={styles.searchWrapper}>
-          <View style={styles.searchBox}>
-            <FontAwesomeIcon icon={faSearch} size={18} color="#94a3b8" style={styles.searchIcon} />
-            <Text style={{ color: "#94a3b8", fontSize: 16 }}>Buscando...</Text>
-          </View>
-        </View>
-
-        <View style={{ paddingHorizontal: 20 }}>
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </View>
-      </View>
+      </LinearGradient>
     )
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
+      <StatusBar barStyle="light-content" backgroundColor="#4A90E2" />
+      
+      {/* Header súper pequeño y lindo */}
+      {/* <LinearGradient 
+        colors={["#667eea", "#764ba2", "#4A90E2"]} 
+        style={styles.header}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.headerWrapper}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerIconWrapper}>
+              <LinearGradient
+                colors={["rgba(255,255,255,0.3)", "rgba(255,255,255,0.2)"]}
+                style={styles.headerIconBackground}
+              >
+                <FontAwesomeIcon icon={faUser} size={18} color="#fff" />
+              </LinearGradient>
+            </View>
+            
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerMainTitle}>Directorio CUCEI</Text>
+              <Text style={styles.headerDescription}>
+                Información de contacto del personal
+              </Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient> */}
 
-      {/* Cabecera Moderna Limpia */}
-      <View style={styles.topHeader}>
-        <Text style={styles.screenTitle}>Directorio</Text>
-        <Text style={styles.screenSubtitle}>Contactos académicos e institucionales</Text>
-      </View>
-
-      {/* Buscador Píldora "Floating" */}
+      {/* Barra de búsqueda mejorada */}
       <View style={styles.searchWrapper}>
-        <View style={styles.searchBox}>
-          <FontAwesomeIcon icon={faSearch} size={18} color="#94a3b8" style={styles.searchIcon} />
+        <LinearGradient
+          colors={["#ffffff", "#f8f9ff"]}
+          style={styles.searchContainer}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.searchIconContainer}>
+            <FontAwesomeIcon icon={faSearch} size={18} color="#4A90E2" />
+          </View>
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar por nombre, puesto o departamento..."
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor="#B0BEC5"
             value={searchText}
             onChangeText={setSearchText}
-            selectionColor="#0b34b0"
+            selectionColor="#4A90E2"
           />
-        </View>
+        </LinearGradient>
       </View>
 
-      {/* Lista de Tarjetas */}
+      {/* Lista mejorada */}
       <FlatList
         data={filteredData}
         renderItem={({ item }) => <ContactCard contact={item} openEmail={openEmail} openPhone={openPhone} />}
         keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#0b34b0"]}
-            progressBackgroundColor="#f8fafc"
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            colors={["#4A90E2", "#357ABD"]}
+            progressBackgroundColor="#ffffff"
           />
         }
-        initialNumToRender={6}
-        maxToRenderPerBatch={4}
+        initialNumToRender={8}
+        maxToRenderPerBatch={5}
         windowSize={10}
       />
     </View>
@@ -299,241 +312,252 @@ export const Directory = () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
+    flex: 1, 
+    backgroundColor: "#f5f7ff" 
+  },
+  
+  // Loading styles
+  loadingContainer: {
     flex: 1,
-    backgroundColor: "#f8fafc" // Color base muy suave y limpio
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingContent: {
+    alignItems: "center",
+    padding: 30,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  loadingText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginTop: 20,
+    textAlign: "center",
+  },
+  loadingSubtext: {
+    fontSize: 16,
+    color: "#E3F2FD",
+    marginTop: 8,
+    textAlign: "center",
   },
 
-  // Header súper limpio (iOS Style)
-  topHeader: {
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? 24 : 10,
-    paddingBottom: 15,
-  },
-  screenTitle: {
-    fontSize: 34,
-    fontWeight: "800",
-    color: "#0f172a",
-    letterSpacing: -0.8,
-  },
-  screenSubtitle: {
-    fontSize: 15,
-    color: "#64748b",
-    marginTop: 2,
-    fontWeight: "500",
-  },
-
-  // Buscador estilo "Píldora Flotante" Drop-Shadow suave
-  searchWrapper: {
+  // Header súper pequeño y lindo
+  header: {
+    paddingTop: 35,
+    paddingBottom: 16,
     paddingHorizontal: 20,
-    paddingBottom: 24,
-    zIndex: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  searchBox: {
+  headerWrapper: {
+    alignItems: 'center',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerIconWrapper: {
+    marginRight: 12,
+  },
+  headerIconBackground: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  headerTextContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerMainTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#ffffff",
+    textAlign: "center",
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  headerDescription: {
+    fontSize: 12,
+    color: "#E8F4FD",
+    textAlign: "center",
+    marginTop: 2,
+    opacity: 0.9,
+    fontWeight: "400",
+  },
+
+  // Search styles
+  searchWrapper: {
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 20, // Píldora suave
-    paddingHorizontal: 16,
-    height: 56,
-    shadowColor: "#94a3b8",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 15,
-    elevation: 5,
+    shadowColor: "#4A90E2",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: "rgba(74, 144, 226, 0.1)",
   },
-  searchIcon: {
+  searchIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#4A90E2" + "10",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: "#334155",
+    color: "#333",
     fontWeight: "500",
-    height: "100%",
   },
 
-  listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+  // Content styles
+  content: {
+    padding: 20,
+    paddingTop: 0,
   },
 
-  // Premium Card Redesign - Rounded & Elegant
+  // Card styles
   cardContainer: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
-  cardInner: {
-    backgroundColor: "#ffffff",
-    borderRadius: 24, // Bordes súper redondeados y modernos
-    padding: 22,
-    shadowColor: "#cbd5e1",
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
+  card: {
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 8,
-    overflow: "hidden", // Para que el gradiente de fondo respete los bordes
-  },
-  cardHeaderBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 90,
-    opacity: 0.8,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(74, 144, 226, 0.08)",
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    minHeight: 100,
   },
-  imageOuterWrapper: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    padding: 3,
-    backgroundColor: "#ffffff",
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-    marginRight: 16,
+  imageContainer: {
+    marginRight: 14,
   },
-  premiumImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 31,
+  image: {
+    width: 65,
+    height: 65,
+    borderRadius: 32.5,
+    borderWidth: 3,
+    borderColor: "rgba(255, 255, 255, 0.8)",
   },
-  headerInfo: {
-    flex: 1,
-    justifyContent: "center",
+  headerText: { 
+    flex: 1, 
+    justifyContent: "center" 
   },
-  contactName: {
-    fontSize: 20,
+  name: {
+    fontSize: 17,
     fontWeight: "700",
-    color: "#0f172a",
-    marginBottom: 6,
-    lineHeight: 24,
-    letterSpacing: -0.4,
+    color: "#ffffff",
+    marginBottom: 5,
+    lineHeight: 21,
   },
-  badgeWrapper: {
+  positionContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  badgeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#3b82f6",
-    marginRight: 6,
-  },
-  contactPosition: {
+  position: {
     fontSize: 13,
-    color: "#64748b",
-    fontWeight: "600",
+    color: "#E3F2FD",
+    marginLeft: 6,
+    fontWeight: "500",
+    lineHeight: 17,
   },
-  divider: {
-    height: 1,
-    backgroundColor: "#f1f5f9",
-    width: "100%",
-    marginBottom: 16,
+  
+  // Card body styles
+  cardBody: { 
+    padding: 18,
+    paddingTop: 14,
   },
-  cardBody: {
-    flexDirection: "column",
-  },
-  infoStaticRow: {
+  infoRow: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 14,
+    alignItems: "flex-start",
+    marginBottom: 12,
+    paddingVertical: 2,
   },
-  iconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 12, // Esquina súper moderna, no es círculo completo (squircle style)
+  importantRow: {
+    backgroundColor: "rgba(139, 90, 150, 0.08)",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: "#8B5A96",
+  },
+  iconContainer: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
+    marginTop: 1,
   },
-  infoStaticText: {
-    flex: 1,
+  icon: {
+    width: 15,
+    height: 15,
+  },
+  infoText: {
     fontSize: 15,
-    color: "#334155",
-    fontWeight: "500",
+    color: "#2D3748",
+    flex: 1,
     lineHeight: 20,
-  },
-
-  // Botones flotantes elegantes (Apilados verticalmente)
-  actionButtonsRow: {
-    flexDirection: "column",
-    marginTop: 8,
-    gap: 8,
-  },
-  actionBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 14, // Rounded Premium
-  },
-  btnCall: {
-    backgroundColor: "#0b34b0",
-    shadowColor: "#0b34b0",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  btnCallTitle: {
-    fontSize: 11,
     fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 0,
   },
-  btnCallText: {
-    fontSize: 14,
+  importantText: {
     fontWeight: "700",
-    color: "#ffffff",
+    color: "#1A202C",
   },
-  btnEmail: {
-    backgroundColor: "#f8fafc",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
+  linkContainer: {
+    borderRadius: 12,
+    overflow: "hidden",
   },
-  btnEmailText: {
-    flex: 1,
-    fontSize: 14,
+  linkText: {
+    color: "#4A90E2",
+    textDecorationLine: "underline",
     fontWeight: "600",
-    color: "#0f172a",
   },
 
-  // Skeletons Premium Modernos
-  skeletonWrapper: {
-    backgroundColor: "#ffffff",
-    borderRadius: 24,
-    padding: 22,
-    marginBottom: 20,
-    flexDirection: "row",
-    shadowColor: "#cbd5e1",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-    elevation: 3,
+  // Card footer
+  cardFooter: {
+    height: 4,
+    overflow: "hidden",
   },
-  skeletonImage: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: "#e2e8f0",
-    marginRight: 16,
+  footerGradient: {
+    height: "100%",
+    width: "100%",
   },
-  skeletonContent: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  skeletonLine: {
-    backgroundColor: "#f1f5f9",
-    borderRadius: 8,
-  }
 })
 
-export default Directory
+export default Directory;

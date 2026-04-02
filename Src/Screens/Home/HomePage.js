@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Dimensions,
   Text,
   Animated,
   Alert,
-  PermissionsAndroid,
   Platform,
   StatusBar,
 } from "react-native";
+import { Image } from 'expo-image';
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -22,7 +21,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ImageZoom from "react-native-image-pan-zoom";
-import LottieView from "lottie-react-native";
 import { SearchRoute2 } from "./Components/SearchBarsComponent/SearchRoute2";
 import { SpecificSearch } from "./Components/SearchBarsComponent/SearchSpecific";
 import { BottomSheetComponent } from "./Components/BottonSheetComponent/BottonSheet";
@@ -33,8 +31,6 @@ import { ChatbotButton } from "../ChatBot/Chatboot_Button";
 import { VideoModal } from "./Components/VideoComponent/VideoModal";
 import { routeVideos } from "../../Screens/Home/Components/VideoComponent/Videos_data";
 import MapSVG from "./Components/MapComponent/MapSVG";
-// Para iOS, usamos expo-media-library
-// import * as MediaLibrary from "expo-media-library";
 
 const { width, height } = Dimensions.get("window");
 const isTablet = width >= 768;
@@ -214,53 +210,56 @@ export const HomePage = () => {
    * Función para manejar la pulsación en un punto del mapa.
    * Muestra el BottomSheet con la información del punto seleccionado.
    */
-  const handlePointPress = (pointId) => {
+  const handlePointPress = useCallback((pointId) => {
     setSelectedPoint(pointId);
     setIsBottomSheetVisible(true);
     bottomSheetRef.current?.expand();
-  };
+  }, []);
+
+
 
   /**
    * Función para alternar la visibilidad de la barra de búsqueda.
    */
-  const toggleSearchBar = () => {
+  const toggleSearchBar = useCallback(() => {
     console.log("Mostrando barra de búsqueda...");
     setShowSearchBar((prev) => !prev);
-  };
+  }, []);
 
   /**
    * Función para cerrar la barra de búsqueda.
    */
-  const closeSearchBar = () => {
+  const closeSearchBar = useCallback(() => {
     console.log("Cerrando barra de búsqueda...");
     setShowSearchBar(false);
-  };
+  }, []);
 
   /**
    * Función para cerrar el BottomSheet.
    */
-  const handleCloseBottomSheet = () => {
+  const handleCloseBottomSheet = useCallback(() => {
     setIsBottomSheetVisible(false);
+    setSelectedPoint(null);
     bottomSheetRef.current?.close();
-  };
+  }, []);
 
   /**
    * Función para realizar una búsqueda específica en los puntos del mapa.
    */
-  const handleSpecificSearch = (pointId) => {
+  const handleSpecificSearch = useCallback((pointId) => {
     const selectedObject = points.find((point) => point.id === pointId);
     if (selectedObject) {
       setMarkedObject(selectedObject);
     }
     setShowSpecificSearch(false);
-  };
+  }, [points, setMarkedObject, setShowSpecificSearch]);
 
-  
+
   /**
    * Función de búsqueda que recibe un objeto de ruta y activa la ruta,
    * estableciendo los puntos, identificador de la ruta y video asociado.
    */
-  const handleSearch = async (routeObject) => {
+  const handleSearch = useCallback((routeObject) => {
     console.log("onSearch:", routeObject);
     if (routeObject) {
       setActiveRoutePoints(routeObject.coordinates);
@@ -272,25 +271,27 @@ export const HomePage = () => {
     } else {
       Alert.alert("Error", "No se encontró la ruta en el JSON.");
     }
-  };
+  }, []);
 
   /**
    * Función para limpiar la ruta activa y reiniciar los estados relacionados.
    */
-  const clearRoute = () => {
+  const clearRoute = useCallback(() => {
     setIsRouteActive(false);
     setActiveRoutePoints([]);
     setCurrentVideoUri(null);
     setIsVideoModalVisible(false);
     setCurrentMapImage(require("./assets/images/mapa.webp"));
-  };
+  }, []);
 
   /**
    * Función para alternar la visibilidad del modal de video.
    */
-  const toggleVideoModal = () => {
+  const toggleVideoModal = useCallback(() => {
     setIsVideoModalVisible(!isVideoModalVisible);
-  };
+  }, [isVideoModalVisible]);
+
+
 
   return (
     <View style={styles.container}>
@@ -299,7 +300,7 @@ export const HomePage = () => {
         backgroundColor="#f8fafc"
         animated={true}
       />
-      
+
       {/* ✨ CONTENIDO PRINCIPAL - SIEMPRE VISIBLE (YA VIMOS EL SPLASH) */}
       <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
         {/* Botón de menú */}
@@ -313,7 +314,7 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-        
+
         {/* Botón de perfil */}
         <TouchableOpacity
           style={[
@@ -332,7 +333,7 @@ export const HomePage = () => {
             />
           )}
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.search_icon} onPress={toggleSearchBar}>
           <FontAwesomeIcon
             icon={faRoute}
@@ -340,11 +341,11 @@ export const HomePage = () => {
             color="#FFFFFF"
           />
         </TouchableOpacity>
-        
+
         {showSearchBar && (
           <SearchRoute2 onClose={closeSearchBar} onSearch={handleSearch} />
         )}
-        
+
         <SpecificSearch
           points={points}
           onSearch={handleSpecificSearch}
@@ -371,7 +372,6 @@ export const HomePage = () => {
               <Image
                 source={currentMapImage}
                 style={styles.mapImage}
-                resizeMode="stretch"
               />
               <MapSVG
                 isRouteActive={isRouteActive}
@@ -429,14 +429,14 @@ export const HomePage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     backgroundColor: '#f8fafc'
   },
-  content: { 
-    flex: 1 
+  content: {
+    flex: 1
   },
-  
+
   // Loading optimizado
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     color: "#64748b", // ✨ COLOR MÁS SUTIL
     letterSpacing: 0.3,
   },
-  
+
   // Overlay
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   search_icon: {
     position: "absolute",
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  
+
   profile_icon: {
     position: "absolute",
     top: Platform.OS === 'android' ? height * 0.06 : height * 0.05,
@@ -521,14 +521,14 @@ const styles = StyleSheet.create({
     width: Platform.OS === 'android' ? 56 : undefined,
     height: Platform.OS === 'android' ? 56 : undefined,
   },
-  
+
   profile_icon_selected: {
     padding: Platform.OS === 'android' ? 4 : 0,
     backgroundColor: "#ffffff",
     borderWidth: 3,
     borderColor: "#0b34b0",
   },
-  
+
   profileImage: {
     width: Platform.OS === 'android' ? 48 : width * 0.13,
     height: Platform.OS === 'android' ? 48 : width * 0.13,
@@ -536,22 +536,22 @@ const styles = StyleSheet.create({
   },
 
   // Mapa optimizado para Android
-  mapContainer: { 
+  mapContainer: {
     flex: 1,
     backgroundColor: '#ffffff'
   },
-  
-  zoomContainer: { 
-    width: 1600, 
-    height: 1400, 
+
+  zoomContainer: {
+    flex: 1,
     position: "relative",
     backgroundColor: '#ffffff'
   },
-  
-  mapImage: { 
-    width: 1600, 
+
+  mapImage: {
+    width: 1600,
     height: 1400,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    resizeMode: "stretch"
   },
 
   // Botones de acción mejorados
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   finalizeButtonText: {
     color: "#FFFFFF",
     textAlign: "center",
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'android' ? 16 : 18,
     letterSpacing: 0.5,
   },
-  
+
   videoButton: {
     position: "absolute",
     bottom: Platform.OS === 'android' ? 96 : 80,
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'android' ? 56 : undefined,
     justifyContent: 'center',
   },
-  
+
   videoButtonText: {
     color: "#FFFFFF",
     marginLeft: Platform.OS === 'android' ? 8 : 8,

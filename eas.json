@@ -30,7 +30,10 @@
     "production": {
       "autoIncrement": true,
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "env": {
+          "EXPO_DEBUG": "true"
+        }
       },
       "android": {
         "image": "latest",

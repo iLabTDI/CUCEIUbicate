@@ -1,5 +1,5 @@
 // BottomSheetComponent.js
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useRef, useCallback, useEffect, useState, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -10,9 +10,9 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
   Animated,
 } from "react-native";
+import { Image } from 'expo-image';
 import BottomSheet from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -74,12 +74,14 @@ export const BottomSheetComponent = React.forwardRef(
         // Animación del header
         Animated.timing(headerAnimation, {
           toValue: 1,
-          duration: 600,
+          duration: 400,
           useNativeDriver: true,
         }).start();
       } else {
         bottomSheetRef.current?.close();
         headerAnimation.setValue(0);
+        setLoadedImages([]);
+        setCurrentImageIndex(0);
       }
     }, [isVisible]);
 
@@ -155,7 +157,6 @@ export const BottomSheetComponent = React.forwardRef(
                   <Image
                     source={image}
                     style={styles.carouselImagePerfect}
-                    resizeMode="contain"
                     onLoad={() => setLoadedImages((prev) => [...prev, index])}
                   />
                   <LinearGradient
@@ -220,7 +221,7 @@ export const BottomSheetComponent = React.forwardRef(
     );
 
     // ✨ LUGARES RELEVANTES SÚPER ORGANIZADOS
-    const renderRelevantPlacesNew = (places) => (
+    const renderRelevantPlacesNew = useCallback((places) => (
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeaderNew}>
           <View style={styles.sectionIconContainer}>
@@ -239,10 +240,10 @@ export const BottomSheetComponent = React.forwardRef(
           ))}
         </View>
       </View>
-    );
+    ), []);
 
     // ✨ BAÑOS SÚPER ORGANIZADOS
-    const renderBathroomsNew = (bathrooms) => (
+    const renderBathroomsNew = useCallback((bathrooms) => (
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeaderNew}>
           <View style={styles.sectionIconContainer}>
@@ -261,7 +262,7 @@ export const BottomSheetComponent = React.forwardRef(
           ))}
         </View>
       </View>
-    );
+    ), []);
 
     return (
       <BottomSheet
@@ -287,9 +288,9 @@ export const BottomSheetComponent = React.forwardRef(
           >
             {selectedPoint && bottomSheetContents[selectedPoint] && (
               <View style={styles.mainContentContainer}>
-                
+
                 {/* ✨ HEADER MINIMALISTA Y ELEGANTE */}
-                <Animated.View 
+                <Animated.View
                   style={[
                     styles.headerMinimal,
                     {
@@ -393,17 +394,17 @@ const styles = StyleSheet.create({
     borderTopRightRadius: Platform.OS === 'android' ? 20 : 24,
     marginBottom: Platform.OS === 'android' ? 12 : 16,
   },
-  
+
   headerGradientCompact: {
     paddingVertical: Platform.OS === 'android' ? 12 : 16,
     paddingHorizontal: Platform.OS === 'android' ? 16 : 20,
   },
-  
+
   headerContentCompact: {
     flexDirection: "row",
     alignItems: "center",
   },
-  
+
   headerIconContainerCompact: {
     width: Platform.OS === 'android' ? 32 : 36,
     height: Platform.OS === 'android' ? 32 : 36,
@@ -413,14 +414,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: Platform.OS === 'android' ? 12 : 16,
   },
-  
+
   headerTextContainerCompact: {
     flex: 1,
   },
-  
+
   titleCompact: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 14) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 14)
       : (isTablet ? 18 : 16),
     fontWeight: "700",
     color: "#ffffff",
@@ -429,10 +430,10 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,
   },
-  
+
   subtitleCompact: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 11 : 10) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 11 : 10)
       : (isTablet ? 12 : 11),
     color: "#ffffff",
     opacity: 0.8,
@@ -442,8 +443,8 @@ const styles = StyleSheet.create({
   // ✨ CARRUSEL MÁS COMPACTO
   carouselContainerCompact: {
     width: "100%",
-    height: Platform.OS === 'android' 
-      ? (isTablet ? width * 0.45 : width * 0.5) 
+    height: Platform.OS === 'android'
+      ? (isTablet ? width * 0.45 : width * 0.5)
       : (isTablet ? width * 0.4 : width * 0.45),
     position: "relative",
     marginBottom: Platform.OS === 'android' ? 16 : 20,
@@ -462,7 +463,7 @@ const styles = StyleSheet.create({
     borderRadius: Platform.OS === 'android' ? 18 : 20,
     overflow: 'hidden',
   },
-  
+
   nextButtonFaded: {
     position: "absolute",
     right: Platform.OS === 'android' ? 12 : 16,
@@ -472,7 +473,7 @@ const styles = StyleSheet.create({
     borderRadius: Platform.OS === 'android' ? 18 : 20,
     overflow: 'hidden',
   },
-  
+
   navButtonFaded: {
     width: Platform.OS === 'android' ? 36 : 40,
     height: Platform.OS === 'android' ? 36 : 40,
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  
+
   paginationDotCompact: {
     width: Platform.OS === 'android' ? 6 : 8,
     height: Platform.OS === 'android' ? 6 : 8,
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.5)",
     marginHorizontal: Platform.OS === 'android' ? 3 : 4,
   },
-  
+
   paginationDotActiveCompact: {
     backgroundColor: "#FFFFFF",
     ...getShadowStyle(1, "#000", 0.3),
@@ -516,7 +517,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'android' ? 4 : 6,
     borderRadius: Platform.OS === 'android' ? 12 : 16,
   },
-  
+
   imageCounterTextCompact: {
     color: '#FFFFFF',
     fontSize: Platform.OS === 'android' ? 10 : 12,
@@ -534,29 +535,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f8fafc',
   },
-  
+
   descriptionHeaderCompact: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: Platform.OS === 'android' ? 8 : 12,
   },
-  
+
   descriptionTitleCompact: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 14 : 13) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 14 : 13)
       : (isTablet ? 16 : 14),
     fontWeight: "600",
     color: "#1f2937",
     marginLeft: Platform.OS === 'android' ? 8 : 12,
   },
-  
+
   descriptionCompact: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 13 : 12) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 13 : 12)
       : (isTablet ? 14 : 13),
     color: "#4b5563",
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? 20 : 18) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? 20 : 18)
       : (isTablet ? 22 : 20),
     fontWeight: "400",
   },
@@ -574,7 +575,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f8fafc',
   },
-  
+
   infoCardIconCompact: {
     width: Platform.OS === 'android' ? 28 : 32,
     height: Platform.OS === 'android' ? 28 : 32,
@@ -584,18 +585,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: Platform.OS === 'android' ? 12 : 16,
   },
-  
+
   infoCardContentCompact: {
     flex: 1,
   },
-  
+
   infoCardTitleCompact: {
     fontSize: Platform.OS === 'android' ? 10 : 11,
     color: '#6b7280',
     fontWeight: '500',
     marginBottom: 2,
   },
-  
+
   infoCardValueCompact: {
     fontSize: Platform.OS === 'android' ? 12 : 13,
     color: '#1f2937',
@@ -613,27 +614,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f8fafc',
   },
-  
+
   sectionHeaderCompact: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: Platform.OS === 'android' ? 8 : 12,
   },
-  
+
   sectionTitleCompact: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 13 : 12) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 13 : 12)
       : (isTablet ? 14 : 13),
     fontWeight: "600",
     color: "#1f2937",
     marginLeft: Platform.OS === 'android' ? 8 : 12,
   },
-  
+
   placesGridCompact: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  
+
   placeItemCompact: {
     backgroundColor: '#f8fafc',
     borderRadius: Platform.OS === 'android' ? 8 : 10,
@@ -644,7 +645,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },
-  
+
   placeTextCompact: {
     fontSize: Platform.OS === 'android' ? 11 : 12,
     color: '#374151',
@@ -662,17 +663,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f8fafc',
   },
-  
+
   bathroomsListCompact: {
     // Contenedor de la lista compacta
   },
-  
+
   bathroomItemCompact: {
     paddingVertical: Platform.OS === 'android' ? 6 : 8,
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
   },
-  
+
   bathroomTextCompact: {
     fontSize: Platform.OS === 'android' ? 11 : 12,
     color: '#374151',
@@ -692,11 +693,11 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     borderStyle: 'dashed',
   },
-  
+
   noImageIconContainer: {
     marginBottom: Platform.OS === 'android' ? 8 : 12,
   },
-  
+
   noImageText: {
     color: '#9ca3af',
     fontSize: Platform.OS === 'android' ? 12 : 14,
@@ -763,8 +764,8 @@ const styles = StyleSheet.create({
   },
 
   titleMinimal: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 16 : 15) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 16 : 15)
       : (isTablet ? 18 : 16),
     fontWeight: "700",
     color: "#1f2937",
@@ -794,6 +795,7 @@ const styles = StyleSheet.create({
     borderRadius: Platform.OS === 'android' ? 12 : 16,
     backgroundColor: '#e5e7eb',
     overflow: 'hidden',
+    resizeMode: 'container',
     borderWidth: 1,
     borderColor: '#f1f5f9',
     ...getShadowStyle(2, "#000", 0.05),
@@ -937,8 +939,8 @@ const styles = StyleSheet.create({
   },
 
   descriptionTitleNew: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 14 : 13) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 14 : 13)
       : (isTablet ? 16 : 14),
     fontWeight: "600",
     color: "#1f2937",
@@ -946,12 +948,12 @@ const styles = StyleSheet.create({
   },
 
   descriptionTextNew: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 13 : 12) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 13 : 12)
       : (isTablet ? 14 : 13),
     color: "#4b5563",
-    lineHeight: Platform.OS === 'android' 
-      ? (isTablet ? 18 : 17) 
+    lineHeight: Platform.OS === 'android'
+      ? (isTablet ? 18 : 17)
       : (isTablet ? 20 : 18),
     fontWeight: "400",
   },
@@ -1025,8 +1027,8 @@ const styles = StyleSheet.create({
   },
 
   sectionTitleNew: {
-    fontSize: Platform.OS === 'android' 
-      ? (isTablet ? 13 : 12) 
+    fontSize: Platform.OS === 'android'
+      ? (isTablet ? 13 : 12)
       : (isTablet ? 14 : 13),
     fontWeight: "600",
     color: "#1f2937",
@@ -1099,4 +1101,4 @@ const styles = StyleSheet.create({
   // ...existing modal styles...
 });
 
-export default BottomSheetComponent;
+export default memo(BottomSheetComponent);
