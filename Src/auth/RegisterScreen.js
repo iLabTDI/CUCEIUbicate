@@ -58,6 +58,9 @@ const getShadowStyle = (elevation, color = "#000", opacity = 0.1) => {
 
 const USER_TYPES = ["estudiante", "academico", "externo"];
 
+// Regex para correo y contraseña
+const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+
 // Dominio requerido por tipo de usuario
 const requiredDomains = {
   estudiante: "alumnos.udg.mx",
@@ -116,10 +119,6 @@ export const RegisterScreen = () => {
   const [floatingAnim] = useState(new Animated.Value(0));
   const [userType, setUserType] = useState(); // estudiante, academico, externo
   const [showUserTypeModal, setShowUserTypeModal] = useState(false);
-
-
-  // Regex para correo y contraseña
-  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
 
   // Inicializar animaciones
   useEffect(() => {

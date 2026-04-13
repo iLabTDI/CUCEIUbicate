@@ -1,23 +1,23 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ✨ GUARDAR SESIÓN CON LOGS SÚPER DETALLADOS Y VALIDACIÓN
-export const setSession = async (userData) => { 
+export const setSession = async (userData) => {
   try {
     console.log('💾 === GUARDANDO SESIÓN ===');
     console.log('📊 Datos recibidos tipo:', typeof userData);
     console.log('📊 Datos recibidos:', JSON.stringify(userData, null, 2));
-    
+
     // Validar que tenemos los datos mínimos necesarios
-    if (!userData || !userData.email || !userData.username) {
+    if (!userData?.email || !userData.username) {
       throw new Error('Datos de usuario incompletos para guardar sesión');
     }
-    
+
     const sessionData = JSON.stringify(userData);
     await AsyncStorage.setItem("userSession", sessionData);
-    
+
     console.log('✅ Sesión guardada exitosamente');
     console.log('🔍 Verificando guardado inmediatamente...');
-    
+
     // ✨ VERIFICACIÓN INMEDIATA MEJORADA
     const savedData = await AsyncStorage.getItem("userSession");
     if (savedData) {
@@ -41,9 +41,9 @@ export const setSession = async (userData) => {
 export const getSession = async () => {
   try {
     console.log('🔍 === OBTENIENDO SESIÓN ===');
-    
+
     const session = await AsyncStorage.getItem("userSession");
-    
+
     if (session) {
       const userData = JSON.parse(session);
       console.log('✅ === SESIÓN ENCONTRADA ===');

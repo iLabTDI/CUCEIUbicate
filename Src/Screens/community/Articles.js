@@ -12,13 +12,11 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
-import { 
-  faExternalLinkAlt, 
-  faBook, 
-  faGavel, 
-  faListOl, 
-  faQuoteRight, 
-  faLink,
+import {
+  faExternalLinkAlt,
+  faBook,
+  faListOl,
+  faQuoteRight,
   faFileAlt,
   faInfoCircle,
   faArrowRight
@@ -75,8 +73,8 @@ export const Articles = () => {
   if (!jsonData) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <LinearGradient 
-          colors={["#667eea", "#764ba2"]} 
+        <LinearGradient
+          colors={["#667eea", "#764ba2"]}
           style={styles.loadingContainer}
         >
           <View style={styles.loadingContent}>
@@ -96,8 +94,8 @@ export const Articles = () => {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
+          <RefreshControl
+            refreshing={refreshing}
             onRefresh={loadJson}
             colors={["#4A90E2", "#357ABD"]}
             progressBackgroundColor="#ffffff"
@@ -117,14 +115,14 @@ export const Articles = () => {
             </View>
             <Text style={styles.descriptionTitle}>Información Importante</Text>
           </LinearGradient>
-          
+
           <View style={styles.descriptionContent}>
             {jsonData.section_description.description.slice(0, 2).map((desc, index) => (
               <Text key={index} style={styles.descriptionText}>
                 {desc}
               </Text>
             ))}
-            
+
             {/* Botón de enlace súper visible */}
             <TouchableOpacity
               style={styles.mainLinkButton}
@@ -176,11 +174,11 @@ export const Articles = () => {
                   </View>
                 ))}
               </View>
-              
+
               {/* Decoración inferior del artículo */}
               <View style={styles.articleFooter}>
-                <LinearGradient 
-                  colors={["#74b9ff", "#0984e3"]} 
+                <LinearGradient
+                  colors={["#74b9ff", "#0984e3"]}
                   style={styles.articleFooterGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -225,7 +223,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 30,
   },
-  
+
   // Loading styles mejorados
   loadingContainer: {
     flex: 1,
