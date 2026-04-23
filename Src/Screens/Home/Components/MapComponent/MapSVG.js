@@ -18,23 +18,13 @@ const MapSVG = ({
   setMarkedObject,
 }) => {
   // Animaciones múltiples para efectos más sofisticados
-  const dashOffset = new Animated.Value(0);
   const pulseAnim = new Animated.Value(1);
-  const glowAnim = new Animated.Value(0);
 
   useEffect(() => {
     let animationGroup;
 
     if (isRouteActive && activeRoutePoints.length > 1) {
       animationGroup = Animated.parallel([
-        // Dash Offset
-        Animated.loop(
-          Animated.timing(dashOffset, {
-            toValue: 30,
-            duration: 2000,
-            useNativeDriver: true,
-          })
-        ),
         // Pulse (Escala)
         Animated.loop(
           Animated.sequence([
@@ -42,20 +32,11 @@ const MapSVG = ({
             Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
           ])
         ),
-        // Glow (Opacidad/Brillo)
-        Animated.loop(
-          Animated.sequence([
-            Animated.timing(glowAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
-            Animated.timing(glowAnim, { toValue: 0, duration: 1500, useNativeDriver: true }),
-          ])
-        )
       ]);
 
       animationGroup.start();
     } else {
-      dashOffset.setValue(0);
       pulseAnim.setValue(1);
-      glowAnim.setValue(0);
     }
     return () => {
       if (animationGroup) animationGroup.stop();
