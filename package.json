@@ -20,6 +20,7 @@
     "@react-navigation/drawer": "^6.6.6",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
+    "@shopify/react-native-skia": "^1.5.0",
     "@supabase/supabase-js": "^2.39.8",
     "bcryptjs": "^2.4.3",
     "eas-cli": "^16.20.1",

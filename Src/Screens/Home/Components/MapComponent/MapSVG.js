@@ -1,12 +1,5 @@
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Animated } from "react-native";
-import Svg, {
-  Polyline,
-  Defs,
-  LinearGradient,
-  Stop,
-  RadialGradient,
-} from "react-native-svg";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faTimes,
@@ -14,8 +7,7 @@ import {
   faLocationArrow,
   faFlag,
 } from "@fortawesome/free-solid-svg-icons";
-
-const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
+import { RouteLine } from "./RouteLine";
 
 const MapSVG = ({
   isRouteActive = false,
@@ -25,13 +17,6 @@ const MapSVG = ({
   markedObject,
   setMarkedObject,
 }) => {
-  // Convierte las coordenadas de la ruta a "x1,y1 x2,y2 ..."
-  const pointsString = useMemo(() => {
-    return activeRoutePoints
-      .map(([x, y]) => `${x},${y}`)
-      .join(" ");
-  }, [activeRoutePoints]);
-
   // Animaciones múltiples para efectos más sofisticados
   const dashOffset = new Animated.Value(0);
   const pulseAnim = new Animated.Value(1);
@@ -91,8 +76,7 @@ const MapSVG = ({
             left: point.left,
             top: point.top,
             width: point.width,
-            height: point.height,
-            // transform: [{ rotate: `${point.rotate}deg` }],
+            height: point.height
           },
         ]}
         onPress={() => {
@@ -133,95 +117,6 @@ const MapSVG = ({
       </Animated.View>
     );
   }, [markedObject, setMarkedObject, pulseAnim]);
-
-  // Renderiza la línea de la ruta con múltiples capas para un efecto premium
-  const renderRouteLine = useCallback(() => {
-    if (!isRouteActive || activeRoutePoints.length < 2) return null;
-
-    return (
-      <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
-        <Defs>
-          {/* Gradiente principal azul vibrante */}
-          <LinearGradient id="routeGradient" x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0%" stopColor="#0033A0" stopOpacity="1" />
-            <Stop offset="25%" stopColor="#1E40AF" stopOpacity="1" />
-            <Stop offset="50%" stopColor="#3B82F6" stopOpacity="1" />
-            <Stop offset="75%" stopColor="#60A5FA" stopOpacity="1" />
-            <Stop offset="100%" stopColor="#93C5FD" stopOpacity="1" />
-          </LinearGradient>
-
-          {/* Gradiente de brillo para efecto glow */}
-          <RadialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
-            <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
-            <Stop offset="70%" stopColor="#3B82F6" stopOpacity="0.4" />
-            <Stop offset="100%" stopColor="#0033A0" stopOpacity="0" />
-          </RadialGradient>
-
-          {/* Gradiente para la sombra */}
-          <LinearGradient id="shadowGradient" x1="0" y1="0" x2="1" y2="0">
-            <Stop offset="0%" stopColor="#000000" stopOpacity="0.3" />
-            <Stop offset="50%" stopColor="#000000" stopOpacity="0.2" />
-            <Stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
-          </LinearGradient>
-        </Defs>
-
-        {/* Capa de sombra exterior */}
-        <AnimatedPolyline
-          points={pointsString}
-          fill="none"
-          stroke="url(#shadowGradient)"
-          strokeWidth={14}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="0"
-          style={{
-            transform: [
-              { translateX: 2 },
-              { translateY: 2 }
-            ]
-          }}
-        />
-
-        {/* Capa de borde exterior */}
-        <AnimatedPolyline
-          points={pointsString}
-          fill="none"
-          stroke="#1F2937"
-          strokeWidth={12}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="0"
-        />
-
-        {/* Capa principal con gradiente */}
-        <AnimatedPolyline
-          points={pointsString}
-          fill="none"
-          stroke="url(#routeGradient)"
-          strokeWidth={8}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="15,8"
-          strokeDashoffset={dashOffset}
-        />
-
-        {/* Capa de brillo interior */}
-        <AnimatedPolyline
-          points={pointsString}
-          fill="none"
-          stroke="#FFFFFF"
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray="10,15"
-          strokeDashoffset={dashOffset}
-          style={{
-            opacity: glowAnim,
-          }}
-        />
-      </Svg>
-    );
-  }, [isRouteActive, activeRoutePoints, dashOffset, glowAnim]);
 
   // Renderiza pines de origen y destino con efectos premium
   const renderRoutePins = useCallback(() => {
@@ -278,7 +173,10 @@ const MapSVG = ({
 
   return (
     <View style={[StyleSheet.absoluteFill, { pointerEvents: "box-none" }]}>
-      {renderRouteLine()}
+
+      {activeRoutePoints !== undefined && activeRoutePoints.length > 1 &&
+        <RouteLine points={activeRoutePoints} />
+      }
       {renderPoints()}
       {renderMarker()}
       {renderRoutePins()}
