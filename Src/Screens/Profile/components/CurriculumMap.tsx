@@ -32,7 +32,7 @@ export const CurriculumMap = ({ degree_code, onPress }: Props) => {
                             <Text style={styles.curriculumSubtitle}>
                                 {(() => {
                                     const careerCode = extractCareerCode(degree_code);
-                                    return degreeNames[careerCode] || degree_code;
+                                    return careerCode && degreeNames[careerCode] ? degreeNames[careerCode] : degree_code;
                                 })()}
                             </Text>
                             <Text style={styles.curriculumDescription}>
