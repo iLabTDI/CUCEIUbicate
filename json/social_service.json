@@ -1,116 +1,115 @@
 {
-    "section_description": {
-      "name": "Servicio Social",
-      "sub-sections": {
-        "general": {
-          "title": "Información General",
-          "content": [
-            "El servicio social es una oportunidad para que los estudiantes apliquen sus conocimientos y contribuyan al bienestar de la comunidad.",
-            "Este programa está diseñado para fomentar la responsabilidad social y el desarrollo profesional a través de experiencias prácticas."
-          ],
-          "listed-elements": {
-            "beneficios": [
-              "Aprendizaje práctico en entornos reales",
-              "Desarrollo de habilidades interpersonales y profesionales",
-              "Oportunidad de networking y crecimiento personal"
-            ]
-          },
-          "mini-subsections": {
-            "detalles": {
-              "title": "Detalles del Programa",
-              "content": "El programa tiene una duración de 480 horas, distribuidas en diversas actividades supervisadas.",
-              "listed-elements": {
-                "actividades": [
-                  "Participación en proyectos comunitarios",
-                  "Asistencia a talleres y seminarios",
-                  "Elaboración de informes y evaluaciones periódicas"
-                ]
-              }
-            }
-          },
-          "links": {
-            "pagina_web": {
-              "text": "Visita nuestra página oficial",
-              "url": "https://ejemplo.com/servicio-social"
+  "section_description": {
+    "name": "Servicio Social",
+    "sub-sections": {
+      "general": {
+        "title": "Información General",
+        "content": [
+          "El servicio social es una oportunidad para que los estudiantes apliquen sus conocimientos y contribuyan al bienestar de la comunidad.",
+          "Este programa está diseñado para fomentar la responsabilidad social y el desarrollo profesional a través de experiencias prácticas."
+        ],
+        "listed-elements": {
+          "beneficios": [
+            "Aprendizaje práctico en entornos reales",
+            "Desarrollo de habilidades interpersonales y profesionales",
+            "Oportunidad de networking y crecimiento personal"
+          ]
+        },
+        "mini-subsections": {
+          "detalles": {
+            "title": "Detalles del Programa",
+            "content": "El programa tiene una duración de 480 horas, distribuidas en diversas actividades supervisadas.",
+            "listed-elements": {
+              "actividades": [
+                "Participación en proyectos comunitarios",
+                "Asistencia a talleres y seminarios",
+                "Elaboración de informes y evaluaciones periódicas"
+              ]
             }
           }
         },
-        "requisitos": {
-          "title": "Requisitos",
-          "content": "Para participar en el servicio social se requiere cumplir con los siguientes requisitos:",
-          "listed-elements": {
-            "lista": [
-              "Estar matriculado en la institución",
-              "Cursar al menos el 60% de los créditos del programa",
-              "Presentar una solicitud formal",
-              "Contar con un promedio mínimo de 8.0"
-            ]
-          },
-          "links": {
-            "formulario": {
-              "text": "Descargar formulario de inscripción",
-              "url": "https://ejemplo.com/formulario-servicio-social.pdf"
+        "links": {
+          "pagina_web": {
+            "text": "Visita nuestra página oficial",
+            "url": "https://www.cucei.udg.mx/es/servicios/servicio-social"
+          }
+        }
+      },
+      "requisitos": {
+        "title": "Requisitos",
+        "content": "Para participar en el servicio social se requiere cumplir con los siguientes requisitos:",
+        "listed-elements": {
+          "lista": [
+            "Estar matriculado en la institución",
+            "Cursar al menos el 60% de los créditos del programa",
+            "Presentar una solicitud formal",
+            "Contar con un promedio mínimo de 8.0"
+          ]
+        },
+        "links": {
+          "formulario": {
+            "text": "Descargar formulario de inscripción",
+            "url": "https://ejemplo.com/formulario-servicio-social.pdf"
+          }
+        }
+      },
+      "proceso": {
+        "title": "Proceso de Inscripción",
+        "content": "El proceso de inscripción consta de los siguientes pasos:",
+        "listed-elements": {
+          "pasos": [
+            "Revisión de requisitos y documentación",
+            "Entrega de solicitud en línea o de manera presencial",
+            "Evaluación y asignación de tutor",
+            "Inicio del programa con una orientación inicial"
+          ]
+        },
+        "mini-subsections": {
+          "plazos": {
+            "title": "Plazos Importantes",
+            "content": "Es fundamental cumplir con las fechas límite de cada etapa del proceso.",
+            "listed-elements": {
+              "fechas": [
+                "Inscripción: del 1 al 15 de septiembre",
+                "Inicio del programa: 1 de octubre",
+                "Cierre de inscripción: 30 de septiembre"
+              ]
             }
           }
+        }
+      },
+      "documentos": {
+        "title": "Documentación Requerida",
+        "content": "Los documentos que debes presentar son:",
+        "listed-elements": {
+          "documentos": [
+            "Copia de credencial de estudiante",
+            "Historial académico actualizado",
+            "Carta de motivos",
+            "Formato de solicitud firmado"
+          ]
         },
-        "proceso": {
-          "title": "Proceso de Inscripción",
-          "content": "El proceso de inscripción consta de los siguientes pasos:",
-          "listed-elements": {
-            "pasos": [
-              "Revisión de requisitos y documentación",
-              "Entrega de solicitud en línea o de manera presencial",
-              "Evaluación y asignación de tutor",
-              "Inicio del programa con una orientación inicial"
-            ]
-          },
-          "mini-subsections": {
-            "plazos": {
-              "title": "Plazos Importantes",
-              "content": "Es fundamental cumplir con las fechas límite de cada etapa del proceso.",
-              "listed-elements": {
-                "fechas": [
-                  "Inscripción: del 1 al 15 de septiembre",
-                  "Inicio del programa: 1 de octubre",
-                  "Cierre de inscripción: 30 de septiembre"
-                ]
-              }
-            }
+        "links": {
+          "guia_documentos": {
+            "text": "Guía para la documentación",
+            "url": "https://ejemplo.com/guia-documentos"
           }
-        },
-        "documentos": {
-          "title": "Documentación Requerida",
-          "content": "Los documentos que debes presentar son:",
-          "listed-elements": {
-            "documentos": [
-              "Copia de credencial de estudiante",
-              "Historial académico actualizado",
-              "Carta de motivos",
-              "Formato de solicitud firmado"
-            ]
-          },
-          "links": {
-            "guia_documentos": {
-              "text": "Guía para la documentación",
-              "url": "https://ejemplo.com/guia-documentos"
-            }
-          }
-        },
-        "contacto": {
-          "title": "Contacto",
-          "content": [
-            "Si tienes dudas o necesitas más información, no dudes en contactarnos.",
-            "Correo: ussocial@cucei.udg.mx",
-            "Teléfono: +52 33 1234 5678"
-          ],
-          "links": {
-            "pagina_contacto": {
-              "text": "Página de contacto",
-              "url": "https://ejemplo.com/contacto"
-            }
+        }
+      },
+      "contacto": {
+        "title": "Contacto",
+        "content": [
+          "Si tienes dudas o necesitas más información, no dudes en contactarnos.",
+          "Correo: ussocial@cucei.udg.mx",
+          "Teléfono: +52 33 1234 5678"
+        ],
+        "links": {
+          "pagina_contacto": {
+            "text": "Página de contacto",
+            "url": "https://ejemplo.com/contacto"
           }
         }
       }
     }
   }
-  
+}

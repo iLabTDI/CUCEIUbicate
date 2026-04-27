@@ -204,6 +204,8 @@ export const Chatbot = () => {
   const inactivityTimerRef = useRef(null);
   const deleteTimerRef = useRef(null);
 
+  const animatedIds = useRef(new Set());
+
   useEffect(() => {
     loadMessages();
     checkFirstVisit();
@@ -242,7 +244,9 @@ export const Chatbot = () => {
     try {
       const savedMessages = await AsyncStorage.getItem("chatMessages");
       if (savedMessages) {
-        setMessages(JSON.parse(savedMessages));
+        const parsedMessages = JSON.parse(savedMessages);
+        parsedMessages.forEach((msg) => animatedIds.current.add(msg._id));
+        setMessages(parsedMessages);
       } else {
         const welcomeMessage = {
           _id: Date.now().toString(),
@@ -287,8 +291,12 @@ export const Chatbot = () => {
       user: { _id: 1, name: "Usuario" },
     };
 
-    setMessages((prevMessages) => [newMessage, ...prevMessages]);
     setInputMessage("");
+    setMessages((prevMessages) => {
+      const updated = [newMessage, ...prevMessages];
+      saveMessages(updated);
+      return updated;
+    });
     setIsTyping(true);
 
     try {
@@ -329,79 +337,86 @@ export const Chatbot = () => {
   };
 
   // Renderizar mensaje completamente rediseñado
-  const renderMessage = ({ item, index }) => (
-    <Animatable.View
-      animation="fadeInUp"
-      delay={index * 50}
-      duration={400}
-      style={styles.messageContainer}
-    >
-      {item.user._id === 1 ? (
-        // Mensaje del usuario - Diseño moderno
-        <View style={styles.userMessageWrapper}>
-          <LinearGradient
-            colors={["#1E40AF", "#3B82F6"]}
-            style={styles.userMessageBubble}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Text style={styles.userMessageText}>
-              {renderTextWithLinks(item.text)}
-            </Text>
-            <View style={styles.messageInfo}>
-              <Text style={styles.messageTime}>
-                {formatTime(item.createdAt)}
-              </Text>
-              <View style={styles.messageStatus}>
-                <FontAwesome name="check-circle" size={14} color="#E8F4FD" />
-              </View>
-            </View>
-          </LinearGradient>
-          <View style={styles.messageTail} />
-        </View>
-      ) : (
-        // Mensaje del bot - Diseño card moderno
-        <View style={styles.botMessageWrapper}>
-          <View style={styles.botAvatarContainer}>
-            <LinearGradient
-              colors={["#3B82F6", "#1E40AF"]}
-              style={styles.botAvatarBg}
-            >
-              <Image source={item.user.avatar} style={styles.botAvatar} />
-            </LinearGradient>
-            <View style={styles.onlineDot} />
-          </View>
+  const renderMessage = ({ item }) => {
 
-          <View style={styles.botMessageCard}>
+    const isNew = !animatedIds.current.has(item._id);
+
+    if (isNew) {
+      animatedIds.current.add(item._id);
+    }
+    return (
+      <Animatable.View
+        animation={isNew ? "fadeInUp" : undefined}
+        duration={400}
+        style={styles.messageContainer}
+      >
+        {item.user._id === 1 ? (
+          // Mensaje del usuario - Diseño moderno
+          <View style={styles.userMessageWrapper}>
             <LinearGradient
-              colors={["#ffffff", "#fafbff"]}
-              style={styles.botMessageBubble}
+              colors={["#1E40AF", "#3B82F6"]}
+              style={styles.userMessageBubble}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <View style={styles.botMessageHeader}>
-                <Text style={styles.botName}>Asistente CUCEI</Text>
-                <TouchableOpacity
-                  style={styles.copyBtn}
-                  onPress={() => copyToClipboard(item.text)}
-                >
-                  <FontAwesome name="copy" size={12} color="#3B82F6" />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.botMessageText}>
+              <Text style={styles.userMessageText}>
                 {renderTextWithLinks(item.text)}
               </Text>
-
-              <Text style={styles.botMessageTime}>
-                {formatTime(item.createdAt)}
-              </Text>
+              <View style={styles.messageInfo}>
+                <Text style={styles.messageTime}>
+                  {formatTime(item.createdAt)}
+                </Text>
+                <View style={styles.messageStatus}>
+                  <FontAwesome name="check-circle" size={14} color="#E8F4FD" />
+                </View>
+              </View>
             </LinearGradient>
+            <View style={styles.messageTail} />
           </View>
-        </View>
-      )}
-    </Animatable.View>
-  );
+        ) : (
+          // Mensaje del bot - Diseño card moderno
+          <View style={styles.botMessageWrapper}>
+            <View style={styles.botAvatarContainer}>
+              <LinearGradient
+                colors={["#3B82F6", "#1E40AF"]}
+                style={styles.botAvatarBg}
+              >
+                <Image source={item.user.avatar} style={styles.botAvatar} />
+              </LinearGradient>
+              <View style={styles.onlineDot} />
+            </View>
+
+            <View style={styles.botMessageCard}>
+              <LinearGradient
+                colors={["#ffffff", "#fafbff"]}
+                style={styles.botMessageBubble}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.botMessageHeader}>
+                  <Text style={styles.botName}>Asistente CUCEI</Text>
+                  <TouchableOpacity
+                    style={styles.copyBtn}
+                    onPress={() => copyToClipboard(item.text)}
+                  >
+                    <FontAwesome name="copy" size={12} color="#3B82F6" />
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.botMessageText}>
+                  {renderTextWithLinks(item.text)}
+                </Text>
+
+                <Text style={styles.botMessageTime}>
+                  {formatTime(item.createdAt)}
+                </Text>
+              </LinearGradient>
+            </View>
+          </View>
+        )}
+      </Animatable.View>
+    )
+  };
 
   // Renderizar texto con enlaces clicables
   const renderTextWithLinks = (text) => {
@@ -453,6 +468,9 @@ export const Chatbot = () => {
 
   // Eliminar conversación (este método elimina todos los mensajes)
   const deleteConversation = async () => {
+
+    animatedIds.current.clear();
+
     const welcomeMessage = messages.find(
       (message) =>
         message.user._id === 2 &&
@@ -461,6 +479,11 @@ export const Chatbot = () => {
         )
     );
     const newMessages = welcomeMessage ? [welcomeMessage] : [];
+
+    if (welcomeMessage) {
+      animatedIds.current.add(welcomeMessage._id);
+    }
+
     setMessages(newMessages);
     await AsyncStorage.setItem("chatMessages", JSON.stringify(newMessages));
     setShowInactivityModal(false);
@@ -535,7 +558,9 @@ export const Chatbot = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.chatArea}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 60}
+        bottomOffset={130}
+
+        keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 110}
       >
         <FlatList
           ref={flatListRef}
