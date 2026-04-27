@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  Dimensions,
   StatusBar,
   TextInput,
   FlatList,
@@ -19,16 +18,15 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Animatable from "react-native-animatable";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import LottieView from "lottie-react-native";
 import * as Clipboard from "expo-clipboard";
 import { useIsFocused } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { CustomDropdownMenu } from "./components/CustomDropdownMenu";
 
-// --------------------------------------------------------------------------------
 // Configuración de la API
-// --------------------------------------------------------------------------------
 const API_URL =
   "https://api.stack-ai.com/inference/v0/run/1640c9fb-aa6e-42d3-aa7b-589fb81ea0a0/679133f2b623c3637afc299f";
 const HEADERS = {
@@ -36,20 +34,13 @@ const HEADERS = {
   "Content-Type": "application/json",
 };
 
-const { width, height } = Dimensions.get("window");
-const isAndroid = Platform.OS === "android";
-
-// --------------------------------------------------------------------------------
 // Función para formatear tiempo
-// --------------------------------------------------------------------------------
 const formatTime = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
-// --------------------------------------------------------------------------------
 // Componente para la animación de escritura súper diferente
-// --------------------------------------------------------------------------------
 const TypingAnimation = () => {
   const [animation] = useState(new Animated.Value(0));
   const [waveAnim] = useState(new Animated.Value(0));
@@ -85,11 +76,11 @@ const TypingAnimation = () => {
         >
           <View style={styles.typingContentLeft}>
             <View style={styles.botAvatarSmall}>
-              <Image 
-                source={require("../ChatBot/images/bot.png")} 
-                style={styles.botImageSmall} 
+              <Image
+                source={require("../ChatBot/images/bot.png")}
+                style={styles.botImageSmall}
               />
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.avatarRing,
                   {
@@ -100,17 +91,17 @@ const TypingAnimation = () => {
                       })
                     }]
                   }
-                ]} 
+                ]}
               />
             </View>
-            
+
             <View style={styles.typingDotsArea}>
               {[0, 1, 2].map((index) => (
-                <Animated.View 
+                <Animated.View
                   key={index}
                   style={[
-                    styles.typingDot, 
-                    { 
+                    styles.typingDot,
+                    {
                       opacity: animation.interpolate({
                         inputRange: [0, 0.25, 0.5, 0.75, 1],
                         outputRange: [0.3, index === 0 ? 1 : 0.3, index === 1 ? 1 : 0.3, index === 2 ? 1 : 0.3, 0.3],
@@ -124,12 +115,12 @@ const TypingAnimation = () => {
                         })
                       }]
                     }
-                  ]} 
+                  ]}
                 />
               ))}
             </View>
           </View>
-          
+
           {/* <Text style={styles.typingLabel}>Escribiendo</Text> */}
         </LinearGradient>
       </View>
@@ -137,9 +128,7 @@ const TypingAnimation = () => {
   );
 };
 
-// --------------------------------------------------------------------------------
 // Función para consultar la API
-// --------------------------------------------------------------------------------
 async function query(user_input) {
   const payload = {
     user_id: "1234", // ID de usuario hardcodeado
@@ -168,9 +157,7 @@ async function query(user_input) {
   }
 }
 
-// --------------------------------------------------------------------------------
 // Función para procesar la respuesta (eliminar contenido no deseado)
-// --------------------------------------------------------------------------------
 function processResponse(response) {
   response = response.replace(/\[\^.*?\]/g, "");
   response = response.replace(/<citations>.*?<\/citations>/gs, "");
@@ -178,9 +165,7 @@ function processResponse(response) {
   return response.trim();
 }
 
-// --------------------------------------------------------------------------------
 // Función para detectar saludos
-// --------------------------------------------------------------------------------
 const isGreeting = (message) => {
   const greetings = [
     "hola",
@@ -194,9 +179,7 @@ const isGreeting = (message) => {
   return greetings.some((greeting) => message.toLowerCase().includes(greeting));
 };
 
-// --------------------------------------------------------------------------------
 // Función para generar respuestas a saludos
-// --------------------------------------------------------------------------------
 const getGreetingResponse = () => {
   const responses = [
     "¡Hola! ¿Cómo estás? ¿En qué puedo ayudarte hoy?",
@@ -208,9 +191,7 @@ const getGreetingResponse = () => {
   return responses[Math.floor(Math.random() * responses.length)];
 };
 
-// --------------------------------------------------------------------------------
 // Componente principal: Chatbot
-// --------------------------------------------------------------------------------
 export const Chatbot = () => {
   const isFocused = useIsFocused(); // Sólo activa el temporizador si el Chatbot está enfocado
   const [messages, setMessages] = useState([]);
@@ -241,9 +222,7 @@ export const Chatbot = () => {
     }
   }, [messages, isFocused]);
 
-  // --------------------------------------------------------------------------------
   // Verificar primera visita
-  // --------------------------------------------------------------------------------
   const checkFirstVisit = async () => {
     try {
       const hasVisited = await AsyncStorage.getItem("hasVisitedNewChatbot");
@@ -254,12 +233,11 @@ export const Chatbot = () => {
       }
     } catch (error) {
       // No se muestra error
+      console.log("Error al verificar primera visita:", error);
     }
   };
 
-  // --------------------------------------------------------------------------------
   // Cargar mensajes guardados
-  // --------------------------------------------------------------------------------
   const loadMessages = async () => {
     try {
       const savedMessages = await AsyncStorage.getItem("chatMessages");
@@ -281,12 +259,11 @@ export const Chatbot = () => {
       }
     } catch (error) {
       // No se muestra error
+      console.log("Error al cargar mensajes:", error);
     }
   };
 
-  // --------------------------------------------------------------------------------
   // Guardar mensajes
-  // --------------------------------------------------------------------------------
   const saveMessages = async (messagesToSave) => {
     try {
       await AsyncStorage.setItem(
@@ -295,12 +272,11 @@ export const Chatbot = () => {
       );
     } catch (error) {
       // No se muestra error
+      console.log("Error al guardar mensajes:", error);
     }
   };
 
-  // --------------------------------------------------------------------------------
   // Manejar el envío de mensajes
-  // --------------------------------------------------------------------------------
   const onSend = useCallback(async () => {
     if (inputMessage.trim() === "") return;
 
@@ -324,6 +300,7 @@ export const Chatbot = () => {
         addBotMessage(processedResponse);
       }
     } catch (error) {
+      console.log("Error al obtener respuesta del bot:", error);
       addBotMessage(
         "Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde."
       );
@@ -332,9 +309,7 @@ export const Chatbot = () => {
     }
   }, [inputMessage]);
 
-  // --------------------------------------------------------------------------------
   // Agregar mensaje del bot
-  // --------------------------------------------------------------------------------
   const addBotMessage = (text) => {
     const botMessage = {
       _id: `${Date.now()}-${Math.random()}`,
@@ -353,9 +328,7 @@ export const Chatbot = () => {
     });
   };
 
-  // --------------------------------------------------------------------------------
   // Renderizar mensaje completamente rediseñado
-  // --------------------------------------------------------------------------------
   const renderMessage = ({ item, index }) => (
     <Animatable.View
       animation="fadeInUp"
@@ -398,7 +371,7 @@ export const Chatbot = () => {
             </LinearGradient>
             <View style={styles.onlineDot} />
           </View>
-          
+
           <View style={styles.botMessageCard}>
             <LinearGradient
               colors={["#ffffff", "#fafbff"]}
@@ -415,11 +388,11 @@ export const Chatbot = () => {
                   <FontAwesome name="copy" size={12} color="#3B82F6" />
                 </TouchableOpacity>
               </View>
-              
+
               <Text style={styles.botMessageText}>
                 {renderTextWithLinks(item.text)}
               </Text>
-              
+
               <Text style={styles.botMessageTime}>
                 {formatTime(item.createdAt)}
               </Text>
@@ -430,9 +403,7 @@ export const Chatbot = () => {
     </Animatable.View>
   );
 
-  // --------------------------------------------------------------------------------
   // Renderizar texto con enlaces clicables
-  // --------------------------------------------------------------------------------
   const renderTextWithLinks = (text) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const parts = text.split(urlRegex);
@@ -451,29 +422,24 @@ export const Chatbot = () => {
     });
   };
 
-  // --------------------------------------------------------------------------------
   // Copiar texto al portapapeles
-  // --------------------------------------------------------------------------------
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
     Alert.alert("Copiado", "El mensaje ha sido copiado al portapapeles");
   };
 
-  // --------------------------------------------------------------------------------
   // Manejar cierre de bienvenida
-  // --------------------------------------------------------------------------------
   const handleCloseWelcome = async () => {
     setShowWelcome(false);
     try {
       await AsyncStorage.setItem("hasVisitedNewChatbot", "true");
     } catch (error) {
       // No se muestra error
+      console.log("Error al verificar primera visita:", error);
     }
   };
 
-  // --------------------------------------------------------------------------------
   // Reiniciar temporizador de inactividad (sólo se activa si el Chatbot está enfocado)
-  // --------------------------------------------------------------------------------
   const resetInactivityTimer = () => {
     clearTimeout(inactivityTimerRef.current);
     clearTimeout(deleteTimerRef.current);
@@ -485,9 +451,7 @@ export const Chatbot = () => {
     }, 3 * 60 * 1000); // 3 minutos
   };
 
-  // --------------------------------------------------------------------------------
   // Eliminar conversación (este método elimina todos los mensajes)
-  // --------------------------------------------------------------------------------
   const deleteConversation = async () => {
     const welcomeMessage = messages.find(
       (message) =>
@@ -500,6 +464,17 @@ export const Chatbot = () => {
     setMessages(newMessages);
     await AsyncStorage.setItem("chatMessages", JSON.stringify(newMessages));
     setShowInactivityModal(false);
+  };
+
+  const copyConversation = async () => {
+    const text = messages
+      .slice()
+      .reverse()
+      .map((m) => `${m.user._id === 1 ? "Tú" : "Bot"}: ${m.text}`)
+      .join("\n\n");
+
+    await Clipboard.setStringAsync(text);
+    Alert.alert("Copiado", "La conversación fue copiada al portapapeles");
   };
 
   if (!isFocused) return null;
@@ -519,15 +494,15 @@ export const Chatbot = () => {
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
               <View style={styles.headerBotAvatar}>
-                <Image 
-                  source={require("../ChatBot/images/bot.png")} 
-                  style={styles.headerBotImage} 
+                <Image
+                  source={require("../ChatBot/images/bot.png")}
+                  style={styles.headerBotImage}
                 />
                 <View style={styles.headerOnlineBadge}>
                   <View style={styles.onlinePulse} />
                 </View>
               </View>
-              
+
               <View style={styles.headerTextArea}>
                 <Text style={styles.headerTitle}>CUCEI Assistant</Text>
                 <View style={styles.headerStatus}>
@@ -536,17 +511,15 @@ export const Chatbot = () => {
                 </View>
               </View>
             </View>
-            
-            <TouchableOpacity style={styles.headerAction}>
-              <LinearGradient
-                colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
-                style={styles.headerActionBg}
-              >
-                <FontAwesome name="ellipsis-v" size={16} color="#ffffff" />
-              </LinearGradient>
-            </TouchableOpacity>
+
+            <CustomDropdownMenu
+              options={[
+                { label: "Copiar conversación", action: copyConversation },
+                { label: "Limpiar chat", action: deleteConversation },
+              ]}
+            />
           </View>
-          
+
           {/* Decoración ondulada */}
           <View style={styles.headerWave}>
             <LinearGradient
@@ -574,9 +547,9 @@ export const Chatbot = () => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
-        
+
         {isTyping && <TypingAnimation />}
-        
+
         {/* Input súper lindo y elevado para Android */}
         <View style={styles.inputSection}>
           <LinearGradient
@@ -600,7 +573,7 @@ export const Chatbot = () => {
                   textAlignVertical="top"
                 />
               </View>
-              
+
               <TouchableOpacity
                 style={[
                   styles.sendButtonContainer,
@@ -611,8 +584,8 @@ export const Chatbot = () => {
                 activeOpacity={0.8}
               >
                 <LinearGradient
-                  colors={inputMessage.trim() 
-                    ? ["#3B82F6", "#1E40AF", "#1E3A8A"] 
+                  colors={inputMessage.trim()
+                    ? ["#3B82F6", "#1E40AF", "#1E3A8A"]
                     : ["#E5E7EB", "#D1D5DB", "#9CA3AF"]
                   }
                   style={styles.sendButtonGradient}
@@ -649,12 +622,12 @@ export const Chatbot = () => {
               style={styles.modalHeaderGradient}
             >
               <View style={styles.modalIcon}>
-                <FontAwesome name="robot" size={32} color="#ffffff" />
+                <FontAwesome6 name="robot" size={32} color="#ffffff" />
               </View>
               <Text style={styles.modalWelcomeTitle}>¡Hola! Soy tu asistente</Text>
               <Text style={styles.modalWelcomeSubtitle}>Estoy aquí para ayudarte</Text>
             </LinearGradient>
-            
+
             <View style={styles.modalBodyContent}>
               <LottieView
                 ref={lottieRef}
@@ -667,7 +640,7 @@ export const Chatbot = () => {
                 Puedo ayudarte con información sobre CUCEI, horarios, eventos, ubicaciones y mucho más.
               </Text>
             </View>
-            
+
             <TouchableOpacity
               style={styles.startChatButton}
               onPress={handleCloseWelcome}
@@ -701,12 +674,12 @@ export const Chatbot = () => {
             <View style={styles.inactivityIcon}>
               <FontAwesome name="clock-o" size={48} color="#3B82F6" />
             </View>
-            
+
             <Text style={styles.inactivityTitle}>¿Aún estás ahí?</Text>
             <Text style={styles.inactivityMessage}>
               No he recibido mensajes en un tiempo. ¿Quieres mantener nuestra conversación?
             </Text>
-            
+
             <View style={styles.inactivityActions}>
               <TouchableOpacity
                 style={styles.keepButton}
@@ -723,7 +696,7 @@ export const Chatbot = () => {
                   <Text style={styles.keepButtonText}>Continuar</Text>
                 </LinearGradient>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={styles.clearButton}
                 onPress={deleteConversation}
@@ -745,11 +718,11 @@ export const Chatbot = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#f8f9ff" 
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9ff"
   },
-  
+
   // Header hermoso y bien proporcionado
   headerContainer: {
     shadowColor: "#3B82F6",
@@ -831,16 +804,6 @@ const styles = StyleSheet.create({
     color: "#E8F4FD",
     fontWeight: "600",
   },
-  headerAction: {
-    marginLeft: 12,
-  },
-  headerActionBg: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   headerWave: {
     height: 16,
     marginTop: -4,
@@ -850,23 +813,23 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  
+
   // Chat area optimizado para Android
-  chatArea: { 
+  chatArea: {
     flex: 1,
     backgroundColor: "#f8f9ff",
   },
-  messagesList: { 
-    paddingHorizontal: 16, 
+  messagesList: {
+    paddingHorizontal: 16,
     paddingVertical: 12,
     flexGrow: 1,
   },
-  
+
   // Messages completamente rediseñados en azul
   messageContainer: {
     marginVertical: 6,
   },
-  
+
   // Usuario
   userMessageWrapper: {
     alignSelf: "flex-end",
@@ -884,7 +847,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  userMessageText: { 
+  userMessageText: {
     fontSize: 15,
     lineHeight: 20,
     color: "#ffffff",
@@ -916,7 +879,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 12,
     borderTopColor: "transparent",
   },
-  
+
   // Bot
   botMessageWrapper: {
     alignSelf: "flex-start",
@@ -941,9 +904,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  botAvatar: { 
-    width: 24, 
-    height: 24, 
+  botAvatar: {
+    width: 24,
+    height: 24,
     borderRadius: 12,
   },
   // onlineDot: {
@@ -993,7 +956,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  botMessageText: { 
+  botMessageText: {
     fontSize: 14,
     lineHeight: 19,
     color: "#2D3748",
@@ -1006,12 +969,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "right",
   },
-  
+
   // Typing animation optimizada
-  typingContainer: { 
-    paddingHorizontal: 16, 
+  typingContainer: {
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    alignItems: "flex-start" 
+    alignItems: "flex-start"
   },
   typingWrapper: {
     shadowColor: "#3B82F6",
@@ -1068,7 +1031,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontStyle: "italic",
   },
-  
+
   // Input súper lindo y elevado perfectamente para Android
   inputSection: {
     paddingHorizontal: 16,
@@ -1126,11 +1089,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   // Modals rediseñados en azul
-  modalBackground: { 
-    flex: 1, 
-    justifyContent: "center", 
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
   },
@@ -1178,7 +1141,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     alignItems: "center",
   },
-  modalAnimation: { 
+  modalAnimation: {
     width: 100,
     height: 100,
     marginBottom: 12,
@@ -1202,13 +1165,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     borderRadius: 22,
   },
-  startButtonText: { 
+  startButtonText: {
     fontSize: 15,
     fontWeight: "700",
     color: "#ffffff",
     marginLeft: 8,
   },
-  
+
   // Inactivity modal
   inactivityModal: {
     backgroundColor: "white",
@@ -1263,7 +1226,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
   },
-  keepButtonText: { 
+  keepButtonText: {
     fontSize: 14,
     fontWeight: "700",
     color: "#ffffff",
@@ -1280,16 +1243,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
   },
-  clearButtonText: { 
+  clearButtonText: {
     fontSize: 14,
     fontWeight: "700",
     color: "#ffffff",
     marginLeft: 8,
   },
-  
+
   // Link styles
-  link: { 
-    color: "#3B82F6", 
+  link: {
+    color: "#3B82F6",
     textDecorationLine: "underline",
     fontWeight: "600",
   },
