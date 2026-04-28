@@ -658,7 +658,7 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_Q/Q2.png"),
     ],
     description:
-      "El Módulo Q2 es un edificio que se utiliza para .",
+      "El Módulo Q2 es una instalación que alberga diversos laboratorios especializados del Departamento de Química y la oficina de Seguridad de CUCEI, donde se gestionan trámites administrativos y solicitudes de emprendimiento.",
   },
   "Comida15": {
     name: "Comida",
@@ -685,7 +685,7 @@ export const bottomSheetContents = {
   "La Flor de Córdoba": {
     name: "La Flor de Córdoba",
     classrooms: "",
-    "relevant-places": ["hay lugares sy puestos de comida a demas de bancas con sombrilla para poder comer"],
+    "relevant-places": ["hay lugares y puestos de comida a demas de bancas con sombrilla para poder comer"],
     bathrooms: [""],
     "images-path": [
       require("./Modulos/Comida/Flor_de_Cordoba.png"),
@@ -704,4 +704,25 @@ export const bottomSheetContents = {
     description:
       "Santander es un banco que se encuentra debajo del Modulo N en el cual puedes retirar dinero tramitar tarjetas y demas.",
   },
+  "CTA": {
+    name: "CTA",
+    classrooms: "",
+    "relevant-places": [
+      "Atención a Usuarios",
+      "Unidad de Multimedia Instruccional",
+      "Soporte a Ambientes Virtuales",
+      "Centro de Operaciones de la Red",
+      "Área de Mantenimiento y Soporte Técnico",
+      "Área de Desarrollo y Bases de Datos",
+      "Área de Infraestructura y Servidores",
+      "Área de Producción Audiovisual",
+      "Oficinas de Coordinación (Módulo Gamma)"
+    ],
+    bathrooms: [""],
+    "images-path": [
+      // require("./Modulos/CTA/CTA.png"),
+    ],
+    description:
+      "La Coordinación de Tecnologías para el Aprendizaje (CTA) es la encargada de administrar, controlar y realizar todas las actividades que estén relacionadas con los sistemas tecnológicos para apoyar la enseñanza en este centro universitario, así como para todas aquellas herramientas tecnológicas que apoyen a los administrativos y académicos en la realización de sus labores.",
+  }
 };
