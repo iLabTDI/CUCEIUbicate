@@ -13,23 +13,19 @@ import {
   Alert,
   StatusBar,
 } from "react-native"
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer"
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { createDrawerNavigator } from "@react-navigation/drawer"
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import {
-  faMap,
   faUser,
   faBars,
   faRadio,
   faFaceSmile,
   faUserFriends,
-  faMedkit,
-  faSchool,
   faBookBookmark,
   faNewspaper,
   faFolder,
   faHandsHelping,
-  faRobot,
   faSignOutAlt,
   faQuestionCircle,
   faEnvelope,
@@ -45,11 +41,7 @@ import Animated, {
   FadeInDown,
   FadeInUp,
   FadeInLeft,
-  SlideInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
+  SlideInRight
 } from "react-native-reanimated"
 
 import { HomePage } from "../../HomePage"
@@ -72,7 +64,7 @@ const isTablet = width >= 768
 const Drawer = createDrawerNavigator()
 
 const CustomDrawerContent = (props) => {
-  const navigation = useNavigation()
+  const navigation = props.navigation;
   const [isHelpModalVisible, setIsHelpModalVisible] = useState(false)
   const [activeItem, setActiveItem] = useState('Mapa')
 
@@ -125,10 +117,12 @@ const CustomDrawerContent = (props) => {
 
   const confirmLogout = () => {
     clearSession()
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    })
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      })
+    )
   }
 
   const handleHelp = () => {
