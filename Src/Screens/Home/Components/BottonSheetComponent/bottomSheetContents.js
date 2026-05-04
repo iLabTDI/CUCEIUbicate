@@ -724,5 +724,27 @@ export const bottomSheetContents = {
     ],
     description:
       "La Coordinación de Tecnologías para el Aprendizaje (CTA) es la encargada de administrar, controlar y realizar todas las actividades que estén relacionadas con los sistemas tecnológicos para apoyar la enseñanza en este centro universitario, así como para todas aquellas herramientas tecnológicas que apoyen a los administrativos y académicos en la realización de sus labores.",
+  },
+  "Baños S2": {
+    name: "Baños S2",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: ["W.C Hombres y W.C Mujeres."],
+    "images-path": [
+      // require("./Modulos/Modulo_S2/Banos_S2.png"),
+    ],
+    description:
+      "Los baños que se encuentran a lado del Módulo S2, ofreciendo servicios tanto para hombres como para mujeres.",
+  },
+  "Comedor de maestros": {
+    name: "Comedor de maestros",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      // require("./Modulos/Comedor_de_Maestros/Comedor_de_Maestros.png"),
+    ],
+    description:
+      "El comedor de maestros es un espacio dedicado a los docentes para que puedan disfrutar de sus comidas durante el horario de trabajo.",
   }
 };
