@@ -746,5 +746,16 @@ export const bottomSheetContents = {
     ],
     description:
       "El comedor de maestros es un espacio dedicado a los docentes para que puedan disfrutar de sus comidas durante el horario de trabajo.",
+  },
+  "comida": {
+    name: "Comida",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      // require("./Modulos/Comida/Comida.png"),
+    ],
+    description:
+      "El área de comida ofrece diversos puestos para consumir alimentos y bebidas.",
   }
 };
