@@ -21,9 +21,6 @@ import {
   faBook,
   faUtensils,
   faFootballBall,
-  faGraduationCap,
-  faTicketAlt,
-  faMapMarkerAlt,
   faParking,
   faBus,
   faRestroom,
@@ -33,7 +30,6 @@ import {
   faLaptop,
   faFlask,
   faHome,
-  faSchool,
   faHospital,
   faUsers,
   faDesktop,
@@ -236,12 +232,11 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
     if (text.length > 0) {
       const filteredResults = points.filter(
         (point) =>
-          point.name.toLowerCase().includes(text.toLowerCase()) ||
-          point.id.toLowerCase().includes(text.toLowerCase()) ||
-          (point.aliases &&
-            point.aliases.some((alias) =>
-              alias.toLowerCase().includes(text.toLowerCase())
-            ))
+          point.name.toLowerCase().includes(text.toLowerCase().trim()) ||
+          point.id.toLowerCase().includes(text.toLowerCase().trim()) ||
+          (point.aliases?.some((alias) =>
+            alias.toLowerCase().includes(text.toLowerCase().trim())
+          ))
       );
       setSearchResults(filteredResults);
       if (filteredResults.length === 0) {
@@ -343,79 +338,81 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.search_icon}
-        onPress={toggleSpecificSearch}>
-        <FontAwesomeIcon
-          icon={faSearch}
-          size={isTablet ? width * 0.04 : width * 0.06}
-          color="#FFFFFF"
-        />
-      </TouchableOpacity>
-
-      {showSpecificSearchState && (
-        <Animated.View
-          style={[
-            styles.overlay,
-            {
-              opacity: animatedOpacity,
-            },
-          ]}
-        />
-      )}
-
-      {showSpecificSearchState && (
-        <Animated.View
-          style={[
-            styles.searchBarContainer,
-            {
-              transform: [
-                {
-                  translateX: animatedWidth.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [isTablet ? 200 : 150, isTablet ? 20 : 10],
-                  }),
-                },
-              ],
-              width: animatedWidth.interpolate({
-                inputRange: [0, 1],
-                outputRange: ["0%", isTablet ? "80%" : "79%"],
-              }),
-            },
-          ]}>
-          <TextInput
-            ref={inputRef}
-            style={styles.searchInput}
-            placeholder="Buscar lugares..."
-            placeholderTextColor="#999999"
-            value={specificSearchText}
-            onChangeText={handleSpecificSearch}
+    <>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.search_icon}
+          onPress={toggleSpecificSearch}>
+          <FontAwesomeIcon
+            icon={faSearch}
+            size={isTablet ? width * 0.04 : width * 0.06}
+            color="#FFFFFF"
           />
-          <TouchableOpacity
-            style={styles.historyIcon}
-            onPress={() => {
-              setShowHistory(!showHistory);
-              setError("");
-              setSearchResults([]);
-            }}>
-            <FontAwesomeIcon
-              icon={faHistory}
-              size={isTablet ? 24 : 20}
-              color="#0000ff"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
-            <FontAwesomeIcon
-              icon={faTimes}
-              size={isTablet ? 24 : 20}
-              color="#0000ff"
-            />
-          </TouchableOpacity>
-        </Animated.View>
-      )}
+        </TouchableOpacity>
 
-      {(searchResults.length > 0 || showHistory || error) && (
+        {showSpecificSearchState && (
+          <Animated.View
+            style={[
+              styles.overlay,
+              {
+                opacity: animatedOpacity,
+              },
+            ]}
+          />
+        )}
+
+        {showSpecificSearchState && (
+          <Animated.View
+            style={[
+              styles.searchBarContainer,
+              {
+                transform: [
+                  {
+                    translateX: animatedWidth.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [isTablet ? 200 : 150, isTablet ? 20 : 10],
+                    }),
+                  },
+                ],
+                width: animatedWidth.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0%", isTablet ? "80%" : "79%"],
+                }),
+              },
+            ]}>
+            <TextInput
+              ref={inputRef}
+              style={styles.searchInput}
+              placeholder="Buscar lugares..."
+              placeholderTextColor="#999999"
+              value={specificSearchText}
+              onChangeText={handleSpecificSearch}
+            />
+            <TouchableOpacity
+              style={styles.historyIcon}
+              onPress={() => {
+                setShowHistory(!showHistory);
+                setError("");
+                setSearchResults([]);
+              }}>
+              <FontAwesomeIcon
+                icon={faHistory}
+                size={isTablet ? 24 : 20}
+                color="#0000ff"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.closeIcon} onPress={closeSearch}>
+              <FontAwesomeIcon
+                icon={faTimes}
+                size={isTablet ? 24 : 20}
+                color="#0000ff"
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+      </View>
+
+      {(searchResults.length > 0 || showHistory || !!(error)) && (
         <View style={styles.resultsContainer}>
           {error ? (
             <View style={styles.errorContainer}>
@@ -428,7 +425,9 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
             </View>
           ) : (
             <FlatList
-              data={showHistory ? searchHistory : searchResults}
+              key={showHistory ? "history-list" : "results-list"}
+              data={showHistory ? (searchHistory || []) : (searchResults || [])}
+              extraData={searchHistory}
               renderItem={showHistory ? renderHistoryItem : renderSearchResult}
               keyExtractor={(item, index) => index.toString()}
               keyboardShouldPersistTaps="always"
@@ -438,7 +437,7 @@ export const SpecificSearch = ({ onSearch, points, setShowSpecificSearch }) => {
           )}
         </View>
       )}
-    </View>
+    </>
   );
 };
 
@@ -504,7 +503,7 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     position: "absolute",
-    top: isTablet ? height * 0.09 : height * 0.07,
+    top: isTablet ? (height * 0.03) + 75 : (height * 0.05) + 65,
     right: isTablet ? width * 0.02 : width * 0.03,
     width: isTablet ? width * 0.85 : width * 0.8,
     backgroundColor: "#FFFFFF",
