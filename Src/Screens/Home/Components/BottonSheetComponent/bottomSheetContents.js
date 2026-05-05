@@ -720,7 +720,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: [""],
     "images-path": [
-      // require("./Modulos/CTA/CTA.png"),
+      require("./Modulos/CTA/CTA.png"),
     ],
     description:
       "La Coordinación de Tecnologías para el Aprendizaje (CTA) es la encargada de administrar, controlar y realizar todas las actividades que estén relacionadas con los sistemas tecnológicos para apoyar la enseñanza en este centro universitario, así como para todas aquellas herramientas tecnológicas que apoyen a los administrativos y académicos en la realización de sus labores.",
@@ -731,7 +731,7 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: ["W.C Hombres y W.C Mujeres."],
     "images-path": [
-      // require("./Modulos/Modulo_S2/Banos_S2.png"),
+      require("./Modulos/Sanitario/S2.png"),
     ],
     description:
       "Los baños que se encuentran a lado del Módulo S2, ofreciendo servicios tanto para hombres como para mujeres.",
@@ -742,7 +742,7 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: [""],
     "images-path": [
-      // require("./Modulos/Comedor_de_Maestros/Comedor_de_Maestros.png"),
+      require("./Modulos/Comida/Comedor_de_Maestros.png"),
     ],
     description:
       "El comedor de maestros es un espacio dedicado a los docentes para que puedan disfrutar de sus comidas durante el horario de trabajo.",
@@ -753,7 +753,7 @@ export const bottomSheetContents = {
     "relevant-places": ["-"],
     bathrooms: [""],
     "images-path": [
-      // require("./Modulos/Comida/Comida.png"),
+      require("./Modulos/Comida/Comida_x.png"),
     ],
     description:
       "El área de comida ofrece diversos puestos para consumir alimentos y bebidas.",
