@@ -603,5 +603,75 @@ export const points = [
     height: 0,
     width: 0,
     rotate: 0,
-  }
+  },
+
+  // -------------------------------------------------- 
+  {
+    id: "Coliseo olimpico",
+    name: "Coliseo Olímpico",
+    aliases: ["Coliseo", "Olimpico", "Coliseo Olimpico"],
+    // node: 'n206',
+
+  },
+  {
+    id: "Gimnasio de usus multiples",
+    name: "Gimnasio de Usos Múltiples",
+    aliases: ["Gimnasio", "Usos Múltiples", "Gimnasio de Usos Múltiples"],
+    // node: 'n206',
+  },
+  {
+    id: "Canchas de fotbol rapido",
+    name: "Canchas de Fútbol Rápido",
+    aliases: ["Canchas", "Fútbol Rápido", "Canchas de Fútbol Rápido"],
+    // node: 'n206',
+  },
+  {
+    id: "Cancha de fotbol no. 3",
+    name: "Cancha de Fútbol No. 3",
+    aliases: ["Cancha", "Fútbol No. 3", "Cancha de Fútbol No. 3"],
+    // node: 'n206',
+  },
+  {
+    id: "Cancha de futbol no. 4",
+    name: "Cancha de Fútbol No. 4",
+    aliases: ["Cancha", "Fútbol No. 4", "Cancha de Fútbol No. 4"],
+    // node: 'n206',
+  },
+  {
+    id: "Campos de beisbol, softbol y americano",
+    name: "Campos de Béisbol, Softbol y Americano",
+    aliases: ["Campos", "Béisbol", "Softbol", "Americano", "Campos de Béisbol, Softbol y Americano", "fotbol americano"],
+    // node: 'n206',
+  },
+  {
+    id: "Street Workout",
+    name: "Street Workout",
+    aliases: ["Street", "Workout", "Street Workout"],
+    // node: 'n206',
+  },
+  {
+    id: "Pista olimpica de atletismo",
+    name: "Pista Olímpica de Atletismo",
+    aliases: ["Pista", "Atletismo", "Pista Olímpica de Atletismo", "cancha de fotbol no. 1", "cancha", "futbol no. 1", "disiplinas atleticas"],
+    // node: 'n206',
+  },
+  {
+    id: "Cancha de fotbol no. 1 y disciplinas atleticas",
+    name: "Cancha de Fútbol No. 1 y Disciplinas Atléticas",
+    aliases: ["Cancha", "Fútbol No. 1", "Disciplinas Atléticas", "Cancha de Fútbol No. 1 y Disciplinas Atléticas"],
+    // node: 'n206',
+  },
+  {
+    id: "Alberca Olimpica",
+    name: "Alberca Olímpica",
+    aliases: ["Alberca", "Olimpica", "Alberca Olimpica"],
+    // node: 'n206',
+
+  },
+  {
+    id: "Estacionamiento CDU",
+    name: "Estacionamiento CDU",
+    aliases: ["Estacionamiento", "CDU", "Estacionamiento CDU"],
+    // node: 'n206',
+  },
 ]
