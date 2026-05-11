@@ -771,7 +771,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Sanitarios para el público general", "Baños y regaderas en área de vestidores de atletas (Hombres y Mujeres)."],
     "images-path": [
-      // require("./Modulos/coliseo/coliseo1.png")
+      require("./Modulos/CDU/Coliseo_Olimpico.png")
     ],
     description: "Recinto histórico y representativo de la UdeG destinado a la práctica de deportes de sala, eventos institucionales y ceremonias. Destaca por su versatilidad y gran capacidad de aforo.",
   },
@@ -787,7 +787,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["W.C. Hombres, W.C. Mujeres, vestidores y regaderas disponibles para los usuarios."],
     "images-path": [
-      // require("./Modulos/GUM/gum1.png")
+      require("./Modulos/CDU/Gimnasio_De_Usus_Multiples.png")
     ],
     description: "Espacio moderno dedicado a la iniciación deportiva y el entrenamiento técnico. Ofrece una amplia gama de disciplinas que ayudan a los niños, jóvenes y adultos a mantener hábitos saludables.",
   },
@@ -805,7 +805,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Sanitarios, vestidores y regaderas distribuidos estratégicamente para el servicio de los usuarios."],
     "images-path": [
-      // require("./Modulos/UnidadDeportiva/ud1.png")
+      require("./Modulos/CDU/Unidad_Deportiva.png")
     ],
     description: "El área más extensa del complejo, diseñada para deportes de conjunto al aire libre. Es el punto de encuentro principal para torneos internos, prácticas recreativas masivas y entrenamientos de las selecciones universitarias.",
   },
@@ -823,7 +823,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Acceso a sanitarios compartidos de la Unidad Deportiva."],
     "images-path": [
-      // require("./Modulos/Atletismo/pista1.png")
+      require("./Modulos/CDU/Pista_Olimpica_De_Atletismo.png")
     ],
     description: "Instalación de alta tecnología con superficie sintética diseñada para el entrenamiento y competencias oficiales de atletismo. Incluye equipamiento completo para todas las pruebas de campo olímpicas.",
   },
@@ -840,7 +840,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["Áreas de vestidores, sanitarios y regaderas separadas para hombres y mujeres, con acceso adaptado."],
     "images-path": [
-      // require("./Modulos/Alberca/alberca1.png")
+      require("./Modulos/CDU/Alberca_Olimpica.png")
     ],
     description: "Instalación con sistema de desinfección UV que forma parte de la Unidad Administrativa del Tecnológico. Ofrece servicios a la comunidad universitaria y público en general desde los 6 años hasta la tercera edad.",
   },
@@ -855,7 +855,7 @@ export const bottomSheetContents = {
     ],
     bathrooms: ["-"],
     "images-path": [
-      // require("./Modulos/Estacionamiento/est1.png")
+      require("./Modulos/CDU/Estacionamiento_CDU.png")
     ],
   },
   // -------------------------
@@ -868,7 +868,9 @@ export const bottomSheetContents = {
       "Zona de bancas y gradas perimetrales"
     ],
     bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
-    "images-path": [],
+    "images-path": [
+      require("./Modulos/CDU/Canchas_De_Futbol_Rapido.png")
+    ],
     description: "Espacio compuesto por tres canchas equipadas con pasto sintético de última generación, ideales para torneos relámpago y ligas universitarias."
   },
 
@@ -880,7 +882,9 @@ export const bottomSheetContents = {
       "Zona de bancas para equipos"
     ],
     bathrooms: ["Sanitarios cercanos en la Unidad Deportiva."],
-    "images-path": [],
+    "images-path": [
+      require("./Modulos/CDU/Cancha_De_Futbol_3.png")
+    ],
     description: "Una de las tres canchas de césped natural de la Unidad Deportiva. Cuenta con mantenimiento profesional para soportar el uso intenso de las selecciones universitarias y ligas locales."
   },
 
@@ -892,8 +896,10 @@ export const bottomSheetContents = {
       "Campo central adaptado para Fútbol Americano (Home de Leones Negros)"
     ],
     bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
-    "images-path": [],
-    description: "Áreas especializadas para deportes de estrategia. El diamante alberga torneos oficiales, mientras que el campo central es la sede de entrenamiento del programa de Fútbol Americano de la UdeG."
+    "images-path": [
+      require("./Modulos/CDU/Campos_De_Beisbol_Softbol_Americano.png")
+    ],
+    description: "Áreas specializadas para deportes de estrategia. El diamante alberga torneos oficiales, mientras que el campo central es la sede de entrenamiento del programa de Fútbol Americano de la UdeG."
   },
 
   "Canchas de basquetbol y voleibol": {
@@ -905,7 +911,9 @@ export const bottomSheetContents = {
       "Tableros y postes de uso rudo"
     ],
     bathrooms: ["Módulos de sanitarios distribuidos en la Unidad Deportiva."],
-    "images-path": [],
+    "images-path": [
+      require("./Modulos/CDU/Canchas_De_Basquetbol_Voleibol.png")
+    ],
     description: "Zona dinámica al aire libre diseñada para la práctica recreativa masiva y 'cascaritas' entre la comunidad estudiantil de los diversos módulos y escuelas cercanas."
   },
 
@@ -917,7 +925,9 @@ export const bottomSheetContents = {
       "Barras paralelas, horizontales y anillas"
     ],
     bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
-    "images-path": [],
+    "images-path": [
+      require("./Modulos/CDU/Street_Workout.png")
+    ],
     description: "Estructura de libre acceso dedicada al entrenamiento funcional y calistenia. Es un punto clave para la cultura deportiva urbana dentro del Tecnológico."
   },
 
@@ -929,7 +939,9 @@ export const bottomSheetContents = {
       "Zona de bancas para equipos"
     ],
     bathrooms: ["Sanitarios cercanos en la Unidad Deportiva."],
-    "images-path": [],
+    "images-path": [
+      require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
     description: "Campo de fútbol con medidas reglamentarias y superficie natural, utilizado primordialmente para competencias oficiales y entrenamiento de alto rendimiento."
   }
 };
