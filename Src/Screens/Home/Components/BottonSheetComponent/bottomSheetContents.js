@@ -761,7 +761,7 @@ export const bottomSheetContents = {
   // ---------------------------------------
   "Coliseo Olimpico": {
     name: "Coliseo Olímpico",
-    classrooms: "No aplica (Recinto de eventos).",
+    classrooms: "",
     "relevant-places": [
       "Cancha de usos múltiples con duela profesional (24.58 x 36.94 mts)",
       "Área de butacas (capacidad 3,230 a 6,000 personas)",
@@ -775,8 +775,8 @@ export const bottomSheetContents = {
     ],
     description: "Recinto histórico y representativo de la UdeG destinado a la práctica de deportes de sala, eventos institucionales y ceremonias. Destaca por su versatilidad y gran capacidad de aforo.",
   },
-  "Gimnasio de Usos Múltiples": {
-    name: "Gimnasio de Usos Múltiples (GUM)",
+  "Gimnasio de usus multiples": {
+    name: "Gimnasio de Usos Múltiples",
     classrooms: "Áreas especializadas para disciplinas individuales y grupales.",
     "relevant-places": [
       "Cancha de usos múltiples (34.90 x 51.75 mts)",
@@ -884,7 +884,7 @@ export const bottomSheetContents = {
     description: "Una de las tres canchas de césped natural de la Unidad Deportiva. Cuenta con mantenimiento profesional para soportar el uso intenso de las selecciones universitarias y ligas locales."
   },
 
-  "Campos de beisbol, softbol y fútbol americano": {
+  "Campos de beisbol, softbol y americano": {
     name: "Campos de Béisbol y Fútbol Americano",
     classrooms: "",
     "relevant-places": [
@@ -896,7 +896,7 @@ export const bottomSheetContents = {
     description: "Áreas especializadas para deportes de estrategia. El diamante alberga torneos oficiales, mientras que el campo central es la sede de entrenamiento del programa de Fútbol Americano de la UdeG."
   },
 
-  "Canchas de básquetbol y vóleibol": {
+  "Canchas de basquetbol y voleibol": {
     name: "Canchas Exteriores de Básquetbol y Vóleibol",
     classrooms: "",
     "relevant-places": [

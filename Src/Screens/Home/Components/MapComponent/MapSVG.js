@@ -57,7 +57,7 @@ const MapSVG = ({
             left: point.left,
             top: point.top,
             width: point.width,
-            height: point.height
+            height: point.height,
           },
         ]}
         onPress={() => {
