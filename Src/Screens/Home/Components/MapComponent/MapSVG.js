@@ -58,6 +58,7 @@ const MapSVG = ({
             top: point.top,
             width: point.width,
             height: point.height,
+            //backgroundColor: "rgba(255, 0, 0 ,0.5) "
           },
         ]}
         onPress={() => {

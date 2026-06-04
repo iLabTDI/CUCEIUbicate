@@ -943,5 +943,32 @@ export const bottomSheetContents = {
       require("./Modulos/CDU/Cancha_De_Futbol_4.png")
     ],
     description: "Campo de fútbol con medidas reglamentarias y superficie natural, utilizado primordialmente para competencias oficiales y entrenamiento de alto rendimiento."
+  },
+  "Cafeteria del P": {
+    name: "Cafeteria del P",
+    classrooms: "",
+    "relevant-places": [
+      "Bancas con sombrilla",
+      "Servicios medicos Enfrente"
+    ],
+    bathrooms: ["Sanitarios cercanos justo a la vuelta."],
+    "images-path": [
+      //require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
+    description: "Varias cafeterias"
+  },
+    "Letras CUCEI": {
+    name: "Letras CUCEI",
+    //classrooms: "",
+    "relevant-places": [
+      "Lonaria",
+      "Mesas con sombrilla"
+    ],
+
+    bathrooms: ["Sanitarios cercanos en el modulo 'Y' y 'Z2'. "],
+    "images-path": [
+      //require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
+    description: "Normalmente usado para fotografias de eventos como lo es la titulacion"
   }
 };

@@ -732,5 +732,25 @@ export const points = [
     height: 90,
     width: 80,
     node: 'n226',
+  },// nuevas agregadas
+    {
+    id: "Cafeteria del P",
+    name: "CAfeteria del P",
+    aliases: ["Cafeteria", "Modulo P", "P"],
+    left: 584,
+    top: 705,
+    height: 15,
+    width: 40,
+    node: 'n273',
+  },
+      {
+    id: "Letras CUCEI",
+    name: "Letras CUCEI",
+    aliases: ["Letras", "Cucei", "C", "L"],
+    left: 290,
+    top: 630,
+    height: 18,
+    width: 38,
+    node: 'n275',
   },
 ]
