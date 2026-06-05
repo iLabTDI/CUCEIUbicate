@@ -1,4 +1,5 @@
-import { findUserByEmail, findUserByUsername, UserRow } from './lib/api';
+import { findUserByEmail, findUserByUsername } from './lib/api';
+import { UserRow } from './lib/types/UserRow';
 import { secureCompare } from './utils/secureCompare';
 
 export const login = async (

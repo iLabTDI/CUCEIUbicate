@@ -1,11 +1,18 @@
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { FontAwesomeIcon, Props as IconProps } from "@fortawesome/react-native-fontawesome";
 import { StyleSheet, Text, View } from "react-native";
 import { SCREEN_DIMENSIONS } from "../constants/screen-dimentions";
 
 const { isTablet } = SCREEN_DIMENSIONS;
 
+interface Props {
+    icon: IconProps["icon"];
+    title: string;
+    value: string;
+    color: string;
+}
+
 // Componente para cards de información
-export const InfoCard = ({ icon, title, value, color }) => (
+export const InfoCard = ({ icon, title, value, color }: Props) => (
     <View style={styles.infoCard}>
         <View style={[styles.infoIcon, { backgroundColor: color }]}>
             <FontAwesomeIcon icon={icon} size={16} color="#FFFFFF" />

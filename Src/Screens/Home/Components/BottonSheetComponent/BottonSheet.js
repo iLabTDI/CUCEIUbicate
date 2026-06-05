@@ -7,13 +7,12 @@ import {
   Text,
   Platform,
   ScrollView,
-  KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
   Animated,
 } from "react-native";
 import { Image } from 'expo-image';
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faMapMarkerAlt,
@@ -24,8 +23,8 @@ import {
   faChalkboardTeacher,
   faMapSigns,
   faCamera,
-  faStar, // ✨ AGREGAR ESTE IMPORT QUE FALTA
-  faLocationDot, // ✨ TAMBIÉN ESTE SI NO ESTÁ
+  faStar,
+  faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { bottomSheetContents } from "./bottomSheetContents";
@@ -264,7 +263,9 @@ export const BottomSheetComponent = React.forwardRef(
       </View>
     ), []);
 
+
     return (
+
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
@@ -273,92 +274,89 @@ export const BottomSheetComponent = React.forwardRef(
         backgroundStyle={styles.bottomSheetBackgroundNew}
         handleIndicatorStyle={styles.bottomSheetIndicatorNew}
         enablePanDownToClose={true}
-        enableContentPanningGesture={false}
+        enableOverDrag={false}
         android_keyboardInputMode="adjustResize"
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingView}
+
+        <BottomSheetScrollView
+          contentContainerStyle={styles.scrollContentNew}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContentNew}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            nestedScrollEnabled={true}
-          >
-            {selectedPoint && bottomSheetContents[selectedPoint] && (
-              <View style={styles.mainContentContainer}>
+          {selectedPoint && bottomSheetContents[selectedPoint] && (
+            <View style={styles.mainContentContainer}>
 
-                {/* ✨ HEADER MINIMALISTA Y ELEGANTE */}
-                <Animated.View
-                  style={[
-                    styles.headerMinimal,
-                    {
-                      opacity: headerAnimation,
-                      transform: [{
-                        translateY: headerAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [-10, 0],
-                        })
-                      }]
-                    }
-                  ]}
-                >
-                  <View style={styles.headerContentMinimal}>
-                    <View style={styles.headerIconMinimal}>
-                      <FontAwesomeIcon
-                        icon={faMapMarkerAlt}
-                        size={16}
-                        color="#0b34b0"
-                      />
-                    </View>
-                    <View style={styles.headerTextMinimal}>
-                      <Text style={styles.titleMinimal}>
-                        {bottomSheetContents[selectedPoint].name}
-                      </Text>
-                    </View>
+              {/* ✨ HEADER MINIMALISTA Y ELEGANTE */}
+              <Animated.View
+                style={[
+                  styles.headerMinimal,
+                  {
+                    opacity: headerAnimation,
+                    transform: [{
+                      translateY: headerAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-10, 0],
+                      })
+                    }]
+                  }
+                ]}
+              >
+                <View style={styles.headerContentMinimal}>
+                  <View style={styles.headerIconMinimal}>
+                    <FontAwesomeIcon
+                      icon={faMapMarkerAlt}
+                      size={16}
+                      color="#0b34b0"
+                    />
                   </View>
-                </Animated.View>
-
-                {/* ✨ CARRUSEL PERFECTO Y CONTENIDO */}
-                {renderImageCarousel(bottomSheetContents[selectedPoint]["images-path"])}
-
-                {/* ✨ INFORMACIÓN PRINCIPAL */}
-                <View style={styles.mainInfoSection}>
-                  <View style={styles.descriptionCard}>
-                    <View style={styles.descriptionHeaderNew}>
-                      <FontAwesomeIcon icon={faInfoCircle} size={14} color="#0b34b0" />
-                      <Text style={styles.descriptionTitleNew}>Descripción</Text>
-                    </View>
-                    <Text style={styles.descriptionTextNew}>
-                      {bottomSheetContents[selectedPoint].description}
+                  <View style={styles.headerTextMinimal}>
+                    <Text style={styles.titleMinimal}>
+                      {bottomSheetContents[selectedPoint].name}
                     </Text>
                   </View>
+                </View>
+              </Animated.View>
 
-                  {/* ✨ AULAS CARD */}
-                  <View style={styles.infoCardSimple}>
-                    <View style={styles.infoCardIconContainer}>
-                      <FontAwesomeIcon icon={faChalkboardTeacher} size={14} color="#0b34b0" />
-                    </View>
-                    <View style={styles.infoCardContent}>
-                      <Text style={styles.infoCardLabel}>Aulas disponibles</Text>
-                      <Text style={styles.infoCardValue}>{bottomSheetContents[selectedPoint].classrooms}</Text>
-                    </View>
+              {/* ✨ CARRUSEL PERFECTO Y CONTENIDO */}
+              {renderImageCarousel(bottomSheetContents[selectedPoint]["images-path"])}
+
+              {/* ✨ INFORMACIÓN PRINCIPAL */}
+              <View style={styles.mainInfoSection}>
+                <View style={styles.descriptionCard}>
+                  <View style={styles.descriptionHeaderNew}>
+                    <FontAwesomeIcon icon={faInfoCircle} size={14} color="#0b34b0" />
+                    <Text style={styles.descriptionTitleNew}>Descripción</Text>
                   </View>
+                  <Text style={styles.descriptionTextNew}>
+                    {bottomSheetContents[selectedPoint].description}
+                  </Text>
                 </View>
 
-                {/* ✨ SECCIONES ORGANIZADAS */}
-                {renderRelevantPlacesNew(bottomSheetContents[selectedPoint]["relevant-places"])}
-                {renderBathroomsNew(bottomSheetContents[selectedPoint].bathrooms)}
-
-                {/* ✨ ESPACIADO FINAL */}
-                <View style={styles.finalSpacer} />
-
+                {/* ✨ AULAS CARD */}
+                <View style={styles.infoCardSimple}>
+                  <View style={styles.infoCardIconContainer}>
+                    <FontAwesomeIcon icon={faChalkboardTeacher} size={14} color="#0b34b0" />
+                  </View>
+                  <View style={styles.infoCardContent}>
+                    <Text style={styles.infoCardLabel}>Aulas disponibles</Text>
+                    <Text style={styles.infoCardValue}>{bottomSheetContents[selectedPoint].classrooms}</Text>
+                  </View>
+                </View>
               </View>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
+
+              {/* ✨ SECCIONES ORGANIZADAS */}
+              {renderRelevantPlacesNew(bottomSheetContents[selectedPoint]["relevant-places"])}
+              {renderBathroomsNew(bottomSheetContents[selectedPoint].bathrooms)}
+
+              {/* ✨ ESPACIADO FINAL */}
+              <View style={styles.finalSpacer} />
+
+            </View>
+          )}
+        </BottomSheetScrollView>
       </BottomSheet>
+
     );
   }
 );

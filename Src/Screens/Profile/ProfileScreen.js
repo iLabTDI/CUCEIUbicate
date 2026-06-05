@@ -9,7 +9,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faSignOutAlt,
@@ -34,8 +34,7 @@ import { SCREEN_DIMENSIONS } from "./constants/screen-dimentions";
 
 const { isTablet } = SCREEN_DIMENSIONS;
 
-export const ProfileScreen = ({ route }) => {
-  const navigation = useNavigation();
+export const ProfileScreen = ({ route, navigation }) => {
   const { user } = route.params;
   const userData = Array.isArray(user) ? user[0] : user;
 
@@ -101,10 +100,13 @@ export const ProfileScreen = ({ route }) => {
 
   const confirmLogout = () => {
     clearSession();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    });
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      })
+    )
   };
 
   return (

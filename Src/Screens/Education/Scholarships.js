@@ -40,6 +40,12 @@ export const Scholarships = () => {
       if (storedData !== null) {
         setScholarshipsData(JSON.parse(storedData))
       } else {
+        // formato del json: 
+        // convocatoria : string
+        // beneficiados: string
+        // fecha: string
+        // resumen: string
+        // hipervinculo: string
         const json = require("../../../json/becas_convocatorias.json")
         setScholarshipsData(json)
         await AsyncStorage.setItem("scholarshipsData", JSON.stringify(json))

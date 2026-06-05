@@ -1,116 +1,118 @@
 {
-    "section_description": {
-      "name": "Servicio Social",
-      "sub-sections": {
-        "general": {
-          "title": "Información General",
-          "content": [
-            "El servicio social es una oportunidad para que los estudiantes apliquen sus conocimientos y contribuyan al bienestar de la comunidad.",
-            "Este programa está diseñado para fomentar la responsabilidad social y el desarrollo profesional a través de experiencias prácticas."
-          ],
-          "listed-elements": {
-            "beneficios": [
-              "Aprendizaje práctico en entornos reales",
-              "Desarrollo de habilidades interpersonales y profesionales",
-              "Oportunidad de networking y crecimiento personal"
-            ]
-          },
-          "mini-subsections": {
-            "detalles": {
-              "title": "Detalles del Programa",
-              "content": "El programa tiene una duración de 480 horas, distribuidas en diversas actividades supervisadas.",
-              "listed-elements": {
-                "actividades": [
-                  "Participación en proyectos comunitarios",
-                  "Asistencia a talleres y seminarios",
-                  "Elaboración de informes y evaluaciones periódicas"
-                ]
-              }
-            }
-          },
-          "links": {
-            "pagina_web": {
-              "text": "Visita nuestra página oficial",
-              "url": "https://ejemplo.com/servicio-social"
+  "section_description": {
+    "name": "Servicio Social",
+    "sub-sections": {
+      "general": {
+        "title": "Información General",
+        "content": [
+          "El servicio social es una oportunidad para que los estudiantes apliquen sus conocimientos y contribuyan al bienestar de la comunidad.",
+          "Este programa está diseñado para fomentar la responsabilidad social y el desarrollo profesional a través de experiencias prácticas."
+        ],
+        "listed-elements": {
+          "beneficios": [
+            "Aprendizaje práctico en entornos reales",
+            "Desarrollo de habilidades interpersonales y profesionales",
+            "Oportunidad de networking y crecimiento personal"
+          ]
+        },
+        "mini-subsections": {
+          "detalles": {
+            "title": "Detalles del Programa",
+            "content": "La prestación del servicio social requiere el cumplimiento de 480 horas, las cuales deben distribuirse en un periodo no menor a seis meses y no mayor a dos años.",
+            "listed-elements": {
+              "actividades": [
+                "Participación en proyectos comunitarios",
+                "Asistencia a talleres y seminarios",
+                "Elaboración de informes y evaluaciones periódicas"
+              ]
             }
           }
         },
-        "requisitos": {
-          "title": "Requisitos",
-          "content": "Para participar en el servicio social se requiere cumplir con los siguientes requisitos:",
-          "listed-elements": {
-            "lista": [
-              "Estar matriculado en la institución",
-              "Cursar al menos el 60% de los créditos del programa",
-              "Presentar una solicitud formal",
-              "Contar con un promedio mínimo de 8.0"
-            ]
-          },
-          "links": {
-            "formulario": {
-              "text": "Descargar formulario de inscripción",
-              "url": "https://ejemplo.com/formulario-servicio-social.pdf"
+        "links": {
+          "pagina_web": {
+            "text": "Portal de Servicio Social CUCEI",
+            "url": "https://www.cucei.udg.mx/es/servicios/servicio-social"
+          }
+        }
+      },
+      "requisitos": {
+        "title": "Requisitos",
+        "content": "Para participar en el servicio social se requiere cumplir con los siguientes requisitos:",
+        "listed-elements": {
+          "lista": [
+            "Estar matriculado en la institución",
+            "Haber cubierto al menos el 60% de los créditos totales del plan de estudios correspondiente.",
+            "No tener una plaza de servicio social activa o vigente de forma simultánea.",
+            "Realizar el pago de la orden de aportación por concepto de servicio social ($170.00 MXN)."
+          ]
+        },
+        "links": {
+          "formulario": {
+            "text": "Acceso al SIIAU - Sistema de Administración de Servicio Social (SASS)",
+            "url": "http://ss.siiau.udg.mx"
+          }
+        }
+      },
+      "proceso": {
+        "title": "Proceso de Inscripción y Asignación",
+        "content": "El flujo de inscripción se realiza semestralmente a través de las plataformas institucionales siguiendo el calendario oficial:",
+        "listed-elements": {
+          "pasos": [
+            "Ingresa a ss.siiau.udg.mx.",
+            "Actualiza tus datos personales",
+            "Realiza tu registro.",
+            "Pago de la orden de aportación y validación del comprobante ante la Unidad de Servicio Social.",
+            "Consulta de la agenda de selección, la cual se asigna con base en el promedio académico.",
+            "Elección de plaza en el sistema según el horario y disponibilidad de programas.",
+            "Obtención y firma del Oficio de Comisión para formalizar el inicio de actividades."
+          ]
+        },
+        "mini-subsections": {
+          "plazos": {
+            "title": "Calendario Ciclo 2026-A",
+            "content": "Es fundamental cumplir con las fechas límite de cada etapa del proceso.",
+            "listed-elements": {
+              "fechas": [
+                "Inscripción: del 20 de octubre al 30 de noviembre 2025",
+                "Inicio del programa: 02 al 06 de marzo 2026"
+              ]
             }
           }
+        }
+      },
+      "documentos": {
+        "title": "Gestión Documental y Reporteo",
+        "content": "El seguimiento del servicio social requiere la entrega sistemática de evidencia de actividades:",
+        "listed-elements": {
+          "documentos": [
+            "Copia de credencial de estudiante o identificación oficial.",
+            "Ficha de pago original y dos copias para el expediente físico.",
+            "Kardex simple certificado que avale el porcentaje de créditos.",
+            "Oficio de comisión debidamente sellado y firmado por la dependencia receptora.",
+            "Reportes bimestrales generados en la página web y cargados en formato PDF (<1MB)."
+          ]
         },
-        "proceso": {
-          "title": "Proceso de Inscripción",
-          "content": "El proceso de inscripción consta de los siguientes pasos:",
-          "listed-elements": {
-            "pasos": [
-              "Revisión de requisitos y documentación",
-              "Entrega de solicitud en línea o de manera presencial",
-              "Evaluación y asignación de tutor",
-              "Inicio del programa con una orientación inicial"
-            ]
-          },
-          "mini-subsections": {
-            "plazos": {
-              "title": "Plazos Importantes",
-              "content": "Es fundamental cumplir con las fechas límite de cada etapa del proceso.",
-              "listed-elements": {
-                "fechas": [
-                  "Inscripción: del 1 al 15 de septiembre",
-                  "Inicio del programa: 1 de octubre",
-                  "Cierre de inscripción: 30 de septiembre"
-                ]
-              }
-            }
+        "links": {
+          "guia_documentos": {
+            "text": "Guía para la elaboración de reportes bimestrales",
+            "url": "https://www.cucei.udg.mx/sites/default/files/pdf/ss-manual-reportes-bimestrales-2024b.pdf"
           }
-        },
-        "documentos": {
-          "title": "Documentación Requerida",
-          "content": "Los documentos que debes presentar son:",
-          "listed-elements": {
-            "documentos": [
-              "Copia de credencial de estudiante",
-              "Historial académico actualizado",
-              "Carta de motivos",
-              "Formato de solicitud firmado"
-            ]
-          },
-          "links": {
-            "guia_documentos": {
-              "text": "Guía para la documentación",
-              "url": "https://ejemplo.com/guia-documentos"
-            }
-          }
-        },
-        "contacto": {
-          "title": "Contacto",
-          "content": [
-            "Si tienes dudas o necesitas más información, no dudes en contactarnos.",
-            "Correo: ussocial@cucei.udg.mx",
-            "Teléfono: +52 33 1234 5678"
-          ],
-          "links": {
-            "pagina_contacto": {
-              "text": "Página de contacto",
-              "url": "https://ejemplo.com/contacto"
-            }
+        }
+      },
+      "contacto": {
+        "title": "Canales de Atención y Soporte",
+        "content": [
+          "Ubicación: Blvd. Marcelino García Barragán #1421, Módulo A, Planta Alta.",
+          "Correo electrónico: ussocial@cucei.udg.mx",
+          "Teléfono: 33 1378 5900, Extensiones: 27427, 27426, 27482."
+        ],
+        "links": {
+          "pagina_contacto": {
+            "text": "Directorio Oficial de la Unidad de Servicio Social",
+            "url": "https://www.cucei.udg.mx/es/directorio/Unidad-de-Servicio-Social"
           }
         }
       }
     }
   }
-  
+}

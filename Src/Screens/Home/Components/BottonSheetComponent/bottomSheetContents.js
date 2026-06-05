@@ -658,7 +658,7 @@ export const bottomSheetContents = {
       require("./Modulos/Modulo_Q/Q2.png"),
     ],
     description:
-      "El Módulo Q2 es un edificio que se utiliza para .",
+      "El Módulo Q2 es una instalación que alberga diversos laboratorios especializados del Departamento de Química y la oficina de Seguridad de CUCEI, donde se gestionan trámites administrativos y solicitudes de emprendimiento.",
   },
   "Comida15": {
     name: "Comida",
@@ -685,7 +685,7 @@ export const bottomSheetContents = {
   "La Flor de Córdoba": {
     name: "La Flor de Córdoba",
     classrooms: "",
-    "relevant-places": ["hay lugares sy puestos de comida a demas de bancas con sombrilla para poder comer"],
+    "relevant-places": ["hay lugares y puestos de comida a demas de bancas con sombrilla para poder comer"],
     bathrooms: [""],
     "images-path": [
       require("./Modulos/Comida/Flor_de_Cordoba.png"),
@@ -704,4 +704,271 @@ export const bottomSheetContents = {
     description:
       "Santander es un banco que se encuentra debajo del Modulo N en el cual puedes retirar dinero tramitar tarjetas y demas.",
   },
+  "CTA": {
+    name: "CTA",
+    classrooms: "",
+    "relevant-places": [
+      "Atención a Usuarios",
+      "Unidad de Multimedia Instruccional",
+      "Soporte a Ambientes Virtuales",
+      "Centro de Operaciones de la Red",
+      "Área de Mantenimiento y Soporte Técnico",
+      "Área de Desarrollo y Bases de Datos",
+      "Área de Infraestructura y Servidores",
+      "Área de Producción Audiovisual",
+      "Oficinas de Coordinación (Módulo Gamma)"
+    ],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/CTA/CTA.png"),
+    ],
+    description:
+      "La Coordinación de Tecnologías para el Aprendizaje (CTA) es la encargada de administrar, controlar y realizar todas las actividades que estén relacionadas con los sistemas tecnológicos para apoyar la enseñanza en este centro universitario, así como para todas aquellas herramientas tecnológicas que apoyen a los administrativos y académicos en la realización de sus labores.",
+  },
+  "Baños S2": {
+    name: "Baños S2",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: ["W.C Hombres y W.C Mujeres."],
+    "images-path": [
+      require("./Modulos/Sanitario/S2.png"),
+    ],
+    description:
+      "Los baños que se encuentran a lado del Módulo S2, ofreciendo servicios tanto para hombres como para mujeres.",
+  },
+  "Comedor de maestros": {
+    name: "Comedor de maestros",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Comida/Comedor_de_Maestros.png"),
+    ],
+    description:
+      "El comedor de maestros es un espacio dedicado a los docentes para que puedan disfrutar de sus comidas durante el horario de trabajo.",
+  },
+  "comida": {
+    name: "Comida",
+    classrooms: "",
+    "relevant-places": ["-"],
+    bathrooms: [""],
+    "images-path": [
+      require("./Modulos/Comida/Comida_x.png"),
+    ],
+    description:
+      "El área de comida ofrece diversos puestos para consumir alimentos y bebidas.",
+  },
+  // ---------------------------------------
+  "Coliseo Olimpico": {
+    name: "Coliseo Olímpico",
+    classrooms: "",
+    "relevant-places": [
+      "Cancha de usos múltiples con duela profesional (24.58 x 36.94 mts)",
+      "Área de butacas (capacidad 3,230 a 6,000 personas)",
+      "Zona de taquillas",
+      "Vestidores con baños y regaderas para atletas",
+      "Área médica y cafeterías"
+    ],
+    bathrooms: ["Sanitarios para el público general", "Baños y regaderas en área de vestidores de atletas (Hombres y Mujeres)."],
+    "images-path": [
+      require("./Modulos/CDU/Coliseo_Olimpico.png")
+    ],
+    description: "Recinto histórico y representativo de la UdeG destinado a la práctica de deportes de sala, eventos institucionales y ceremonias. Destaca por su versatilidad y gran capacidad de aforo.",
+  },
+  "Gimnasio de usus multiples": {
+    name: "Gimnasio de Usos Múltiples",
+    classrooms: "Áreas especializadas para disciplinas individuales y grupales.",
+    "relevant-places": [
+      "Cancha de usos múltiples (34.90 x 51.75 mts)",
+      "Dos áreas de butacas (capacidad para 978 personas)",
+      "Área de combate (Box, Judo, MMA)",
+      "Zona de acondicionamiento físico, pesas y tonificación",
+      "Sala de gimnasia y baile"
+    ],
+    bathrooms: ["W.C. Hombres, W.C. Mujeres, vestidores y regaderas disponibles para los usuarios."],
+    "images-path": [
+      require("./Modulos/CDU/Gimnasio_De_Usus_Multiples.png")
+    ],
+    description: "Espacio moderno dedicado a la iniciación deportiva y el entrenamiento técnico. Ofrece una amplia gama de disciplinas que ayudan a los niños, jóvenes y adultos a mantener hábitos saludables.",
+  },
+  "Unidad Deportiva": {
+    name: "Unidad Deportiva",
+    classrooms: "Oficina administrativa de la Coordinación de Extensión (Área de Deportes).",
+    "relevant-places": [
+      "3 canchas de fútbol empastadas",
+      "1 cancha de béisbol",
+      "3 canchas de fútbol rápido",
+      "9 canchas de básquetbol",
+      "4 canchas de voleibol",
+      "1 cancha de voleibol de playa",
+      "Área de Street Workout y cafetería"
+    ],
+    bathrooms: ["Sanitarios, vestidores y regaderas distribuidos estratégicamente para el servicio de los usuarios."],
+    "images-path": [
+      require("./Modulos/CDU/Unidad_Deportiva.png")
+    ],
+    description: "El área más extensa del complejo, diseñada para deportes de conjunto al aire libre. Es el punto de encuentro principal para torneos internos, prácticas recreativas masivas y entrenamientos de las selecciones universitarias.",
+  },
+  "Pista Olimpica de Atletismo": {
+    name: "Pista Olímpica de Atletismo",
+    classrooms: "No aplica.",
+    "relevant-places": [
+      "Pista de tartán de 8 carriles (400m)",
+      "Campo central de fútbol empastado con medidas oficiales",
+      "Zona de salto de altura y garrocha",
+      "Valla y fosa de Steeple Chase",
+      "Jaula de lanzamiento (martillo y disco) y 2 montículos para lanzamiento de bala",
+      "Área para lanzamiento de jabalina, salto de longitud y salto triple",
+      "Área de calentamiento y gradas para cronometristas"
+    ],
+    bathrooms: ["Acceso a sanitarios compartidos de la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Pista_Olimpica_De_Atletismo.png")
+    ],
+    description: "Instalación de alta tecnología con superficie sintética diseñada para el entrenamiento y competencias oficiales de atletismo. Incluye equipamiento completo para todas las pruebas de campo olímpicas.",
+  },
+
+  "Alberca Olimpica": {
+    name: "Alberca Olímpica",
+    classrooms: "Áreas de enseñanza, terapéutica y rehabilitación acuática.",
+    "relevant-places": [
+      "Alberca Olímpica de 50 x 21.5 mts (8 carriles, 1.8m profundidad, 28°C)",
+      "Fosa de clavados de 20 x 20 mts (3 a 6 mts de profundidad)",
+      "Graderías con capacidad para 1,462 espectadores",
+      "Área Médica, de Nutrición y Psicológica",
+      "Estacionamiento propio (200 autos) y caseta de vigilancia"
+    ],
+    bathrooms: ["Áreas de vestidores, sanitarios y regaderas separadas para hombres y mujeres, con acceso adaptado."],
+    "images-path": [
+      require("./Modulos/CDU/Alberca_Olimpica.png")
+    ],
+    description: "Instalación con sistema de desinfección UV que forma parte de la Unidad Administrativa del Tecnológico. Ofrece servicios a la comunidad universitaria y público en general desde los 6 años hasta la tercera edad.",
+  },
+
+  "Estacionamiento CDU": {
+    name: "Estacionamiento CDU",
+    classrooms: "Caseta de vigilancia y control de accesos.",
+    "relevant-places": [
+      "Estacionamiento Alberca (Capacidad: 200 autos)",
+      "Estacionamiento Corregidora (Capacidad: 93 autos - exclusivo académicos)",
+      "Casetas de control de acceso vehicular"
+    ],
+    bathrooms: ["-"],
+    "images-path": [
+      require("./Modulos/CDU/Estacionamiento_CDU.png")
+    ],
+  },
+  // -------------------------
+  "Canchas de futbol rapido": {
+    name: "Canchas de Fútbol Rápido",
+    classrooms: "",
+    "relevant-places": [
+      "3 canchas con pasto sintético",
+      "Malla perimetral tipo cercasel reforzada",
+      "Zona de bancas y gradas perimetrales"
+    ],
+    bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Canchas_De_Futbol_Rapido.png")
+    ],
+    description: "Espacio compuesto por tres canchas equipadas con pasto sintético de última generación, ideales para torneos relámpago y ligas universitarias."
+  },
+
+  "Cancha de futbol no. 3": {
+    name: "Cancha de Fútbol No. 3",
+    classrooms: "",
+    "relevant-places": [
+      "Cancha de césped natural",
+      "Zona de bancas para equipos"
+    ],
+    bathrooms: ["Sanitarios cercanos en la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Cancha_De_Futbol_3.png")
+    ],
+    description: "Una de las tres canchas de césped natural de la Unidad Deportiva. Cuenta con mantenimiento profesional para soportar el uso intenso de las selecciones universitarias y ligas locales."
+  },
+
+  "Campos de beisbol, softbol y americano": {
+    name: "Campos de Béisbol y Fútbol Americano",
+    classrooms: "",
+    "relevant-places": [
+      "1 Diamante de béisbol/softbol reglamentario",
+      "Campo central adaptado para Fútbol Americano (Home de Leones Negros)"
+    ],
+    bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Campos_De_Beisbol_Softbol_Americano.png")
+    ],
+    description: "Áreas specializadas para deportes de estrategia. El diamante alberga torneos oficiales, mientras que el campo central es la sede de entrenamiento del programa de Fútbol Americano de la UdeG."
+  },
+
+  "Canchas de basquetbol y voleibol": {
+    name: "Canchas Exteriores de Básquetbol y Vóleibol",
+    classrooms: "",
+    "relevant-places": [
+      "9 canchas de básquetbol",
+      "4 canchas de vóleibol",
+      "Tableros y postes de uso rudo"
+    ],
+    bathrooms: ["Módulos de sanitarios distribuidos en la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Canchas_De_Basquetbol_Voleibol.png")
+    ],
+    description: "Zona dinámica al aire libre diseñada para la práctica recreativa masiva y 'cascaritas' entre la comunidad estudiantil de los diversos módulos y escuelas cercanas."
+  },
+
+  "Street Workout": {
+    name: "Área de Street Workout",
+    classrooms: "",
+    "relevant-places": [
+      "Circuito de calistenia",
+      "Barras paralelas, horizontales y anillas"
+    ],
+    bathrooms: ["Sanitarios compartidos de la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Street_Workout.png")
+    ],
+    description: "Estructura de libre acceso dedicada al entrenamiento funcional y calistenia. Es un punto clave para la cultura deportiva urbana dentro del Tecnológico."
+  },
+
+  "Cancha de futbol no. 4": {
+    name: "Cancha de Fútbol No. 4",
+    classrooms: "",
+    "relevant-places": [
+      "Cancha de césped natural",
+      "Zona de bancas para equipos"
+    ],
+    bathrooms: ["Sanitarios cercanos en la Unidad Deportiva."],
+    "images-path": [
+      require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
+    description: "Campo de fútbol con medidas reglamentarias y superficie natural, utilizado primordialmente para competencias oficiales y entrenamiento de alto rendimiento."
+  },
+  "Cafeteria del P": {
+    name: "Cafeteria del P",
+    classrooms: "",
+    "relevant-places": [
+      "Bancas con sombrilla",
+      "Servicios medicos Enfrente"
+    ],
+    bathrooms: ["Sanitarios cercanos justo a la vuelta."],
+    "images-path": [
+      //require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
+    description: "Varias cafeterias"
+  },
+    "Letras CUCEI": {
+    name: "Letras CUCEI",
+    //classrooms: "",
+    "relevant-places": [
+      "Lonaria",
+      "Mesas con sombrilla"
+    ],
+
+    bathrooms: ["Sanitarios cercanos en el modulo 'Y' y 'Z2'. "],
+    "images-path": [
+      //require("./Modulos/CDU/Cancha_De_Futbol_4.png")
+    ],
+    description: "Normalmente usado para fotografias de eventos como lo es la titulacion"
+  }
 };

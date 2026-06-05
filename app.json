@@ -2,7 +2,6 @@
   "expo": {
     "name": "CUCEIUbicate",
     "slug": "CUCEIUbicate",
-    "owner": "ilabtdi1",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/cucei.png",
@@ -12,12 +11,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#FFFFFF"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cuceiubicate.cuceiubicate",
+      "bundleIdentifier": "yairhdz24",
       "infoPlist": {
         "NSPhotoLibraryAddUsageDescription": "Esta aplicación necesita acceso a la biblioteca de fotos para guardar imágenes."
       }
@@ -29,21 +26,13 @@
         "foregroundImage": "./assets/images/icono.png",
         "backgroundColor": "#FFFFFF"
       },
-      "permissions": [
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
       "usesCleartextTraffic": true
     },
     "plugins": [
       "expo-secure-store",
       "expo-video",
-      [
-        "./plugins/withRemovePermissions",
-        [
-          "android.permission.RECORD_AUDIO"
-        ]
-      ],
+      ["./plugins/withRemovePermissions", ["android.permission.RECORD_AUDIO"]],
       [
         "expo-build-properties",
         {
@@ -57,7 +46,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "706d0afd-a919-4569-92b2-ecbb9937756d"
+        "projectId": "08a561e4-8d60-47af-b4b6-f830296c28e8"
       }
     }
   }

@@ -58,6 +58,9 @@ const getShadowStyle = (elevation, color = "#000", opacity = 0.1) => {
 
 const USER_TYPES = ["estudiante", "academico", "externo"];
 
+// Regex para correo y contraseña
+const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+
 // Dominio requerido por tipo de usuario
 const requiredDomains = {
   estudiante: "alumnos.udg.mx",
@@ -116,10 +119,6 @@ export const RegisterScreen = () => {
   const [floatingAnim] = useState(new Animated.Value(0));
   const [userType, setUserType] = useState(); // estudiante, academico, externo
   const [showUserTypeModal, setShowUserTypeModal] = useState(false);
-
-
-  // Regex para correo y contraseña
-  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
 
   // Inicializar animaciones
   useEffect(() => {
@@ -262,7 +261,9 @@ export const RegisterScreen = () => {
   };
 
   const handleFocus = () => {
-    scrollViewRef.current?.scrollToEnd({ animated: true });
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 300);
   };
 
   // Gradiente animado de fondo
@@ -359,25 +360,17 @@ export const RegisterScreen = () => {
                   selectionColor="#0b34b0"
                 />
                 {email.length > 0 && (
-                  <>
+                  <View style={{ opacity: email.length > 0 ? 1 : 0 }}>
                     {emailRegex.test(email) && (requiredDomains[userType] === null || email.split("@")[1] === requiredDomains[userType]) ? (
                       <Animated.View style={styles.validIconWrapper}>
-                        <FontAwesomeIcon
-                          icon={faCheckCircle}
-                          style={styles.inputIconValid}
-                          size={22}
-                        />
+                        <FontAwesomeIcon icon={faCheckCircle} style={styles.inputIconValid} size={22} />
                       </Animated.View>
                     ) : (
                       <Animated.View style={styles.validIconWrapper}>
-                        <FontAwesomeIcon
-                          icon={faTimesCircle}
-                          style={styles.inputIconError}
-                          size={22}
-                        />
+                        <FontAwesomeIcon icon={faTimesCircle} style={styles.inputIconError} size={22} />
                       </Animated.View>
                     )}
-                  </>
+                  </View>
                 )}
 
               </View>
@@ -880,7 +873,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     justifyContent: "center",
     alignItems: "center",
-    backdropFilter: "blur(8px)",
   },
   modalContainer: {
     marginHorizontal: 32,

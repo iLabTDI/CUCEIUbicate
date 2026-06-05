@@ -13,23 +13,19 @@ import {
   Alert,
   StatusBar,
 } from "react-native"
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer"
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { createDrawerNavigator } from "@react-navigation/drawer"
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native"
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import {
-  faMap,
   faUser,
   faBars,
   faRadio,
   faFaceSmile,
   faUserFriends,
-  faMedkit,
-  faSchool,
   faBookBookmark,
   faNewspaper,
   faFolder,
   faHandsHelping,
-  faRobot,
   faSignOutAlt,
   faQuestionCircle,
   faEnvelope,
@@ -41,15 +37,11 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons"
 import { LinearGradient } from "expo-linear-gradient"
-import Animated, { 
+import Animated, {
   FadeInDown,
-  FadeInUp, 
-  FadeInLeft, 
-  SlideInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
+  FadeInUp,
+  FadeInLeft,
+  SlideInRight
 } from "react-native-reanimated"
 
 import { HomePage } from "../../HomePage"
@@ -72,7 +64,7 @@ const isTablet = width >= 768
 const Drawer = createDrawerNavigator()
 
 const CustomDrawerContent = (props) => {
-  const navigation = useNavigation()
+  const navigation = props.navigation;
   const [isHelpModalVisible, setIsHelpModalVisible] = useState(false)
   const [activeItem, setActiveItem] = useState('Mapa')
 
@@ -113,8 +105,8 @@ const CustomDrawerContent = (props) => {
 
   const handleLogout = () => {
     Alert.alert(
-      "Cerrar Sesión", 
-      "¿Estás seguro de que quieres cerrar sesión?", 
+      "Cerrar Sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
       [
         { text: "Cancelar", style: "cancel" },
         { text: "Sí, cerrar sesión", onPress: confirmLogout, style: "destructive" },
@@ -125,10 +117,12 @@ const CustomDrawerContent = (props) => {
 
   const confirmLogout = () => {
     clearSession()
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    })
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      })
+    )
   }
 
   const handleHelp = () => {
@@ -137,7 +131,7 @@ const CustomDrawerContent = (props) => {
 
   const renderDrawerItem = ({ item, index, sectionIndex }) => {
     const isActive = activeItem === item.name
-    
+
     return (
       <Animated.View
         key={item.name}
@@ -153,10 +147,10 @@ const CustomDrawerContent = (props) => {
           activeOpacity={0.7}
         >
           <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
-            <FontAwesomeIcon 
-              icon={item.icon} 
-              size={20} 
-              color={isActive ? "#FFFFFF" : "#0b34b0"} 
+            <FontAwesomeIcon
+              icon={item.icon}
+              size={20}
+              color={isActive ? "#FFFFFF" : "#0b34b0"}
             />
           </View>
           <View style={styles.itemTextContainer}>
@@ -165,10 +159,10 @@ const CustomDrawerContent = (props) => {
             </Text>
             <Text style={styles.itemDescription}>{item.description}</Text>
           </View>
-          <FontAwesomeIcon 
-            icon={faChevronRight} 
-            size={14} 
-            color={isActive ? "#0b34b0" : "#94a3b8"} 
+          <FontAwesomeIcon
+            icon={faChevronRight}
+            size={14}
+            color={isActive ? "#0b34b0" : "#94a3b8"}
           />
         </TouchableOpacity>
       </Animated.View>
@@ -187,7 +181,7 @@ const CustomDrawerContent = (props) => {
   return (
     <View style={styles.drawerContainer}>
       <StatusBar backgroundColor="#0b34b0" barStyle="light-content" />
-      
+
       {/* Header Premium */}
       <Animated.View entering={FadeInDown.duration(800)} style={styles.drawerHeaderContainer}>
         <LinearGradient
@@ -217,27 +211,27 @@ const CustomDrawerContent = (props) => {
       </Animated.View>
 
       {/* Contenido del Drawer */}
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {drawerSections.map((section, sectionIndex) => (
-          <Animated.View 
+          <Animated.View
             key={section.title}
             entering={FadeInUp.delay(sectionIndex * 150)}
             style={styles.sectionContainer}
           >
             <Text style={styles.sectionTitle}>{section.title}</Text>
-            {section.items.map((item, index) => 
+            {section.items.map((item, index) =>
               renderDrawerItem({ item, index, sectionIndex })
             )}
           </Animated.View>
         ))}
 
         {/* Bottom Actions - Ahora dentro del ScrollView */}
-        <Animated.View 
-          entering={SlideInRight.delay(800)} 
+        <Animated.View
+          entering={SlideInRight.delay(800)}
           style={styles.bottomActionsContainer}
         >
           <TouchableOpacity
@@ -250,7 +244,7 @@ const CustomDrawerContent = (props) => {
             </View>
             <Text style={styles.actionButtonText}>Ayuda y Soporte</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[styles.actionButton, styles.logoutButton]}
             onPress={handleLogout}
@@ -265,15 +259,15 @@ const CustomDrawerContent = (props) => {
       </ScrollView>
 
       {/* Modal de Ayuda Premium */}
-      <Modal 
-        animationType="fade" 
-        transparent={true} 
-        visible={isHelpModalVisible} 
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isHelpModalVisible}
         onRequestClose={closeHelpModal}
         statusBarTranslucent
       >
         <View style={styles.modalOverlay}>
-          <Animated.View 
+          <Animated.ScrollView
             entering={FadeInDown.duration(300)}
             style={styles.modalContent}
           >
@@ -291,12 +285,12 @@ const CustomDrawerContent = (props) => {
                 <FontAwesomeIcon icon={faTimes} size={20} color="#FFFFFF" />
               </TouchableOpacity>
             </LinearGradient>
-            
+
             <View style={styles.modalBody}>
               <Text style={styles.modalDescription}>
                 Nuestro equipo de soporte está aquí para ayudarte. Puedes contactarnos mediante correo electrónico.
               </Text>
-              
+
               <View style={styles.developerCard}>
                 <View style={styles.developerAvatar}>
                   <FontAwesomeIcon icon={faEnvelope} size={32} color="#0b34b0" />
@@ -314,7 +308,7 @@ const CustomDrawerContent = (props) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </Animated.View>
+          </Animated.ScrollView>
         </View>
       </Modal>
     </View>
@@ -324,9 +318,9 @@ const CustomDrawerContent = (props) => {
 const DrawerHeaderButton = () => {
   const navigation = useNavigation()
   return (
-    <TouchableOpacity 
-      onPress={() => navigation.openDrawer()} 
-      style={styles.menuIcon} 
+    <TouchableOpacity
+      onPress={() => navigation.openDrawer()}
+      style={styles.menuIcon}
       activeOpacity={0.7}
     >
       <View style={styles.menuIconContainer}>
@@ -777,6 +771,8 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     overflow: "hidden",
     elevation: 24,
+    height: "60%",
+    maxHeight: 410,
   },
   modalHeader: {
     padding: 24,
